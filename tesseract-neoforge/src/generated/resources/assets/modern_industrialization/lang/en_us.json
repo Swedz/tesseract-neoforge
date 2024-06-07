@@ -1,0 +1,16 @@
+{
+  "recipe_type.modern_industrialization.assembler": "Assembler",
+  "recipe_type.modern_industrialization.centrifuge": "Centrifuge",
+  "recipe_type.modern_industrialization.chemical_reactor": "Chemical Reactor",
+  "recipe_type.modern_industrialization.compressor": "Compressor",
+  "recipe_type.modern_industrialization.cutting_machine": "Cutting Machine",
+  "recipe_type.modern_industrialization.distillery": "Distillery",
+  "recipe_type.modern_industrialization.electrolyzer": "Electrolyzer",
+  "recipe_type.modern_industrialization.furnace": "Furnace",
+  "recipe_type.modern_industrialization.macerator": "Macerator",
+  "recipe_type.modern_industrialization.mixer": "Mixer",
+  "recipe_type.modern_industrialization.packer": "Packer",
+  "recipe_type.modern_industrialization.polarizer": "Polarizer",
+  "recipe_type.modern_industrialization.unpacker": "Unpacker",
+  "recipe_type.modern_industrialization.wiremill": "Wiremill"
+}
