@@ -13,6 +13,7 @@ import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.swedz.tesseract.neoforge.registry.MIFluidProperties;
+import net.swedz.tesseract.neoforge.registry.SortOrder;
 
 import java.util.function.Consumer;
 
@@ -25,6 +26,7 @@ public class MIFluidHolder extends FluidHolder<MIFluid, MIFluidHolder.FakedMIFlu
 						 DeferredRegister<FluidType> registerFluidTypes,
 						 DeferredRegister.Blocks registerBlocks,
 						 DeferredRegister.Items registerItems,
+						 SortOrder bucketSortOrder,
 						 MIFluidProperties properties)
 	{
 		super(
@@ -46,7 +48,8 @@ public class MIFluidHolder extends FluidHolder<MIFluid, MIFluidHolder.FakedMIFlu
 					return new FakedMIFluidType(location.getNamespace(), holder.block().registerableBlock().get(), fluidTypeProperties);
 				},
 				registerBlocks, (__, ___) -> new MIFluidBlock(properties.color()),
-				registerItems, (holder, p) -> new MIBucketItem(holder.registerableFluid().getOrThrow(), properties.color(), p)
+				registerItems, (holder, p) -> new MIBucketItem(holder.registerableFluid().getOrThrow(), properties.color(), p),
+				bucketSortOrder
 		);
 		this.properties = properties;
 	}

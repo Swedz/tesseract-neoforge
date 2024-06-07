@@ -12,6 +12,7 @@ import net.swedz.tesseract.neoforge.api.FluidLike;
 import net.swedz.tesseract.neoforge.registry.CommonCapabilities;
 import net.swedz.tesseract.neoforge.registry.CommonModelBuilders;
 import net.swedz.tesseract.neoforge.registry.RegisteredObjectHolder;
+import net.swedz.tesseract.neoforge.registry.SortOrder;
 import net.swedz.tesseract.neoforge.registry.registerable.SimpleRegisterableWrapper;
 
 import java.util.function.BiFunction;
@@ -29,13 +30,14 @@ public class FluidHolder<F extends Fluid, FT extends FluidType, FB extends Block
 					   DeferredRegister<Fluid> registerFluids, Function<FluidHolder<F, FT, FB, FBI>, F> creatorFluid,
 					   DeferredRegister<FluidType> registerFluidTypes, Function<FluidHolder<F, FT, FB, FBI>, FT> creatorFluidType,
 					   DeferredRegister.Blocks registerBlocks, BiFunction<FluidHolder<F, FT, FB, FBI>, BlockBehaviour.Properties, FB> creatorFluidBlock,
-					   DeferredRegister.Items registerItems, BiFunction<FluidHolder<F, FT, FB, FBI>, Item.Properties, FBI> creatorBucketItem)
+					   DeferredRegister.Items registerItems, BiFunction<FluidHolder<F, FT, FB, FBI>, Item.Properties, FBI> creatorBucketItem, SortOrder bucketSortOrder)
 	{
 		super(location, englishName);
 		this.registerableFluid = new SimpleRegisterableWrapper<>(registerFluids, () -> creatorFluid.apply(this));
 		this.registerableFluidType = new SimpleRegisterableWrapper<>(registerFluidTypes, () -> creatorFluidType.apply(this));
 		this.blockHolder = new BlockHolder<>(location, englishName, registerBlocks, (p) -> creatorFluidBlock.apply(this, p));
 		this.bucketItemHolder = new ItemHolder<>(new ResourceLocation(location.getNamespace(), location.getPath() + "_bucket"), englishName + " Bucket", registerItems, (p) -> creatorBucketItem.apply(this, p))
+				.sorted(bucketSortOrder)
 				.withModel(CommonModelBuilders::generated)
 				.withCapabilities(CommonCapabilities::bucketItem);
 	}
