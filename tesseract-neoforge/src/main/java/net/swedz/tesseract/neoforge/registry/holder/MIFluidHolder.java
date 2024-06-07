@@ -59,6 +59,13 @@ public class MIFluidHolder extends FluidHolder<MIFluid, MIFluidHolder.FakedMIFlu
 		return properties;
 	}
 	
+	@Override
+	public MIFluidHolder register()
+	{
+		super.register();
+		return this;
+	}
+	
 	public static final class FakedMIFluidType extends MIFluidType
 	{
 		private final String namespace;
