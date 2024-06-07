@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.swedz.tesseract.neoforge.datagen.client.mi.MachineCasingModelsMIHookDatagenProvider;
 import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -66,20 +67,21 @@ public final class MIHookTracker
 		return new ResourceLocation(TRACKING_MOD_ID, id);
 	}
 	
-	private static final Map<String, List<Consumer<LanguageProvider>>> LANGUAGE       = Maps.newHashMap();
-	private static final Map<ResourceLocation, MachineModelProperties> MACHINE_MODELS = Maps.newHashMap();
+	private static final Map<String, List<Consumer<LanguageProvider>>>                         LANGUAGE              = Maps.newHashMap();
+	private static final Map<ResourceLocation, MachineModelProperties>                         MACHINE_MODELS        = Maps.newHashMap();
+	private static final Map<String, List<Consumer<MachineCasingModelsMIHookDatagenProvider>>> MACHINE_CASING_MODELS = Maps.newHashMap();
 	
 	public static List<Consumer<LanguageProvider>> getLanguageEntries(String modId)
 	{
 		return LANGUAGE.computeIfAbsent(modId, (k) -> Lists.newArrayList());
 	}
 	
-	public static void addReiCategoryLanguageEntry(String modId, String id, String englishName)
+	public static void addReiCategoryLanguageEntry(String id, String englishName)
 	{
 		assertTracking();
 		
-		LANGUAGE.computeIfAbsent(modId, (k) -> Lists.newArrayList())
-				.add((provider) -> provider.add("rei_categories.%s.%s".formatted(modId, id), englishName));
+		LANGUAGE.computeIfAbsent(TRACKING_MOD_ID, (k) -> Lists.newArrayList())
+				.add((provider) -> provider.add("rei_categories.%s.%s".formatted(MI.ID, id), englishName));
 	}
 	
 	public static MachineModelProperties getMachineModel(ResourceLocation id)
@@ -90,6 +92,18 @@ public final class MIHookTracker
 	public static void addMachineModel(ResourceLocation id, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active)
 	{
 		MACHINE_MODELS.put(id, new MachineModelProperties(id.getNamespace(), defaultCasing, overlay, front, top, side, active));
+	}
+	
+	public static List<Consumer<MachineCasingModelsMIHookDatagenProvider>> getMachineCasingModels(String modId)
+	{
+		return MACHINE_CASING_MODELS.computeIfAbsent(modId, (k) -> Lists.newArrayList());
+	}
+	
+	public static void addMachineCasingModel(String name, Consumer<MachineCasingModelsMIHookDatagenProvider> action)
+	{
+		assertTracking();
+		
+		MACHINE_CASING_MODELS.computeIfAbsent(TRACKING_MOD_ID, (k) -> Lists.newArrayList()).add(action);
 	}
 	
 	public record MachineModelProperties(

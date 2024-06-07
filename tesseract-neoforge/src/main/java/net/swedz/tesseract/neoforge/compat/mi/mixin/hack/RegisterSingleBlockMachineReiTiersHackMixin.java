@@ -1,6 +1,5 @@
 package net.swedz.tesseract.neoforge.compat.mi.mixin.hack;
 
-import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.compat.rei.machines.MachineCategoryParams;
 import aztech.modern_industrialization.compat.rei.machines.ReiMachineRecipes;
 import aztech.modern_industrialization.compat.rei.machines.SteamMode;
@@ -51,7 +50,7 @@ public class RegisterSingleBlockMachineReiTiersHackMixin
 							recipe -> recipe.getType() == recipeType && minEu <= recipe.eu && recipe.eu <= maxEu, false,
 							i < 2 ? SteamMode.BOTH : SteamMode.ELECTRIC_ONLY
 					);
-					MIHookTracker.addReiCategoryLanguageEntry(MI.ID, itemId, fullEnglishName);
+					MIHookTracker.addReiCategoryLanguageEntry(itemId, fullEnglishName);
 					ReiMachineRecipes.registerCategory(itemId, category);
 					ReiMachineRecipes.registerMachineClickArea(itemId, categoryParams.progressBarParams.toRectangle());
 					previousCategories.add(category);
