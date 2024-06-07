@@ -1,0 +1,23 @@
+plugins {
+    id 'java-library'
+}
+
+group = "net.swedz"
+version = "1.0"
+
+allprojects {
+    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: "java"
+
+    dependencies {
+        compileOnly("org.json:json:20231013")
+    }
+}
