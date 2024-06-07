@@ -66,9 +66,5 @@ public class RegisterSingleBlockMachineReiTiersHackMixin
 			
 			callback.cancel();
 		}
-		else
-		{
-			MIHookTracker.addMachineRecipeTypeLanguageEntry(recipeType.getId().getNamespace(), recipeType.getPath(), englishName);
-		}
 	}
 }
