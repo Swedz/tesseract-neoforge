@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.datagen.client.mi;
+package net.swedz.tesseract.neoforge.datagen.mi.client;
 
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.machines.models.MachineBakedModel;

@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.datagen.client.mi;
+package net.swedz.tesseract.neoforge.datagen.mi.client;
 
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.resource.FastPathPackResources;
@@ -77,7 +77,7 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 		{
 			if(holder instanceof MIFluidHolder fluid)
 			{
-				defer.accept(() -> registerFluidTextures(mtm, fluid));
+				defer.accept(() -> this.registerFluidTextures(mtm, fluid));
 			}
 		}
 		
@@ -180,7 +180,7 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 		List<PackResources> generatedPack = List.of(new FastPathPackResources("gen", generatedResources, true));
 		
 		MultiPackResourceManager outputPack = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, generatedPack);
-		return offerTextures(
+		return this.offerTextures(
 				(image, textureId) -> this.writeTexture(cache, image, textureId),
 				(json, path) -> futureList.accept(this.customJsonSave(cache, json, path)),
 				resourceLocation ->

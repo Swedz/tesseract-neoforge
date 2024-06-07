@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
-import net.swedz.tesseract.neoforge.datagen.client.mi.MachineCasingModelsMIHookDatagenProvider;
+import net.swedz.tesseract.neoforge.datagen.mi.client.MachineCasingModelsMIHookDatagenProvider;
 
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
