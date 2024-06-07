@@ -43,12 +43,6 @@ public class BlockWithItemHolder<BlockType extends Block, ItemType extends Block
 	}
 	
 	@Override
-	public BlockType get()
-	{
-		return registerableBlock.getOrThrow();
-	}
-	
-	@Override
 	public Item asItem()
 	{
 		return itemHolder.asItem();
