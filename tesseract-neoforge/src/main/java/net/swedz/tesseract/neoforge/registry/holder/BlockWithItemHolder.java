@@ -7,7 +7,7 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.swedz.tesseract.neoforge.registry.CommonModelBuilders;
+import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;

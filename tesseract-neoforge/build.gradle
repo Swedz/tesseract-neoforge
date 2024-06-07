@@ -44,7 +44,9 @@ repositories {
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
 
-    implementation(jarJar("io.github.llamalad7:mixinextras-neoforge:${mixinextras_version}"))
+    implementation(jarJar("io.github.llamalad7:mixinextras-neoforge:${mixinextras_version}")) {
+        jarJar.ranged(it, "[${mixinextras_version},)")
+    }
 
     implementation "dev.emi:emi-neoforge:${emi_version}+${minecraft_version}"
 
@@ -124,4 +126,15 @@ tasks.withType(ProcessResources).configureEach {
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId = project.group
+            artifactId = "tesseract-neoforge"
+            version = project.version
+        }
+    }
 }

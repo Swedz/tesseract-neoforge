@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.registry;
+package net.swedz.tesseract.neoforge.registry.common;
 
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;

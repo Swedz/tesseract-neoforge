@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.registry;
+package net.swedz.tesseract.neoforge.registry.common;
 
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.level.storage.loot.LootTable;
