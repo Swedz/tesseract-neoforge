@@ -9,10 +9,10 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.swedz.tesseract.neoforge.api.FluidLike;
-import net.swedz.tesseract.neoforge.registry.common.CommonCapabilities;
-import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 import net.swedz.tesseract.neoforge.registry.RegisteredObjectHolder;
 import net.swedz.tesseract.neoforge.registry.SortOrder;
+import net.swedz.tesseract.neoforge.registry.common.CommonCapabilities;
+import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 import net.swedz.tesseract.neoforge.registry.registerable.SimpleRegisterableWrapper;
 
 import java.util.function.BiFunction;
