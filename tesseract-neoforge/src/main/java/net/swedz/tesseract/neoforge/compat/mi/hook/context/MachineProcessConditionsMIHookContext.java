@@ -8,7 +8,7 @@ import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookContext;
 
 public final class MachineProcessConditionsMIHookContext implements MIHookContext
 {
-	public static void register(ResourceLocation id, Codec<? extends MachineProcessCondition> serializer)
+	public void register(ResourceLocation id, Codec<? extends MachineProcessCondition> serializer)
 	{
 		MachineProcessConditions.register(id, serializer);
 	}

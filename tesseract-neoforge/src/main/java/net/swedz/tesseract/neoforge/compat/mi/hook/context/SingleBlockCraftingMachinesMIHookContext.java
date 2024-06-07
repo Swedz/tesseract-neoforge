@@ -13,19 +13,19 @@ import java.util.function.Consumer;
 
 public final class SingleBlockCraftingMachinesMIHookContext implements MIHookContext
 {
-	public static void register(String englishName, String machine, MachineRecipeType type,
-								int itemInputCount, int itemOutputCount, int fluidInputCount, int fluidOutputCount,
-								Consumer<MachineGuiParameters.Builder> guiParams,
-								ProgressBar.Parameters progressBarParams,
-								RecipeEfficiencyBar.Parameters efficiencyBarParams,
-								EnergyBar.Parameters energyBarParams,
-								Consumer<SlotPositions.Builder> itemPositions,
-								Consumer<SlotPositions.Builder> fluidPositions,
-								boolean frontOverlay, boolean topOverlay, boolean sideOverlay,
-								int tiers,
-								int ioBucketCapacity)
+	public void register(String englishName, String machine, MachineRecipeType type,
+						 int itemInputCount, int itemOutputCount, int fluidInputCount, int fluidOutputCount,
+						 Consumer<MachineGuiParameters.Builder> guiParams,
+						 ProgressBar.Parameters progressBarParams,
+						 RecipeEfficiencyBar.Parameters efficiencyBarParams,
+						 EnergyBar.Parameters energyBarParams,
+						 Consumer<SlotPositions.Builder> itemPositions,
+						 Consumer<SlotPositions.Builder> fluidPositions,
+						 boolean frontOverlay, boolean topOverlay, boolean sideOverlay,
+						 int tiers,
+						 int ioBucketCapacity)
 	{
-		register(
+		this.register(
 				englishName, machine, type,
 				itemInputCount, itemOutputCount, fluidInputCount, fluidOutputCount,
 				guiParams, progressBarParams, efficiencyBarParams, energyBarParams,
@@ -36,18 +36,18 @@ public final class SingleBlockCraftingMachinesMIHookContext implements MIHookCon
 		);
 	}
 	
-	public static void register(String englishName, String machine, MachineRecipeType type,
-								int itemInputCount, int itemOutputCount, int fluidInputCount, int fluidOutputCount,
-								Consumer<MachineGuiParameters.Builder> guiParams,
-								ProgressBar.Parameters progressBarParams,
-								RecipeEfficiencyBar.Parameters efficiencyBarParams,
-								EnergyBar.Parameters energyBarParams,
-								Consumer<SlotPositions.Builder> itemPositions,
-								Consumer<SlotPositions.Builder> fluidPositions,
-								boolean frontOverlay, boolean topOverlay, boolean sideOverlay,
-								int tiers,
-								int ioBucketCapacity,
-								SingleBlockCraftingMachines.Config extraConfig)
+	public void register(String englishName, String machine, MachineRecipeType type,
+						 int itemInputCount, int itemOutputCount, int fluidInputCount, int fluidOutputCount,
+						 Consumer<MachineGuiParameters.Builder> guiParams,
+						 ProgressBar.Parameters progressBarParams,
+						 RecipeEfficiencyBar.Parameters efficiencyBarParams,
+						 EnergyBar.Parameters energyBarParams,
+						 Consumer<SlotPositions.Builder> itemPositions,
+						 Consumer<SlotPositions.Builder> fluidPositions,
+						 boolean frontOverlay, boolean topOverlay, boolean sideOverlay,
+						 int tiers,
+						 int ioBucketCapacity,
+						 SingleBlockCraftingMachines.Config extraConfig)
 	{
 		SingleBlockCraftingMachines.registerMachineTiers(
 				englishName, machine, type,

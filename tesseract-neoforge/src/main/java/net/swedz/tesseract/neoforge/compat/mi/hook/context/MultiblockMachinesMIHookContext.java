@@ -13,29 +13,29 @@ import java.util.function.Function;
 public final class MultiblockMachinesMIHookContext implements MIHookContext
 {
 	@SafeVarargs
-	public static void register(String englishName, String id,
-								Function<BEP, MachineBlockEntity> factory,
-								Consumer<BlockEntityType<?>>... extraRegistrators)
+	public final void register(String englishName, String id,
+							   Function<BEP, MachineBlockEntity> factory,
+							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
 		MachineRegistrationHelper.registerMachine(englishName, id, factory, extraRegistrators);
 	}
 	
 	@SafeVarargs
-	public static void register(String englishName, String id, String overlayFolder,
-								MachineCasing defaultCasing, boolean frontOverlay, boolean topOverlay, boolean sideOverlay, boolean hasActive,
-								Function<BEP, MachineBlockEntity> factory,
-								Consumer<BlockEntityType<?>>... extraRegistrators)
+	public final void register(String englishName, String id, String overlayFolder,
+							   MachineCasing defaultCasing, boolean frontOverlay, boolean topOverlay, boolean sideOverlay, boolean hasActive,
+							   Function<BEP, MachineBlockEntity> factory,
+							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		register(englishName, id, factory, extraRegistrators);
+		this.register(englishName, id, factory, extraRegistrators);
 		MachineRegistrationHelper.addMachineModel(id, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, hasActive);
 	}
 	
 	@SafeVarargs
-	public static void register(String englishName, String id, String overlayFolder,
-								MachineCasing defaultCasing, boolean frontOverlay, boolean topOverlay, boolean sideOverlay,
-								Function<BEP, MachineBlockEntity> factory,
-								Consumer<BlockEntityType<?>>... extraRegistrators)
+	public final void register(String englishName, String id, String overlayFolder,
+							   MachineCasing defaultCasing, boolean frontOverlay, boolean topOverlay, boolean sideOverlay,
+							   Function<BEP, MachineBlockEntity> factory,
+							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		register(englishName, id, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, true, factory, extraRegistrators);
+		this.register(englishName, id, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, true, factory, extraRegistrators);
 	}
 }

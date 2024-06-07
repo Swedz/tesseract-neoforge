@@ -6,7 +6,7 @@ import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookContext;
 
 public final class MachineRecipeTypesMIHookContext implements MIHookContext
 {
-	public static MachineRecipeType create(String name)
+	public MachineRecipeType create(String name)
 	{
 		return MIMachineRecipeTypes.create(name);
 	}
