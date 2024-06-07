@@ -74,22 +74,16 @@ public final class MIHookTracker
 		return LANGUAGE.computeIfAbsent(modId, (k) -> Lists.newArrayList());
 	}
 	
-	public static void addLanguageEntry(Consumer<LanguageProvider> action)
-	{
-		assertTracking();
-		
-		LANGUAGE.computeIfAbsent(TRACKING_MOD_ID, (k) -> Lists.newArrayList()).add(action);
-	}
-	
 	public static void addMachineRecipeTypeLanguageEntry(String modId, String id, String englishName)
 	{
 		LANGUAGE.computeIfAbsent(modId, (k) -> Lists.newArrayList())
 				.add((provider) -> provider.add("recipe_type.%s.%s".formatted(modId, id), englishName));
 	}
 	
-	public static void addReiCategoryLanguageEntry(String id, String englishName)
+	public static void addReiCategoryLanguageEntry(String modId, String id, String englishName)
 	{
-		addLanguageEntry((provider) -> provider.add("rei_categories.%s.%s".formatted(MI.ID, id), englishName));
+		LANGUAGE.computeIfAbsent(modId, (k) -> Lists.newArrayList())
+				.add((provider) -> provider.add("rei_categories.%s.%s".formatted(modId, id), englishName));
 	}
 	
 	public static MachineModelProperties getMachineModel(ResourceLocation id)
