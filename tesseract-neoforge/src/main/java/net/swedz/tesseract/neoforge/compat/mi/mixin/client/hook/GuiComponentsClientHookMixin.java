@@ -18,6 +18,6 @@ public class GuiComponentsClientHookMixin
 	)
 	private static void cinit(CallbackInfo callback)
 	{
-		MIHooks.triggerHooks((hook) -> hook.clientGuiComponents(new ClientGuiComponentsMIHookContext()));
+		MIHooks.triggerHookListeners((hook) -> hook.clientGuiComponents(new ClientGuiComponentsMIHookContext()));
 	}
 }

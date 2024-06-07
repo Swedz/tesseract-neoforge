@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.mi.mixin.hook;
 
 import aztech.modern_industrialization.MITooltips;
-import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookListener;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,6 +20,6 @@ public class TooltipsHookMixin
 	)
 	private static void clinit(CallbackInfo callback)
 	{
-		MIHooks.triggerHooks(MIHook::tooltips);
+		MIHooks.triggerHookListeners(MIHookListener::tooltips);
 	}
 }

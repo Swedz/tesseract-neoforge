@@ -21,7 +21,7 @@ public class BlastFurnaceTierHookMixin
 	)
 	private static List clinit(List value)
 	{
-		MIHooks.triggerHooks((hook) ->
+		MIHooks.triggerHookListeners((hook) ->
 		{
 			BlastFurnaceTiersMIHookContext context = new BlastFurnaceTiersMIHookContext();
 			hook.blastFurnaceTiers(context);

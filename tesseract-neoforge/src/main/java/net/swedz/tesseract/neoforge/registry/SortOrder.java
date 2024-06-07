@@ -1,13 +1,6 @@
 package net.swedz.tesseract.neoforge.registry;
 
-public enum SortOrder
+public record SortOrder(int ordinal)
 {
-	GEAR,
-	OTHER_GEAR,
-	CASINGS,
-	MACHINES,
-	PARTS,
-	RESOURCES,
-	BUCKETS,
-	UNSORTED
+	public static final SortOrder UNSORTED = new SortOrder(Integer.MAX_VALUE);
 }

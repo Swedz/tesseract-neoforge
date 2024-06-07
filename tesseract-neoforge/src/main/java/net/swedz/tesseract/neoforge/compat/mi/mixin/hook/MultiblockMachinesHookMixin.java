@@ -20,6 +20,6 @@ public class MultiblockMachinesHookMixin
 	)
 	private static void init(CallbackInfo callback)
 	{
-		MIHooks.triggerHooks((hook) -> hook.multiblockMachines(new MultiblockMachinesMIHookContext()));
+		MIHooks.triggerHookListeners((hook) -> hook.multiblockMachines(new MultiblockMachinesMIHookContext()));
 	}
 }

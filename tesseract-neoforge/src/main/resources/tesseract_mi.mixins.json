@@ -6,6 +6,12 @@
     "compatibilityLevel": "JAVA_17",
     "mixins": [
         "fix.MakeMachineBlockEntityUseProperTitleMixin",
+        "hack.RegisterMachineHackMixin",
+        "hack.RegisterMachineModelHackMixin",
+        "hack.RegisterMachineRecipeTypeHackMixin",
+        "hack.RegisterMultiblockShapeReiRecipeHackMixin",
+        "hack.RegisterReiMachineRecipeHackMixin",
+        "hack.RegisterSingleBlockMachineReiTiersHackMixin",
         "hook.BlastFurnaceTierHookMixin",
         "hook.MachineCasingsHookMixin",
         "hook.MachineProcessConditionsHookMixin",

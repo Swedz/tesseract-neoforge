@@ -20,6 +20,6 @@ public class SingleBlockSpecialMachinesHookMixin
 	)
 	private static void init(CallbackInfo callback)
 	{
-		MIHooks.triggerHooks((hook) -> hook.singleBlockSpecialMachines(new SingleBlockSpecialMachinesMIHookContext()));
+		MIHooks.triggerHookListeners((hook) -> hook.singleBlockSpecialMachines(new SingleBlockSpecialMachinesMIHookContext()));
 	}
 }

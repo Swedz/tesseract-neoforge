@@ -1,6 +1,17 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook;
 
+import aztech.modern_industrialization.MI;
+import aztech.modern_industrialization.machines.models.MachineCasing;
+import com.google.common.collect.Maps;
+import com.google.gson.JsonObject;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.data.LanguageProvider;
+import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.ApiStatus;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 @ApiStatus.Internal
 public final class MIHookTracker
@@ -27,8 +38,116 @@ public final class MIHookTracker
 		return TRACKING_MOD_ID != null;
 	}
 	
+	public static void assertTracking()
+	{
+		if(!isTracking())
+		{
+			throw new IllegalStateException("Tracker is not open right now");
+		}
+	}
+	
+	public static void assertNotTracking()
+	{
+		if(isTracking())
+		{
+			throw new IllegalStateException("Tracker is open right now");
+		}
+	}
+	
 	public static String getTrackingModId()
 	{
 		return TRACKING_MOD_ID;
+	}
+	
+	public static ResourceLocation id(String id)
+	{
+		assertTracking();
+		
+		return new ResourceLocation(TRACKING_MOD_ID, id);
+	}
+	
+	private static final Map<String, List<Consumer<LanguageProvider>>> LANGUAGE       = Maps.newHashMap();
+	private static final Map<ResourceLocation, MachineModelProperties> MACHINE_MODELS = Maps.newHashMap();
+	
+	public static List<Consumer<LanguageProvider>> getLanguageEntries(String modId)
+	{
+		return LANGUAGE.computeIfAbsent(modId, (k) -> Lists.newArrayList());
+	}
+	
+	public static void addLanguageEntry(Consumer<LanguageProvider> action)
+	{
+		assertTracking();
+		
+		LANGUAGE.computeIfAbsent(TRACKING_MOD_ID, (k) -> Lists.newArrayList()).add(action);
+	}
+	
+	public static void addMachineRecipeTypeLanguageEntry(String modId, String id, String englishName)
+	{
+		LANGUAGE.computeIfAbsent(modId, (k) -> Lists.newArrayList())
+				.add((provider) -> provider.add("recipe_type.%s.%s".formatted(modId, id), englishName));
+	}
+	
+	public static void addReiCategoryLanguageEntry(String id, String englishName)
+	{
+		addLanguageEntry((provider) -> provider.add("rei_categories.%s.%s".formatted(MI.ID, id), englishName));
+	}
+	
+	public static MachineModelProperties getMachineModel(ResourceLocation id)
+	{
+		return MACHINE_MODELS.get(id);
+	}
+	
+	public static void addMachineModel(ResourceLocation id, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active)
+	{
+		MACHINE_MODELS.put(id, new MachineModelProperties(id.getNamespace(), defaultCasing, overlay, front, top, side, active));
+	}
+	
+	public record MachineModelProperties(
+			String modId,
+			MachineCasing defaultCasing,
+			String overlay, boolean front, boolean top, boolean side,
+			boolean active
+	)
+	{
+		public void addToMachineJson(JsonObject json)
+		{
+			json.addProperty("casing", defaultCasing.name);
+			
+			var defaultOverlays = new JsonObject();
+			
+			if(top)
+			{
+				defaultOverlays.addProperty("top", "%s:block/machines/%s/overlay_top".formatted(modId, overlay));
+				if(active)
+				{
+					defaultOverlays.addProperty("top_active", "%s:block/machines/%s/overlay_top_active".formatted(modId, overlay));
+				}
+			}
+			if(front)
+			{
+				defaultOverlays.addProperty("front", "%s:block/machines/%s/overlay_front".formatted(modId, overlay));
+				if(active)
+				{
+					defaultOverlays.addProperty(
+							"front_active",
+							"%s:block/machines/%s/overlay_front_active".formatted(modId, overlay)
+					);
+				}
+			}
+			if(side)
+			{
+				defaultOverlays.addProperty("side", "%s:block/machines/%s/overlay_side".formatted(modId, overlay));
+				if(active)
+				{
+					defaultOverlays.addProperty("side_active", "%s:block/machines/%s/overlay_side_active".formatted(modId, overlay));
+				}
+			}
+			
+			defaultOverlays.addProperty("output", "%s:block/overlays/output".formatted(MI.ID));
+			defaultOverlays.addProperty("item_auto", "%s:block/overlays/item_auto".formatted(MI.ID));
+			defaultOverlays.addProperty("fluid_auto", "%s:block/overlays/fluid_auto".formatted(MI.ID));
+			
+			json.add("default_overlays", defaultOverlays);
+		}
 	}
 }

@@ -25,7 +25,7 @@ public class ViewerSetupHookMixin
 	)
 	private static void clinit(CallbackInfoReturnable<List<ViewerCategory<?>>> callback, List<ViewerCategory<?>> registry)
 	{
-		MIHooks.triggerHooks((hook) ->
+		MIHooks.triggerHookListeners((hook) ->
 		{
 			ViewerSetupMIHookContext context = new ViewerSetupMIHookContext();
 			hook.viewerSetup(context);

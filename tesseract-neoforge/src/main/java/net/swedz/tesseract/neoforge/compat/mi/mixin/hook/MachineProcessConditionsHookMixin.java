@@ -20,6 +20,6 @@ public class MachineProcessConditionsHookMixin
 	)
 	private static void clinit(CallbackInfo callback)
 	{
-		MIHooks.triggerHooks((hook) -> hook.machineProcessConditions(new MachineProcessConditionsMIHookContext()));
+		MIHooks.triggerHookListeners((hook) -> hook.machineProcessConditions(new MachineProcessConditionsMIHookContext()));
 	}
 }

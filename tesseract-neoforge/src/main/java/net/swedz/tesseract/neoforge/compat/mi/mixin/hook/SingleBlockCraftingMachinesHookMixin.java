@@ -20,6 +20,6 @@ public class SingleBlockCraftingMachinesHookMixin
 	)
 	private static void init(CallbackInfo callback)
 	{
-		MIHooks.triggerHooks((hook) -> hook.singleBlockCraftingMachines(new SingleBlockCraftingMachinesMIHookContext()));
+		MIHooks.triggerHookListeners((hook) -> hook.singleBlockCraftingMachines(new SingleBlockCraftingMachinesMIHookContext()));
 	}
 }
