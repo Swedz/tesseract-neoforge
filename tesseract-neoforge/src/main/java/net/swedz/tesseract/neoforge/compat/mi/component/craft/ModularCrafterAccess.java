@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.component;
+package net.swedz.tesseract.neoforge.compat.mi.component.craft;
 
 import aztech.modern_industrialization.api.machine.component.CrafterAccess;
 

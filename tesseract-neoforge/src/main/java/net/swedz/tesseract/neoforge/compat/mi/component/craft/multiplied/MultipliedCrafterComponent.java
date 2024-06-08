@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.component.multiplied;
+package net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied;
 
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.api.machine.component.InventoryAccess;
@@ -23,8 +23,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.material.Fluid;
 import net.swedz.tesseract.neoforge.TesseractMod;
-import net.swedz.tesseract.neoforge.compat.mi.component.ModularCrafterAccess;
-import net.swedz.tesseract.neoforge.compat.mi.component.ModularCrafterAccessBehavior;
+import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccess;
+import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccessBehavior;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.component.multiplied;
+package net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
