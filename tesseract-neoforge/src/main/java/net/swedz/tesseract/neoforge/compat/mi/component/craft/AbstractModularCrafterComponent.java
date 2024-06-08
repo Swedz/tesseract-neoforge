@@ -7,7 +7,6 @@ import aztech.modern_industrialization.inventory.ConfigurableItemStack;
 import aztech.modern_industrialization.machines.IComponent;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
 import aztech.modern_industrialization.machines.components.CrafterComponent;
-import aztech.modern_industrialization.machines.components.MultiblockInventoryComponent;
 import aztech.modern_industrialization.machines.recipe.condition.MachineProcessCondition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +26,7 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 {
 	protected final MachineProcessCondition.Context conditionContext;
 	
-	protected final MultiblockInventoryComponent inventory;
+	protected final CrafterComponent.Inventory   inventory;
 	protected final ModularCrafterAccessBehavior behavior;
 	
 	protected R                activeRecipe;
@@ -48,7 +47,7 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	
 	public AbstractModularCrafterComponent(
 			MachineBlockEntity blockEntity,
-			MultiblockInventoryComponent inventory,
+			CrafterComponent.Inventory inventory,
 			ModularCrafterAccessBehavior behavior
 	)
 	{

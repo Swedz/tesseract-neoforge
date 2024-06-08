@@ -5,7 +5,7 @@ import aztech.modern_industrialization.inventory.AbstractConfigurableStack;
 import aztech.modern_industrialization.inventory.ConfigurableFluidStack;
 import aztech.modern_industrialization.inventory.ConfigurableItemStack;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
-import aztech.modern_industrialization.machines.components.MultiblockInventoryComponent;
+import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
@@ -38,7 +38,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	private int tryRecipeMultiplier = 0;
 	private int recipeMultiplier    = 0;
 	
-	public MultipliedCrafterComponent(MachineBlockEntity blockEntity, MultiblockInventoryComponent inventory, ModularCrafterAccessBehavior behavior,
+	public MultipliedCrafterComponent(MachineBlockEntity blockEntity, CrafterComponent.Inventory inventory, ModularCrafterAccessBehavior behavior,
 									  Supplier<MachineRecipeType> recipeTypeGetter, Supplier<Integer> maxMultiplierGetter, Supplier<EuCostTransformer> euCostTransformer)
 	{
 		super(blockEntity, inventory, behavior);
