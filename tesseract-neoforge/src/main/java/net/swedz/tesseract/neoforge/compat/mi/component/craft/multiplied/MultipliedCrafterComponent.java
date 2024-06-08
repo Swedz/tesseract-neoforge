@@ -111,6 +111,11 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	}
 	
 	@Override
+	protected void onTick()
+	{
+	}
+	
+	@Override
 	protected Iterable<RecipeHolder<MachineRecipe>> getRecipes()
 	{
 		if(this.getRecipeType() == null)

@@ -75,6 +75,8 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	
 	protected abstract boolean doConditionsMatchForRecipe(R recipe);
 	
+	protected abstract void onTick();
+	
 	protected boolean takeInputs(R recipe, boolean simulate)
 	{
 		return this.takeItemInputs(recipe, simulate) &&
@@ -239,6 +241,8 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 		{
 			throw new IllegalStateException("May not call client side.");
 		}
+		
+		this.onTick();
 		
 		boolean active = false;
 		boolean enabled = behavior.isEnabled();
