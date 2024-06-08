@@ -6,6 +6,7 @@ import org.apache.commons.compress.utils.Lists;
 import java.util.List;
 import java.util.function.Consumer;
 
+// TODO make this per-mod
 public final class CapabilitiesListeners
 {
 	private static final List<Consumer<RegisterCapabilitiesEvent>> listeners = Lists.newArrayList();

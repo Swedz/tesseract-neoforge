@@ -18,4 +18,10 @@ public final class TesseractMIHookListener implements MIHookListener
 		hook.register(ModularMultiblockGui.ID, ModularMultiblockGuiClient::new);
 		hook.register(ModularRecipeEfficiencyBar.ID, ModularRecipeEfficiencyBarClient::new);
 	}
+	
+	@Override
+	public void tooltips()
+	{
+		TesseractMITooltips.init();
+	}
 }

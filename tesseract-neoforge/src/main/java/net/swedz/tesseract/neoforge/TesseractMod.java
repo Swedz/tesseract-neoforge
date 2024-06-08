@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
 import net.swedz.tesseract.neoforge.capabilities.CapabilitiesListeners;
 import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
@@ -11,6 +12,7 @@ import net.swedz.tesseract.neoforge.compat.mi.builtinhook.TesseractMIHookListene
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.network.TesseractMIPackets;
+import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
 import net.swedz.tesseract.neoforge.isolatedlistener.IsolatedListeners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,9 @@ public final class TesseractMod
 			
 			bus.addListener(RegisterPayloadHandlerEvent.class, TesseractMIPackets::init);
 		}
+		
+		bus.addListener(GatherDataEvent.class, (event) ->
+				event.getGenerator().addProvider(event.includeClient(), new LanguageDatagenProvider(event)));
 	}
 	
 	public static boolean isMILoaded()
