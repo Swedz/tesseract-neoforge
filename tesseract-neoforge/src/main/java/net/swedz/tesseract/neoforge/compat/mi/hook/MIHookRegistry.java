@@ -31,7 +31,8 @@ public interface MIHookRegistry
 	
 	SortOrder sortOrderMachines();
 	
-	MIHookRegistry NONE = new MIHookRegistry() {
+	MIHookRegistry NONE = new MIHookRegistry()
+	{
 		@Override
 		public DeferredRegister.Blocks blockRegistry()
 		{

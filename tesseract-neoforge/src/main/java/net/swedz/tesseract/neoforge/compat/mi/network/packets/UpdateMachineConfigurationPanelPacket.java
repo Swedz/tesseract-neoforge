@@ -9,7 +9,9 @@ import net.swedz.tesseract.neoforge.compat.mi.network.TesseractMIBasePacket;
 /**
  * This was stolen from {@link aztech.modern_industrialization.network.machines.ChangeShapePacket} to make my own generic "configuration panel" component to be used for non-shape related configuring of machines.
  */
-public record UpdateMachineConfigurationPanelPacket(int syncId, int line, boolean clickedLeftButton) implements TesseractMIBasePacket
+public record UpdateMachineConfigurationPanelPacket(
+		int syncId, int line, boolean clickedLeftButton
+) implements TesseractMIBasePacket
 {
 	public UpdateMachineConfigurationPanelPacket(FriendlyByteBuf buf)
 	{
