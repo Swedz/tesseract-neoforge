@@ -88,7 +88,7 @@ public final class CommonGuiComponents
 	
 	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, int height)
 	{
-		return standardMultiblockScreen(machine, null, isActive, height);
+		return standardMultiblockScreen(machine, null, null, isActive, height);
 	}
 	
 	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive)
