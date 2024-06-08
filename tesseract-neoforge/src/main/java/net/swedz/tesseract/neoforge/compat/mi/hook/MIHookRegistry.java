@@ -30,4 +30,66 @@ public interface MIHookRegistry
 	void onMachineRecipeTypeRegister(MachineRecipeType type);
 	
 	SortOrder sortOrderMachines();
+	
+	MIHookRegistry NONE = new MIHookRegistry() {
+		@Override
+		public DeferredRegister.Blocks blockRegistry()
+		{
+			return null;
+		}
+		
+		@Override
+		public DeferredRegister<BlockEntityType<?>> blockEntityRegistry()
+		{
+			return null;
+		}
+		
+		@Override
+		public DeferredRegister.Items itemRegistry()
+		{
+			return null;
+		}
+		
+		@Override
+		public DeferredRegister<RecipeSerializer<?>> recipeSerializerRegistry()
+		{
+			return null;
+		}
+		
+		@Override
+		public DeferredRegister<RecipeType<?>> recipeTypeRegistry()
+		{
+			return null;
+		}
+		
+		@Override
+		public void onBlockRegister(BlockHolder holder)
+		{
+		
+		}
+		
+		@Override
+		public void onBlockEntityRegister(BlockEntityType<?> type)
+		{
+		
+		}
+		
+		@Override
+		public void onItemRegister(ItemHolder holder)
+		{
+		
+		}
+		
+		@Override
+		public void onMachineRecipeTypeRegister(MachineRecipeType type)
+		{
+		
+		}
+		
+		@Override
+		public SortOrder sortOrderMachines()
+		{
+			return null;
+		}
+	};
 }
