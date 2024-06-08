@@ -1,29 +1,25 @@
 package net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied;
 
 import aztech.modern_industrialization.MI;
-import aztech.modern_industrialization.api.machine.component.InventoryAccess;
 import aztech.modern_industrialization.inventory.AbstractConfigurableStack;
 import aztech.modern_industrialization.inventory.ConfigurableFluidStack;
 import aztech.modern_industrialization.inventory.ConfigurableItemStack;
-import aztech.modern_industrialization.machines.IComponent;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
-import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.components.MultiblockInventoryComponent;
 import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
-import aztech.modern_industrialization.machines.recipe.condition.MachineProcessCondition;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.item.ItemVariant;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.material.Fluid;
-import net.swedz.tesseract.neoforge.TesseractMod;
-import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccess;
+import net.swedz.tesseract.neoforge.compat.mi.component.craft.AbstractModularCrafterComponent;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccessBehavior;
 
 import java.util.ArrayList;
@@ -33,52 +29,19 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 
-import static aztech.modern_industrialization.util.Simulation.*;
-
-/**
- * Most of the code here was directly copied from {@link CrafterComponent}, please understand.
- * <br><br>
- * Aside from formatting, here are the changes I made:
- * <ul>
- *     <li>Instead of using <code>behavior.recipeType()</code> to get the recipe type, it is fetched from <code>recipeTypeGetter</code></li>
- *     <li>Recipe inputs and outputs are multiplied by the <code>recipeMultiplier</code> variable</li>
- * </ul>
- */
-public final class MultipliedCrafterComponent implements IComponent.ServerOnly, ModularCrafterAccess
+public final class MultipliedCrafterComponent extends AbstractModularCrafterComponent<RecipeHolder<MachineRecipe>>
 {
-	private final MachineProcessCondition.Context conditionContext;
-	
-	private final MultiblockInventoryComponent inventory;
-	private final ModularCrafterAccessBehavior behavior;
-	
 	private final Supplier<MachineRecipeType> recipeTypeGetter;
 	private final Supplier<Integer>           maxMultiplierGetter;
 	private final Supplier<EuCostTransformer> euCostTransformer;
 	
-	private RecipeHolder<MachineRecipe> activeRecipe = null;
-	private ResourceLocation            delayedActiveRecipe;
-	
-	private int recipeMultiplier = 1;
-	
-	private long usedEnergy;
-	private long recipeEnergy;
-	private long recipeMaxEu;
-	
-	private int efficiencyTicks;
-	private int maxEfficiencyTicks;
-	
-	private long previousBaseEu = -1;
-	private long previousMaxEu  = -1;
-	
-	private int lastInvHash    = 0;
-	private int lastForcedTick = 0;
+	private int tryRecipeMultiplier = 0;
+	private int recipeMultiplier    = 0;
 	
 	public MultipliedCrafterComponent(MachineBlockEntity blockEntity, MultiblockInventoryComponent inventory, ModularCrafterAccessBehavior behavior,
 									  Supplier<MachineRecipeType> recipeTypeGetter, Supplier<Integer> maxMultiplierGetter, Supplier<EuCostTransformer> euCostTransformer)
 	{
-		this.inventory = inventory;
-		this.behavior = behavior;
-		this.conditionContext = () -> blockEntity;
+		super(blockEntity, inventory, behavior);
 		this.recipeTypeGetter = recipeTypeGetter;
 		this.maxMultiplierGetter = maxMultiplierGetter;
 		this.euCostTransformer = euCostTransformer;
@@ -89,55 +52,38 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 		return recipeTypeGetter.get();
 	}
 	
+	public int getRecipeMultiplier()
+	{
+		return recipeMultiplier;
+	}
+	
 	public int getMaxMultiplier()
 	{
 		return maxMultiplierGetter.get();
 	}
 	
+	@Override
 	public long transformEuCost(long eu)
 	{
 		return euCostTransformer.get().transform(this, eu);
 	}
 	
 	@Override
-	public InventoryAccess getInventory()
+	protected boolean canContinueRecipe()
 	{
-		return inventory;
+		return recipeMultiplier != 0;
 	}
 	
 	@Override
-	public ModularCrafterAccessBehavior getBehavior()
+	protected ResourceLocation getRecipeId(RecipeHolder<MachineRecipe> recipe)
 	{
-		return behavior;
-	}
-	
-	public int getRecipeMultiplier()
-	{
-		return recipeMultiplier;
+		return recipe.id();
 	}
 	
 	@Override
-	public float getProgress()
+	protected RecipeHolder<MachineRecipe> getRecipeById(ResourceLocation recipeId)
 	{
-		return (float) usedEnergy / recipeEnergy;
-	}
-	
-	@Override
-	public int getEfficiencyTicks()
-	{
-		return efficiencyTicks;
-	}
-	
-	@Override
-	public int getMaxEfficiencyTicks()
-	{
-		return maxEfficiencyTicks;
-	}
-	
-	@Override
-	public boolean hasActiveRecipe()
-	{
-		return activeRecipe != null;
+		return this.getRecipeType().getRecipe(behavior.getCrafterWorld(), recipeId);
 	}
 	
 	@Override
@@ -147,96 +93,25 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 	}
 	
 	@Override
-	public long getCurrentRecipeEu()
+	protected long getRecipeEuCost(RecipeHolder<MachineRecipe> recipe)
 	{
-		return recipeMaxEu;
+		return recipe.value().eu;
 	}
 	
 	@Override
-	public void decreaseEfficiencyTicks()
+	protected long getRecipeTotalEuCost(RecipeHolder<MachineRecipe> recipe)
 	{
-		efficiencyTicks = Math.max(efficiencyTicks - 1, 0);
-		this.clearActiveRecipeIfPossible();
+		return recipe.value().getTotalEu();
 	}
 	
 	@Override
-	public void increaseEfficiencyTicks(int increment)
+	protected boolean doConditionsMatchForRecipe(RecipeHolder<MachineRecipe> recipe)
 	{
-		efficiencyTicks = Math.min(efficiencyTicks + increment, maxEfficiencyTicks);
+		return recipe.value().conditionsMatch(conditionContext);
 	}
 	
-	/**
-	 * Attempt to re-lock hatches to continue the active recipe.
-	 *
-	 * @return True if there is no current recipe or if the hatches could be locked
-	 * for it, false otherwise.
-	 */
-	public boolean tryContinueRecipe()
-	{
-		this.loadDelayedActiveRecipe();
-		
-		if(activeRecipe != null && recipeMultiplier != 0)
-		{
-			if(this.putItemOutputs(activeRecipe.value(), recipeMultiplier, true, false) && this.putFluidOutputs(activeRecipe.value(), recipeMultiplier, true, false))
-			{
-				// Relock stacks
-				this.putItemOutputs(activeRecipe.value(), recipeMultiplier, true, true);
-				this.putFluidOutputs(activeRecipe.value(), recipeMultiplier, true, true);
-			}
-			else
-			{
-				return false;
-			}
-		}
-		
-		return true;
-	}
-	
-	private void loadDelayedActiveRecipe()
-	{
-		if(delayedActiveRecipe != null)
-		{
-			activeRecipe = this.getRecipeType().getRecipe(behavior.getCrafterWorld(), delayedActiveRecipe);
-			delayedActiveRecipe = null;
-			if(activeRecipe == null)
-			{
-				// If a recipe got removed, we need to reset the efficiency and the used energy
-				// to allow the machine to resume processing.
-				efficiencyTicks = 0;
-				usedEnergy = 0;
-			}
-		}
-	}
-	
-	private boolean updateActiveRecipe()
-	{
-		// Only then can we run the iteration over the recipes
-		for(RecipeHolder<MachineRecipe> recipe : this.getRecipes())
-		{
-			if(behavior.isRecipeBanned(recipe.value().eu))
-			{
-				continue;
-			}
-			if(this.tryStartRecipe(recipe.value()))
-			{
-				// Make sure we recalculate the max efficiency ticks if the recipe changes or if
-				// the efficiency has reached 0 (the latter is to recalculate the efficiency for
-				// 0.3.6 worlds without having to break and replace the machines)
-				if(activeRecipe != recipe || efficiencyTicks == 0)
-				{
-					maxEfficiencyTicks = this.getRecipeMaxEfficiencyTicks(recipe.value());
-				}
-				activeRecipe = recipe;
-				usedEnergy = 0;
-				recipeEnergy = this.transformEuCost(recipe.value().getTotalEu());
-				recipeMaxEu = this.getRecipeMaxEu(recipe.value().eu, recipeEnergy, efficiencyTicks);
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private Iterable<RecipeHolder<MachineRecipe>> getRecipes()
+	@Override
+	protected Iterable<RecipeHolder<MachineRecipe>> getRecipes()
 	{
 		if(this.getRecipeType() == null)
 		{
@@ -278,21 +153,6 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 			}
 			return recipes;
 		}
-	}
-	
-	private boolean tryStartRecipe(MachineRecipe recipe, int recipeMultiplier)
-	{
-		if(this.takeItemInputs(recipe, recipeMultiplier, true) && this.takeFluidInputs(recipe, recipeMultiplier, true) &&
-				this.putItemOutputs(recipe, recipeMultiplier, true, false) && this.putFluidOutputs(recipe, recipeMultiplier, true, false) &&
-				recipe.conditionsMatch(conditionContext))
-		{
-			this.takeItemInputs(recipe, recipeMultiplier, false);
-			this.takeFluidInputs(recipe, recipeMultiplier, false);
-			this.putItemOutputs(recipe, recipeMultiplier, true, true);
-			this.putFluidOutputs(recipe, recipeMultiplier, true, true);
-			return true;
-		}
-		return false;
 	}
 	
 	private int calculateItemInputRecipeMultiplier(MachineRecipe recipe)
@@ -440,44 +300,11 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 		return fluidMultiplier;
 	}
 	
-	private boolean tryStartRecipe(MachineRecipe recipe)
+	@Override
+	protected boolean takeItemInputs(RecipeHolder<MachineRecipe> recipeHolder, boolean simulate)
 	{
-		if(this.getMaxMultiplier() > 1)
-		{
-			int itemInputMultiplier = this.calculateItemInputRecipeMultiplier(recipe);
-			if(itemInputMultiplier > 1)
-			{
-				int itemOutputMultiplier = this.calculateItemOutputRecipeMultiplier(recipe);
-				if(itemOutputMultiplier > 1)
-				{
-					int itemMultiplier = Math.min(itemInputMultiplier, itemOutputMultiplier);
-					
-					int fluidInputMultiplier = this.calculateFluidInputRecipeMultiplier(recipe);
-					if(fluidInputMultiplier > 1)
-					{
-						int fluidOutputMultiplier = this.calculateFluidOutputRecipeMultiplier(recipe);
-						if(fluidOutputMultiplier > 1)
-						{
-							int fluidMultiplier = Math.min(fluidInputMultiplier, fluidOutputMultiplier);
-							
-							int multiplier = Math.min(itemMultiplier, fluidMultiplier);
-							if(this.tryStartRecipe(recipe, multiplier))
-							{
-								recipeMultiplier = multiplier;
-								return true;
-							}
-						}
-					}
-				}
-			}
-		}
+		MachineRecipe recipe = recipeHolder.value();
 		
-		recipeMultiplier = 1;
-		return this.tryStartRecipe(recipe, 1);
-	}
-	
-	private boolean takeItemInputs(MachineRecipe recipe, int recipeMultiplier, boolean simulate)
-	{
 		List<ConfigurableItemStack> baseList = inventory.getItemInputs();
 		List<ConfigurableItemStack> stacks = simulate ? ConfigurableItemStack.copyList(baseList) : baseList;
 		
@@ -492,10 +319,9 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 					continue;
 				}
 			}
-			int remainingAmount = input.amount * recipeMultiplier;
+			int remainingAmount = input.amount * tryRecipeMultiplier;
 			for(ConfigurableItemStack stack : stacks)
 			{
-				// TODO: ItemStack creation slow?
 				if(stack.getAmount() > 0 && input.matches(stack.getResource().toStack()))
 				{
 					int taken = Math.min((int) stack.getAmount(), remainingAmount);
@@ -520,8 +346,11 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 		return ok;
 	}
 	
-	private boolean takeFluidInputs(MachineRecipe recipe, int recipeMultiplier, boolean simulate)
+	@Override
+	protected boolean takeFluidInputs(RecipeHolder<MachineRecipe> recipeHolder, boolean simulate)
 	{
+		MachineRecipe recipe = recipeHolder.value();
+		
 		List<ConfigurableFluidStack> baseList = inventory.getFluidInputs();
 		List<ConfigurableFluidStack> stacks = simulate ? ConfigurableFluidStack.copyList(baseList) : baseList;
 		
@@ -536,7 +365,7 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 					continue;
 				}
 			}
-			long remainingAmount = input.amount * recipeMultiplier;
+			long remainingAmount = input.amount * tryRecipeMultiplier;
 			for(ConfigurableFluidStack stack : stacks)
 			{
 				if(stack.getResource().equals(FluidVariant.of(input.fluid)))
@@ -563,8 +392,12 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 	}
 	
 	@SuppressWarnings("deprecation")
-	private boolean putItemOutputs(MachineRecipe recipe, int recipeMultiplier, boolean simulate, boolean toggleLock)
+	@Override
+	protected boolean putItemOutputs(RecipeHolder<MachineRecipe> recipeHolder, boolean simulate, boolean toggleLock)
 	{
+		MachineRecipe recipe = recipeHolder.value();
+		int recipeMultiplier = tryRecipeMultiplier == 0 ? this.recipeMultiplier : tryRecipeMultiplier;
+		
 		List<ConfigurableItemStack> baseList = inventory.getItemOutputs();
 		List<ConfigurableItemStack> stacks = simulate ? ConfigurableItemStack.copyList(baseList) : baseList;
 		
@@ -653,8 +486,12 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 		return ok;
 	}
 	
-	private boolean putFluidOutputs(MachineRecipe recipe, int recipeMultiplier, boolean simulate, boolean toggleLock)
+	@Override
+	protected boolean putFluidOutputs(RecipeHolder<MachineRecipe> recipeHolder, boolean simulate, boolean toggleLock)
 	{
+		MachineRecipe recipe = recipeHolder.value();
+		int recipeMultiplier = tryRecipeMultiplier == 0 ? this.recipeMultiplier : tryRecipeMultiplier;
+		
 		List<ConfigurableFluidStack> baseList = inventory.getFluidOutputs();
 		List<ConfigurableFluidStack> stacks = simulate ? ConfigurableFluidStack.copyList(baseList) : baseList;
 		
@@ -725,160 +562,70 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 		return ok;
 	}
 	
-	public boolean tickRecipe()
+	@Override
+	protected boolean tryStartRecipe(RecipeHolder<MachineRecipe> recipe)
 	{
-		if(behavior.getCrafterWorld().isClientSide())
+		if(this.getMaxMultiplier() > 1)
 		{
-			throw new IllegalStateException("May not call client side.");
-		}
-		
-		boolean active = false;
-		boolean enabled = behavior.isEnabled();
-		
-		boolean started = false;
-		if(usedEnergy == 0 && enabled)
-		{
-			if(behavior.canConsumeEu(1))
+			int itemInputMultiplier = this.calculateItemInputRecipeMultiplier(recipe.value());
+			if(itemInputMultiplier > 1)
 			{
-				started = this.updateActiveRecipe();
+				int itemOutputMultiplier = this.calculateItemOutputRecipeMultiplier(recipe.value());
+				if(itemOutputMultiplier > 1)
+				{
+					int itemMultiplier = Math.min(itemInputMultiplier, itemOutputMultiplier);
+					
+					int fluidInputMultiplier = this.calculateFluidInputRecipeMultiplier(recipe.value());
+					if(fluidInputMultiplier > 1)
+					{
+						int fluidOutputMultiplier = this.calculateFluidOutputRecipeMultiplier(recipe.value());
+						if(fluidOutputMultiplier > 1)
+						{
+							int fluidMultiplier = Math.min(fluidInputMultiplier, fluidOutputMultiplier);
+							
+							tryRecipeMultiplier = Math.min(itemMultiplier, fluidMultiplier);
+							if(super.tryStartRecipe(recipe))
+							{
+								recipeMultiplier = tryRecipeMultiplier;
+								tryRecipeMultiplier = 0;
+								return true;
+							}
+						}
+					}
+				}
 			}
 		}
 		
-		long eu = 0;
-		boolean finished = false;
-		if(activeRecipe != null && (usedEnergy > 0 || started) && enabled)
-		{
-			recipeMaxEu = this.getRecipeMaxEu(activeRecipe.value().eu, recipeEnergy, efficiencyTicks);
-			eu = activeRecipe.value().conditionsMatch(conditionContext) ? behavior.consumeEu(Math.min(recipeMaxEu, recipeEnergy - usedEnergy), ACT) : 0;
-			active = eu > 0;
-			usedEnergy += eu;
-			
-			if(usedEnergy == recipeEnergy)
-			{
-				this.putItemOutputs(activeRecipe.value(), recipeMultiplier, false, false);
-				this.putFluidOutputs(activeRecipe.value(), recipeMultiplier, false, false);
-				
-				this.clearLocks();
-				
-				usedEnergy = 0;
-				finished = true;
-			}
-		}
-		
-		if(activeRecipe != null && (previousBaseEu != behavior.getBaseRecipeEu() || previousMaxEu != behavior.getMaxRecipeEu()))
-		{
-			previousBaseEu = behavior.getBaseRecipeEu();
-			previousMaxEu = behavior.getMaxRecipeEu();
-			maxEfficiencyTicks = this.getRecipeMaxEfficiencyTicks(activeRecipe.value());
-			efficiencyTicks = Math.min(efficiencyTicks, maxEfficiencyTicks);
-		}
-		
-		// If we finished a recipe, we can add an efficiency tick
-		if(finished)
-		{
-			if(efficiencyTicks < maxEfficiencyTicks)
-			{
-				efficiencyTicks++;
-			}
-		}
-		// If we didn't use the max energy this tick and the recipe is still ongoing, remove one efficiency tick
-		else if(eu < recipeMaxEu)
-		{
-			if(efficiencyTicks > 0)
-			{
-				efficiencyTicks--;
-			}
-		}
-		
-		// If the recipe is done, allow starting another one when the efficiency reaches 0
-		this.clearActiveRecipeIfPossible();
-		
-		return active;
+		tryRecipeMultiplier = 1;
+		recipeMultiplier = 1;
+		boolean success = super.tryStartRecipe(recipe);
+		tryRecipeMultiplier = 0;
+		return success;
 	}
 	
 	@Override
 	public void writeNbt(CompoundTag tag)
 	{
-		tag.putLong("usedEnergy", usedEnergy);
-		tag.putLong("recipeEnergy", recipeEnergy);
-		tag.putLong("recipeMaxEu", recipeMaxEu);
-		if(activeRecipe != null)
-		{
-			tag.putString("activeRecipe", activeRecipe.id().toString());
-		}
-		else if(delayedActiveRecipe != null)
-		{
-			tag.putString("activeRecipe", delayedActiveRecipe.toString());
-		}
+		super.writeNbt(tag);
 		tag.putInt("recipeMultiplier", recipeMultiplier);
-		tag.putInt("efficiencyTicks", efficiencyTicks);
-		tag.putInt("maxEfficiencyTicks", maxEfficiencyTicks);
 	}
 	
 	@Override
 	public void readNbt(CompoundTag tag, boolean isUpgradingMachine)
 	{
-		usedEnergy = tag.getInt("usedEnergy");
-		recipeEnergy = tag.getInt("recipeEnergy");
-		recipeMaxEu = tag.getInt("recipeMaxEu");
-		delayedActiveRecipe = tag.contains("activeRecipe") ? new ResourceLocation(tag.getString("activeRecipe")) : null;
-		if(delayedActiveRecipe == null && usedEnergy > 0)
-		{
-			usedEnergy = 0;
-			TesseractMod.LOGGER.error("Had to set the usedEnergy of MultipliedCrafterComponent to 0, but that should never happen!");
-		}
+		super.readNbt(tag, isUpgradingMachine);
 		recipeMultiplier = tag.getInt("recipeMultiplier");
-		efficiencyTicks = tag.getInt("efficiencyTicks");
-		maxEfficiencyTicks = tag.getInt("maxEfficiencyTicks");
 	}
 	
-	private void clearActiveRecipeIfPossible()
+	@Override
+	protected void clearActiveRecipes()
 	{
-		if(efficiencyTicks == 0 && usedEnergy == 0)
-		{
-			activeRecipe = null;
-			recipeMultiplier = 1;
-		}
+		super.clearActiveRecipes();
+		recipeMultiplier = 0;
 	}
 	
-	private long getRecipeMaxEu(long recipeEu, long totalEu, int efficiencyTicks)
-	{
-		long baseEu = Math.max(this.transformEuCost(behavior.getBaseRecipeEu()), this.transformEuCost(recipeEu));
-		return Math.min(totalEu, Math.min((int) Math.floor(baseEu * CrafterComponent.getEfficiencyOverclock(efficiencyTicks)), this.transformEuCost(behavior.getMaxRecipeEu())));
-	}
-	
-	private int getRecipeMaxEfficiencyTicks(MachineRecipe recipe)
-	{
-		long eu = recipe.eu;
-		long totalEu = this.transformEuCost(recipe.getTotalEu());
-		for(int ticks = 0; true; ++ticks)
-		{
-			if(this.getRecipeMaxEu(eu, totalEu, ticks) == Math.min(this.transformEuCost(behavior.getMaxRecipeEu()), totalEu))
-			{
-				return ticks;
-			}
-		}
-	}
-	
-	private void clearLocks()
-	{
-		for(ConfigurableItemStack stack : inventory.getItemOutputs())
-		{
-			if(stack.isMachineLocked())
-			{
-				stack.disableMachineLock();
-			}
-		}
-		for(ConfigurableFluidStack stack : inventory.getFluidOutputs())
-		{
-			if(stack.isMachineLocked())
-			{
-				stack.disableMachineLock();
-			}
-		}
-	}
-	
-	public void lockRecipe(ResourceLocation recipeId, net.minecraft.world.entity.player.Inventory inventory)
+	@Override
+	public void lockRecipe(ResourceLocation recipeId, Inventory inventory)
 	{
 		// Find MachineRecipe
 		MachineRecipeType recipeType = this.getRecipeType();
@@ -990,17 +737,6 @@ public final class MultipliedCrafterComponent implements IComponent.ServerOnly, 
 		{
 			lockAll(this.inventory.getFluidInputs());
 			lockAll(this.inventory.getFluidOutputs());
-		}
-	}
-	
-	private static void lockAll(List<? extends AbstractConfigurableStack<?, ?>> stacks)
-	{
-		for(AbstractConfigurableStack stack : stacks)
-		{
-			if(stack.isEmpty() && stack.getLockedInstance() == null)
-			{
-				stack.togglePlayerLock();
-			}
 		}
 	}
 }
