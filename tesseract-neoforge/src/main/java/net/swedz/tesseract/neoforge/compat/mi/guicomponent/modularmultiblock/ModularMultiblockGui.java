@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 public final class ModularMultiblockGui
 {
-	public static final ResourceLocation ID = TesseractMod.id("modular_multiblock_gui");
+	public static final ResourceLocation ID = TesseractMod.id("modular_multiblock");
 	
 	public static final class Server implements GuiComponent.Server<Data>
 	{
