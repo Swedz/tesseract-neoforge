@@ -75,7 +75,8 @@ public abstract class RegisteredObjectHolder<Thing, ActualThing extends Thing, S
 	
 	public Self withCapabilities(BiConsumer<? super ActualThing, RegisterCapabilitiesEvent> listener)
 	{
-		return this.withRegistrationListener((thing) -> CapabilitiesListeners.register((event) -> listener.accept(thing, event)));
+		return this.withRegistrationListener((thing) ->
+				CapabilitiesListeners.register(identifier.modId(), (event) -> listener.accept(thing, event)));
 	}
 	
 	public final boolean isLocked()

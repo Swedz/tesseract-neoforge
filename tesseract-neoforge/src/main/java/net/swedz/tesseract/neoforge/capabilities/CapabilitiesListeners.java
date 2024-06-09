@@ -1,23 +1,29 @@
 package net.swedz.tesseract.neoforge.capabilities;
 
+import com.google.common.collect.Maps;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
-// TODO make this per-mod
 public final class CapabilitiesListeners
 {
-	private static final List<Consumer<RegisterCapabilitiesEvent>> listeners = Lists.newArrayList();
+	private static final Map<String, List<Consumer<RegisterCapabilitiesEvent>>> LISTENERS = Maps.newHashMap();
 	
-	public static void triggerAll(RegisterCapabilitiesEvent event)
+	private static List<Consumer<RegisterCapabilitiesEvent>> getListeners(String modId)
 	{
-		listeners.forEach((action) -> action.accept(event));
+		return LISTENERS.computeIfAbsent(modId, (k) -> Lists.newArrayList());
 	}
 	
-	public static void register(Consumer<RegisterCapabilitiesEvent> listener)
+	public static void triggerAll(String modId, RegisterCapabilitiesEvent event)
 	{
-		listeners.add(listener);
+		getListeners(modId).forEach((action) -> action.accept(event));
+	}
+	
+	public static void register(String modId, Consumer<RegisterCapabilitiesEvent> listener)
+	{
+		getListeners(modId).add(listener);
 	}
 }
