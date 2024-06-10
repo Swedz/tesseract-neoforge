@@ -5,10 +5,8 @@ plugins {
 version = mod_version
 group = mod_group_id
 base {
-    archivesName = mod_id
+    archivesName = artifact_name
 }
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 repositories {
     maven {
@@ -44,10 +42,6 @@ repositories {
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
 
-    implementation(jarJar("io.github.llamalad7:mixinextras-neoforge:${mixinextras_version}")) {
-        jarJar.ranged(it, "[${mixinextras_version},)")
-    }
-
     implementation "dev.emi:emi-neoforge:${emi_version}+${minecraft_version}"
 
     if (project.runtime_include_mi.toBoolean()) {
@@ -61,7 +55,27 @@ dependencies {
     }
 }
 
-sourceSets.main.resources { srcDir 'src/generated/resources' }
+task sourceJar(type: Jar) {
+    archiveClassifier.set("sources")
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifactId = project.artifact_name
+
+            artifact(sourceJar) {
+                classifier "sources"
+            }
+        }
+    }
+
+    repositories {
+        mavenLocal()
+    }
+}
 
 runs {
     configureEach {
@@ -124,17 +138,14 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            groupId = project.group
-            artifactId = "tesseract-neoforge"
-            version = project.version
-        }
-    }
+processResources {
+    exclude(".cache")
 }

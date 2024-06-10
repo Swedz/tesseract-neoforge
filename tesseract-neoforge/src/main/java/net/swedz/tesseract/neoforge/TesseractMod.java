@@ -18,8 +18,8 @@ import org.slf4j.LoggerFactory;
 @Mod(TesseractMod.ID)
 public final class TesseractMod
 {
-	public static final String ID   = "tesseract";
-	public static final String NAME = "Tesseract";
+	public static final String ID   = "tesseract_api";
+	public static final String NAME = "Tesseract API";
 	
 	public static ResourceLocation id(String path)
 	{
