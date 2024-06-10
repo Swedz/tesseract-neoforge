@@ -15,7 +15,7 @@ Hook registries are defined by creating an implementation of the `MIHookRegistry
 
 Although it is not required to, it is recommended to take the registered objects provided in the `on____Register` methods and save them to a collection of some kind in your codebase. These methods will be called whenever something has been registered by your listener.
 
-Note that blocks and items registered through this system will be created and provided to you in `BlockHolder`s and `ItemHolder`s respectively. These are registerable object wrappers that are futher explained in [REGISTRY_HELPERS.md](REGISTRY_HOLDERS). If you have your own system you would like to use for things like this, feel free to convert the objects provided to you to your own versions.
+Note that blocks and items registered through this system will be created and provided to you in `BlockHolder`s and `ItemHolder`s respectively. These are registerable object wrappers that are futher explained in [REGISTRY_HELPERS.md](REGISTRY_HOLDERS.md). If you have your own system you would like to use for things like this, feel free to convert the objects provided to you to your own versions.
 
 If you don't use a registry in your listener, it is "safe" to return `null` or throw an exception. For example, it is not required to create a block registry for this if you do not register any blocks (this includes machines). Additionally, if you do not use any of the registries in your listener, you can use `MIHookRegistry.NONE` as your registry to simply return `null` for all registries.
 
