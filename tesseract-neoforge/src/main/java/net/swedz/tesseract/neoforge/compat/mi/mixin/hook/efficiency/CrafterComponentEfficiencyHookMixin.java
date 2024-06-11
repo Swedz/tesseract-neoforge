@@ -115,15 +115,12 @@ public abstract class CrafterComponentEfficiencyHookMixin
 	)
 	private void tickRecipeReset(CallbackInfoReturnable<Boolean> cir, boolean isActive, boolean isEnabled, boolean recipeStarted, long eu, boolean finishedRecipe)
 	{
-		if(eu < recipeMaxEu)
-		{
-			EfficiencyMIHookContext context = new EfficiencyMIHookContext(
-					conditionContext.getBlockEntity(), this.hasActiveRecipe(),
-					maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
-			);
-			MIHooks.triggerHookEfficiencyListeners(context, (h, c) -> h.onResetRecipe(c, eu));
-			efficiencyTicks = context.getEfficiencyTicks();
-		}
+		EfficiencyMIHookContext context = new EfficiencyMIHookContext(
+				conditionContext.getBlockEntity(), this.hasActiveRecipe(),
+				maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
+		);
+		MIHooks.triggerHookEfficiencyListeners(context, (h, c) -> h.onTickEnd(c, eu));
+		efficiencyTicks = context.getEfficiencyTicks();
 	}
 	
 	@Inject(

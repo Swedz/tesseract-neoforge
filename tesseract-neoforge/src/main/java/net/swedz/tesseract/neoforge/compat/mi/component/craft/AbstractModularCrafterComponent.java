@@ -329,20 +329,20 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 		// If we didn't use the max energy this tick and the recipe is still ongoing, remove one efficiency tick
 		else if(eu < recipeMaxEu)
 		{
-			{
-				final long euUsed = eu;
-				EfficiencyMIHookContext context = new EfficiencyMIHookContext(
-						conditionContext.getBlockEntity(), this.hasActiveRecipe(),
-						maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
-				);
-				MIHooks.triggerHookEfficiencyListeners(context, (h, c) -> h.onResetRecipe(c, euUsed));
-				efficiencyTicks = context.getEfficiencyTicks();
-			}
-			
 			if(efficiencyTicks > 0)
 			{
 				efficiencyTicks--;
 			}
+		}
+		
+		{
+			final long euUsed = eu;
+			EfficiencyMIHookContext context = new EfficiencyMIHookContext(
+					conditionContext.getBlockEntity(), this.hasActiveRecipe(),
+					maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
+			);
+			MIHooks.triggerHookEfficiencyListeners(context, (h, c) -> h.onTickEnd(c, euUsed));
+			efficiencyTicks = context.getEfficiencyTicks();
 		}
 		
 		// If the recipe is done, allow starting another one when the efficiency reaches 0

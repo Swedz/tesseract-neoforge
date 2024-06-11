@@ -80,7 +80,7 @@ public interface MIHookEfficiency
 	}
 	
 	/**
-	 * Called near the end of the crafter component's tick when the EU used this tick is less than the max recipe EU.
+	 * Called at the end of the crafter component's tick.
 	 * <br><br>
 	 * This context is not cancellable.<br>
 	 * List of modifiable variables in this context:
@@ -91,7 +91,7 @@ public interface MIHookEfficiency
 	 * @param context the context
 	 * @param eu      the eu used this tick
 	 */
-	default void onResetRecipe(EfficiencyMIHookContext context, long eu)
+	default void onTickEnd(EfficiencyMIHookContext context, long eu)
 	{
 	}
 	
