@@ -26,6 +26,10 @@ public abstract class CrafterComponentEfficiencyHookMixin
 	private MachineProcessCondition.Context conditionContext;
 	
 	@Shadow
+	@Final
+	private CrafterComponent.Behavior behavior;
+	
+	@Shadow
 	private int efficiencyTicks;
 	
 	@Shadow
@@ -97,12 +101,15 @@ public abstract class CrafterComponentEfficiencyHookMixin
 	)
 	private void tickRecipe(CallbackInfoReturnable<Boolean> callback)
 	{
-		EfficiencyMIHookContext context = new EfficiencyMIHookContext(
-				conditionContext.getBlockEntity(), this.hasActiveRecipe(),
-				maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
-		);
-		MIHooks.triggerHookEfficiencyListeners(context, MIHookEfficiency::onTickStart);
-		efficiencyTicks = context.getEfficiencyTicks();
+		if(!behavior.getCrafterWorld().isClientSide())
+		{
+			EfficiencyMIHookContext context = new EfficiencyMIHookContext(
+					conditionContext.getBlockEntity(), this.hasActiveRecipe(),
+					maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
+			);
+			MIHooks.triggerHookEfficiencyListeners(context, MIHookEfficiency::onTickStart);
+			efficiencyTicks = context.getEfficiencyTicks();
+		}
 	}
 	
 	@Inject(
