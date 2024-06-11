@@ -7,7 +7,13 @@ First you need to register your mod with the hook system. To do so, you must pro
 To register your mod's hook registry and listener, use the code below (of course, replacing the parameters with your own). Only one hook can be registered for a given mod id.
 
 ```java
-MIHooks.register("<your mod id>", new MyMIHookRegistry(), new MyMIHookListener());
+MIHooks.registerListener("<your mod id>", new MyMIHookRegistry(), new MyMIHookListener());
+```
+
+For those insane enough to try, you can use an efficiency hook to modify the efficiency behavior of MI machines.
+
+```java
+MIHooks.registerEfficiencyListener("<your mod id>", new MyMIHookEfficiency());
 ```
 
 ### Hook Registries
@@ -23,6 +29,13 @@ If you don't use a registry in your listener, it is "safe" to return `null` or t
 Hook listeners are defined by creating an implementation of the `MIHookListener` interface. None of the methods require implementation, so you only need to implement the methods you need for your hook. These methods will be called by the hook system to request any additions.
 
 The method names are rather intuitive, and they provide hook contexts to make registering various machines, recipe types, or many other MI-related features rather trivial.
+
+### Efficiency Hooks
+Efficiency hooks are defined by creating an implementation of the `MIHookEfficiency` interface. None of the methods require implementation, so you only need to implement the methods you need for your hook. These methods will be called by the hook system to request any changes to the efficiency values at each point.
+
+Efficiency hooks are called in order of priority (highest first, lowest last). If `shouldAlwaysRun()` returns `false` (default), the hook will only be called if no modification to the context has been made by any higher priority hooks. It is not recommended to touch this unless you know what you're doing.
+
+The different `on____` methods in the hook are called at different injection points of the crafter component and crafter behavior code. This is also compatible with the modular crafter component framework provided by Tesseract. For each of these contexts, only some variables are modifiable. See the javadocs for each method to see what variables are allowed to be modified.
 
 ### Working Example
 For a working example of a registry and listener, see [my implementation in Extended Industrialization](https://github.com/Swedz/Extended-Industrialization/tree/master/src/main/java/net/swedz/extended_industrialization/compat/mi).

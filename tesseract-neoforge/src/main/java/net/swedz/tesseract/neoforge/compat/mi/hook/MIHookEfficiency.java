@@ -25,26 +25,87 @@ public interface MIHookEfficiency
 		return false;
 	}
 	
+	/**
+	 * Called when the max recipe eu is read.
+	 * <br><br>
+	 * This context is not cancellable.<br>
+	 * List of modifiable variables in this context:
+	 * <ul>
+	 *     <li>setMaxRecipeEu</li>
+	 * </ul>
+	 *
+	 * @param context the context
+	 */
 	default void onGetRecipeMaxEu(EfficiencyMIHookContext context)
 	{
 	}
 	
+	/**
+	 * Called when the <code>decreaseEfficiencyTicks</code> method is called. This is <b>not</b> the only time efficiency ticks are decreased. This is only called when a multiblock's shape is not matched or it failed to resume its recipe when re-loaded.
+	 * <br><br>
+	 * This context is cancellable.<br>
+	 * There are no modifiable variables in this context.
+	 *
+	 * @param context the context
+	 */
 	default void onDecreaseEfficiencyTicks(EfficiencyMIHookContext context)
 	{
 	}
 	
+	/**
+	 * Called when the <code>increaseEfficiencyTicks</code> method is called. This is <b>not</b> the only time efficiency ticks are increased. This is only called when lubricant is applied to the machine.
+	 * <br><br>
+	 * This context is cancellable.<br>
+	 * There are no modifiable variables in this context.
+	 *
+	 * @param context the context
+	 */
 	default void onIncreaseEfficiencyTicks(EfficiencyMIHookContext context)
 	{
 	}
 	
+	/**
+	 * Called at the start of the crafter component's tick.
+	 * <br><br>
+	 * This context is not cancellable.<br>
+	 * List of modifiable variables in this context:
+	 * <ul>
+	 *     <li>setEfficiencyTicks</li>
+	 * </ul>
+	 *
+	 * @param context the context
+	 */
 	default void onTickStart(EfficiencyMIHookContext context)
 	{
 	}
 	
+	/**
+	 * Called near the end of the crafter component's tick when the EU used this tick is less than the max recipe EU.
+	 * <br><br>
+	 * This context is not cancellable.<br>
+	 * List of modifiable variables in this context:
+	 * <ul>
+	 *     <li>setEfficiencyTicks</li>
+	 * </ul>
+	 *
+	 * @param context the context
+	 */
 	default void onResetRecipe(EfficiencyMIHookContext context)
 	{
 	}
 	
+	/**
+	 * Called after NBT data is read for a crafter component.
+	 * <br><br>
+	 * This context is not cancellable.<br>
+	 * List of modifiable variables in this context:
+	 * <ul>
+	 *     <li>setEfficiencyTicks</li>
+	 *     <li>setMaxRecipeEu</li>
+	 * </ul>
+	 *
+	 * @param context the context
+	 */
 	default void onReadNbt(EfficiencyMIHookContext context)
 	{
 	}
