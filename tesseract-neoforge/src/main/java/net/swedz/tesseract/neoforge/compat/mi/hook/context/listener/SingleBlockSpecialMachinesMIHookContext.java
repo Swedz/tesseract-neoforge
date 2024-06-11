@@ -1,11 +1,11 @@
-package net.swedz.tesseract.neoforge.compat.mi.hook.context;
+package net.swedz.tesseract.neoforge.compat.mi.hook.context.listener;
 
 import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
 import aztech.modern_industrialization.machines.init.MachineRegistrationHelper;
 import aztech.modern_industrialization.machines.models.MachineCasing;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

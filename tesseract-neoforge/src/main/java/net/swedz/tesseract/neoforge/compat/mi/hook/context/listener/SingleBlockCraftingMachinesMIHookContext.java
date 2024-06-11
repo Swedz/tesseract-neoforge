@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.hook.context;
+package net.swedz.tesseract.neoforge.compat.mi.hook.context.listener;
 
 import aztech.modern_industrialization.inventory.SlotPositions;
 import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
@@ -7,7 +7,7 @@ import aztech.modern_industrialization.machines.guicomponents.ProgressBar;
 import aztech.modern_industrialization.machines.guicomponents.RecipeEfficiencyBar;
 import aztech.modern_industrialization.machines.init.SingleBlockCraftingMachines;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
-import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
 
 import java.util.function.Consumer;
 

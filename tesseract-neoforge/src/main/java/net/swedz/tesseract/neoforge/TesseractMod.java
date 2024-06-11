@@ -34,7 +34,7 @@ public final class TesseractMod
 		
 		if(isMILoaded())
 		{
-			MIHooks.register(ID, MIHookRegistry.NONE, new TesseractMIHookListener());
+			MIHooks.registerListener(ID, MIHookRegistry.NONE, new TesseractMIHookListener());
 			
 			bus.addListener(RegisterPayloadHandlerEvent.class, TesseractMIPackets::init);
 		}

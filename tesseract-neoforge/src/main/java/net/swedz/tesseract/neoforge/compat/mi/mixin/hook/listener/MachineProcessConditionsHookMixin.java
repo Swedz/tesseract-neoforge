@@ -1,8 +1,8 @@
-package net.swedz.tesseract.neoforge.compat.mi.mixin.hook;
+package net.swedz.tesseract.neoforge.compat.mi.mixin.hook.listener;
 
 import aztech.modern_industrialization.machines.recipe.condition.MachineProcessConditions;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
-import net.swedz.tesseract.neoforge.compat.mi.hook.context.MachineProcessConditionsMIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.MachineProcessConditionsMIHookContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

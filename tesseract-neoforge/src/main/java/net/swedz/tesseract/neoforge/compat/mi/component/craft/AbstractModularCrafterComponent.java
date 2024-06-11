@@ -12,6 +12,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.swedz.tesseract.neoforge.TesseractMod;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
+import net.swedz.tesseract.neoforge.compat.mi.hook.context.efficiency.EfficiencyMIHookContext;
 
 import java.util.List;
 
@@ -144,6 +147,16 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	@Override
 	public void decreaseEfficiencyTicks()
 	{
+		EfficiencyMIHookContext context = new EfficiencyMIHookContext(
+				conditionContext.getBlockEntity(), this.hasActiveRecipe(),
+				maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
+		);
+		MIHooks.triggerHookEfficiencyListeners(context, MIHookEfficiency::onDecreaseEfficiencyTicks);
+		if(context.isCancelled())
+		{
+			return;
+		}
+		
 		efficiencyTicks = Math.max(efficiencyTicks - 1, 0);
 		this.clearActiveRecipeIfPossible();
 	}
@@ -151,6 +164,16 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	@Override
 	public void increaseEfficiencyTicks(int increment)
 	{
+		EfficiencyMIHookContext context = new EfficiencyMIHookContext(
+				conditionContext.getBlockEntity(), this.hasActiveRecipe(),
+				maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
+		);
+		MIHooks.triggerHookEfficiencyListeners(context, MIHookEfficiency::onIncreaseEfficiencyTicks);
+		if(context.isCancelled())
+		{
+			return;
+		}
+		
 		efficiencyTicks = Math.min(efficiencyTicks + increment, maxEfficiencyTicks);
 	}
 	
@@ -242,6 +265,15 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 			throw new IllegalStateException("May not call client side.");
 		}
 		
+		{
+			EfficiencyMIHookContext context = new EfficiencyMIHookContext(
+					conditionContext.getBlockEntity(), this.hasActiveRecipe(),
+					maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
+			);
+			MIHooks.triggerHookEfficiencyListeners(context, MIHookEfficiency::onTickStart);
+			efficiencyTicks = context.getEfficiencyTicks();
+		}
+		
 		this.onTick();
 		
 		boolean active = false;
@@ -297,6 +329,15 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 		// If we didn't use the max energy this tick and the recipe is still ongoing, remove one efficiency tick
 		else if(eu < recipeMaxEu)
 		{
+			{
+				EfficiencyMIHookContext context = new EfficiencyMIHookContext(
+						conditionContext.getBlockEntity(), this.hasActiveRecipe(),
+						maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
+				);
+				MIHooks.triggerHookEfficiencyListeners(context, MIHookEfficiency::onResetRecipe);
+				efficiencyTicks = context.getEfficiencyTicks();
+			}
+			
 			if(efficiencyTicks > 0)
 			{
 				efficiencyTicks--;
@@ -341,6 +382,16 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 		}
 		efficiencyTicks = tag.getInt("efficiencyTicks");
 		maxEfficiencyTicks = tag.getInt("maxEfficiencyTicks");
+		
+		{
+			EfficiencyMIHookContext context = new EfficiencyMIHookContext(
+					conditionContext.getBlockEntity(), this.hasActiveRecipe(),
+					maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
+			);
+			MIHooks.triggerHookEfficiencyListeners(context, MIHookEfficiency::onReadNbt);
+			efficiencyTicks = context.getEfficiencyTicks();
+			recipeMaxEu = context.getMaxRecipeEu();
+		}
 	}
 	
 	protected void clearActiveRecipes()

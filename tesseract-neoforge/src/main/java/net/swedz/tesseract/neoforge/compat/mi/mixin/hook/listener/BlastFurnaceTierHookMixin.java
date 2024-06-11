@@ -1,8 +1,8 @@
-package net.swedz.tesseract.neoforge.compat.mi.mixin.hook;
+package net.swedz.tesseract.neoforge.compat.mi.mixin.hook.listener;
 
 import aztech.modern_industrialization.machines.blockentities.multiblocks.ElectricBlastFurnaceBlockEntity;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
-import net.swedz.tesseract.neoforge.compat.mi.hook.context.BlastFurnaceTiersMIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.BlastFurnaceTiersMIHookContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;

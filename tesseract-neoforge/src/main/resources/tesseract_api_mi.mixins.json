@@ -12,15 +12,18 @@
         "hack.RegisterMultiblockShapeReiRecipeHackMixin",
         "hack.RegisterReiMachineRecipeHackMixin",
         "hack.RegisterSingleBlockMachineReiTiersHackMixin",
-        "hook.BlastFurnaceTierHookMixin",
-        "hook.MachineCasingsHookMixin",
-        "hook.MachineProcessConditionsHookMixin",
-        "hook.MachineRecipeTypesHookMixin",
-        "hook.MultiblockMachinesHookMixin",
-        "hook.SingleBlockCraftingMachinesHookMixin",
-        "hook.SingleBlockSpecialMachinesHookMixin",
-        "hook.TooltipsHookMixin",
-        "hook.ViewerSetupHookMixin"
+        "hook.efficiency.CrafterComponentBehaviorEfficiencyHookMixin",
+        "hook.efficiency.CrafterComponentEfficiencyHookMixin",
+        "hook.efficiency.EBFEfficiencyHookMixin",
+        "hook.listener.BlastFurnaceTierHookMixin",
+        "hook.listener.MachineCasingsHookMixin",
+        "hook.listener.MachineProcessConditionsHookMixin",
+        "hook.listener.MachineRecipeTypesHookMixin",
+        "hook.listener.MultiblockMachinesHookMixin",
+        "hook.listener.SingleBlockCraftingMachinesHookMixin",
+        "hook.listener.SingleBlockSpecialMachinesHookMixin",
+        "hook.listener.TooltipsHookMixin",
+        "hook.listener.ViewerSetupHookMixin"
     ],
     "client": [
         "client.hook.GuiComponentsClientHookMixin"

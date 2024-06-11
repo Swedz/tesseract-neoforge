@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.mixin.hook;
+package net.swedz.tesseract.neoforge.compat.mi.mixin.hook.listener;
 
 import aztech.modern_industrialization.MITooltips;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookListener;
