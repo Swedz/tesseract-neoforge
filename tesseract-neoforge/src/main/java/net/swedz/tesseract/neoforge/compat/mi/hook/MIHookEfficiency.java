@@ -89,8 +89,9 @@ public interface MIHookEfficiency
 	 * </ul>
 	 *
 	 * @param context the context
+	 * @param eu      the eu used this tick
 	 */
-	default void onResetRecipe(EfficiencyMIHookContext context)
+	default void onResetRecipe(EfficiencyMIHookContext context, long eu)
 	{
 	}
 	

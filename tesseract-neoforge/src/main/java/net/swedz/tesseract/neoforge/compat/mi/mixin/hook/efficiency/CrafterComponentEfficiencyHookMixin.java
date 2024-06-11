@@ -121,7 +121,7 @@ public abstract class CrafterComponentEfficiencyHookMixin
 					conditionContext.getBlockEntity(), this.hasActiveRecipe(),
 					maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
 			);
-			MIHooks.triggerHookEfficiencyListeners(context, MIHookEfficiency::onResetRecipe);
+			MIHooks.triggerHookEfficiencyListeners(context, (h, c) -> h.onResetRecipe(c, eu));
 			efficiencyTicks = context.getEfficiencyTicks();
 		}
 	}

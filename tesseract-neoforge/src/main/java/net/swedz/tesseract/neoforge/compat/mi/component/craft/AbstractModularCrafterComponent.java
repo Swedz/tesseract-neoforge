@@ -330,11 +330,12 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 		else if(eu < recipeMaxEu)
 		{
 			{
+				final long euUsed = eu;
 				EfficiencyMIHookContext context = new EfficiencyMIHookContext(
 						conditionContext.getBlockEntity(), this.hasActiveRecipe(),
 						maxEfficiencyTicks, efficiencyTicks, recipeMaxEu
 				);
-				MIHooks.triggerHookEfficiencyListeners(context, MIHookEfficiency::onResetRecipe);
+				MIHooks.triggerHookEfficiencyListeners(context, (h, c) -> h.onResetRecipe(c, euUsed));
 				efficiencyTicks = context.getEfficiencyTicks();
 			}
 			
