@@ -1,6 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "${loader_version_range}"
 license = "${mod_license}"
+issueTrackerURL = "https://github.com/Swedz/Tesseract/issues"
 
 [[mods]]
 modId = "${mod_id}"
@@ -8,6 +9,8 @@ version = "${mod_version}"
 displayName = "${mod_name}"
 authors = "${mod_authors}"
 description = '''${mod_description}'''
+displayURL = "https://github.com/Swedz/Tesseract"
+logoFile = "assets/tesseract/logo.png"
 
 [[mixins]]
 config = "${mod_id}.mixins.json"
