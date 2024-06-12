@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.isolatedlistener;
+package net.swedz.tesseract.neoforge.localizedlistener;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -11,11 +11,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public final class IsolatedListenerMultiMap
+public final class LocalizedListenerMultiMap
 {
-	private final Map<LevelAccessor, Map<ChunkPos, Map<Class<?>, Set<IsolatedListener<?>>>>> storage = Maps.newHashMap();
+	private final Map<LevelAccessor, Map<ChunkPos, Map<Class<?>, Set<LocalizedListener<?>>>>> storage = Maps.newHashMap();
 	
-	public <E extends Event> void add(LevelAccessor level, ChunkPos chunk, Class<E> listenerClass, IsolatedListener<E> listener)
+	public <E extends Event> void add(LevelAccessor level, ChunkPos chunk, Class<E> listenerClass, LocalizedListener<E> listener)
 	{
 		storage.computeIfAbsent(level, (__) -> Maps.newHashMap())
 				.computeIfAbsent(chunk, (__) -> Maps.newHashMap())
@@ -23,19 +23,19 @@ public final class IsolatedListenerMultiMap
 				.add(listener);
 	}
 	
-	public <E extends Event> void remove(LevelAccessor level, ChunkPos chunk, Class<E> listenerClass, IsolatedListener<E> listener)
+	public <E extends Event> void remove(LevelAccessor level, ChunkPos chunk, Class<E> listenerClass, LocalizedListener<E> listener)
 	{
-		Map<ChunkPos, Map<Class<?>, Set<IsolatedListener<?>>>> chunkMap = storage.get(level);
+		Map<ChunkPos, Map<Class<?>, Set<LocalizedListener<?>>>> chunkMap = storage.get(level);
 		if(chunkMap == null)
 		{
 			return;
 		}
-		Map<Class<?>, Set<IsolatedListener<?>>> listenerMap = chunkMap.get(chunk);
+		Map<Class<?>, Set<LocalizedListener<?>>> listenerMap = chunkMap.get(chunk);
 		if(listenerMap == null)
 		{
 			return;
 		}
-		Set<IsolatedListener<?>> listeners = listenerMap.get(listenerClass);
+		Set<LocalizedListener<?>> listeners = listenerMap.get(listenerClass);
 		if(listeners == null)
 		{
 			return;
@@ -61,25 +61,25 @@ public final class IsolatedListenerMultiMap
 	}
 	
 	@Nullable
-	public <E extends Event> Set<IsolatedListener<E>> get(LevelAccessor level, ChunkPos chunk, Class<E> listenerClass)
+	public <E extends Event> Set<LocalizedListener<E>> get(LevelAccessor level, ChunkPos chunk, Class<E> listenerClass)
 	{
-		Map<ChunkPos, Map<Class<?>, Set<IsolatedListener<?>>>> chunkMap = storage.get(level);
+		Map<ChunkPos, Map<Class<?>, Set<LocalizedListener<?>>>> chunkMap = storage.get(level);
 		if(chunkMap == null)
 		{
 			return null;
 		}
-		Map<Class<?>, Set<IsolatedListener<?>>> listenerMap = chunkMap.get(chunk);
+		Map<Class<?>, Set<LocalizedListener<?>>> listenerMap = chunkMap.get(chunk);
 		if(listenerMap == null)
 		{
 			return null;
 		}
-		Set<IsolatedListener<?>> listeners = listenerMap.get(listenerClass);
+		Set<LocalizedListener<?>> listeners = listenerMap.get(listenerClass);
 		if(listeners == null)
 		{
 			return null;
 		}
 		return listeners.stream()
-				.map((l) -> (IsolatedListener<E>) l)
+				.map((l) -> (LocalizedListener<E>) l)
 				.collect(Collectors.toSet());
 	}
 	

@@ -11,7 +11,6 @@ import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.network.TesseractMIPackets;
 import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
-import net.swedz.tesseract.neoforge.isolatedlistener.IsolatedListeners;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +29,6 @@ public final class TesseractMod
 	
 	public TesseractMod(IEventBus bus)
 	{
-		IsolatedListeners.init();
-		
 		if(isMILoaded())
 		{
 			MIHooks.registerListener(ID, MIHookRegistry.NONE, new TesseractMIHookListener());
