@@ -1,5 +1,0 @@
-{
-  "eu_cost_transformer.tesseract.percentage": "%d%%",
-  "text.tesseract.mi_machine_batcher_recipe": "Can run %s recipes in batches.",
-  "text.tesseract.mi_machine_batcher_size_and_cost": "Runs in batches of up to %d at %s the EU cost."
-}
