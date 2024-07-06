@@ -2,12 +2,12 @@ package net.swedz.tesseract.neoforge.compat.mi.hook;
 
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.machines.models.MachineCasing;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.swedz.tesseract.neoforge.datagen.mi.client.MachineCasingModelsMIHookDatagenProvider;
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;

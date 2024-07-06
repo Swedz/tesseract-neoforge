@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.mixin.event;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -10,7 +11,6 @@ import net.minecraft.world.level.levelgen.feature.configurations.TreeConfigurati
 import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.swedz.tesseract.neoforge.event.TreeGrowthEvent;
-import org.apache.commons.compress.utils.Lists;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

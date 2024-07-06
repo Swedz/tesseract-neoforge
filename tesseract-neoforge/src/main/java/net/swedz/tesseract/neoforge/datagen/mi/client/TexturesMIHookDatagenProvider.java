@@ -6,6 +6,7 @@ import aztech.modern_industrialization.textures.TextureHelper;
 import aztech.modern_industrialization.textures.TextureManager;
 import aztech.modern_industrialization.textures.coloramp.Coloramp;
 import aztech.modern_industrialization.textures.coloramp.IColoramp;
+import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import com.google.gson.JsonElement;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -27,7 +28,6 @@ import net.swedz.tesseract.neoforge.TesseractMod;
 import net.swedz.tesseract.neoforge.registry.MIFluidProperties;
 import net.swedz.tesseract.neoforge.registry.holder.FluidHolder;
 import net.swedz.tesseract.neoforge.registry.holder.MIFluidHolder;
-import org.apache.commons.compress.utils.Lists;
 
 import java.io.IOException;
 import java.nio.file.Path;

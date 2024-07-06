@@ -6,11 +6,11 @@ import aztech.modern_industrialization.machines.components.IsActiveComponent;
 import aztech.modern_industrialization.machines.guicomponents.ShapeSelection;
 import aztech.modern_industrialization.machines.multiblocks.MultiblockMachineBlockEntity;
 import aztech.modern_industrialization.util.TextHelper;
+import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccess;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGui;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGuiLine;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 import java.util.function.Supplier;

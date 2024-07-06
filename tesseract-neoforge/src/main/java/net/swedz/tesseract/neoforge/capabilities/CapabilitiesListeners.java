@@ -1,8 +1,8 @@
 package net.swedz.tesseract.neoforge.capabilities;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 import java.util.Map;
