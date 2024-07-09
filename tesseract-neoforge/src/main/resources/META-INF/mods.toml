@@ -31,6 +31,6 @@ side = "BOTH"
 [[dependencies.${ mod_id }]]
 modId = "modern_industrialization"
 type = "optional"
-versionRange = "${modern_industrialization_version}"
+versionRange = "${modern_industrialization_version_range}"
 ordering = "AFTER"
 side = "BOTH"
