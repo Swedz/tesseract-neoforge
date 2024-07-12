@@ -2,6 +2,11 @@ plugins {
     id 'net.neoforged.gradle.userdev' version '7.0.97'
 }
 
+configurations {
+    runtimeClasspath.extendsFrom localImplementation
+    compileClasspath.extendsFrom localImplementation
+}
+
 version = mod_version
 group = mod_group_id
 base {
@@ -42,12 +47,12 @@ repositories {
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
 
-    implementation "dev.emi:emi-neoforge:${emi_version}+${minecraft_version}"
+    localImplementation "dev.emi:emi-neoforge:${emi_version}+${minecraft_version}"
 
     if (project.runtime_include_mi.toBoolean()) {
-        implementation "maven.modrinth:modern-industrialization:${modern_industrialization_version}"
-        implementation "dev.technici4n:GrandPower:${grandpower_version}"
-        implementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
+        localImplementation "maven.modrinth:modern-industrialization:${modern_industrialization_version}"
+        localImplementation "dev.technici4n:GrandPower:${grandpower_version}"
+        localImplementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
     } else {
         compileOnly "maven.modrinth:modern-industrialization:${modern_industrialization_version}"
         compileOnly "dev.technici4n:GrandPower:${grandpower_version}"
