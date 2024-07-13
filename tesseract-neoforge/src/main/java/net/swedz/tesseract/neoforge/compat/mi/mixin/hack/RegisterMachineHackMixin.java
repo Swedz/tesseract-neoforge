@@ -8,6 +8,7 @@ import aztech.modern_industrialization.util.MobSpawning;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -17,6 +18,7 @@ import net.swedz.tesseract.neoforge.compat.mi.hack.FakedMachineModelBuilder;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
+import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 import org.spongepowered.asm.mixin.Mixin;
@@ -61,6 +63,8 @@ public class RegisterMachineHackMixin
 			);
 			blockHolder.item().sorted(registry.sortOrderMachines());
 			blockHolder
+					.tag(BlockTags.NEEDS_STONE_TOOL, BlockTags.MINEABLE_WITH_PICKAXE)
+					.withLootTable(CommonLootTableBuilders::self)
 					.withProperties((p) -> p
 							.mapColor(MapColor.METAL)
 							.destroyTime(4)
