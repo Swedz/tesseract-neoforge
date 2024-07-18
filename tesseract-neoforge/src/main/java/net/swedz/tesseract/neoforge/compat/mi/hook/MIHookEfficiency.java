@@ -1,6 +1,6 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook;
 
-import net.swedz.tesseract.neoforge.compat.mi.hook.context.efficiency.EfficiencyMIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.hook.context.machine.EfficiencyMIHookContext;
 
 public interface MIHookEfficiency
 {

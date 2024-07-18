@@ -14,7 +14,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.swedz.tesseract.neoforge.TesseractMod;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
-import net.swedz.tesseract.neoforge.compat.mi.hook.context.efficiency.EfficiencyMIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.hook.context.machine.EfficiencyMIHookContext;
 
 import java.util.List;
 

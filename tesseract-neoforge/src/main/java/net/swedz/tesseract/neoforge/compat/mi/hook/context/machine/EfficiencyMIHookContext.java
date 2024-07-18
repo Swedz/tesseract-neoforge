@@ -1,12 +1,10 @@
-package net.swedz.tesseract.neoforge.compat.mi.hook.context.efficiency;
+package net.swedz.tesseract.neoforge.compat.mi.hook.context.machine;
 
 import aztech.modern_industrialization.machines.MachineBlockEntity;
-import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
 
-public final class EfficiencyMIHookContext implements MIHookContext
+public class EfficiencyMIHookContext extends MachineMIHookContext
 {
-	private final MachineBlockEntity machineBlockEntity;
-	private final boolean            hasActiveRecipe;
+	private final boolean hasActiveRecipe;
 	
 	private boolean modified;
 	
@@ -19,17 +17,12 @@ public final class EfficiencyMIHookContext implements MIHookContext
 	public EfficiencyMIHookContext(MachineBlockEntity machineBlockEntity, boolean hasActiveRecipe,
 								   int maxEfficiencyTicks, int efficiencyTicks, long maxRecipeEu)
 	{
-		this.machineBlockEntity = machineBlockEntity;
+		super(machineBlockEntity);
 		this.hasActiveRecipe = hasActiveRecipe;
 		
 		this.maxEfficiencyTicks = maxEfficiencyTicks;
 		this.efficiencyTicks = efficiencyTicks;
 		this.maxRecipeEu = maxRecipeEu;
-	}
-	
-	public MachineBlockEntity getMachineBlockEntity()
-	{
-		return machineBlockEntity;
 	}
 	
 	public boolean hasActiveRecipe()

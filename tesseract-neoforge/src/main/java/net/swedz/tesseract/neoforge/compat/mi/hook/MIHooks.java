@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook;
 
 import com.google.common.collect.Maps;
-import net.swedz.tesseract.neoforge.compat.mi.hook.context.efficiency.EfficiencyMIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.hook.context.machine.EfficiencyMIHookContext;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Comparator;
