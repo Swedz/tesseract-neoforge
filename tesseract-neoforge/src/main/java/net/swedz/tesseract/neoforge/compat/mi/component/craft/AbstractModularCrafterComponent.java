@@ -25,7 +25,7 @@ import static aztech.modern_industrialization.util.Simulation.*;
  *
  * @param <R> the recipe type to use
  */
-public abstract class AbstractModularCrafterComponent<R> implements IComponent.ServerOnly, ModularCrafterAccess
+public abstract class AbstractModularCrafterComponent<R> implements IComponent.ServerOnly, ModularCrafterAccess<R>
 {
 	protected final MachineProcessCondition.Context conditionContext;
 	
@@ -72,12 +72,6 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	
 	protected abstract R getRecipeById(ResourceLocation recipeId);
 	
-	protected abstract long getRecipeEuCost(R recipe);
-	
-	protected abstract long getRecipeTotalEuCost(R recipe);
-	
-	protected abstract boolean doConditionsMatchForRecipe(R recipe);
-	
 	protected abstract void onTick();
 	
 	protected boolean takeInputs(R recipe, boolean simulate)
@@ -118,6 +112,12 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	public boolean hasActiveRecipe()
 	{
 		return activeRecipe != null;
+	}
+	
+	@Override
+	public R getActiveRecipe()
+	{
+		return activeRecipe;
 	}
 	
 	@Override

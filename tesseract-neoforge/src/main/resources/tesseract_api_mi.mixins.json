@@ -5,6 +5,7 @@
     "plugin": "net.swedz.tesseract.neoforge.compat.mi.MIMixinPlugin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
+        "ActiveRecipeHolderMixin",
         "fix.MakeMachineBlockEntityUseProperTitleMixin",
         "hack.RegisterMachineHackMixin",
         "hack.RegisterMachineModelHackMixin",

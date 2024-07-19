@@ -93,19 +93,19 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	}
 	
 	@Override
-	protected long getRecipeEuCost(RecipeHolder<MachineRecipe> recipe)
+	public long getRecipeEuCost(RecipeHolder<MachineRecipe> recipe)
 	{
 		return recipe.value().eu;
 	}
 	
 	@Override
-	protected long getRecipeTotalEuCost(RecipeHolder<MachineRecipe> recipe)
+	public long getRecipeTotalEuCost(RecipeHolder<MachineRecipe> recipe)
 	{
 		return recipe.value().getTotalEu();
 	}
 	
 	@Override
-	protected boolean doConditionsMatchForRecipe(RecipeHolder<MachineRecipe> recipe)
+	public boolean doConditionsMatchForRecipe(RecipeHolder<MachineRecipe> recipe)
 	{
 		return recipe.value().conditionsMatch(conditionContext);
 	}
