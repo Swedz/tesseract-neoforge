@@ -9,7 +9,7 @@ configurations {
     compileClasspath.extendsFrom localImplementation
 }
 
-version = mod_version
+version = "${mod_version}+${minecraft_version}"
 group = mod_group_id
 base {
     archivesName = artifact_name
