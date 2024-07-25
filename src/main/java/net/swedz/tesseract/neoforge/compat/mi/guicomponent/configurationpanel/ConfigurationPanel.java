@@ -2,8 +2,9 @@ package net.swedz.tesseract.neoforge.compat.mi.guicomponent.configurationpanel;
 
 import aztech.modern_industrialization.machines.gui.GuiComponent;
 import com.google.common.base.Preconditions;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.TesseractMod;
 
@@ -71,10 +72,10 @@ public final class ConfigurationPanel
 		}
 		
 		@Override
-		public void writeInitialData(FriendlyByteBuf buf)
+		public void writeInitialData(RegistryFriendlyByteBuf buf)
 		{
-			buf.writeComponent(title);
-			buf.writeComponent(description);
+			ComponentSerialization.STREAM_CODEC.encode(buf, title);
+			ComponentSerialization.STREAM_CODEC.encode(buf, description);
 			
 			buf.writeVarInt(lines.size());
 			for(LineInfo line : lines)
@@ -82,7 +83,7 @@ public final class ConfigurationPanel
 				buf.writeVarInt(line.numValues);
 				for(Component component : line.translations)
 				{
-					buf.writeComponent(component);
+					ComponentSerialization.STREAM_CODEC.encode(buf, component);
 				}
 				buf.writeBoolean(line.useArrows);
 			}
@@ -91,7 +92,7 @@ public final class ConfigurationPanel
 		}
 		
 		@Override
-		public void writeCurrentData(FriendlyByteBuf buf)
+		public void writeCurrentData(RegistryFriendlyByteBuf buf)
 		{
 			for(int i = 0; i < lines.size(); ++i)
 			{

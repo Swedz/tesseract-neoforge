@@ -7,16 +7,16 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 public final class MICommonCapabitilies
 {
-	public static <Type extends Item> void simpleEnergyItem(Type item, RegisterCapabilitiesEvent event)
+	public static <Type extends Item & ISimpleEnergyItem> void simpleEnergyItem(Type item, RegisterCapabilitiesEvent event)
 	{
-		ISimpleEnergyItem simpleEnergyItem = (ISimpleEnergyItem) item;
 		event.registerItem(
 				EnergyApi.ITEM,
 				(stack, ctx) -> ISimpleEnergyItem.createStorage(
 						stack,
-						simpleEnergyItem.getEnergyCapacity(stack),
-						simpleEnergyItem.getEnergyMaxInput(stack),
-						simpleEnergyItem.getEnergyMaxOutput(stack)
+						item.getEnergyComponent(),
+						item.getEnergyCapacity(stack),
+						item.getEnergyMaxInput(stack),
+						item.getEnergyMaxOutput(stack)
 				),
 				item
 		);

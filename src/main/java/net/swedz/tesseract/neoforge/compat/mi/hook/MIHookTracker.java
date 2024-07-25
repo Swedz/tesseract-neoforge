@@ -64,7 +64,7 @@ public final class MIHookTracker
 	{
 		assertTracking();
 		
-		return new ResourceLocation(TRACKING_MOD_ID, id);
+		return ResourceLocation.fromNamespaceAndPath(TRACKING_MOD_ID, id);
 	}
 	
 	private static final Map<String, List<Consumer<LanguageProvider>>>                         LANGUAGE              = Maps.newHashMap();

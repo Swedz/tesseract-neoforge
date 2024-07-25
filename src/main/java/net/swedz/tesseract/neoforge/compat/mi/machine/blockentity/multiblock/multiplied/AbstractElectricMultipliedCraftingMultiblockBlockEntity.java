@@ -16,7 +16,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.swedz.tesseract.neoforge.TesseractText;
 import net.swedz.tesseract.neoforge.compat.mi.helper.ModularLubricantHelper;
@@ -69,9 +69,9 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 	}
 	
 	@Override
-	protected InteractionResult onUse(Player player, InteractionHand hand, Direction face)
+	protected ItemInteractionResult useItemOn(Player player, InteractionHand hand, Direction face)
 	{
-		InteractionResult result = super.onUse(player, hand, face);
+		ItemInteractionResult result = super.useItemOn(player, hand, face);
 		if(!result.consumesAction())
 		{
 			result = ModularLubricantHelper.onUse(crafter, player, hand);

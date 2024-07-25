@@ -10,6 +10,7 @@ import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.item.ItemVariant;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -178,7 +179,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 				}
 			}
 			
-			int multiplier = countItemsInHatches / input.amount;
+			int multiplier = countItemsInHatches / input.amount();
 			if(multiplier < itemMultiplier)
 			{
 				itemMultiplier = multiplier;
@@ -200,20 +201,20 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		int itemMultiplier = this.getMaxMultiplier();
 		for(MachineRecipe.ItemOutput output : recipe.itemOutputs)
 		{
-			if(output.probability < 1)
+			if(output.probability() < 1)
 			{
 				continue;
 			}
 			
-			int maxOutputCount = output.amount * this.getMaxMultiplier();
+			int maxOutputCount = output.amount() * this.getMaxMultiplier();
 			
 			int outputSpace = 0;
 			for(ConfigurableItemStack item : inventory.getItemOutputs())
 			{
 				ItemVariant key = item.getResource();
-				if(key.getItem() == output.item || key.isBlank())
+				if(key.getItem() == output.variant().getItem() || key.isBlank())
 				{
-					int remainingCapacity = (int) item.getRemainingCapacityFor(ItemVariant.of(output.item));
+					int remainingCapacity = (int) item.getRemainingCapacityFor(output.variant());
 					outputSpace += remainingCapacity;
 					if(outputSpace >= maxOutputCount)
 					{
@@ -223,7 +224,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 				}
 			}
 			
-			int multiplier = outputSpace / output.amount;
+			int multiplier = outputSpace / output.amount();
 			if(multiplier < itemMultiplier)
 			{
 				itemMultiplier = multiplier;
@@ -245,13 +246,13 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 			long countFluidInHatches = 0;
 			for(ConfigurableFluidStack stack : inventory.getFluidInputs())
 			{
-				if(stack.getResource().equals(FluidVariant.of(input.fluid)))
+				if(stack.getResource().equals(FluidVariant.of(input.fluid())))
 				{
 					countFluidInHatches += stack.getAmount();
 				}
 			}
 			
-			int multiplier = (int) (countFluidInHatches / input.amount);
+			int multiplier = (int) (countFluidInHatches / input.amount());
 			if(multiplier < fluidMultiplier)
 			{
 				fluidMultiplier = multiplier;
@@ -271,24 +272,24 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		{
 			MachineRecipe.FluidOutput output = recipe.fluidOutputs.get(i);
 			
-			if(output.probability < 1)
+			if(output.probability() < 1)
 			{
 				continue;
 			}
 			
-			long maxOutputCount = output.amount * this.getMaxMultiplier();
+			long maxOutputCount = output.amount() * this.getMaxMultiplier();
 			
 			outer:
 			for(int tries = 0; tries < 2; tries++)
 			{
 				for(ConfigurableFluidStack stack : inventory.getFluidOutputs())
 				{
-					FluidVariant outputKey = FluidVariant.of(output.fluid);
+					FluidVariant outputKey = FluidVariant.of(output.fluid());
 					if(stack.isResourceAllowedByLock(outputKey) && ((tries == 1 && stack.isResourceBlank()) || stack.getResource().equals(outputKey)))
 					{
 						long outputSpace = Math.min(stack.getRemainingSpace(), maxOutputCount);
 						
-						int multiplier = (int) (outputSpace / output.amount);
+						int multiplier = (int) (outputSpace / output.amount());
 						if(multiplier < fluidMultiplier)
 						{
 							fluidMultiplier = multiplier;
@@ -317,14 +318,14 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		for(MachineRecipe.ItemInput input : recipe.itemInputs)
 		{
 			// if we are not simulating, there is a chance we don't need to take this output
-			if(!simulate && input.probability < 1)
+			if(!simulate && input.probability() < 1)
 			{
-				if(ThreadLocalRandom.current().nextFloat() >= input.probability)
+				if(ThreadLocalRandom.current().nextFloat() >= input.probability())
 				{
 					continue;
 				}
 			}
-			int remainingAmount = input.amount * tryRecipeMultiplier;
+			int remainingAmount = input.amount() * tryRecipeMultiplier;
 			for(ConfigurableItemStack stack : stacks)
 			{
 				if(stack.getAmount() > 0 && input.matches(stack.getResource().toStack()))
@@ -363,17 +364,17 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		for(MachineRecipe.FluidInput input : recipe.fluidInputs)
 		{
 			// if we are not simulating, there is a chance we don't need to take this output
-			if(!simulate && input.probability < 1)
+			if(!simulate && input.probability() < 1)
 			{
-				if(ThreadLocalRandom.current().nextFloat() >= input.probability)
+				if(ThreadLocalRandom.current().nextFloat() >= input.probability())
 				{
 					continue;
 				}
 			}
-			long remainingAmount = input.amount * tryRecipeMultiplier;
+			long remainingAmount = input.amount() * tryRecipeMultiplier;
 			for(ConfigurableFluidStack stack : stacks)
 			{
-				if(stack.getResource().equals(FluidVariant.of(input.fluid)))
+				if(stack.getResource().equals(FluidVariant.of(input.fluid())))
 				{
 					long taken = Math.min(remainingAmount, stack.getAmount());
 					if(taken > 0 && !simulate)
@@ -396,7 +397,6 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		return ok;
 	}
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	protected boolean putItemOutputs(RecipeHolder<MachineRecipe> recipeHolder, boolean simulate, boolean toggleLock)
 	{
@@ -412,19 +412,19 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		boolean ok = true;
 		for(MachineRecipe.ItemOutput output : recipe.itemOutputs)
 		{
-			if(output.probability < 1)
+			if(output.probability() < 1)
 			{
 				if(simulate)
 				{
 					continue; // don't check output space for probabilistic recipes
 				}
 				float randFloat = ThreadLocalRandom.current().nextFloat();
-				if(randFloat > output.probability)
+				if(randFloat > output.probability())
 				{
 					continue;
 				}
 			}
-			int remainingAmount = output.amount * recipeMultiplier;
+			int remainingAmount = output.amount() * recipeMultiplier;
 			// Try to insert in non-empty stacks or locked first, then also allow insertion
 			// in empty stacks.
 			for(int loopRun = 0; loopRun < 2; loopRun++)
@@ -434,20 +434,20 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 				{
 					stackId++;
 					ItemVariant key = stack.getResource();
-					if(key.getItem() == output.item || key.isBlank())
+					if(key.getItem() == output.variant().getItem() || key.isBlank())
 					{
 						// If simulating or chanced output, respect the adjusted capacity.
 						// If putting the output, don't respect the adjusted capacity in case it was
 						// reduced during the processing.
-						int remainingCapacity = simulate || output.probability < 1 ? (int) stack.getRemainingCapacityFor(ItemVariant.of(output.item))
-								: output.item.getMaxStackSize() - (int) stack.getAmount();
+						int remainingCapacity = simulate || output.probability() < 1 ? (int) stack.getRemainingCapacityFor(output.variant())
+								: output.variant().getMaxStackSize() - (int) stack.getAmount();
 						int ins = Math.min(remainingAmount, remainingCapacity);
 						if(key.isBlank())
 						{
-							if((stack.isMachineLocked() || stack.isPlayerLocked() || loopRun == 1) && stack.isValid(new ItemStack(output.item)))
+							if((stack.isMachineLocked() || stack.isPlayerLocked() || loopRun == 1) && stack.isValid(new ItemStack(output.variant().getItem())))
 							{
 								stack.setAmount(ins);
-								stack.setKey(ItemVariant.of(output.item));
+								stack.setKey(output.variant());
 							}
 							else
 							{
@@ -462,10 +462,10 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 						if(ins > 0)
 						{
 							locksToToggle.add(stackId - 1);
-							lockItems.add(output.item);
+							lockItems.add(output.variant().getItem());
 							if(!simulate)
 							{
-								behavior.getStatsOrDummy().addProducedItems(behavior.getCrafterWorld(), output.item, ins);
+								behavior.getStatsOrDummy().addProducedItems(behavior.getCrafterWorld(), output.variant().getItem(), ins);
 							}
 						}
 						if(remainingAmount == 0)
@@ -507,14 +507,14 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		for(int i = 0; i < Math.min(recipe.fluidOutputs.size(), behavior.getMaxFluidOutputs()); ++i)
 		{
 			MachineRecipe.FluidOutput output = recipe.fluidOutputs.get(i);
-			if(output.probability < 1)
+			if(output.probability() < 1)
 			{
 				if(simulate)
 				{
 					continue; // don't check output space for probabilistic recipes
 				}
 				float randFloat = ThreadLocalRandom.current().nextFloat();
-				if(randFloat > output.probability)
+				if(randFloat > output.probability())
 				{
 					continue;
 				}
@@ -527,23 +527,23 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 				for(int j = 0; j < stacks.size(); j++)
 				{
 					ConfigurableFluidStack stack = stacks.get(j);
-					FluidVariant outputKey = FluidVariant.of(output.fluid);
+					FluidVariant outputKey = FluidVariant.of(output.fluid());
 					if(stack.isResourceAllowedByLock(outputKey)
 							&& ((tries == 1 && stack.isResourceBlank()) || stack.getResource().equals(outputKey)))
 					{
-						long inserted = Math.min(output.amount * recipeMultiplier, stack.getRemainingSpace());
+						long inserted = Math.min(output.amount() * recipeMultiplier, stack.getRemainingSpace());
 						if(inserted > 0)
 						{
 							stack.setKey(outputKey);
 							stack.increment(inserted);
 							locksToToggle.add(j);
-							lockFluids.add(output.fluid);
+							lockFluids.add(output.fluid());
 							if(!simulate)
 							{
-								behavior.getStatsOrDummy().addProducedFluids(output.fluid, inserted);
+								behavior.getStatsOrDummy().addProducedFluids(output.fluid(), inserted);
 							}
 						}
-						if(inserted < output.amount * recipeMultiplier)
+						if(inserted < output.amount() * recipeMultiplier)
 						{
 							ok = false;
 						}
@@ -609,16 +609,16 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	}
 	
 	@Override
-	public void writeNbt(CompoundTag tag)
+	public void writeNbt(CompoundTag tag, HolderLookup.Provider registries)
 	{
-		super.writeNbt(tag);
+		super.writeNbt(tag, registries);
 		tag.putInt("recipeMultiplier", recipeMultiplier);
 	}
 	
 	@Override
-	public void readNbt(CompoundTag tag, boolean isUpgradingMachine)
+	public void readNbt(CompoundTag tag, HolderLookup.Provider registries, boolean isUpgradingMachine)
 	{
-		super.readNbt(tag, isUpgradingMachine);
+		super.readNbt(tag, registries, isUpgradingMachine);
 		recipeMultiplier = tag.getInt("recipeMultiplier");
 	}
 	
@@ -700,10 +700,10 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		{
 			for(ConfigurableItemStack stack : this.inventory.getItemOutputs())
 			{
-				if(stack.getLockedInstance() == output.item)
+				if(stack.getLockedInstance() == output.variant().getItem())
 					continue outer;
 			}
-			AbstractConfigurableStack.playerLockNoOverride(output.item, this.inventory.getItemOutputs());
+			AbstractConfigurableStack.playerLockNoOverride(output.variant().getItem(), this.inventory.getItemOutputs());
 		}
 		
 		// FLUID INPUTS
@@ -712,12 +712,12 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		{
 			for(ConfigurableFluidStack stack : this.inventory.getFluidInputs())
 			{
-				if(stack.isLockedTo(input.fluid))
+				if(stack.isLockedTo(input.fluid()))
 				{
 					continue outer;
 				}
 			}
-			AbstractConfigurableStack.playerLockNoOverride(input.fluid, this.inventory.getFluidInputs());
+			AbstractConfigurableStack.playerLockNoOverride(input.fluid(), this.inventory.getFluidInputs());
 		}
 		// FLUID OUTPUTS
 		outer:
@@ -725,10 +725,10 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		{
 			for(ConfigurableFluidStack stack : this.inventory.getFluidOutputs())
 			{
-				if(stack.isLockedTo(output.fluid))
+				if(stack.isLockedTo(output.fluid()))
 					continue outer;
 			}
-			AbstractConfigurableStack.playerLockNoOverride(output.fluid, this.inventory.getFluidOutputs());
+			AbstractConfigurableStack.playerLockNoOverride(output.fluid(), this.inventory.getFluidOutputs());
 		}
 		
 		// LOCK ITEMS

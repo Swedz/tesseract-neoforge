@@ -2,7 +2,7 @@ package net.swedz.tesseract.neoforge.compat.mi.guicomponent.recipeefficiency;
 
 import aztech.modern_industrialization.machines.GuiComponents;
 import aztech.modern_industrialization.machines.gui.GuiComponent;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.TesseractMod;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccess;
@@ -57,7 +57,7 @@ public final class ModularRecipeEfficiencyBar
 		}
 		
 		@Override
-		public void writeInitialData(FriendlyByteBuf buf)
+		public void writeInitialData(RegistryFriendlyByteBuf buf)
 		{
 			buf.writeInt(params.renderX);
 			buf.writeInt(params.renderY);
@@ -65,7 +65,7 @@ public final class ModularRecipeEfficiencyBar
 		}
 		
 		@Override
-		public void writeCurrentData(FriendlyByteBuf buf)
+		public void writeCurrentData(RegistryFriendlyByteBuf buf)
 		{
 			if(crafter.hasActiveRecipe())
 			{

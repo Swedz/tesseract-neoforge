@@ -7,8 +7,9 @@ import aztech.modern_industrialization.util.Rectangle;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.swedz.tesseract.neoforge.compat.mi.network.packets.UpdateMachineConfigurationPanelPacket;
 
 import java.util.ArrayList;
@@ -25,10 +26,10 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 	final         int[]                         currentData;
 	private       Renderer                      renderer;
 	
-	public ConfigurationPanelClient(FriendlyByteBuf buf)
+	public ConfigurationPanelClient(RegistryFriendlyByteBuf buf)
 	{
-		title = buf.readComponent();
-		description = buf.readComponent();
+		title = ComponentSerialization.STREAM_CODEC.decode(buf);
+		description = ComponentSerialization.STREAM_CODEC.decode(buf);
 		
 		lines = new ConfigurationPanel.LineInfo[buf.readVarInt()];
 		for(int i = 0; i < lines.length; ++i)
@@ -37,7 +38,7 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 			List<Component> components = new ArrayList<>();
 			for(int j = 0; j < numValues; ++j)
 			{
-				components.add(buf.readComponent());
+				components.add(ComponentSerialization.STREAM_CODEC.decode(buf));
 			}
 			lines[i] = new ConfigurationPanel.LineInfo(numValues, components, buf.readBoolean());
 		}
@@ -47,7 +48,7 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 	}
 	
 	@Override
-	public void readCurrentData(FriendlyByteBuf buf)
+	public void readCurrentData(RegistryFriendlyByteBuf buf)
 	{
 		for(int i = 0; i < currentData.length; ++i)
 		{

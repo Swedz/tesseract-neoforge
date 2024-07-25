@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.97'
+    id 'net.neoforged.gradle.userdev' version '7.0.145'
 }
 
 configurations {
@@ -26,6 +26,8 @@ repositories {
         content {
             // GrandPower
             includeGroup "dev.technici4n"
+            // MI
+            includeGroup "aztech"
         }
     }
     maven {
@@ -52,11 +54,11 @@ dependencies {
     localImplementation "dev.emi:emi-neoforge:${emi_version}+${minecraft_version}"
 
     if (project.runtime_include_mi.toBoolean()) {
-        localImplementation "maven.modrinth:modern-industrialization:${modern_industrialization_version}"
+        localImplementation "aztech:Modern-Industrialization:${modern_industrialization_version}"
         localImplementation "dev.technici4n:GrandPower:${grandpower_version}"
         localImplementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
     } else {
-        compileOnly "maven.modrinth:modern-industrialization:${modern_industrialization_version}"
+        compileOnly "aztech:Modern-Industrialization:${modern_industrialization_version}"
         compileOnly "dev.technici4n:GrandPower:${grandpower_version}"
         compileOnly "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
     }
@@ -95,6 +97,12 @@ publishing {
             name = "modmaven"
             url = "https://modmaven.dev/artifactory/local-releases/"
         }
+    }
+}
+
+minecraft {
+    accessTransformers {
+        file("src/main/resources/${mod_id}.accesstransformer.cfg")
     }
 }
 
@@ -154,12 +162,12 @@ tasks.withType(ProcessResources).configureEach {
     ]
     inputs.properties replaceProperties
 
-    filesMatching(['META-INF/mods.toml']) {
+    filesMatching(['META-INF/neoforge.mods.toml']) {
         expand replaceProperties
     }
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 

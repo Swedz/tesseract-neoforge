@@ -1,13 +1,13 @@
 package net.swedz.tesseract.neoforge.compat.mi.network;
 
 import aztech.modern_industrialization.network.BasePacket;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 public interface TesseractMIBasePacket extends BasePacket
 {
 	@Override
-	default ResourceLocation id()
+	default Type<? extends CustomPacketPayload> type()
 	{
-		return TesseractMIPackets.getId(this.getClass());
+		return TesseractMIPackets.getType(this.getClass());
 	}
 }

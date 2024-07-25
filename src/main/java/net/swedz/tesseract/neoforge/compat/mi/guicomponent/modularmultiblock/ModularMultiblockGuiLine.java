@@ -1,7 +1,8 @@
 package net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock;
 
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 
 public record ModularMultiblockGuiLine(Component text, int color)
 {
@@ -10,16 +11,16 @@ public record ModularMultiblockGuiLine(Component text, int color)
 		this(text, 0xFFFFFF);
 	}
 	
-	public static ModularMultiblockGuiLine read(FriendlyByteBuf buf)
+	public static ModularMultiblockGuiLine read(RegistryFriendlyByteBuf buf)
 	{
-		Component text = buf.readComponent();
+		Component text = ComponentSerialization.STREAM_CODEC.decode(buf);
 		int color = buf.readInt();
 		return new ModularMultiblockGuiLine(text, color);
 	}
 	
-	public static void write(FriendlyByteBuf buf, ModularMultiblockGuiLine line)
+	public static void write(RegistryFriendlyByteBuf buf, ModularMultiblockGuiLine line)
 	{
-		buf.writeComponent(line.text());
+		ComponentSerialization.STREAM_CODEC.encode(buf, line.text());
 		buf.writeInt(line.color());
 	}
 }

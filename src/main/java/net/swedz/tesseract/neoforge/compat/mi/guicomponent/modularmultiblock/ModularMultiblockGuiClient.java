@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -19,16 +19,22 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 	
 	private List<ModularMultiblockGuiLine> text;
 	
-	public ModularMultiblockGuiClient(FriendlyByteBuf buf)
+	public ModularMultiblockGuiClient(RegistryFriendlyByteBuf buf)
 	{
 		this.readCurrentData(buf);
 	}
 	
 	@Override
-	public void readCurrentData(FriendlyByteBuf buf)
+	public void readCurrentData(RegistryFriendlyByteBuf buf)
 	{
 		height = buf.readInt();
-		text = buf.readCollection(Lists::newArrayListWithCapacity, ModularMultiblockGuiLine::read);
+		
+		int lineCount = buf.readVarInt();
+		text = Lists.newArrayListWithCapacity(lineCount);
+		for(int i = 0; i < lineCount; i++)
+		{
+			text.add(ModularMultiblockGuiLine.read(buf));
+		}
 	}
 	
 	@Override

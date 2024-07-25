@@ -36,7 +36,7 @@ public abstract class RegisterMultiblockShapeReiRecipeHackMixin
 	{
 		for(String modId : MIHooks.getModIds())
 		{
-			ResourceLocation id = new ResourceLocation(modId, controller);
+			ResourceLocation id = ResourceLocation.fromNamespaceAndPath(modId, controller);
 			ItemStack controllerItem = BuiltInRegistries.ITEM.get(id).getDefaultInstance();
 			if(!controllerItem.isEmpty())
 			{

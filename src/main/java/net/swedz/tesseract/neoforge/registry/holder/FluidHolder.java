@@ -36,7 +36,7 @@ public class FluidHolder<F extends Fluid, FT extends FluidType, FB extends Block
 		this.registerableFluid = new SimpleRegisterableWrapper<>(registerFluids, () -> creatorFluid.apply(this));
 		this.registerableFluidType = new SimpleRegisterableWrapper<>(registerFluidTypes, () -> creatorFluidType.apply(this));
 		this.blockHolder = new BlockHolder<>(location, englishName, registerBlocks, (p) -> creatorFluidBlock.apply(this, p));
-		this.bucketItemHolder = new ItemHolder<>(new ResourceLocation(location.getNamespace(), location.getPath() + "_bucket"), englishName + " Bucket", registerItems, (p) -> creatorBucketItem.apply(this, p))
+		this.bucketItemHolder = new ItemHolder<>(ResourceLocation.fromNamespaceAndPath(location.getNamespace(), location.getPath() + "_bucket"), englishName + " Bucket", registerItems, (p) -> creatorBucketItem.apply(this, p))
 				.sorted(bucketSortOrder)
 				.withModel(CommonModelBuilders::generated)
 				.withCapabilities(CommonCapabilities::bucketItem);

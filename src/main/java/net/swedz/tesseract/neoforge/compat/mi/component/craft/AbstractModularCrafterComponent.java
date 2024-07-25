@@ -8,6 +8,7 @@ import aztech.modern_industrialization.machines.IComponent;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
 import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.recipe.condition.MachineProcessCondition;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -352,7 +353,7 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	}
 	
 	@Override
-	public void writeNbt(CompoundTag tag)
+	public void writeNbt(CompoundTag tag, HolderLookup.Provider registries)
 	{
 		tag.putLong("usedEnergy", usedEnergy);
 		tag.putLong("recipeEnergy", recipeEnergy);
@@ -370,12 +371,12 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	}
 	
 	@Override
-	public void readNbt(CompoundTag tag, boolean isUpgradingMachine)
+	public void readNbt(CompoundTag tag, HolderLookup.Provider registries, boolean isUpgradingMachine)
 	{
 		usedEnergy = tag.getInt("usedEnergy");
 		recipeEnergy = tag.getInt("recipeEnergy");
 		recipeMaxEu = tag.getInt("recipeMaxEu");
-		delayedActiveRecipe = tag.contains("activeRecipe") ? new ResourceLocation(tag.getString("activeRecipe")) : null;
+		delayedActiveRecipe = tag.contains("activeRecipe") ? ResourceLocation.parse(tag.getString("activeRecipe")) : null;
 		if(delayedActiveRecipe == null && usedEnergy > 0)
 		{
 			usedEnergy = 0;

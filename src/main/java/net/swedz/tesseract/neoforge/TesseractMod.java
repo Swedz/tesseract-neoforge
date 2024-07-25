@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
 import net.swedz.tesseract.neoforge.compat.mi.builtinhook.TesseractMIHookListener;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
@@ -22,7 +22,7 @@ public final class TesseractMod
 	
 	public static ResourceLocation id(String path)
 	{
-		return new ResourceLocation(ID, path);
+		return ResourceLocation.fromNamespaceAndPath(ID, path);
 	}
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(NAME);
@@ -33,7 +33,7 @@ public final class TesseractMod
 		{
 			MIHooks.registerListener(ID, MIHookRegistry.NONE, new TesseractMIHookListener());
 			
-			bus.addListener(RegisterPayloadHandlerEvent.class, TesseractMIPackets::init);
+			bus.addListener(RegisterPayloadHandlersEvent.class, TesseractMIPackets::init);
 		}
 		
 		bus.addListener(GatherDataEvent.class, (event) ->

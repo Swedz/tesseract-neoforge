@@ -15,7 +15,7 @@ public final class CommonModelBuilders
 	{
 		return (builder) -> builder
 				.parent(new ModelFile.UncheckedModelFile("item/generated"))
-				.texture("layer0", new ResourceLocation(item.identifier().modId(), "item/" + texture));
+				.texture("layer0", ResourceLocation.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture));
 	}
 	
 	public static Consumer<ItemModelBuilder> generated(ItemHolder item)
@@ -27,7 +27,7 @@ public final class CommonModelBuilders
 	{
 		return (builder) -> builder
 				.parent(new ModelFile.UncheckedModelFile("item/handheld"))
-				.texture("layer0", new ResourceLocation(item.identifier().modId(), "item/" + texture));
+				.texture("layer0", ResourceLocation.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture));
 	}
 	
 	public static Consumer<ItemModelBuilder> handheld(ItemHolder item)

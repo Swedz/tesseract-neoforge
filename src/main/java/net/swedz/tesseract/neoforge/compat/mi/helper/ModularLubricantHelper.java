@@ -4,6 +4,7 @@ import aztech.modern_industrialization.MIFluids;
 import aztech.modern_industrialization.machines.components.LubricantHelper;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.fluids.FluidActionResult;
 import net.neoforged.neoforge.fluids.FluidUtil;
@@ -16,7 +17,7 @@ public final class ModularLubricantHelper
 	/**
 	 * This is literally the exact same code from {@link LubricantHelper} but it is for the {@link ModularCrafterAccess}...
 	 */
-	public static InteractionResult onUse(ModularCrafterAccess crafter, Player player, InteractionHand hand)
+	public static ItemInteractionResult onUse(ModularCrafterAccess crafter, Player player, InteractionHand hand)
 	{
 		if(crafter.hasActiveRecipe())
 		{
@@ -40,10 +41,10 @@ public final class ModularLubricantHelper
 				{
 					crafter.increaseEfficiencyTicks(interactionTank.getFluidAmount() / LubricantHelper.mbPerTick);
 					player.setItemInHand(hand, result.getResult());
-					return InteractionResult.SUCCESS;
+					return ItemInteractionResult.SUCCESS;
 				}
 			}
 		}
-		return InteractionResult.PASS;
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 }

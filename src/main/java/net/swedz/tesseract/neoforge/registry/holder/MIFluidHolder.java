@@ -91,7 +91,7 @@ public class MIFluidHolder extends FluidHolder<MIFluid, MIFluidHolder.FakedMIFlu
 				{
 					if(textureLocation == null)
 					{
-						textureLocation = new ResourceLocation(namespace, "fluid/%s_still".formatted(fluidBlock.getId().getPath()));
+						textureLocation = ResourceLocation.fromNamespaceAndPath(namespace, "fluid/%s_still".formatted(fluidBlock.getId().getPath()));
 					}
 					return textureLocation;
 				}

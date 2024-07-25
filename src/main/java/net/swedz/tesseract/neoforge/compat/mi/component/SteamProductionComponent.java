@@ -7,6 +7,7 @@ import aztech.modern_industrialization.thirdparty.fabrictransfer.api.storage.Sto
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.transaction.Transaction;
 import it.unimi.dsi.fastutil.objects.Reference2LongMap;
 import it.unimi.dsi.fastutil.objects.Reference2LongOpenHashMap;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -93,7 +94,7 @@ public final class SteamProductionComponent implements IComponent.ServerOnly
 	}
 	
 	@Override
-	public void writeNbt(CompoundTag tag)
+	public void writeNbt(CompoundTag tag, HolderLookup.Provider registries)
 	{
 		CompoundTag buffer = new CompoundTag();
 		for(Reference2LongMap.Entry<Fluid> entry : steamBuffer.reference2LongEntrySet())
@@ -107,7 +108,7 @@ public final class SteamProductionComponent implements IComponent.ServerOnly
 	}
 	
 	@Override
-	public void readNbt(CompoundTag tag, boolean isUpgradingMachine)
+	public void readNbt(CompoundTag tag, HolderLookup.Provider registries, boolean isUpgradingMachine)
 	{
 		CompoundTag buffer = tag.getCompound("steamBuffer");
 		for(String key : buffer.getAllKeys())

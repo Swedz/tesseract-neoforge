@@ -2,6 +2,8 @@ package net.swedz.tesseract.neoforge.compat.mi.mixin.hook.efficiency;
 
 import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.recipe.condition.MachineProcessCondition;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.machine.EfficiencyMIHookContext;
@@ -134,7 +136,7 @@ public abstract class CrafterComponentEfficiencyHookMixin
 			method = "readNbt",
 			at = @At("RETURN")
 	)
-	private void readNbt(net.minecraft.nbt.CompoundTag tag, boolean isUpgradingMachine, CallbackInfo callback)
+	private void readNbt(CompoundTag tag, HolderLookup.Provider registries, boolean isUpgradingMachine, CallbackInfo ci)
 	{
 		EfficiencyMIHookContext context = new EfficiencyMIHookContext(
 				conditionContext.getBlockEntity(), this.hasActiveRecipe(),

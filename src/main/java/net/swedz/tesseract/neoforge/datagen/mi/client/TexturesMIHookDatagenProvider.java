@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.datagen.mi.client;
 
 import aztech.modern_industrialization.MI;
+import aztech.modern_industrialization.MIText;
 import aztech.modern_industrialization.resource.FastPathPackResources;
 import aztech.modern_industrialization.textures.TextureHelper;
 import aztech.modern_industrialization.textures.TextureManager;
@@ -14,10 +15,13 @@ import net.minecraft.Util;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.FilePackResources;
+import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.VanillaPackResourcesBuilder;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.resources.MultiPackResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceProvider;
@@ -38,6 +42,8 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+
+import static net.minecraft.client.resources.ClientPackSource.*;
 
 /**
  * A lot of this code was taken directly from {@link aztech.modern_industrialization.datagen.texture.TexturesProvider} and {@link aztech.modern_industrialization.textures.MITextures}.
@@ -154,15 +160,28 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 	{
 		List<PackResources> packs = Lists.newArrayList();
 		
-		packs.add(new VanillaPackResourcesBuilder().exposeNamespace("minecraft").pushJarResources().build());
+		packs.add(new VanillaPackResourcesBuilder().exposeNamespace("minecraft").pushJarResources().build(VANILLA_PACK_INFO));
 		
 		Path nonGeneratedResources = output.getOutputFolder().resolve("../../main/resources");
-		packs.add(new FastPathPackResources("nonGen", nonGeneratedResources, true));
+		packs.add(new FastPathPackResources(
+				new PackLocationInfo(
+						"nonGen",
+						Component.literal("Non-Generated Resources"),
+						PackSource.BUILT_IN,
+						Optional.empty()
+				),
+				nonGeneratedResources
+		));
 		
 		packs.add(new FilePackResources(
-				"mi",
+				new PackLocationInfo(
+						"modern_industrialization/generated",
+						MIText.GeneratedResources.text(),
+						PackSource.BUILT_IN,
+						Optional.empty()
+				),
 				new FilePackResources.SharedZipFileAccess(ModList.get().getModFileById(MI.ID).getFile().getFilePath().toFile()),
-				true, ""
+				""
 		));
 		
 		List<CompletableFuture<?>> jsonSaveFutures = Lists.newArrayList();
@@ -177,7 +196,15 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 												  Consumer<CompletableFuture<?>> futureList)
 	{
 		Path generatedResources = output.getOutputFolder();
-		List<PackResources> generatedPack = List.of(new FastPathPackResources("gen", generatedResources, true));
+		List<PackResources> generatedPack = List.of(new FastPathPackResources(
+				new PackLocationInfo(
+						"gen",
+						Component.literal("Generated Resources"),
+						PackSource.BUILT_IN,
+						Optional.empty()
+				),
+				generatedResources
+		));
 		
 		MultiPackResourceManager outputPack = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, generatedPack);
 		return this.offerTextures(

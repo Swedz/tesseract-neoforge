@@ -1,7 +1,10 @@
 package net.swedz.tesseract.neoforge.compat.mi.network.packets;
 
 import aztech.modern_industrialization.machines.gui.MachineMenuServer;
-import net.minecraft.network.FriendlyByteBuf;
+import aztech.modern_industrialization.network.MIStreamCodecs;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.configurationpanel.ConfigurationPanel;
 import net.swedz.tesseract.neoforge.compat.mi.network.TesseractMIBasePacket;
@@ -13,18 +16,15 @@ public record UpdateMachineConfigurationPanelPacket(
 		int syncId, int line, boolean clickedLeftButton
 ) implements TesseractMIBasePacket
 {
-	public UpdateMachineConfigurationPanelPacket(FriendlyByteBuf buf)
-	{
-		this(buf.readUnsignedByte(), buf.readVarInt(), buf.readBoolean());
-	}
-	
-	@Override
-	public void write(FriendlyByteBuf buf)
-	{
-		buf.writeByte(syncId);
-		buf.writeVarInt(line);
-		buf.writeBoolean(clickedLeftButton);
-	}
+	public static final StreamCodec<ByteBuf, UpdateMachineConfigurationPanelPacket> STREAM_CODEC = StreamCodec.composite(
+			MIStreamCodecs.BYTE,
+			UpdateMachineConfigurationPanelPacket::syncId,
+			ByteBufCodecs.VAR_INT,
+			UpdateMachineConfigurationPanelPacket::line,
+			ByteBufCodecs.BOOL,
+			UpdateMachineConfigurationPanelPacket::clickedLeftButton,
+			UpdateMachineConfigurationPanelPacket::new
+	);
 	
 	@Override
 	public void handle(Context ctx)

@@ -2,10 +2,11 @@ package net.swedz.tesseract.neoforge.compat.mi.network;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlerEvent;
-import net.neoforged.neoforge.network.registration.IPayloadRegistrar;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.swedz.tesseract.neoforge.TesseractMod;
 import net.swedz.tesseract.neoforge.compat.mi.network.packets.UpdateMachineConfigurationPanelPacket;
 
@@ -16,47 +17,47 @@ public final class TesseractMIPackets
 {
 	public static final class Registry
 	{
-		private static final Set<PacketRegistration<?>>                                    PACKET_REGISTRATIONS = Sets.newHashSet();
-		private static final Map<Class<? extends TesseractMIBasePacket>, ResourceLocation> PACKET_IDS           = Maps.newHashMap();
+		private static final Set<PacketRegistration<TesseractMIBasePacket>>                                               PACKET_REGISTRATIONS = Sets.newHashSet();
+		private static final Map<Class<? extends TesseractMIBasePacket>, CustomPacketPayload.Type<TesseractMIBasePacket>> PACKET_TYPES         = Maps.newHashMap();
 		
 		private record PacketRegistration<P extends TesseractMIBasePacket>(
-				ResourceLocation resourceLocation,
+				CustomPacketPayload.Type<P> packetType,
 				Class<P> packetClass,
-				FriendlyByteBuf.Reader<P> packetConstructor
+				StreamCodec<? super RegistryFriendlyByteBuf, P> packetCodec
 		)
 		{
 		}
 		
-		private static void init(RegisterPayloadHandlerEvent event)
+		private static void init(RegisterPayloadHandlersEvent event)
 		{
-			IPayloadRegistrar registrar = event.registrar(TesseractMod.ID);
-			for(PacketRegistration<?> packetRegistration : PACKET_REGISTRATIONS)
+			PayloadRegistrar registrar = event.registrar(TesseractMod.ID);
+			for(PacketRegistration<TesseractMIBasePacket> packetRegistration : PACKET_REGISTRATIONS)
 			{
-				registrar.play(packetRegistration.resourceLocation(), packetRegistration.packetConstructor(), (p, context) ->
-						context.workHandler().execute(() ->
-								p.handle(new TesseractMIBasePacket.Context(packetRegistration.packetClass(), context))));
+				registrar.playBidirectional(packetRegistration.packetType(), packetRegistration.packetCodec(), (packet, context) ->
+						packet.handle(new TesseractMIBasePacket.Context(packetRegistration.packetClass(), context)));
 			}
 		}
 	}
 	
-	public static void init(RegisterPayloadHandlerEvent event)
+	public static void init(RegisterPayloadHandlersEvent event)
 	{
 		Registry.init(event);
 	}
 	
 	static
 	{
-		create("configure_machine", UpdateMachineConfigurationPanelPacket.class, UpdateMachineConfigurationPanelPacket::new);
+		create("configure_machine", UpdateMachineConfigurationPanelPacket.class, UpdateMachineConfigurationPanelPacket.STREAM_CODEC);
 	}
 	
-	public static ResourceLocation getId(Class<? extends TesseractMIBasePacket> packetClass)
+	public static CustomPacketPayload.Type<TesseractMIBasePacket> getType(Class<? extends TesseractMIBasePacket> packetClass)
 	{
-		return Registry.PACKET_IDS.get(packetClass);
+		return Registry.PACKET_TYPES.get(packetClass);
 	}
 	
-	public static <P extends TesseractMIBasePacket> void create(String path, Class<P> packetClass, FriendlyByteBuf.Reader<P> packetConstructor)
+	public static <P extends TesseractMIBasePacket> void create(String path, Class<P> packetClass, StreamCodec<? super RegistryFriendlyByteBuf, P> packetCodec)
 	{
-		Registry.PACKET_REGISTRATIONS.add(new Registry.PacketRegistration<>(TesseractMod.id(path), packetClass, packetConstructor));
-		Registry.PACKET_IDS.put(packetClass, TesseractMod.id(path));
+		CustomPacketPayload.Type type = new CustomPacketPayload.Type<>(TesseractMod.id(path));
+		Registry.PACKET_REGISTRATIONS.add(new Registry.PacketRegistration<>(type, packetClass, packetCodec));
+		Registry.PACKET_TYPES.put(packetClass, type);
 	}
 }

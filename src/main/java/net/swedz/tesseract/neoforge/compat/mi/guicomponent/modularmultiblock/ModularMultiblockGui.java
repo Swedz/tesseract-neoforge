@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock;
 
 import aztech.modern_industrialization.machines.gui.GuiComponent;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.TesseractMod;
 
@@ -41,16 +41,22 @@ public final class ModularMultiblockGui
 		}
 		
 		@Override
-		public void writeInitialData(FriendlyByteBuf buf)
+		public void writeInitialData(RegistryFriendlyByteBuf buf)
 		{
 			this.writeCurrentData(buf);
 		}
 		
 		@Override
-		public void writeCurrentData(FriendlyByteBuf buf)
+		public void writeCurrentData(RegistryFriendlyByteBuf buf)
 		{
 			buf.writeInt(height);
-			buf.writeCollection(textSupplier.get(), ModularMultiblockGuiLine::write);
+			
+			List<ModularMultiblockGuiLine> lines = textSupplier.get();
+			buf.writeVarInt(lines.size());
+			for(ModularMultiblockGuiLine line : lines)
+			{
+				ModularMultiblockGuiLine.write(buf, line);
+			}
 		}
 		
 		@Override
