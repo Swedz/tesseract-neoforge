@@ -1,7 +1,10 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.Objects;
 
+@ApiStatus.Internal
 public final class MIHook
 {
 	private MIHookRegistry   registry           = MIHookRegistry.NONE;
@@ -38,13 +41,20 @@ public final class MIHook
 		return efficiencyListener != MIHookEfficiency.NONE;
 	}
 	
-	MIHook withListener(MIHookRegistry registry, MIHookListener listener)
+	MIHook withListener(MIHookListener listener)
 	{
-		Objects.requireNonNull(registry);
 		Objects.requireNonNull(listener);
 		
-		this.registry = registry;
 		this.listener = listener;
+		
+		return this;
+	}
+	
+	MIHook withRegistry(MIHookRegistry registry)
+	{
+		Objects.requireNonNull(registry);
+		
+		this.registry = registry;
 		
 		return this;
 	}
