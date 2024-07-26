@@ -31,7 +31,7 @@ public class ItemHolder<Type extends Item> extends ModeledRegisteredObjectHolder
 	
 	public ItemHolder<Type> withProperties(Consumer<Item.Properties> action)
 	{
-		action.accept(registerableItem.properties());
+		registerableItem.withProperties(action);
 		return this;
 	}
 	

@@ -1,10 +1,12 @@
 package net.swedz.tesseract.neoforge.registry.registerable;
 
+import com.google.common.collect.Lists;
 import net.minecraft.data.models.blockstates.PropertyDispatch;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.swedz.tesseract.neoforge.api.MCIdentifier;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -14,7 +16,8 @@ public class RegisterableWrapper<Type, DeferredType extends DeferredHolder<? sup
 {
 	private final Register register;
 	
-	private final Properties properties;
+	private final Properties                 properties;
+	private final List<Consumer<Properties>> propertiesActions = Lists.newArrayList();
 	
 	private final Function<Properties, Type> creator;
 	
@@ -34,7 +37,7 @@ public class RegisterableWrapper<Type, DeferredType extends DeferredHolder<? sup
 	
 	public void withProperties(Consumer<Properties> action)
 	{
-		action.accept(properties);
+		propertiesActions.add(action);
 	}
 	
 	public Function<Properties, Type> creator()
@@ -44,12 +47,21 @@ public class RegisterableWrapper<Type, DeferredType extends DeferredHolder<? sup
 	
 	public void register(MCIdentifier identifier, PropertyDispatch.QuadFunction<Register, String, Function<Properties, Type>, Properties, DeferredType> builder)
 	{
-		this.deferred = Optional.of(builder.apply(register, identifier.id(), creator, properties));
+		this.deferred = Optional.of(builder.apply(
+				register,
+				identifier.id(),
+				(p) ->
+				{
+					propertiesActions.forEach((action) -> action.accept(p));
+					return this.creator().apply(p);
+				},
+				properties
+		));
 	}
 	
 	public void registerSimple(MCIdentifier identifier, PropertyDispatch.TriFunction<Register, String, Supplier<Type>, DeferredType> builder)
 	{
-		this.register(identifier, (r, id, f, p) -> builder.apply(r, id, () -> creator().apply(null)));
+		this.register(identifier, (r, id, f, p) -> builder.apply(r, id, () -> this.creator().apply(null)));
 	}
 	
 	public DeferredType get()
