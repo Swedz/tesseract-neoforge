@@ -21,24 +21,44 @@ public final class MIHooks
 	 * Registers a MI listener hook for your mod.
 	 *
 	 * @param modId    the id of your mod
-	 * @param registry the registry to use for your hook
 	 * @param listener the listener to use for your hook
-	 * @throws IllegalArgumentException if the mod already has a hook registered
+	 * @throws IllegalArgumentException if the mod already has a listener hook registered
 	 */
-	public static void registerListener(String modId, MIHookRegistry registry, MIHookListener listener)
+	public static void registerListener(String modId, MIHookListener listener)
 	{
 		Objects.requireNonNull(modId);
-		Objects.requireNonNull(registry);
 		Objects.requireNonNull(listener);
 		
 		MIHook hook = getHook(modId);
 		
-		if(hook.hasRegistry() || hook.hasListener())
+		if(hook.hasListener())
 		{
 			throw new IllegalArgumentException("The mod %s already has a registered MI listener hook".formatted(modId));
 		}
 		
-		hook.withListener(registry, listener);
+		hook.withListener(listener);
+	}
+	
+	/**
+	 * Registers a MI registry hook for your mod.
+	 *
+	 * @param modId    the id of your mod
+	 * @param registry the registry to use for your hook
+	 * @throws IllegalArgumentException if the mod already has a registry hook registered
+	 */
+	public static void registerRegistry(String modId, MIHookRegistry registry)
+	{
+		Objects.requireNonNull(modId);
+		Objects.requireNonNull(registry);
+		
+		MIHook hook = getHook(modId);
+		
+		if(hook.hasRegistry())
+		{
+			throw new IllegalArgumentException("The mod %s already has a registered MI registry hook".formatted(modId));
+		}
+		
+		hook.withRegistry(registry);
 	}
 	
 	/**
@@ -46,7 +66,7 @@ public final class MIHooks
 	 *
 	 * @param modId              the id of your mod
 	 * @param efficiencyListener the efficiency listener to use for your hook
-	 * @throws IllegalArgumentException if the mod already has a hook registered
+	 * @throws IllegalArgumentException if the mod already has an efficiency hook registered
 	 */
 	public static void registerEfficiencyListener(String modId, MIHookEfficiency efficiencyListener)
 	{

@@ -7,8 +7,10 @@ import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.Mod
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.recipeefficiency.ModularRecipeEfficiencyBar;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.recipeefficiency.ModularRecipeEfficiencyBarClient;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookListener;
+import net.swedz.tesseract.neoforge.compat.mi.hook.TesseractMIHookEntrypoint;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.ClientGuiComponentsMIHookContext;
 
+@TesseractMIHookEntrypoint
 public final class TesseractMIHookListener implements MIHookListener
 {
 	@Override

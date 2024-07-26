@@ -6,9 +6,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
-import net.swedz.tesseract.neoforge.compat.mi.builtinhook.TesseractMIHookListener;
-import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
-import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.network.TesseractMIPackets;
 import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
 import org.slf4j.Logger;
@@ -31,9 +28,7 @@ public final class TesseractMod
 	{
 		if(isMILoaded())
 		{
-			MIHooks.registerListener(ID, MIHookRegistry.NONE, new TesseractMIHookListener());
-			
-			bus.addListener(RegisterPayloadHandlersEvent.class, TesseractMIPackets::init);
+			MIOnly.init(bus);
 		}
 		
 		bus.addListener(GatherDataEvent.class, (event) ->
@@ -43,5 +38,13 @@ public final class TesseractMod
 	public static boolean isMILoaded()
 	{
 		return ModLoadedHelper.isLoaded("modern_industrialization");
+	}
+	
+	private static final class MIOnly
+	{
+		private static void init(IEventBus bus)
+		{
+			bus.addListener(RegisterPayloadHandlersEvent.class, TesseractMIPackets::init);
+		}
 	}
 }
