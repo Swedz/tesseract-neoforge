@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'idea'
     id 'maven-publish'
     id 'net.neoforged.gradle.userdev' version '7.0.145'
 }
@@ -173,6 +174,13 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
 }
 
 processResources {
