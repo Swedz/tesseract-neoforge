@@ -23,7 +23,7 @@ jobs:
         with:
           arguments: publishMavenJavaPublicationToModmavenRepository
         env:
-          MODMAVEN_USER: ${{ secrets.MODMAVEN_USERNAME }}
+          MODMAVEN_USERNAME: ${{ secrets.MODMAVEN_USERNAME }}
           MODMAVEN_PASSWORD: ${{ secrets.MODMAVEN_PASSWORD }}
       - name: Upload to Curseforge
         env:
