@@ -4,11 +4,9 @@ import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.TreeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
-import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
 import net.neoforged.neoforge.common.NeoForge;
 import net.swedz.tesseract.neoforge.event.TreeGrowthEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +17,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiConsumer;
 
 @Mixin(TreeFeature.class)
 public class TreeGrowthEventMixin
@@ -40,12 +37,7 @@ public class TreeGrowthEventMixin
 							  Set<BlockPos> trunkPositions,
 							  Set<BlockPos> branchPositions,
 							  Set<BlockPos> foliagePositions,
-							  Set<BlockPos> decoratorPositions,
-							  BiConsumer<BlockPos, BlockState> trunkPlacer,
-							  BiConsumer<BlockPos, BlockState> branchPlacer,
-							  FoliagePlacer.FoliageSetter foliageSetter,
-							  BiConsumer<BlockPos, BlockState> decoratorPlacer,
-							  boolean success)
+							  Set<BlockPos> decoratorPositions)
 	{
 		List<BlockPos> positions = Lists.newArrayList();
 		positions.addAll(trunkPositions);
