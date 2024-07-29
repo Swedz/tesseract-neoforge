@@ -8,9 +8,9 @@ import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostT
 
 public class ElectricMultipliedCraftingMultiblockBlockEntity extends AbstractElectricMultipliedCraftingMultiblockBlockEntity
 {
-	private final MachineRecipeType recipeType;
-	private final int               maxMultiplier;
-	private final EuCostTransformer euCostTransformer;
+	protected final MachineRecipeType recipeType;
+	protected final int               maxMultiplier;
+	protected final EuCostTransformer euCostTransformer;
 	
 	public ElectricMultipliedCraftingMultiblockBlockEntity(BEP bep, String name, ShapeTemplate[] shapeTemplates,
 														   MachineTier machineTier,

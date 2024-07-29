@@ -22,7 +22,7 @@ import static net.swedz.tesseract.neoforge.compat.mi.builtinhook.TesseractMITool
 
 public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity
 {
-	private final OverclockComponent overclock;
+	protected final OverclockComponent overclock;
 	
 	private boolean steel;
 	

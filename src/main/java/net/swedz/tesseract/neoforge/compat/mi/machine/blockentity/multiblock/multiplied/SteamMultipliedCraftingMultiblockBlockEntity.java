@@ -10,9 +10,9 @@ import java.util.List;
 
 public class SteamMultipliedCraftingMultiblockBlockEntity extends AbstractSteamMultipliedCraftingMultiblockBlockEntity
 {
-	private final MachineRecipeType recipeType;
-	private final int               maxMultiplier;
-	private final EuCostTransformer euCostTransformer;
+	protected final MachineRecipeType recipeType;
+	protected final int               maxMultiplier;
+	protected final EuCostTransformer euCostTransformer;
 	
 	public SteamMultipliedCraftingMultiblockBlockEntity(BEP bep, String name, ShapeTemplate[] shapeTemplates, List<OverclockComponent.Catalyst> overclockCatalysts, MachineRecipeType recipeType, int maxMultiplier, EuCostTransformer euCostTransformer)
 	{

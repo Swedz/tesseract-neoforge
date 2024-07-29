@@ -28,12 +28,12 @@ import static net.swedz.tesseract.neoforge.compat.mi.builtinhook.TesseractMITool
 
 public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity implements EnergyListComponentHolder
 {
-	private final MachineTier machineTier;
+	protected final MachineTier machineTier;
 	
-	private final UpgradeComponent         upgrades;
-	private final RedstoneControlComponent redstoneControl;
+	protected final UpgradeComponent         upgrades;
+	protected final RedstoneControlComponent redstoneControl;
 	
-	private final List<EnergyComponent> energyInputs = Lists.newArrayList();
+	protected final List<EnergyComponent> energyInputs = Lists.newArrayList();
 	
 	public AbstractElectricMultipliedCraftingMultiblockBlockEntity(BEP bep, String name, ShapeTemplate[] shapeTemplates,
 																   MachineTier machineTier)
