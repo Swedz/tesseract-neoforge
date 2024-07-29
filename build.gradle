@@ -164,7 +164,7 @@ neoForge {
 
     validateAccessTransformers = true
     accessTransformers = [
-            "/src/main/resources/${mod_id}.accesstransformer.cfg"
+            "src/main/resources/${mod_id}.accesstransformer.cfg"
     ]
 
     runs {
