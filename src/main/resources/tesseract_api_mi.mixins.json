@@ -29,6 +29,7 @@
         "hook.listener.ViewerSetupHookMixin"
     ],
     "client": [
+        "client.fix.BuildRecipesMachineCategoryClientMixin",
         "client.hook.GuiComponentsClientHookMixin"
     ],
     "injectors": {
