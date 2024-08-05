@@ -7,6 +7,7 @@
     "mixins": [
         "ActiveRecipeHolderMixin",
         "accessor.MIMachineRecipeTypesAccessor",
+        "accessor.MIRecipeAccessor",
         "fix.MakeMachineBlockEntityUseProperTitleMixin",
         "hack.RegisterMachineHackMixin",
         "hack.RegisterMachineModelHackMixin",
