@@ -279,7 +279,7 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 		boolean active = false;
 		boolean enabled = behavior.isEnabled();
 		
-		this.tryContinueRecipe();
+		this.loadDelayedActiveRecipe();
 		
 		boolean started = false;
 		if(usedEnergy == 0 && enabled)
