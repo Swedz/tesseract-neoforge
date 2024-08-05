@@ -6,11 +6,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
 import java.util.function.Function;
 
 @Mixin(
@@ -19,6 +22,10 @@ import java.util.function.Function;
 )
 public class RegisterMachineRecipeTypeHackMixin
 {
+	@Shadow
+	@Final
+	private static List<MachineRecipeType> recipeTypes;
+	
 	@Inject(
 			method = "create(Ljava/lang/String;Ljava/util/function/Function;)Laztech/modern_industrialization/machines/recipe/MachineRecipeType;",
 			at = @At("HEAD"),
@@ -35,7 +42,7 @@ public class RegisterMachineRecipeTypeHackMixin
 			registry.recipeSerializerRegistry().register(name, () -> type);
 			registry.recipeTypeRegistry().register(name, () -> type);
 			registry.onMachineRecipeTypeRegister(type);
-			// recipeTypes.add(type); - this is only used for kjs, we don't need this
+			recipeTypes.add(type);
 			callback.setReturnValue(type);
 		}
 	}
