@@ -118,7 +118,7 @@ if (System.getenv("CURSEFORGE_API_KEY")) {
                 optionalDependency "modern-industrialization"
             }
 
-            mainArtifact(tasks.named("jarJar").flatMap { it.archiveFile })
+            mainArtifact(tasks.named("jar").flatMap { it.archiveFile })
         }
 
         options {
