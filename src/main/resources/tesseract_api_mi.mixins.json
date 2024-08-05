@@ -6,6 +6,7 @@
     "compatibilityLevel": "JAVA_21",
     "mixins": [
         "ActiveRecipeHolderMixin",
+        "accessor.MIMachineRecipeTypesAccessor",
         "fix.MakeMachineBlockEntityUseProperTitleMixin",
         "hack.RegisterMachineHackMixin",
         "hack.RegisterMachineModelHackMixin",
