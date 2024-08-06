@@ -148,7 +148,7 @@ if (System.getenv("MODRINTH_API_KEY")) {
             optional.project "modern-industrialization"
         }
 
-        uploadFile = tasks.jarJar
+        uploadFile = tasks.jar
     }
 }
 
