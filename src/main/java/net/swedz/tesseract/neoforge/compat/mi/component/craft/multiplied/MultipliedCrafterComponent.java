@@ -179,6 +179,11 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 				}
 			}
 			
+			if(input.probability() == 0f && countItemsInHatches >= input.amount())
+			{
+				continue;
+			}
+			
 			int multiplier = countItemsInHatches / input.amount();
 			if(multiplier < itemMultiplier)
 			{
@@ -250,6 +255,11 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 				{
 					countFluidInHatches += stack.getAmount();
 				}
+			}
+			
+			if(input.probability() == 0f && countFluidInHatches >= input.amount())
+			{
+				continue;
 			}
 			
 			int multiplier = (int) (countFluidInHatches / input.amount());
@@ -325,7 +335,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 					continue;
 				}
 			}
-			int remainingAmount = input.amount() * tryRecipeMultiplier;
+			int remainingAmount = input.amount() * (input.probability() == 0 ? 1 : tryRecipeMultiplier);
 			for(ConfigurableItemStack stack : stacks)
 			{
 				if(stack.getAmount() > 0 && input.matches(stack.getResource().toStack()))
@@ -371,7 +381,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 					continue;
 				}
 			}
-			long remainingAmount = input.amount() * tryRecipeMultiplier;
+			long remainingAmount = input.amount() * (input.probability() == 0 ? 1 : tryRecipeMultiplier);
 			for(ConfigurableFluidStack stack : stacks)
 			{
 				if(stack.getResource().equals(FluidVariant.of(input.fluid())))
