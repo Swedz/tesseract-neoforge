@@ -64,6 +64,13 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 	}
 	
 	@Override
+	public void tick()
+	{
+		super.tick();
+		overclock.tick(this);
+	}
+	
+	@Override
 	public long getBaseRecipeEu()
 	{
 		return overclock.getRecipeEu(steel ? 4 : 2);
