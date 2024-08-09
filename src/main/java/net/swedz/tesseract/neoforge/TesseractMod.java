@@ -26,18 +26,13 @@ public final class TesseractMod
 	
 	public TesseractMod(IEventBus bus)
 	{
-		if(isMILoaded())
+		if(ModLoadedHelper.isLoaded("modern_industrialization"))
 		{
 			MIOnly.init(bus);
 		}
 		
 		bus.addListener(GatherDataEvent.class, (event) ->
 				event.getGenerator().addProvider(event.includeClient(), new LanguageDatagenProvider(event)));
-	}
-	
-	public static boolean isMILoaded()
-	{
-		return ModLoadedHelper.isLoaded("modern_industrialization");
 	}
 	
 	private static final class MIOnly

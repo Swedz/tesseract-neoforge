@@ -5,7 +5,7 @@ import net.neoforged.neoforgespi.language.IModFileInfo;
 import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import net.neoforged.neoforgespi.locating.IModFile;
-import net.swedz.tesseract.neoforge.TesseractMod;
+import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookListener;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
@@ -13,6 +13,8 @@ import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.hook.TesseractMIHookEntrypoint;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
@@ -24,6 +26,8 @@ import java.util.function.BiConsumer;
 
 public final class MIMixinPlugin implements IMixinConfigPlugin
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger("Tesseract API/MIMixinPlugin");
+	
 	private <H> boolean registerEntrypoint(ModFileScanData data, Class<?> entrypointClass, Class<H> hookClass, BiConsumer<String, H> register) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
 	{
 		if(hookClass.isAssignableFrom(entrypointClass))
@@ -51,6 +55,7 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 	@Override
 	public void onLoad(String mixinPackage)
 	{
+		LOGGER.info("Starting MI hook entrypoint loader");
 		Type entrypointType = Type.getType(TesseractMIHookEntrypoint.class);
 		for(ModFileScanData data : this.getAllScanData())
 		{
@@ -79,16 +84,17 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 						
 						if(!registered)
 						{
-							TesseractMod.LOGGER.error("TesseractMIHookEntrypoint {} does not implement a valid hook entrypoint", annotation.memberName());
+							LOGGER.error("TesseractMIHookEntrypoint {} does not implement a valid hook entrypoint", annotation.memberName());
 						}
 					}
 				}
 				catch (Throwable ex)
 				{
-					TesseractMod.LOGGER.error("Exception constructing entrypoint:", ex);
+					LOGGER.error("Exception constructing entrypoint:", ex);
 				}
 			}
 		}
+		LOGGER.info("Done MI hook entrypoint loader");
 	}
 	
 	@Override
@@ -100,7 +106,7 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName)
 	{
-		return TesseractMod.isMILoaded();
+		return ModLoadedHelper.isLoaded("modern_industrialization");
 	}
 	
 	@Override
