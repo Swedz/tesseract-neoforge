@@ -539,7 +539,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 					ConfigurableFluidStack stack = stacks.get(j);
 					FluidVariant outputKey = FluidVariant.of(output.fluid());
 					if(stack.isResourceAllowedByLock(outputKey)
-							&& ((tries == 1 && stack.isResourceBlank()) || stack.getResource().equals(outputKey)))
+					   && ((tries == 1 && stack.isResourceBlank()) || stack.getResource().equals(outputKey)))
 					{
 						long inserted = Math.min(output.amount() * recipeMultiplier, stack.getRemainingSpace());
 						if(inserted > 0)
