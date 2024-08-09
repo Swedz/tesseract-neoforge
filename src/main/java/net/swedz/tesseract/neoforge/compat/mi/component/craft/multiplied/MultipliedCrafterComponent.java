@@ -695,7 +695,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 				// If there is only one value in the tag, pick that one
 				if(input.getInputItems().size() == 1)
 				{
-					targetItem = input.getInputItems().get(0);
+					targetItem = input.getInputItems().getFirst();
 				}
 			}
 			
