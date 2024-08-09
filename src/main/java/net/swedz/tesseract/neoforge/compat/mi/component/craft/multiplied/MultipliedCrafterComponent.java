@@ -4,12 +4,14 @@ import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.inventory.AbstractConfigurableStack;
 import aztech.modern_industrialization.inventory.ConfigurableFluidStack;
 import aztech.modern_industrialization.inventory.ConfigurableItemStack;
+import aztech.modern_industrialization.inventory.MIItemStorage;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
 import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.item.ItemVariant;
+import aztech.modern_industrialization.thirdparty.fabrictransfer.api.transaction.Transaction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -199,48 +201,45 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	
 	private int calculateItemOutputRecipeMultiplier(MachineRecipe recipe)
 	{
-		List<ItemStack> itemsInHatches = inventory.getItemOutputs().stream()
-				.map((item) -> item.getResource().toStack((int) item.getAmount()))
-				.toList();
-		
-		int itemMultiplier = this.getMaxMultiplier();
-		for(MachineRecipe.ItemOutput output : recipe.itemOutputs)
+		int multiplier = 1;
+		int maxMultiplier = this.getMaxMultiplier();
+		while(multiplier < maxMultiplier)
 		{
-			if(output.probability() < 1)
+			int middleMultiplier = (multiplier + maxMultiplier + 1) / 2;
+			if(this.canItemOutputsAllFit(recipe, middleMultiplier))
 			{
-				continue;
+				multiplier = middleMultiplier;
 			}
-			
-			int maxOutputCount = output.amount() * this.getMaxMultiplier();
-			
-			int outputSpace = 0;
-			for(ConfigurableItemStack item : inventory.getItemOutputs())
+			else
 			{
-				ItemVariant key = item.getResource();
-				if(key.getItem() == output.variant().getItem() || key.isBlank())
-				{
-					int remainingCapacity = (int) item.getRemainingCapacityFor(output.variant());
-					outputSpace += remainingCapacity;
-					if(outputSpace >= maxOutputCount)
-					{
-						outputSpace = maxOutputCount;
-						break;
-					}
-				}
-			}
-			
-			int multiplier = outputSpace / output.amount();
-			if(multiplier < itemMultiplier)
-			{
-				itemMultiplier = multiplier;
-			}
-			if(itemMultiplier <= 1)
-			{
-				break;
+				maxMultiplier = middleMultiplier - 1;
 			}
 		}
-		
-		return itemMultiplier;
+		return multiplier;
+	}
+	
+	private boolean canItemOutputsAllFit(MachineRecipe recipe, int multiplier)
+	{
+		try (Transaction transaction = Transaction.openOuter())
+		{
+			MIItemStorage outputStorage = new MIItemStorage(inventory.getItemOutputs());
+			
+			for(MachineRecipe.ItemOutput output : recipe.itemOutputs)
+			{
+				if(output.probability() < 1)
+				{
+					continue;
+				}
+				
+				int outputAmount = output.amount() * multiplier;
+				long inserted = outputStorage.insertAllSlot(output.variant(), outputAmount, transaction);
+				if(inserted != outputAmount)
+				{
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 	
 	private int calculateFluidInputRecipeMultiplier(MachineRecipe recipe)
