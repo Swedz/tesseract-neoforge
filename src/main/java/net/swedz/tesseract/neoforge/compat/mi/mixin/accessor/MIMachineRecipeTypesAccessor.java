@@ -2,11 +2,10 @@ package net.swedz.tesseract.neoforge.compat.mi.mixin.accessor;
 
 import aztech.modern_industrialization.machines.init.MIMachineRecipeTypes;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
-import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-import java.util.function.Function;
+import java.util.List;
 
 @Mixin(
 		value = MIMachineRecipeTypes.class,
@@ -14,8 +13,8 @@ import java.util.function.Function;
 )
 public interface MIMachineRecipeTypesAccessor
 {
-	@Invoker("create")
-	static MachineRecipeType create(String name, Function<ResourceLocation, MachineRecipeType> ctor)
+	@Accessor("recipeTypes")
+	static List<MachineRecipeType> getRecipeTypes()
 	{
 		throw new UnsupportedOperationException();
 	}

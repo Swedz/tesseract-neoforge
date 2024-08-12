@@ -4,6 +4,7 @@ import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.components.OverclockComponent;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
+import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
 
 import java.util.List;
@@ -14,9 +15,9 @@ public class SteamMultipliedCraftingMultiblockBlockEntity extends AbstractSteamM
 	protected final int               maxMultiplier;
 	protected final EuCostTransformer euCostTransformer;
 	
-	public SteamMultipliedCraftingMultiblockBlockEntity(BEP bep, String name, ShapeTemplate[] shapeTemplates, List<OverclockComponent.Catalyst> overclockCatalysts, MachineRecipeType recipeType, int maxMultiplier, EuCostTransformer euCostTransformer)
+	public SteamMultipliedCraftingMultiblockBlockEntity(BEP bep, ResourceLocation id, ShapeTemplate[] shapeTemplates, List<OverclockComponent.Catalyst> overclockCatalysts, MachineRecipeType recipeType, int maxMultiplier, EuCostTransformer euCostTransformer)
 	{
-		super(bep, name, shapeTemplates, overclockCatalysts);
+		super(bep, id, shapeTemplates, overclockCatalysts);
 		
 		this.recipeType = recipeType;
 		this.maxMultiplier = maxMultiplier;

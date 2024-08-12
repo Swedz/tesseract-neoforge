@@ -4,6 +4,7 @@ import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.init.MachineTier;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
+import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
 
 public class ElectricMultipliedCraftingMultiblockBlockEntity extends AbstractElectricMultipliedCraftingMultiblockBlockEntity
@@ -12,11 +13,11 @@ public class ElectricMultipliedCraftingMultiblockBlockEntity extends AbstractEle
 	protected final int               maxMultiplier;
 	protected final EuCostTransformer euCostTransformer;
 	
-	public ElectricMultipliedCraftingMultiblockBlockEntity(BEP bep, String name, ShapeTemplate[] shapeTemplates,
+	public ElectricMultipliedCraftingMultiblockBlockEntity(BEP bep, ResourceLocation id, ShapeTemplate[] shapeTemplates,
 														   MachineTier machineTier,
 														   MachineRecipeType recipeType, int maxMultiplier, EuCostTransformer euCostTransformer)
 	{
-		super(bep, name, shapeTemplates, machineTier);
+		super(bep, id, shapeTemplates, machineTier);
 		
 		this.recipeType = recipeType;
 		this.maxMultiplier = maxMultiplier;

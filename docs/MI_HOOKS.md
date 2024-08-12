@@ -37,10 +37,10 @@ It is strongly recommended to use datagen for creating assets for things registe
 There are some cases where some assets must still get registered under MI's namespace. Aside from minor annoyance, this isn't really that much of an issue.
 
 #### Language
-If you create any machine recipe types in your hook listener, you may notice that the english name you provided is not displaying in your recipe indexer (JEI/REI/EMI). This can be resolved by adding the following line of code to your `GatherDataEvent` listener and running your datagen.
+If you create any machine recipe types in your hook listener, you may notice that the english name you provided is not displaying in your recipe indexer (JEI/REI/EMI). This can be resolved by adding the following line of code to your implementation of `LanguageProvider` and running your datagen.
 
 ```java
-MIDatagenHooks.Client.addLanguageHook(event, "<your mod id>");
+MIDatagenHooks.Client.withLanguageHook(this, "<your mod id>");
 ```
 
 #### Machine Casing Models

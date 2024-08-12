@@ -1,13 +1,16 @@
 package net.swedz.tesseract.neoforge.datagen.mi;
 
 import aztech.modern_industrialization.datagen.texture.MISpriteSourceProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.swedz.tesseract.neoforge.datagen.mi.client.LanguageMIHookDatagenProvider;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
 import net.swedz.tesseract.neoforge.datagen.mi.client.MachineCasingModelsMIHookDatagenProvider;
 import net.swedz.tesseract.neoforge.datagen.mi.client.TexturesMIHookDatagenProvider;
 import net.swedz.tesseract.neoforge.registry.holder.FluidHolder;
 
 import java.util.Collection;
+import java.util.Map;
 
 public final class MIDatagenHooks
 {
@@ -23,9 +26,12 @@ public final class MIDatagenHooks
 			event.getGenerator().addProvider(event.includeClient(), new TexturesMIHookDatagenProvider(event, modId, fluidHolders));
 		}
 		
-		public static void addLanguageHook(GatherDataEvent event, String modId)
+		public static void withLanguageHook(LanguageProvider languageProvider, String modId)
 		{
-			event.getGenerator().addProvider(event.includeClient(), new LanguageMIHookDatagenProvider(event, modId));
+			for(Map.Entry<ResourceLocation, String> entry : MIHookTracker.getReiCategoryNames(modId))
+			{
+				languageProvider.add("rei_categories.%s.%s".formatted(entry.getKey().getNamespace(), entry.getKey().getPath()), entry.getValue());
+			}
 		}
 		
 		public static void addMachineCasingModelsHook(GatherDataEvent event, String modId)

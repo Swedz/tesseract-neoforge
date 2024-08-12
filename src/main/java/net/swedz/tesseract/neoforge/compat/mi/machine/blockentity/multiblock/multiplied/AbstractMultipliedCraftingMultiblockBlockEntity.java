@@ -7,6 +7,7 @@ import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
 import aztech.modern_industrialization.machines.guicomponents.ReiSlotLocking;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccessBehavior;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
@@ -20,9 +21,9 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 {
 	protected final MultipliedCrafterComponent crafter;
 	
-	public AbstractMultipliedCraftingMultiblockBlockEntity(BEP bep, String name, ShapeTemplate[] shapeTemplates)
+	public AbstractMultipliedCraftingMultiblockBlockEntity(BEP bep, ResourceLocation id, ShapeTemplate[] shapeTemplates)
 	{
-		super(bep, new MachineGuiParameters.Builder(name, false).backgroundHeight(200).build(), shapeTemplates);
+		super(bep, new MachineGuiParameters.Builder(id, false).backgroundHeight(200).build(), shapeTemplates);
 		
 		this.crafter = new MultipliedCrafterComponent(
 				this, inventory, this,

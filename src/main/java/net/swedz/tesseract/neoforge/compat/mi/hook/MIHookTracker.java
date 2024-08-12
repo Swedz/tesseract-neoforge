@@ -6,7 +6,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.swedz.tesseract.neoforge.datagen.mi.client.MachineCasingModelsMIHookDatagenProvider;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -67,21 +66,20 @@ public final class MIHookTracker
 		return ResourceLocation.fromNamespaceAndPath(TRACKING_MOD_ID, id);
 	}
 	
-	private static final Map<String, List<Consumer<LanguageProvider>>>                         LANGUAGE              = Maps.newHashMap();
+	private static final Map<ResourceLocation, String>                                         REI_CATEGORY_NAMES    = Maps.newHashMap();
 	private static final Map<ResourceLocation, MachineModelProperties>                         MACHINE_MODELS        = Maps.newHashMap();
 	private static final Map<String, List<Consumer<MachineCasingModelsMIHookDatagenProvider>>> MACHINE_CASING_MODELS = Maps.newHashMap();
 	
-	public static List<Consumer<LanguageProvider>> getLanguageEntries(String modId)
+	public static List<Map.Entry<ResourceLocation, String>> getReiCategoryNames(String modId)
 	{
-		return LANGUAGE.computeIfAbsent(modId, (k) -> Lists.newArrayList());
+		return REI_CATEGORY_NAMES.entrySet().stream()
+				.filter((entry) -> entry.getKey().getNamespace().equals(modId))
+				.toList();
 	}
 	
-	public static void addReiCategoryLanguageEntry(String id, String englishName)
+	public static void addReiCategoryName(ResourceLocation categoryId, String englishName)
 	{
-		assertTracking();
-		
-		LANGUAGE.computeIfAbsent(TRACKING_MOD_ID, (k) -> Lists.newArrayList())
-				.add((provider) -> provider.add("rei_categories.%s.%s".formatted(MI.ID, id), englishName));
+		REI_CATEGORY_NAMES.put(categoryId, englishName);
 	}
 	
 	public static MachineModelProperties getMachineModel(ResourceLocation id)

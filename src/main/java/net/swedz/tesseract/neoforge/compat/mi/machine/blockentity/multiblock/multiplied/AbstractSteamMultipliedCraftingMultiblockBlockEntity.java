@@ -10,6 +10,7 @@ import aztech.modern_industrialization.util.Simulation;
 import com.google.common.collect.Lists;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -26,10 +27,10 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 	
 	private boolean steel;
 	
-	public AbstractSteamMultipliedCraftingMultiblockBlockEntity(BEP bep, String name, ShapeTemplate[] shapeTemplates,
+	public AbstractSteamMultipliedCraftingMultiblockBlockEntity(BEP bep, ResourceLocation id, ShapeTemplate[] shapeTemplates,
 																List<OverclockComponent.Catalyst> overclockCatalysts)
 	{
-		super(bep, name, shapeTemplates);
+		super(bep, id, shapeTemplates);
 		
 		overclock = new OverclockComponent(overclockCatalysts);
 		
