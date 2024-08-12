@@ -31,7 +31,7 @@ public abstract class RegisterMultiblockShapeReiRecipeHackMixin
 			method = "<init>",
 			at = @At("RETURN")
 	)
-	private void init(String controller, ShapeTemplate shapeTemplate,
+	private void init(String controller, ShapeTemplate shapeTemplate, String alternative,
 					  CallbackInfo callback)
 	{
 		for(String modId : MIHooks.getModIds())
@@ -41,8 +41,8 @@ public abstract class RegisterMultiblockShapeReiRecipeHackMixin
 			if(!controllerItem.isEmpty())
 			{
 				this.setController(controllerItem);
-				this.getMaterials().remove(0);
-				this.getMaterials().add(0, controllerItem);
+				this.getMaterials().removeFirst();
+				this.getMaterials().addFirst(controllerItem);
 				break;
 			}
 		}
