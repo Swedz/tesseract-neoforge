@@ -4,10 +4,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
-import net.swedz.tesseract.neoforge.compat.mi.network.TesseractMIPackets;
 import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
+import net.swedz.tesseract.neoforge.proxy.ProxyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,20 +24,9 @@ public final class TesseractMod
 	
 	public TesseractMod(IEventBus bus)
 	{
-		if(ModLoadedHelper.isLoaded("modern_industrialization"))
-		{
-			MIOnly.init(bus);
-		}
+		ProxyManager.initEntrypoints();
 		
 		bus.addListener(GatherDataEvent.class, (event) ->
 				event.getGenerator().addProvider(event.includeClient(), new LanguageDatagenProvider(event)));
-	}
-	
-	private static final class MIOnly
-	{
-		private static void init(IEventBus bus)
-		{
-			bus.addListener(RegisterPayloadHandlersEvent.class, TesseractMIPackets::init);
-		}
 	}
 }
