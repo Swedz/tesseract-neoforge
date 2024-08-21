@@ -10,7 +10,7 @@ import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookListener;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
-import net.swedz.tesseract.neoforge.compat.mi.hook.TesseractMIHookEntrypoint;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEntrypoint;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Tesseract API/MIMixinPlugin");
 	
-	private static final Type HOOK_ENTRYPOINT = Type.getType(TesseractMIHookEntrypoint.class);
+	private static final Type HOOK_ENTRYPOINT = Type.getType(MIHookEntrypoint.class);
 	
 	private <H> boolean registerEntrypoint(ModFileScanData data, Class<?> entrypointClass, Class<H> hookClass, BiConsumer<String, H> register) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
 	{
@@ -89,7 +89,7 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 						
 						if(!registered)
 						{
-							LOGGER.error("TesseractMIHookEntrypoint {} does not implement a valid hook entrypoint", annotation.memberName());
+							LOGGER.error("MIHookEntrypoint {} does not implement a valid hook entrypoint", annotation.memberName());
 						}
 					}
 					catch (Throwable ex)
