@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.network.packets;
+package net.swedz.tesseract.neoforge.compat.mi.network.packet;
 
 import aztech.modern_industrialization.machines.gui.MachineMenuServer;
 import aztech.modern_industrialization.network.MIStreamCodecs;

@@ -8,7 +8,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.swedz.tesseract.neoforge.Tesseract;
-import net.swedz.tesseract.neoforge.compat.mi.network.packets.UpdateMachineConfigurationPanelPacket;
+import net.swedz.tesseract.neoforge.compat.mi.network.packet.UpdateMachineConfigurationPanelPacket;
 
 import java.util.Map;
 import java.util.Set;
