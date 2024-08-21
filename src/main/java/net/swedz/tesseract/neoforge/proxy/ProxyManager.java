@@ -3,7 +3,7 @@ package net.swedz.tesseract.neoforge.proxy;
 import com.google.common.collect.Maps;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.ModFileScanData;
-import net.swedz.tesseract.neoforge.api.AnnotationDataHelper;
+import net.swedz.tesseract.neoforge.helper.AnnotationDataHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;

@@ -1,5 +1,6 @@
-package net.swedz.tesseract.neoforge.compat.mi.builtin;
+package net.swedz.tesseract.neoforge.compat.mi.hook.builtin;
 
+import net.swedz.tesseract.neoforge.compat.mi.TesseractMITooltips;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.configurationpanel.ConfigurationPanel;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.configurationpanel.ConfigurationPanelClient;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGui;

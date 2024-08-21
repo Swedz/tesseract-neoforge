@@ -13,7 +13,7 @@ import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAcce
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.MultipliedCrafterComponent;
 import net.swedz.tesseract.neoforge.compat.mi.helper.CommonGuiComponents;
-import net.swedz.tesseract.neoforge.compat.mi.machine.multiblock.BasicMultiblockMachineBlockEntity;
+import net.swedz.tesseract.neoforge.compat.mi.machine.blockentity.multiblock.BasicMultiblockMachineBlockEntity;
 
 import java.util.UUID;
 

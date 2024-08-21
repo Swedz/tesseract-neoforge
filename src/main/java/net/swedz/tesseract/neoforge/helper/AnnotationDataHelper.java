@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.api;
+package net.swedz.tesseract.neoforge.helper;
 
 import net.neoforged.fml.loading.modscan.ModAnnotation;
 import net.neoforged.neoforgespi.language.ModFileScanData;

@@ -19,7 +19,7 @@ import net.swedz.tesseract.neoforge.TesseractText;
 import java.util.List;
 
 import static aztech.modern_industrialization.MITooltips.*;
-import static net.swedz.tesseract.neoforge.compat.mi.builtin.TesseractMITooltips.*;
+import static net.swedz.tesseract.neoforge.compat.mi.TesseractMITooltips.*;
 
 public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity
 {

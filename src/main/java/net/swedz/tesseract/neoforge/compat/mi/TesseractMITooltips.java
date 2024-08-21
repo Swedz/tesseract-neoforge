@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.builtin;
+package net.swedz.tesseract.neoforge.compat.mi;
 
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
