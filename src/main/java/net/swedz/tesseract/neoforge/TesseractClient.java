@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.swedz.tesseract.neoforge.tooltips.TooltipHandler;
 
 @Mod(
-		value = TesseractMod.ID,
+		value = Tesseract.ID,
 		dist = Dist.CLIENT
 )
 public final class TesseractClient

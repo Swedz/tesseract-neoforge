@@ -3,7 +3,7 @@ package net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.swedz.tesseract.neoforge.TesseractMod;
+import net.swedz.tesseract.neoforge.Tesseract;
 
 import java.util.function.Supplier;
 
@@ -34,7 +34,7 @@ public abstract class EuCostTransformer
 		
 		public PercentageEuCostTransformer(Supplier<Float> percentage)
 		{
-			super(TesseractMod.id("percentage"));
+			super(Tesseract.id("percentage"));
 			this.percentage = percentage;
 		}
 		

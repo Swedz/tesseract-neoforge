@@ -4,12 +4,12 @@ import aztech.modern_industrialization.machines.GuiComponents;
 import aztech.modern_industrialization.machines.gui.GuiComponent;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.swedz.tesseract.neoforge.TesseractMod;
+import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccess;
 
 public final class ModularRecipeEfficiencyBar
 {
-	public static final ResourceLocation ID = TesseractMod.id("modular_recipe_efficiency");
+	public static final ResourceLocation ID = Tesseract.id("modular_recipe_efficiency");
 	
 	public static final class Server implements GuiComponent.Server<Data>
 	{

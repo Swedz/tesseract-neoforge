@@ -7,7 +7,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.swedz.tesseract.neoforge.TesseractMod;
+import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.compat.mi.network.packets.UpdateMachineConfigurationPanelPacket;
 
 import java.util.Map;
@@ -30,7 +30,7 @@ public final class TesseractMIPackets
 		
 		private static void init(RegisterPayloadHandlersEvent event)
 		{
-			PayloadRegistrar registrar = event.registrar(TesseractMod.ID);
+			PayloadRegistrar registrar = event.registrar(Tesseract.ID);
 			for(PacketRegistration<TesseractMIBasePacket> packetRegistration : PACKET_REGISTRATIONS)
 			{
 				registrar.playBidirectional(packetRegistration.packetType(), packetRegistration.packetCodec(), (packet, context) ->
@@ -56,7 +56,7 @@ public final class TesseractMIPackets
 	
 	public static <P extends TesseractMIBasePacket> void create(String path, Class<P> packetClass, StreamCodec<? super RegistryFriendlyByteBuf, P> packetCodec)
 	{
-		CustomPacketPayload.Type type = new CustomPacketPayload.Type<>(TesseractMod.id(path));
+		CustomPacketPayload.Type type = new CustomPacketPayload.Type<>(Tesseract.id(path));
 		Registry.PACKET_REGISTRATIONS.add(new Registry.PacketRegistration<>(type, packetClass, packetCodec));
 		Registry.PACKET_TYPES.put(packetClass, type);
 	}

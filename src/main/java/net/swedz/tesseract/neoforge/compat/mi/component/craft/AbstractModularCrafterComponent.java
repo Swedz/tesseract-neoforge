@@ -12,7 +12,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.swedz.tesseract.neoforge.TesseractMod;
+import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.machine.EfficiencyMIHookContext;
@@ -380,7 +380,7 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 		if(delayedActiveRecipe == null && usedEnergy > 0)
 		{
 			usedEnergy = 0;
-			TesseractMod.LOGGER.error("Had to set the usedEnergy of MultipliedCrafterComponent to 0, but that should never happen!");
+			Tesseract.LOGGER.error("Had to set the usedEnergy of MultipliedCrafterComponent to 0, but that should never happen!");
 		}
 		efficiencyTicks = tag.getInt("efficiencyTicks");
 		maxEfficiencyTicks = tag.getInt("maxEfficiencyTicks");

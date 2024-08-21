@@ -3,14 +3,14 @@ package net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock;
 import aztech.modern_industrialization.machines.gui.GuiComponent;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.swedz.tesseract.neoforge.TesseractMod;
+import net.swedz.tesseract.neoforge.Tesseract;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 public final class ModularMultiblockGui
 {
-	public static final ResourceLocation ID = TesseractMod.id("modular_multiblock");
+	public static final ResourceLocation ID = Tesseract.id("modular_multiblock");
 	
 	public static final class Server implements GuiComponent.Server<Data>
 	{

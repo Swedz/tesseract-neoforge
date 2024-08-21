@@ -24,6 +24,6 @@ public enum TesseractText implements TranslatableTextEnum
 	@Override
 	public String getTranslationKey()
 	{
-		return "text.%s.%s".formatted(TesseractMod.ID, this.name().toLowerCase());
+		return "text.%s.%s".formatted(Tesseract.ID, this.name().toLowerCase());
 	}
 }

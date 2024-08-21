@@ -6,7 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.swedz.tesseract.neoforge.TesseractMod;
+import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.compat.mi.network.TesseractMIPackets;
 import net.swedz.tesseract.neoforge.proxy.ProxyEntrypoint;
 import net.swedz.tesseract.neoforge.proxy.ProxyEnvironment;
@@ -17,7 +17,7 @@ public class TesseractMILoadedProxy extends TesseractMIProxy
 	@Override
 	public void init()
 	{
-		IEventBus bus = ModList.get().getModContainerById(TesseractMod.ID).orElseThrow().getEventBus();
+		IEventBus bus = ModList.get().getModContainerById(Tesseract.ID).orElseThrow().getEventBus();
 		
 		bus.addListener(RegisterPayloadHandlersEvent.class, TesseractMIPackets::init);
 	}

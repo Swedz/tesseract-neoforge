@@ -9,8 +9,8 @@ import net.swedz.tesseract.neoforge.proxy.ProxyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Mod(TesseractMod.ID)
-public final class TesseractMod
+@Mod(Tesseract.ID)
+public final class Tesseract
 {
 	public static final String ID   = "tesseract_api";
 	public static final String NAME = "Tesseract API";
@@ -22,7 +22,7 @@ public final class TesseractMod
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(NAME);
 	
-	public TesseractMod(IEventBus bus)
+	public Tesseract(IEventBus bus)
 	{
 		ProxyManager.initEntrypoints();
 		
