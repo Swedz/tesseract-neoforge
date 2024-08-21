@@ -8,8 +8,30 @@ import net.swedz.tesseract.neoforge.tooltip.Parser;
 import net.swedz.tesseract.neoforge.tooltip.TextLine;
 import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
+import static aztech.modern_industrialization.MITooltips.*;
+
 public final class MICompatibleTextLine extends TextLine
 {
+	public static MICompatibleTextLine line(TranslatableTextEnum text, Style style)
+	{
+		return new MICompatibleTextLine(text, style);
+	}
+	
+	public static MICompatibleTextLine line(MIText text, Style style)
+	{
+		return new MICompatibleTextLine(text, style);
+	}
+	
+	public static MICompatibleTextLine line(TranslatableTextEnum text)
+	{
+		return new MICompatibleTextLine(text, DEFAULT_STYLE);
+	}
+	
+	public static MICompatibleTextLine line(MIText text)
+	{
+		return new MICompatibleTextLine(text);
+	}
+	
 	public MICompatibleTextLine(TranslatableTextEnum text, Style style)
 	{
 		super(text, style);

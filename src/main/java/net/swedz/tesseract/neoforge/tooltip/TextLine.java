@@ -11,6 +11,16 @@ import java.util.List;
 
 public class TextLine implements Component
 {
+	public static TextLine line(TranslatableTextEnum text, Style style)
+	{
+		return new TextLine(text, style);
+	}
+	
+	public static TextLine line(TranslatableTextEnum text)
+	{
+		return new TextLine(text);
+	}
+	
 	protected final TranslatableTextEnum text;
 	protected final Style                style;
 	
