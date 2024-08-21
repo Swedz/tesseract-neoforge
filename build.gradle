@@ -19,6 +19,7 @@ base {
 }
 
 repositories {
+    mavenLocal()
     maven {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
