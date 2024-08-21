@@ -2,12 +2,14 @@ package net.swedz.tesseract.neoforge.proxy;
 
 import com.google.common.collect.Maps;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import net.swedz.tesseract.neoforge.api.AnnotationDataHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
@@ -54,6 +56,33 @@ public final class ProxyManager
 		return (Class<? extends Proxy>) lastProxyClass;
 	}
 	
+	private static boolean registerEntrypoint(
+			ModFileScanData.AnnotationData annotation,
+			EnumSet<ProxyEnvironment> environments,
+			Map<Class<? extends Proxy>, ProxyWrapper> proxies
+	) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
+	{
+		Class<?> entrypointClass = Class.forName(annotation.memberName());
+		if(Proxy.class.isAssignableFrom(entrypointClass))
+		{
+			Class<? extends Proxy> proxyClassReference = entrypointClass.asSubclass(Proxy.class);
+			Class<? extends Proxy> proxyKey = getProxyKey(proxyClassReference);
+			if(!proxies.containsKey(proxyKey) ||
+			   proxies.get(proxyKey).environments().contains(ProxyEnvironment.COMMON))
+			{
+				Proxy proxy = proxyClassReference.getConstructor().newInstance();
+				ProxyWrapper oldProxy = proxies.put(proxyKey, new ProxyWrapper(proxy, environments));
+				LOGGER.info("Loaded proxy entrypoint {} ({})", proxy.getClass().getName(), proxyKey.getSimpleName());
+				if(oldProxy != null)
+				{
+					LOGGER.info("Overriding proxy entrypoint {} ({})", oldProxy.proxy().getClass().getName(), proxyKey.getSimpleName());
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+	
 	@ApiStatus.Internal
 	public static void initEntrypoints()
 	{
@@ -86,24 +115,7 @@ public final class ProxyManager
 						String modId = (String) annotation.annotationData().getOrDefault("modid", "");
 						if(environments.stream().allMatch((e) -> e.test(modId)))
 						{
-							Class<?> entrypointClass = Class.forName(annotation.memberName());
-							if(Proxy.class.isAssignableFrom(entrypointClass))
-							{
-								Class<? extends Proxy> proxyClassReference = entrypointClass.asSubclass(Proxy.class);
-								Class<? extends Proxy> proxyKey = getProxyKey(proxyClassReference);
-								if(!proxies.containsKey(proxyKey) ||
-								   proxies.get(proxyKey).environments().contains(ProxyEnvironment.COMMON))
-								{
-									Proxy proxy = proxyClassReference.getConstructor().newInstance();
-									ProxyWrapper oldProxy = proxies.put(proxyKey, new ProxyWrapper(proxy, environments));
-									LOGGER.info("Loaded proxy entrypoint {} ({})", proxy.getClass().getName(), proxyKey.getSimpleName());
-									if(oldProxy != null)
-									{
-										LOGGER.info("Overriding proxy entrypoint {} ({})", oldProxy.proxy().getClass().getName(), proxyKey.getSimpleName());
-									}
-								}
-							}
-							else
+							if(!registerEntrypoint(annotation, environments, proxies))
 							{
 								LOGGER.error("Invalid proxy entrypoint {}: does not implement Proxy", annotation.memberName());
 							}

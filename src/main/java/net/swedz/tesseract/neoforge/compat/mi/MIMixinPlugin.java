@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -27,6 +28,8 @@ import java.util.function.BiConsumer;
 public final class MIMixinPlugin implements IMixinConfigPlugin
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Tesseract API/MIMixinPlugin");
+	
+	private static final Type HOOK_ENTRYPOINT = Type.getType(TesseractMIHookEntrypoint.class);
 	
 	private <H> boolean registerEntrypoint(ModFileScanData data, Class<?> entrypointClass, Class<H> hookClass, BiConsumer<String, H> register) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
 	{
@@ -56,14 +59,16 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 	public void onLoad(String mixinPackage)
 	{
 		LOGGER.info("Starting MI hook entrypoint loader");
-		Type entrypointType = Type.getType(TesseractMIHookEntrypoint.class);
-		for(ModFileScanData data : this.getAllScanData())
-		{
-			for(ModFileScanData.AnnotationData annotation : data.getAnnotations())
-			{
-				try
+		
+		this.getAllScanData().stream()
+				.flatMap((data) -> data.getAnnotations().stream()
+						.filter((annotation) -> HOOK_ENTRYPOINT.equals(annotation.annotationType()))
+						.map((annotation) -> Map.entry(data, annotation)))
+				.forEach((entry) ->
 				{
-					if(entrypointType.equals(annotation.annotationType()))
+					ModFileScanData data = entry.getKey();
+					ModFileScanData.AnnotationData annotation = entry.getValue();
+					try
 					{
 						Class<?> entrypointClass = Class.forName(annotation.memberName());
 						
@@ -87,13 +92,12 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 							LOGGER.error("TesseractMIHookEntrypoint {} does not implement a valid hook entrypoint", annotation.memberName());
 						}
 					}
-				}
-				catch (Throwable ex)
-				{
-					LOGGER.error("Exception constructing entrypoint:", ex);
-				}
-			}
-		}
+					catch (Throwable ex)
+					{
+						LOGGER.error("Exception constructing entrypoint:", ex);
+					}
+				});
+		
 		LOGGER.info("Done MI hook entrypoint loader");
 	}
 	
