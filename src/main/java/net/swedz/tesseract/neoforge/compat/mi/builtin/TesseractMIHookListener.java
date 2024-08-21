@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.builtinhook;
+package net.swedz.tesseract.neoforge.compat.mi.builtin;
 
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.configurationpanel.ConfigurationPanel;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.configurationpanel.ConfigurationPanelClient;

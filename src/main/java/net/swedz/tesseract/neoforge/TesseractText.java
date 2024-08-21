@@ -1,6 +1,6 @@
 package net.swedz.tesseract.neoforge;
 
-import net.swedz.tesseract.neoforge.tooltips.TranslatableTextEnum;
+import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
 public enum TesseractText implements TranslatableTextEnum
 {

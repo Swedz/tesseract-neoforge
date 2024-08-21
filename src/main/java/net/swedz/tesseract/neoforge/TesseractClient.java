@@ -6,7 +6,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.swedz.tesseract.neoforge.tooltips.TooltipHandler;
+import net.swedz.tesseract.neoforge.tooltip.TooltipHandler;
 
 @Mod(
 		value = Tesseract.ID,

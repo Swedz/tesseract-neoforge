@@ -25,7 +25,7 @@ import net.swedz.tesseract.neoforge.compat.mi.helper.ModularLubricantHelper;
 import java.util.List;
 
 import static aztech.modern_industrialization.MITooltips.*;
-import static net.swedz.tesseract.neoforge.compat.mi.builtinhook.TesseractMITooltips.*;
+import static net.swedz.tesseract.neoforge.compat.mi.builtin.TesseractMITooltips.*;
 
 public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity implements EnergyListComponentHolder
 {

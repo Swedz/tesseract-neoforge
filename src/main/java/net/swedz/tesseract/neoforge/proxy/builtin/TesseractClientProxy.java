@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.proxy.old;
+package net.swedz.tesseract.neoforge.proxy.builtin;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;

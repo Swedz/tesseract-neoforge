@@ -1,12 +1,12 @@
-package net.swedz.tesseract.neoforge.compat.mi.tooltips;
+package net.swedz.tesseract.neoforge.compat.mi.tooltip;
 
 import aztech.modern_industrialization.MIText;
 import aztech.modern_industrialization.MITooltips;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.swedz.tesseract.neoforge.tooltips.Parser;
-import net.swedz.tesseract.neoforge.tooltips.TextLine;
-import net.swedz.tesseract.neoforge.tooltips.TranslatableTextEnum;
+import net.swedz.tesseract.neoforge.tooltip.Parser;
+import net.swedz.tesseract.neoforge.tooltip.TextLine;
+import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
 public final class MICompatibleTextLine extends TextLine
 {

@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.tooltips;
+package net.swedz.tesseract.neoforge.tooltip;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.swedz.tesseract.neoforge.TesseractText;
 import net.swedz.tesseract.neoforge.compat.mi.proxy.TesseractMIProxy;
 import net.swedz.tesseract.neoforge.proxy.ProxyManager;
-import net.swedz.tesseract.neoforge.proxy.old.TesseractProxy;
+import net.swedz.tesseract.neoforge.proxy.builtin.TesseractProxy;
 
 import java.util.List;
 import java.util.Optional;

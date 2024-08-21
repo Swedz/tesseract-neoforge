@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.proxy.old;
+package net.swedz.tesseract.neoforge.proxy.builtin;
 
 import net.minecraft.world.entity.player.Player;
 import net.swedz.tesseract.neoforge.proxy.Proxy;

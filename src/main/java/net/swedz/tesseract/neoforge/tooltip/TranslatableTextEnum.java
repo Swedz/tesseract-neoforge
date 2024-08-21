@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.tooltips;
+package net.swedz.tesseract.neoforge.tooltip;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
