@@ -58,6 +58,7 @@ public final class ProxyManager
 	
 	private static boolean registerEntrypoint(
 			ModFileScanData.AnnotationData annotation,
+			int priority,
 			EnumSet<ProxyEnvironment> environments,
 			Map<Class<? extends Proxy>, ProxyWrapper> proxies
 	) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
@@ -67,11 +68,13 @@ public final class ProxyManager
 		{
 			Class<? extends Proxy> proxyClassReference = entrypointClass.asSubclass(Proxy.class);
 			Class<? extends Proxy> proxyKey = getProxyKey(proxyClassReference);
-			if(!proxies.containsKey(proxyKey) ||
-			   proxies.get(proxyKey).environments().contains(ProxyEnvironment.COMMON))
+			ProxyWrapper existingProxy = proxies.get(proxyKey);
+			if(existingProxy == null ||
+			   existingProxy.priority() < priority ||
+			   existingProxy.environments().contains(ProxyEnvironment.COMMON))
 			{
 				Proxy proxy = proxyClassReference.getConstructor().newInstance();
-				ProxyWrapper oldProxy = proxies.put(proxyKey, new ProxyWrapper(proxy, environments));
+				ProxyWrapper oldProxy = proxies.put(proxyKey, new ProxyWrapper(proxy, priority, environments));
 				LOGGER.info("Loaded proxy entrypoint {} ({})", proxy.getClass().getName(), proxyKey.getSimpleName());
 				if(oldProxy != null)
 				{
@@ -103,6 +106,7 @@ public final class ProxyManager
 				{
 					try
 					{
+						int priority = (int) annotation.annotationData().getOrDefault("priority", 0);
 						EnumSet<ProxyEnvironment> environments = AnnotationDataHelper.getEnumSetOrDefault(
 								annotation, ProxyEnvironment.class,
 								"environment", ProxyEnvironment.COMMON
@@ -115,7 +119,7 @@ public final class ProxyManager
 						String modId = (String) annotation.annotationData().getOrDefault("modid", "");
 						if(environments.stream().allMatch((e) -> e.test(modId)))
 						{
-							if(!registerEntrypoint(annotation, environments, proxies))
+							if(!registerEntrypoint(annotation, priority, environments, proxies))
 							{
 								LOGGER.error("Invalid proxy entrypoint {}: does not implement Proxy", annotation.memberName());
 							}
@@ -136,7 +140,7 @@ public final class ProxyManager
 		LOGGER.info("Done proxy manager entrypoint loader");
 	}
 	
-	private record ProxyWrapper(Proxy proxy, EnumSet<ProxyEnvironment> environments)
+	private record ProxyWrapper(Proxy proxy, int priority, EnumSet<ProxyEnvironment> environments)
 	{
 	}
 }
