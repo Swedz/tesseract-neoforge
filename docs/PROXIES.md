@@ -29,7 +29,6 @@ public class MyProxy implements Proxy {}
 Here's an example conditional proxy that only would get loaded on the client side.
 
 ```java
-
 @ProxyEntrypoint(environment = ProxyEnvironment.CLIENT)
 public class MyClientProxy extends MyProxy {}
 ```
@@ -38,7 +37,6 @@ There's also the option to make a conditional proxy that is only loaded if a cer
 how that would be done:
 
 ```java
-
 @ProxyEntrypoint(environment = ProxyEnvironment.MOD, modid = "<mod id>")
 public class MyModProxy extends MyProxy {}
 ```
