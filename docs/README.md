@@ -16,3 +16,9 @@ There are some relatively basic registry holders provided by Tesseract that are 
 registering blocks, items, and fluids. The MI Hook system uses the registry holders internally.
 
 Refer to [REGISTRY_HOLDERS.md](REGISTRY_HOLDERS.md) for further information.
+
+## Proxies
+
+Tesseract provides a very simple and quick way to implement proxies that have different load environments.
+
+Refer to [PROXIES.md](PROXIES.md) for further information.
