@@ -4,6 +4,7 @@ import aztech.modern_industrialization.MIText;
 import aztech.modern_industrialization.MITooltips;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.swedz.tesseract.neoforge.tooltip.BiParser;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 import net.swedz.tesseract.neoforge.tooltip.TextLine;
 import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
@@ -56,6 +57,13 @@ public final class MICompatibleTextLine extends TextLine
 	public <T> MICompatibleTextLine arg(T arg, Parser<T> parser)
 	{
 		super.arg(arg, parser);
+		return this;
+	}
+	
+	@Override
+	public <A, B> MICompatibleTextLine arg(A a, B b, BiParser<A, B> parser)
+	{
+		super.arg(a, b, parser);
 		return this;
 	}
 	

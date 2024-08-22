@@ -46,6 +46,13 @@ public class TextLine implements Component
 		return this;
 	}
 	
+	public <A, B> TextLine arg(A a, B b, BiParser<A, B> parser)
+	{
+		arguments.add(parser.parse(a, b));
+		this.markDirty();
+		return this;
+	}
+	
 	protected void markDirty()
 	{
 		component = null;

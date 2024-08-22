@@ -4,8 +4,9 @@ import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
-import net.swedz.tesseract.neoforge.api.BiParser;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
+import net.swedz.tesseract.neoforge.tooltip.BiParser;
+import net.swedz.tesseract.neoforge.tooltip.Parser;
 
 import static aztech.modern_industrialization.MITooltips.*;
 

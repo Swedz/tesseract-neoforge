@@ -18,8 +18,8 @@ import net.swedz.tesseract.neoforge.TesseractText;
 
 import java.util.List;
 
-import static aztech.modern_industrialization.MITooltips.*;
 import static net.swedz.tesseract.neoforge.compat.mi.TesseractMITooltips.*;
+import static net.swedz.tesseract.neoforge.compat.mi.tooltip.MICompatibleTextLine.*;
 
 public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity
 {
@@ -88,8 +88,8 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 	{
 		List<Component> tooltips = Lists.newArrayList();
 		tooltips.addAll(overclock.getTooltips());
-		tooltips.add(DEFAULT_PARSER.parse(TesseractText.MI_MACHINE_BATCHER_RECIPE.text(MACHINE_RECIPE_TYPE_PARSER.parse(false, this.getRecipeType()))));
-		tooltips.add(DEFAULT_PARSER.parse(TesseractText.MI_MACHINE_BATCHER_SIZE_AND_COST.text(DEFAULT_PARSER.parse(this.getMaxMultiplier()), EU_COST_TRANSFORMER_PARSER.parse(this.getEuCostTransformer()))));
+		tooltips.add(line(TesseractText.MI_MACHINE_BATCHER_RECIPE).arg(false, this.getRecipeType(), MACHINE_RECIPE_TYPE_PARSER));
+		tooltips.add(line(TesseractText.MI_MACHINE_BATCHER_SIZE_AND_COST).arg(this.getMaxMultiplier()).arg(this.getEuCostTransformer(), EU_COST_TRANSFORMER_PARSER));
 		return tooltips;
 	}
 }
