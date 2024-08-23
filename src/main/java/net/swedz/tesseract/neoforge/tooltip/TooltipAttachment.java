@@ -2,19 +2,146 @@ package net.swedz.tesseract.neoforge.tooltip;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 public final class TooltipAttachment implements Comparable<TooltipAttachment>
 {
+	public static TooltipAttachment multilinesOptional(TooltipFunction function)
+	{
+		return new TooltipAttachment(function);
+	}
+	
+	public static TooltipAttachment multilinesOptional(ItemFilter filter, TooltipFunction function)
+	{
+		return multilinesOptional(TooltipFunction.of(filter, function));
+	}
+	
+	public static TooltipAttachment multilinesOptional(ItemLike itemLike, TooltipFunction function)
+	{
+		return multilinesOptional(ItemFilter.of(itemLike), function);
+	}
+	
+	public static TooltipAttachment multilinesOptional(List<ResourceLocation> itemIds, TooltipFunction function)
+	{
+		return multilinesOptional(ItemFilter.of(itemIds), function);
+	}
+	
+	public static <I extends Item> TooltipAttachment multilinesOptional(Class<I> itemClass, TooltipFunction<I> function)
+	{
+		return multilinesOptional(ItemFilter.of(itemClass), function);
+	}
+	
+	public static TooltipAttachment multilines(ItemFilter filter, TooltipContentFunction function)
+	{
+		return multilinesOptional(TooltipFunction.of(filter, function));
+	}
+	
+	public static TooltipAttachment multilines(ItemLike itemLike, TooltipContentFunction function)
+	{
+		return multilines(ItemFilter.of(itemLike), function);
+	}
+	
+	public static TooltipAttachment multilines(List<ResourceLocation> itemIds, TooltipContentFunction function)
+	{
+		return multilines(ItemFilter.of(itemIds), function);
+	}
+	
+	public static <I extends Item> TooltipAttachment multilines(Class<I> itemClass, TooltipContentFunction<I> function)
+	{
+		return multilines(ItemFilter.of(itemClass), function);
+	}
+	
+	public static TooltipAttachment multilines(ItemFilter filter, List<Component> lines)
+	{
+		return multilinesOptional(TooltipFunction.of(filter, lines));
+	}
+	
+	public static TooltipAttachment multilines(ItemLike itemLike, List<Component> lines)
+	{
+		return multilines(ItemFilter.of(itemLike), lines);
+	}
+	
+	public static TooltipAttachment multilines(List<ResourceLocation> itemIds, List<Component> lines)
+	{
+		return multilines(ItemFilter.of(itemIds), lines);
+	}
+	
+	public static <I extends Item> TooltipAttachment multilines(Class<I> itemClass, List<Component> lines)
+	{
+		return multilines(ItemFilter.of(itemClass), lines);
+	}
+	
+	public static TooltipAttachment singleLineOptional(SingleLineTooltipFunction function)
+	{
+		return new TooltipAttachment(function);
+	}
+	
+	public static TooltipAttachment singleLineOptional(ItemFilter filter, SingleLineTooltipFunction function)
+	{
+		return multilinesOptional(TooltipFunction.of(filter, function));
+	}
+	
+	public static TooltipAttachment singleLineOptional(ItemLike itemLike, SingleLineTooltipFunction function)
+	{
+		return singleLineOptional(ItemFilter.of(itemLike), function);
+	}
+	
+	public static TooltipAttachment singleLineOptional(List<ResourceLocation> itemIds, SingleLineTooltipFunction function)
+	{
+		return singleLineOptional(ItemFilter.of(itemIds), function);
+	}
+	
+	public static <I extends Item> TooltipAttachment singleLineOptional(Class<I> itemClass, SingleLineTooltipFunction<I> function)
+	{
+		return singleLineOptional(ItemFilter.of(itemClass), function);
+	}
+	
+	public static TooltipAttachment singleLine(ItemFilter filter, SingleLineTooltipContentFunction function)
+	{
+		return multilinesOptional(TooltipFunction.of(filter, function));
+	}
+	
+	public static TooltipAttachment singleLine(ItemLike itemLike, SingleLineTooltipContentFunction function)
+	{
+		return singleLine(ItemFilter.of(itemLike), function);
+	}
+	
+	public static TooltipAttachment singleLine(List<ResourceLocation> itemIds, SingleLineTooltipContentFunction function)
+	{
+		return singleLine(ItemFilter.of(itemIds), function);
+	}
+	
+	public static <I extends Item> TooltipAttachment singleLine(Class<I> itemClass, SingleLineTooltipContentFunction<I> function)
+	{
+		return singleLine(ItemFilter.of(itemClass), function);
+	}
+	
+	public static TooltipAttachment singleLine(ItemFilter filter, Component line)
+	{
+		return multilinesOptional(TooltipFunction.of(filter, line));
+	}
+	
+	public static TooltipAttachment singleLine(ItemLike itemLike, Component line)
+	{
+		return singleLine(ItemFilter.of(itemLike), line);
+	}
+	
+	public static TooltipAttachment singleLine(List<ResourceLocation> itemIds, Component line)
+	{
+		return singleLine(ItemFilter.of(itemIds), line);
+	}
+	
+	public static <I extends Item> TooltipAttachment singleLine(Class<I> itemClass, Component line)
+	{
+		return singleLine(ItemFilter.of(itemClass), line);
+	}
+	
 	private final TooltipFunction function;
 	
 	private boolean requiresShift = true;
@@ -25,122 +152,6 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 		this.function = function;
 		TooltipHandler.register(this);
 	}
-	
-	//<editor-fold desc="Helper methods">
-	private static ItemTest toItemTest(ItemLike itemLike)
-	{
-		return (stack, item) -> item == itemLike.asItem();
-	}
-	
-	private static ItemTest toItemTest(List<ResourceLocation> itemIds)
-	{
-		return (stack, item) ->
-		{
-			ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
-			return itemIds.stream().anyMatch((itemId) -> itemId.equals(id));
-		};
-	}
-	
-	private static <I extends Item> ItemTest toItemTest(Class<I> itemClass)
-	{
-		return (stack, item) -> itemClass.isAssignableFrom(item.getClass());
-	}
-	
-	public static <C extends Component> TooltipAttachment of(ItemTest itemTest, C line)
-	{
-		return new TooltipAttachment((stack, item) -> itemTest.test(stack, item) ? Optional.of(List.of(line)) : Optional.empty());
-	}
-	
-	public static <C extends Component> TooltipAttachment of(ItemLike itemLike, C line)
-	{
-		return of(toItemTest(itemLike), line);
-	}
-	
-	public static <C extends Component> TooltipAttachment of(List<ResourceLocation> itemIds, C line)
-	{
-		return of(toItemTest(itemIds), line);
-	}
-	
-	public static <I extends Item, C extends Component> TooltipAttachment of(Class<I> itemClass, Function<I, C> line)
-	{
-		return of((stack, item) -> toItemTest(itemClass).test(stack, item) ? Optional.of(line.apply((I) item)) : Optional.empty());
-	}
-	
-	public static TooltipAttachment of(ItemTest itemTest, TranslatableTextEnum text, Style style)
-	{
-		return of(itemTest, new TextLine(text, style));
-	}
-	
-	public static TooltipAttachment of(ItemLike itemLike, TranslatableTextEnum text, Style style)
-	{
-		return of(itemLike, new TextLine(text, style));
-	}
-	
-	public static TooltipAttachment of(List<ResourceLocation> itemIds, TranslatableTextEnum text, Style style)
-	{
-		return of(itemIds, new TextLine(text, style));
-	}
-	
-	public static <I extends Item> TooltipAttachment of(Class<I> itemClass, TranslatableTextEnum text, Style style)
-	{
-		return of(itemClass, (__) -> new TextLine(text, style));
-	}
-	
-	public static TooltipAttachment of(SingleLineTooltipFunction function)
-	{
-		return new TooltipAttachment(function);
-	}
-	
-	public static <C extends Component> TooltipAttachment ofMultilines(ItemTest itemTest, List<C> lines)
-	{
-		return new TooltipAttachment((stack, item) -> itemTest.test(item) ? Optional.of(lines) : Optional.empty());
-	}
-	
-	public static <C extends Component> TooltipAttachment ofMultilines(ItemLike itemLike, List<C> lines)
-	{
-		return ofMultilines(toItemTest(itemLike), lines);
-	}
-	
-	public static <C extends Component> TooltipAttachment ofMultilines(List<ResourceLocation> itemIds, List<C> lines)
-	{
-		return ofMultilines(toItemTest(itemIds), lines);
-	}
-	
-	public static <I extends Item, C extends Component> TooltipAttachment ofMultilines(Class<I> itemClass, Function<I, List<C>> lines)
-	{
-		return ofMultilines((stack, item) -> toItemTest(itemClass).test(stack, item) ? Optional.of(lines.apply((I) item)) : Optional.empty());
-	}
-	
-	private static List<TextLine> toTextLines(Style style, TranslatableTextEnum... lines)
-	{
-		return Arrays.stream(lines).map((line) -> new TextLine(line, style)).toList();
-	}
-	
-	public static TooltipAttachment ofMultilines(ItemTest itemTest, Style style, TranslatableTextEnum... lines)
-	{
-		return ofMultilines(itemTest, toTextLines(style, lines));
-	}
-	
-	public static TooltipAttachment ofMultilines(ItemLike itemLike, Style style, TranslatableTextEnum... lines)
-	{
-		return ofMultilines(itemLike, toTextLines(style, lines));
-	}
-	
-	public static TooltipAttachment ofMultilines(List<ResourceLocation> itemIds, Style style, TranslatableTextEnum... lines)
-	{
-		return ofMultilines(itemIds, toTextLines(style, lines));
-	}
-	
-	public static <I extends Item> TooltipAttachment ofMultilines(Class<I> itemClass, Style style, TranslatableTextEnum... lines)
-	{
-		return ofMultilines(itemClass, (__) -> toTextLines(style, lines));
-	}
-	
-	public static TooltipAttachment ofMultilines(TooltipFunction function)
-	{
-		return new TooltipAttachment(function);
-	}
-	//</editor-fold>
 	
 	public Optional<List<? extends Component>> lines(ItemStack stack)
 	{
@@ -175,8 +186,23 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 		return -Integer.compare(priority, other.priority());
 	}
 	
-	public interface ItemTest
+	public interface ItemFilter
 	{
+		static ItemFilter of(ItemLike itemLike)
+		{
+			return (stack, item) -> item == itemLike.asItem();
+		}
+		
+		static ItemFilter of(List<ResourceLocation> itemIds)
+		{
+			return (stack, item) -> itemIds.contains(BuiltInRegistries.ITEM.getKey(item));
+		}
+		
+		static <I extends Item> ItemFilter of(Class<I> itemClass)
+		{
+			return (stack, item) -> itemClass.isAssignableFrom(item.getClass());
+		}
+		
 		boolean test(ItemStack stack, Item item);
 		
 		default boolean test(ItemStack stack)
@@ -190,18 +216,55 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 		}
 	}
 	
-	public interface TooltipFunction
+	public interface TooltipFunction<I extends Item>
 	{
-		Optional<List<? extends Component>> get(ItemStack stack, Item item);
+		static TooltipFunction of(ItemFilter filter, TooltipFunction function)
+		{
+			return (stack, item) -> filter.test(stack, item) ? function.get(stack, item) : Optional.empty();
+		}
+		
+		static TooltipFunction of(ItemFilter filter, TooltipContentFunction function)
+		{
+			return (stack, item) -> filter.test(stack, item) ? Optional.of(function.get(stack, item)) : Optional.empty();
+		}
+		
+		static TooltipFunction of(ItemFilter filter, List<Component> lines)
+		{
+			return TooltipFunction.of(filter, (TooltipContentFunction) (stack, item) -> lines);
+		}
+		
+		static TooltipFunction of(ItemFilter filter, Component line)
+		{
+			return TooltipFunction.of(filter, List.of(line));
+		}
+		
+		Optional<List<? extends Component>> get(ItemStack stack, I item);
 	}
 	
-	public interface SingleLineTooltipFunction extends TooltipFunction
+	public interface SingleLineTooltipFunction<I extends Item> extends TooltipFunction<I>
 	{
-		Optional<? extends Component> getSingle(ItemStack stack, Item item);
+		Optional<Component> getSingleLine(ItemStack stack, I item);
 		
-		default Optional<List<? extends Component>> get(ItemStack stack, Item item)
+		@Override
+		default Optional<List<? extends Component>> get(ItemStack stack, I item)
 		{
-			return this.getSingle(stack, item).map(List::of);
+			return this.getSingleLine(stack, item).map(List::of);
+		}
+	}
+	
+	public interface TooltipContentFunction<I extends Item>
+	{
+		List<? extends Component> get(ItemStack stack, I item);
+	}
+	
+	public interface SingleLineTooltipContentFunction<I extends Item> extends TooltipContentFunction<I>
+	{
+		Component getSingleLine(ItemStack stack, I item);
+		
+		@Override
+		default List<? extends Component> get(ItemStack stack, I item)
+		{
+			return List.of(this.getSingleLine(stack, item));
 		}
 	}
 }
