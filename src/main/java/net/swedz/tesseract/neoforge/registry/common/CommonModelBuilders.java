@@ -23,6 +23,19 @@ public final class CommonModelBuilders
 		return generated(item, item.identifier().id());
 	}
 	
+	public static Consumer<ItemModelBuilder> generatedOverlayed(ItemHolder item, String texture)
+	{
+		return (builder) -> builder
+				.parent(new ModelFile.UncheckedModelFile("item/generated"))
+				.texture("layer0", ResourceLocation.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))
+				.texture("layer1", ResourceLocation.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay"));
+	}
+	
+	public static Consumer<ItemModelBuilder> generatedOverlayed(ItemHolder item)
+	{
+		return generatedOverlayed(item, item.identifier().id());
+	}
+	
 	public static Consumer<ItemModelBuilder> handheld(ItemHolder item, String texture)
 	{
 		return (builder) -> builder
