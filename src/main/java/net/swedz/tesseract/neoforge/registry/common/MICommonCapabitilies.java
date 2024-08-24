@@ -7,7 +7,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 public final class MICommonCapabitilies
 {
-	public static <Type extends Item & ISimpleEnergyItem> void simpleEnergyItem(Type item, RegisterCapabilitiesEvent event)
+	public static <I extends Item & ISimpleEnergyItem> void simpleEnergyItem(I item, RegisterCapabilitiesEvent event)
 	{
 		event.registerItem(
 				EnergyApi.ITEM,
