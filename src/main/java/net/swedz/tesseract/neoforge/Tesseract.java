@@ -11,8 +11,10 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
+import net.swedz.tesseract.neoforge.event.ItemHurtEvent;
 import net.swedz.tesseract.neoforge.item.ArmorTickHandler;
 import net.swedz.tesseract.neoforge.item.ArmorUnequippedHandler;
+import net.swedz.tesseract.neoforge.item.ItemHurtHandler;
 import net.swedz.tesseract.neoforge.proxy.ProxyManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +64,14 @@ public final class Tesseract
 			   event.getFrom().getItem() instanceof ArmorUnequippedHandler handler)
 			{
 				handler.onUnequipArmor(event.getEntity(), event.getSlot(), event.getFrom(), event.getTo());
+			}
+		});
+		
+		NeoForge.EVENT_BUS.addListener(ItemHurtEvent.class, (event) ->
+		{
+			if(event.getItemStack().getItem() instanceof ItemHurtHandler handler)
+			{
+				handler.onHurt(event.getEntity(), event.getItemStack(), event.getDamageAmount());
 			}
 		});
 	}

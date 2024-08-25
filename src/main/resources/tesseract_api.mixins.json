@@ -5,6 +5,7 @@
     "compatibilityLevel": "JAVA_21",
     "mixins": [
         "event.FarmlandLoseMoistureEventMixin",
+        "event.ItemHurtEventMixin",
         "event.TreeGrowthEventMixin"
     ],
     "client": [],
