@@ -4,11 +4,14 @@
     "package": "net.swedz.tesseract.neoforge.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
+        "DynamicDyedItemApplyDyeColorMixin",
         "event.FarmlandLoseMoistureEventMixin",
         "event.ItemHurtEventMixin",
         "event.TreeGrowthEventMixin"
     ],
-    "client": [],
+    "client": [
+        "client.DynamicDyedItemDefaultDyeColorMixin"
+    ],
     "injectors": {
         "defaultRequire": 1
     }
