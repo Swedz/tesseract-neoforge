@@ -48,6 +48,19 @@ public final class CommonModelBuilders
 		return handheld(item, item.identifier().id());
 	}
 	
+	public static Consumer<ItemModelBuilder> handheldOverlayed(ItemHolder item, String texture)
+	{
+		return (builder) -> builder
+				.parent(new ModelFile.UncheckedModelFile("item/handheld"))
+				.texture("layer0", ResourceLocation.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))
+				.texture("layer1", ResourceLocation.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay"));
+	}
+	
+	public static Consumer<ItemModelBuilder> handheldOverlayed(ItemHolder item)
+	{
+		return handheldOverlayed(item, item.identifier().id());
+	}
+	
 	public static Consumer<ItemModelBuilder> block(ItemHolder item)
 	{
 		return (builder) -> builder
