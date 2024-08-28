@@ -26,7 +26,7 @@ repositories {
         content {
             // GrandPower
             includeGroup "dev.technici4n"
-            // MI
+            // Modern Industrialization
             includeGroup "aztech"
         }
     }
