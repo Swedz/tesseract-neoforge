@@ -15,6 +15,7 @@ import aztech.modern_industrialization.util.Simulation;
 import com.google.common.collect.Lists;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -23,8 +24,8 @@ import net.swedz.tesseract.neoforge.compat.mi.helper.ModularLubricantHelper;
 
 import java.util.List;
 
-import static aztech.modern_industrialization.MITooltips.*;
-import static net.swedz.tesseract.neoforge.compat.mi.builtinhook.TesseractMITooltips.*;
+import static net.swedz.tesseract.neoforge.compat.mi.TesseractMITooltips.*;
+import static net.swedz.tesseract.neoforge.compat.mi.tooltip.MICompatibleTextLine.*;
 
 public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity implements EnergyListComponentHolder
 {
@@ -35,10 +36,10 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 	
 	protected final List<EnergyComponent> energyInputs = Lists.newArrayList();
 	
-	public AbstractElectricMultipliedCraftingMultiblockBlockEntity(BEP bep, String name, ShapeTemplate[] shapeTemplates,
+	public AbstractElectricMultipliedCraftingMultiblockBlockEntity(BEP bep, ResourceLocation id, ShapeTemplate[] shapeTemplates,
 																   MachineTier machineTier)
 	{
-		super(bep, name, shapeTemplates);
+		super(bep, id, shapeTemplates);
 		
 		this.machineTier = machineTier;
 		
@@ -120,8 +121,8 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 	public List<Component> getTooltips()
 	{
 		return List.of(
-				DEFAULT_PARSER.parse(TesseractText.MI_MACHINE_BATCHER_RECIPE.text(MACHINE_RECIPE_TYPE_PARSER.parse(true, this.getRecipeType()))),
-				DEFAULT_PARSER.parse(TesseractText.MI_MACHINE_BATCHER_SIZE_AND_COST.text(DEFAULT_PARSER.parse(this.getMaxMultiplier()), EU_COST_TRANSFORMER_PARSER.parse(this.getEuCostTransformer())))
+				line(TesseractText.MI_MACHINE_BATCHER_RECIPE).arg(true, this.getRecipeType(), MACHINE_RECIPE_TYPE_PARSER),
+				line(TesseractText.MI_MACHINE_BATCHER_SIZE_AND_COST).arg(this.getMaxMultiplier()).arg(this.getEuCostTransformer(), EU_COST_TRANSFORMER_PARSER)
 		);
 	}
 }

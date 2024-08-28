@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.registry;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -21,7 +22,7 @@ public abstract class RegisteredObjectHolder<Thing, ActualThing extends Thing, S
 	
 	protected final Set<TagKey<Thing>> tags = Sets.newHashSet();
 	
-	protected Consumer<? super ActualThing> registrationListener;
+	protected final List<Consumer<? super ActualThing>> registrationListeners = Lists.newArrayList();
 	
 	private boolean locked;
 	
@@ -61,15 +62,12 @@ public abstract class RegisteredObjectHolder<Thing, ActualThing extends Thing, S
 	
 	public void triggerRegistrationListener()
 	{
-		if(registrationListener != null)
-		{
-			registrationListener.accept(this.get());
-		}
+		registrationListeners.forEach((listener) -> listener.accept(this.get()));
 	}
 	
 	public Self withRegistrationListener(Consumer<? super ActualThing> listener)
 	{
-		this.registrationListener = listener;
+		registrationListeners.add(listener);
 		return this.self();
 	}
 	

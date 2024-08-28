@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.machine.multiblock.members;
+package net.swedz.tesseract.neoforge.compat.mi.machine.multiblock.member;
 
 import aztech.modern_industrialization.machines.multiblocks.SimpleMember;
 import net.minecraft.world.level.block.Block;

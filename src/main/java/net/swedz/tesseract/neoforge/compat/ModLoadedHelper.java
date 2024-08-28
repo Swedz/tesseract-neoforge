@@ -7,7 +7,7 @@ public final class ModLoadedHelper
 {
 	public static boolean isLoaded(String modId)
 	{
-		return ModList.get() != null ?
+		return modId != null && !modId.isEmpty() && ModList.get() != null ?
 				ModList.get().isLoaded(modId) :
 				LoadingModList.get().getMods().stream().anyMatch((m) -> m.getModId().equals(modId));
 	}

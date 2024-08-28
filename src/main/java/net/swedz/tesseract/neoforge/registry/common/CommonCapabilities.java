@@ -7,7 +7,7 @@ import net.neoforged.neoforge.fluids.capability.wrappers.FluidBucketWrapper;
 
 public final class CommonCapabilities
 {
-	public static <Type extends Item> void bucketItem(Type item, RegisterCapabilitiesEvent event)
+	public static <I extends Item> void bucketItem(I item, RegisterCapabilitiesEvent event)
 	{
 		event.registerItem(Capabilities.FluidHandler.ITEM, (stack, context) -> new FluidBucketWrapper(stack), item);
 	}

@@ -10,7 +10,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.swedz.tesseract.neoforge.compat.mi.network.packets.UpdateMachineConfigurationPanelPacket;
+import net.swedz.tesseract.neoforge.compat.mi.network.packet.UpdateMachineConfigurationPanelPacket;
 
 import java.util.ArrayList;
 import java.util.List;

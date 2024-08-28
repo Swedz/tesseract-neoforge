@@ -19,17 +19,14 @@ base {
 }
 
 repositories {
-    maven {
-        name = "Modrinth"
-        url = "https://api.modrinth.com/maven"
-    }
+    mavenLocal()
     maven {
         name = "Modmaven"
         url = "https://modmaven.dev"
         content {
             // GrandPower
             includeGroup "dev.technici4n"
-            // MI
+            // Modern Industrialization
             includeGroup "aztech"
         }
     }
@@ -111,7 +108,8 @@ if (System.getenv("CURSEFORGE_API_KEY")) {
             changelogType = "markdown"
             delegate.changelog = System.getenv("MOD_CHANGELOG")
 
-            addGameVersion project.minecraft_version
+            def compatible_minecraft_versions = project.compatible_minecraft_versions.split(",")
+            compatible_minecraft_versions.each { addGameVersion it }
             addGameVersion "NeoForge"
             addGameVersion "Java 21"
 
@@ -138,7 +136,7 @@ if (System.getenv("MODRINTH_API_KEY")) {
 		versionType = project.release_type
         delegate.changelog = System.getenv("MOD_CHANGELOG")
 
-		gameVersions = [project.minecraft_version]
+        gameVersions = project.compatible_minecraft_versions.split(",")
 		loaders = ["neoforge"]
 
 		dependencies {
@@ -162,6 +160,11 @@ neoForge {
     accessTransformers = [
             "src/main/resources/${mod_id}.accesstransformer.cfg"
     ]
+
+    parchment {
+        mappingsVersion = project.parchment_mappings_version
+        minecraftVersion = project.minecraft_version
+    }
 
     runs {
         configureEach {

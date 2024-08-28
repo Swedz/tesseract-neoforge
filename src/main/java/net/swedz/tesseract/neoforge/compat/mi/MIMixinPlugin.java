@@ -10,7 +10,7 @@ import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookListener;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
-import net.swedz.tesseract.neoforge.compat.mi.hook.TesseractMIHookEntrypoint;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEntrypoint;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.ClassNode;
 import org.slf4j.Logger;
@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -28,6 +29,8 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Tesseract API/MIMixinPlugin");
 	
+	private static final Type HOOK_ENTRYPOINT = Type.getType(MIHookEntrypoint.class);
+	
 	private <H> boolean registerEntrypoint(ModFileScanData data, Class<?> entrypointClass, Class<H> hookClass, BiConsumer<String, H> register) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
 	{
 		if(hookClass.isAssignableFrom(entrypointClass))
@@ -35,6 +38,7 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 			Class<? extends H> hookClassReference = entrypointClass.asSubclass(hookClass);
 			H hook = hookClassReference.getConstructor().newInstance();
 			String id = data.getIModInfoData().getFirst().getMods().getFirst().getModId();
+			LOGGER.info("Registered entrypoint for mod {}: {}", id, hookClassReference.getName());
 			register.accept(id, hook);
 			return true;
 		}
@@ -56,14 +60,16 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 	public void onLoad(String mixinPackage)
 	{
 		LOGGER.info("Starting MI hook entrypoint loader");
-		Type entrypointType = Type.getType(TesseractMIHookEntrypoint.class);
-		for(ModFileScanData data : this.getAllScanData())
-		{
-			for(ModFileScanData.AnnotationData annotation : data.getAnnotations())
-			{
-				try
+		
+		this.getAllScanData().stream()
+				.flatMap((data) -> data.getAnnotations().stream()
+						.filter((annotation) -> HOOK_ENTRYPOINT.equals(annotation.annotationType()))
+						.map((annotation) -> Map.entry(data, annotation)))
+				.forEach((entry) ->
 				{
-					if(entrypointType.equals(annotation.annotationType()))
+					ModFileScanData data = entry.getKey();
+					ModFileScanData.AnnotationData annotation = entry.getValue();
+					try
 					{
 						Class<?> entrypointClass = Class.forName(annotation.memberName());
 						
@@ -84,16 +90,15 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 						
 						if(!registered)
 						{
-							LOGGER.error("TesseractMIHookEntrypoint {} does not implement a valid hook entrypoint", annotation.memberName());
+							LOGGER.error("MIHookEntrypoint {} does not implement a valid hook entrypoint", annotation.memberName());
 						}
 					}
-				}
-				catch (Throwable ex)
-				{
-					LOGGER.error("Exception constructing entrypoint:", ex);
-				}
-			}
-		}
+					catch (Throwable ex)
+					{
+						LOGGER.error("Exception constructing entrypoint:", ex);
+					}
+				});
+		
 		LOGGER.info("Done MI hook entrypoint loader");
 	}
 	

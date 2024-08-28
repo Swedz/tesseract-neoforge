@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.machine.multiblock;
+package net.swedz.tesseract.neoforge.compat.mi.machine.blockentity.multiblock;
 
 import aztech.modern_industrialization.api.machine.component.InventoryAccess;
 import aztech.modern_industrialization.api.machine.holder.MultiblockInventoryComponentHolder;

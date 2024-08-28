@@ -7,6 +7,7 @@ import aztech.modern_industrialization.machines.guicomponents.ProgressBar;
 import aztech.modern_industrialization.machines.guicomponents.RecipeEfficiencyBar;
 import aztech.modern_industrialization.machines.init.SingleBlockCraftingMachines;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
+import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
 
 import java.util.function.Consumer;
@@ -49,7 +50,7 @@ public final class SingleBlockCraftingMachinesMIHookContext implements MIHookCon
 						 int ioBucketCapacity,
 						 SingleBlockCraftingMachines.Config extraConfig)
 	{
-		SingleBlockCraftingMachines.registerMachineTiers(
+		HackedMachineRegistrationHelper.registerMachineTiers(
 				englishName, machine, type,
 				itemInputCount, itemOutputCount, fluidInputCount, fluidOutputCount,
 				guiParams, progressBarParams, efficiencyBarParams, energyBarParams,

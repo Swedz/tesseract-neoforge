@@ -1,5 +1,5 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook;
 
-public @interface TesseractMIHookEntrypoint
+public @interface MIHookEntrypoint
 {
 }

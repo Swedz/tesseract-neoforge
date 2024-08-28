@@ -28,7 +28,7 @@ import net.minecraft.server.packs.resources.ResourceProvider;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.swedz.tesseract.neoforge.TesseractMod;
+import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.registry.MIFluidProperties;
 import net.swedz.tesseract.neoforge.registry.holder.FluidHolder;
 import net.swedz.tesseract.neoforge.registry.holder.MIFluidHolder;
@@ -90,7 +90,7 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 		return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
 				.thenComposeAsync(v -> mtm.doEndWork(), Util.backgroundExecutor())
 				.thenRun(() -> mtm.markTexturesAsGenerated(fileHelper))
-				.thenRun(() -> TesseractMod.LOGGER.info("\"I used the png to destroy the png.\": 2 Electric Boogaloo"));
+				.thenRun(() -> Tesseract.LOGGER.info("\"I used the png to destroy the png.\": 2 Electric Boogaloo"));
 	}
 	
 	private void registerFluidTextures(TextureManager tm, MIFluidHolder fluid)

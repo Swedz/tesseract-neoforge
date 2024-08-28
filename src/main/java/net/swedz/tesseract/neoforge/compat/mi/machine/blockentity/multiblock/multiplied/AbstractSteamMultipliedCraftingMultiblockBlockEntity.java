@@ -10,6 +10,7 @@ import aztech.modern_industrialization.util.Simulation;
 import com.google.common.collect.Lists;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -17,8 +18,8 @@ import net.swedz.tesseract.neoforge.TesseractText;
 
 import java.util.List;
 
-import static aztech.modern_industrialization.MITooltips.*;
-import static net.swedz.tesseract.neoforge.compat.mi.builtinhook.TesseractMITooltips.*;
+import static net.swedz.tesseract.neoforge.compat.mi.TesseractMITooltips.*;
+import static net.swedz.tesseract.neoforge.compat.mi.tooltip.MICompatibleTextLine.*;
 
 public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity
 {
@@ -26,10 +27,10 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 	
 	private boolean steel;
 	
-	public AbstractSteamMultipliedCraftingMultiblockBlockEntity(BEP bep, String name, ShapeTemplate[] shapeTemplates,
+	public AbstractSteamMultipliedCraftingMultiblockBlockEntity(BEP bep, ResourceLocation id, ShapeTemplate[] shapeTemplates,
 																List<OverclockComponent.Catalyst> overclockCatalysts)
 	{
-		super(bep, name, shapeTemplates);
+		super(bep, id, shapeTemplates);
 		
 		overclock = new OverclockComponent(overclockCatalysts);
 		
@@ -87,8 +88,8 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 	{
 		List<Component> tooltips = Lists.newArrayList();
 		tooltips.addAll(overclock.getTooltips());
-		tooltips.add(DEFAULT_PARSER.parse(TesseractText.MI_MACHINE_BATCHER_RECIPE.text(MACHINE_RECIPE_TYPE_PARSER.parse(false, this.getRecipeType()))));
-		tooltips.add(DEFAULT_PARSER.parse(TesseractText.MI_MACHINE_BATCHER_SIZE_AND_COST.text(DEFAULT_PARSER.parse(this.getMaxMultiplier()), EU_COST_TRANSFORMER_PARSER.parse(this.getEuCostTransformer()))));
+		tooltips.add(line(TesseractText.MI_MACHINE_BATCHER_RECIPE).arg(false, this.getRecipeType(), MACHINE_RECIPE_TYPE_PARSER));
+		tooltips.add(line(TesseractText.MI_MACHINE_BATCHER_SIZE_AND_COST).arg(this.getMaxMultiplier()).arg(this.getEuCostTransformer(), EU_COST_TRANSFORMER_PARSER));
 		return tooltips;
 	}
 }

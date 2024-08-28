@@ -23,6 +23,19 @@ public final class CommonModelBuilders
 		return generated(item, item.identifier().id());
 	}
 	
+	public static Consumer<ItemModelBuilder> generatedOverlayed(ItemHolder item, String texture)
+	{
+		return (builder) -> builder
+				.parent(new ModelFile.UncheckedModelFile("item/generated"))
+				.texture("layer0", ResourceLocation.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))
+				.texture("layer1", ResourceLocation.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay"));
+	}
+	
+	public static Consumer<ItemModelBuilder> generatedOverlayed(ItemHolder item)
+	{
+		return generatedOverlayed(item, item.identifier().id());
+	}
+	
 	public static Consumer<ItemModelBuilder> handheld(ItemHolder item, String texture)
 	{
 		return (builder) -> builder
@@ -33,6 +46,19 @@ public final class CommonModelBuilders
 	public static Consumer<ItemModelBuilder> handheld(ItemHolder item)
 	{
 		return handheld(item, item.identifier().id());
+	}
+	
+	public static Consumer<ItemModelBuilder> handheldOverlayed(ItemHolder item, String texture)
+	{
+		return (builder) -> builder
+				.parent(new ModelFile.UncheckedModelFile("item/handheld"))
+				.texture("layer0", ResourceLocation.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))
+				.texture("layer1", ResourceLocation.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay"));
+	}
+	
+	public static Consumer<ItemModelBuilder> handheldOverlayed(ItemHolder item)
+	{
+		return handheldOverlayed(item, item.identifier().id());
 	}
 	
 	public static Consumer<ItemModelBuilder> block(ItemHolder item)

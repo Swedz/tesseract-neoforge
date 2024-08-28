@@ -1,12 +1,12 @@
 package net.swedz.tesseract.neoforge;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
+import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
-public enum TesseractText
+public enum TesseractText implements TranslatableTextEnum
 {
 	MI_MACHINE_BATCHER_RECIPE("Can run %s recipes in batches."),
-	MI_MACHINE_BATCHER_SIZE_AND_COST("Runs in batches of up to %d at %s the EU cost.");
+	MI_MACHINE_BATCHER_SIZE_AND_COST("Runs in batches of up to %d at %s the EU cost."),
+	TOOLTIPS_SHIFT_REQUIRED("Press [Shift] for info");
 	
 	private final String englishText;
 	
@@ -15,23 +15,15 @@ public enum TesseractText
 		this.englishText = englishText;
 	}
 	
+	@Override
 	public String englishText()
 	{
 		return englishText;
 	}
 	
+	@Override
 	public String getTranslationKey()
 	{
-		return "text.%s.%s".formatted(TesseractMod.ID, this.name().toLowerCase());
-	}
-	
-	public MutableComponent text()
-	{
-		return Component.translatable(this.getTranslationKey());
-	}
-	
-	public MutableComponent text(Object... args)
-	{
-		return Component.translatable(this.getTranslationKey(), args);
+		return "text.%s.%s".formatted(Tesseract.ID, this.name().toLowerCase());
 	}
 }

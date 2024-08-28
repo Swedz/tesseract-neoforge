@@ -6,7 +6,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.resources.ResourceLocation;
-import net.swedz.tesseract.neoforge.TesseractMod;
+import net.swedz.tesseract.neoforge.Tesseract;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -16,7 +16,7 @@ import java.util.stream.IntStream;
  */
 public final class ConfigurationPanel
 {
-	public static final ResourceLocation ID = TesseractMod.id("configuration_panel");
+	public static final ResourceLocation ID = Tesseract.id("configuration_panel");
 	
 	public interface Behavior
 	{
