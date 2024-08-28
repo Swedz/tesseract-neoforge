@@ -38,6 +38,7 @@ public final class MIMixinPlugin implements IMixinConfigPlugin
 			Class<? extends H> hookClassReference = entrypointClass.asSubclass(hookClass);
 			H hook = hookClassReference.getConstructor().newInstance();
 			String id = data.getIModInfoData().getFirst().getMods().getFirst().getModId();
+			LOGGER.info("Registered entrypoint for mod {}: {}", id, hookClassReference.getName());
 			register.accept(id, hook);
 			return true;
 		}
