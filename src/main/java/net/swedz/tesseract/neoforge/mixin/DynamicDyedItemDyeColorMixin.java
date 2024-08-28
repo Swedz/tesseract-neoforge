@@ -9,9 +9,10 @@ import net.minecraft.world.item.component.DyedItemColor;
 import net.swedz.tesseract.neoforge.item.DynamicDyedItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(DyedItemColor.class)
-public class DynamicDyedItemApplyDyeColorMixin
+public class DynamicDyedItemDyeColorMixin
 {
 	@WrapOperation(
 			method = "applyDyes",
@@ -27,5 +28,21 @@ public class DynamicDyedItemApplyDyeColorMixin
 		return stack.getItem() instanceof DynamicDyedItem item ?
 				item.getDyeColor(dyeColor) :
 				original.call(dyeColor);
+	}
+	
+	@ModifyVariable(
+			method = "getOrDefault",
+			at = @At("HEAD"),
+			argsOnly = true
+	)
+	private static int getDefaultDyeColor(int defaultValue, ItemStack stack)
+	{
+		if(defaultValue == DyedItemColor.LEATHER_COLOR)
+		{
+			return stack.getItem() instanceof DynamicDyedItem item ?
+					item.getDefaultDyeColor() :
+					defaultValue;
+		}
+		return defaultValue;
 	}
 }

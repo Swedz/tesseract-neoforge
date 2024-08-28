@@ -5,14 +5,12 @@
     "compatibilityLevel": "JAVA_21",
     "mixins": [
         "DataComponentTooltipProviderMixin",
-        "DynamicDyedItemApplyDyeColorMixin",
+        "DynamicDyedItemDyeColorMixin",
         "event.FarmlandLoseMoistureEventMixin",
         "event.ItemHurtEventMixin",
         "event.TreeGrowthEventMixin"
     ],
-    "client": [
-        "client.DynamicDyedItemDefaultDyeColorMixin"
-    ],
+    "client": [],
     "injectors": {
         "defaultRequire": 1
     }
