@@ -4,6 +4,7 @@
     "package": "net.swedz.tesseract.neoforge.mixin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
+        "DataComponentTooltipProviderMixin",
         "DynamicDyedItemApplyDyeColorMixin",
         "event.FarmlandLoseMoistureEventMixin",
         "event.ItemHurtEventMixin",
