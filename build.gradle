@@ -12,7 +12,8 @@ configurations {
     compileClasspath.extendsFrom localImplementation
 }
 
-version = "${mod_version}+${minecraft_version}"
+var versionSimple = System.getenv("MOD_VERSION") ?: "0.0.0-local"
+version = "${versionSimple}-${minecraft_version}"
 group = mod_group_id
 base {
     archivesName = artifact_name
@@ -104,7 +105,7 @@ if (System.getenv("CURSEFORGE_API_KEY")) {
 
         project {
             id = project.curseforge_project
-            releaseType = project.release_type
+            releaseType = System.getenv("RELEASE_TYPE")
             changelogType = "markdown"
             delegate.changelog = System.getenv("MOD_CHANGELOG")
 
@@ -133,7 +134,7 @@ if (System.getenv("MODRINTH_API_KEY")) {
         projectId = project.modrinth_project
         versionNumber = "${version}"
         versionName = "${project.mod_name} ${version}"
-		versionType = project.release_type
+		versionType = System.getenv("RELEASE_TYPE")
         delegate.changelog = System.getenv("MOD_CHANGELOG")
 
         gameVersions = project.compatible_minecraft_versions.split(",").collect { it }
@@ -225,7 +226,7 @@ tasks.withType(ProcessResources).configureEach {
             loader_version_range                  : loader_version_range,
             mod_id                                : mod_id,
             mod_name                              : mod_name,
-            mod_version                           : version,
+            mod_version                           : versionSimple,
             mod_authors                           : mod_authors,
             mod_description                       : mod_description,
             mod_github                            : mod_github,
