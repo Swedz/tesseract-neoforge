@@ -50,7 +50,7 @@ repositories {
 }
 
 dependencies {
-    localImplementation "dev.emi:emi-neoforge:${emi_version}+${minecraft_version}"
+    localImplementation "dev.emi:emi-neoforge:${emi_version}"
 
     if (project.runtime_include_mi.toBoolean()) {
         localImplementation "aztech:Modern-Industrialization:${modern_industrialization_version}"
