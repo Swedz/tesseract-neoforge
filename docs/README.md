@@ -22,3 +22,10 @@ Refer to [REGISTRY_HOLDERS.md](REGISTRY_HOLDERS.md) for further information.
 Tesseract provides a very simple and quick way to implement proxies that have different load environments.
 
 Refer to [PROXIES.md](PROXIES.md) for further information.
+
+## Behaviors
+
+When you need to supply multiple behaviors for a system and grab them depending on context, the Behavior API has you 
+covered.
+
+Refer to [BEHAVIORS.md](BEHAVIORS.md) for further information.
