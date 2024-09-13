@@ -56,6 +56,11 @@ public interface ModularCrafterAccessBehavior
 		return maxRecipeEu;
 	}
 	
+	default boolean isOverdriving()
+	{
+		return false;
+	}
+	
 	// can't use getWorld() or the remapping will fail
 	Level getCrafterWorld();
 	

@@ -4,6 +4,7 @@ import aztech.modern_industrialization.api.machine.component.EnergyAccess;
 import aztech.modern_industrialization.api.machine.holder.EnergyListComponentHolder;
 import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.components.EnergyComponent;
+import aztech.modern_industrialization.machines.components.OverdriveComponent;
 import aztech.modern_industrialization.machines.components.RedstoneControlComponent;
 import aztech.modern_industrialization.machines.components.UpgradeComponent;
 import aztech.modern_industrialization.machines.guicomponents.SlotPanel;
@@ -33,6 +34,7 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 	
 	protected final UpgradeComponent         upgrades;
 	protected final RedstoneControlComponent redstoneControl;
+	protected final OverdriveComponent       overdrive;
 	
 	protected final List<EnergyComponent> energyInputs = Lists.newArrayList();
 	
@@ -45,12 +47,14 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 		
 		this.upgrades = new UpgradeComponent();
 		this.redstoneControl = new RedstoneControlComponent();
+		this.overdrive = new OverdriveComponent();
 		
-		this.registerComponents(upgrades, redstoneControl);
+		this.registerComponents(upgrades, redstoneControl, overdrive);
 		
 		this.registerGuiComponent(new SlotPanel.Server(this)
 				.withRedstoneControl(redstoneControl)
-				.withUpgrades(upgrades));
+				.withUpgrades(upgrades)
+				.withOverdrive(overdrive));
 	}
 	
 	@Override
@@ -79,11 +83,15 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 		}
 		if(!result.consumesAction())
 		{
-			result = mapComponentOrDefault(UpgradeComponent.class, upgrade -> upgrade.onUse(this, player, hand), result);
+			result = this.mapComponentOrDefault(UpgradeComponent.class, upgrade -> upgrade.onUse(this, player, hand), result);
 		}
 		if(!result.consumesAction())
 		{
 			result = redstoneControl.onUse(this, player, hand);
+		}
+		if(!result.consumesAction())
+		{
+			result = this.mapComponentOrDefault(OverdriveComponent.class, (overdrive) -> overdrive.onUse(this, player, hand), result);
 		}
 		return result;
 	}
@@ -115,6 +123,12 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 	public long getBaseMaxRecipeEu()
 	{
 		return machineTier.getMaxEu() + upgrades.getAddMaxEUPerTick();
+	}
+	
+	@Override
+	public boolean isOverdriving()
+	{
+		return overdrive.shouldOverdrive();
 	}
 	
 	@Override

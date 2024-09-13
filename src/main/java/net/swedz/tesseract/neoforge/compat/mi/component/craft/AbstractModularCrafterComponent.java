@@ -293,21 +293,29 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 		
 		long eu = 0;
 		boolean finished = false;
-		if(activeRecipe != null && (usedEnergy > 0 || started) && enabled)
+		if(activeRecipe != null && enabled)
 		{
-			recipeMaxEu = this.getRecipeMaxEu(this.getRecipeEuCost(activeRecipe), recipeEnergy, efficiencyTicks);
-			eu = this.doConditionsMatchForRecipe(activeRecipe) ? behavior.consumeEu(Math.min(recipeMaxEu, recipeEnergy - usedEnergy), ACT) : 0;
-			active = eu > 0;
-			usedEnergy += eu;
-			
-			if(usedEnergy == recipeEnergy)
+			if(usedEnergy > 0 || started)
 			{
-				this.putOutputs(activeRecipe, false, false);
+				recipeMaxEu = this.getRecipeMaxEu(this.getRecipeEuCost(activeRecipe), recipeEnergy, efficiencyTicks);
+				eu = this.doConditionsMatchForRecipe(activeRecipe) ? behavior.consumeEu(Math.min(recipeMaxEu, recipeEnergy - usedEnergy), ACT) : 0;
+				active = eu > 0;
+				usedEnergy += eu;
 				
-				this.clearLocks();
-				
-				usedEnergy = 0;
-				finished = true;
+				if(usedEnergy == recipeEnergy)
+				{
+					this.putOutputs(activeRecipe, false, false);
+					
+					this.clearLocks();
+					
+					usedEnergy = 0;
+					finished = true;
+				}
+			}
+			else if(behavior.isOverdriving())
+			{
+				eu = this.doConditionsMatchForRecipe(activeRecipe) ? behavior.consumeEu(recipeMaxEu, ACT) : 0;
+				active = eu > 0;
 			}
 		}
 		
