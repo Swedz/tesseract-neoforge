@@ -12,7 +12,7 @@ public record PacketContext(Class<? extends CustomPacket> packetClass, IPayloadC
 		return handle.flow().isClientbound();
 	}
 	
-	public void assetClientbound()
+	public void assertClientbound()
 	{
 		if(!this.isClientbound())
 		{
