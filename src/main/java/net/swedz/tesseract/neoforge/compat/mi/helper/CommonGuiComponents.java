@@ -38,9 +38,9 @@ public final class CommonGuiComponents
 		);
 	}
 	
-	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess crafter, Supplier<Long> baseEuSupplier, IsActiveComponent isActive, int height)
+	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess crafter, Supplier<Long> baseEuSupplier, IsActiveComponent isActive, int y, int height)
 	{
-		return new ModularMultiblockGui.Server(height, () ->
+		return new ModularMultiblockGui.Server(y, height, () ->
 		{
 			List<ModularMultiblockGuiLine> text = Lists.newArrayList();
 			
@@ -73,26 +73,36 @@ public final class CommonGuiComponents
 	
 	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess crafter, Supplier<Long> baseEuSupplier, IsActiveComponent isActive)
 	{
-		return standardMultiblockScreen(machine, crafter, baseEuSupplier, isActive, ModularMultiblockGui.H);
+		return standardMultiblockScreen(machine, crafter, baseEuSupplier, isActive, 0, ModularMultiblockGui.HEIGHT);
+	}
+	
+	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess crafter, IsActiveComponent isActive, int y, int height)
+	{
+		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, y, height);
 	}
 	
 	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess crafter, IsActiveComponent isActive, int height)
 	{
-		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, height);
+		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, 0, height);
 	}
 	
 	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess crafter, IsActiveComponent isActive)
 	{
-		return standardMultiblockScreen(machine, crafter, isActive, ModularMultiblockGui.H);
+		return standardMultiblockScreen(machine, crafter, isActive, ModularMultiblockGui.HEIGHT);
+	}
+	
+	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, int y, int height)
+	{
+		return standardMultiblockScreen(machine, null, null, isActive, y, height);
 	}
 	
 	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, int height)
 	{
-		return standardMultiblockScreen(machine, null, null, isActive, height);
+		return standardMultiblockScreen(machine, null, null, isActive, 0, height);
 	}
 	
 	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive)
 	{
-		return standardMultiblockScreen(machine, isActive, ModularMultiblockGui.H);
+		return standardMultiblockScreen(machine, isActive, ModularMultiblockGui.HEIGHT);
 	}
 }

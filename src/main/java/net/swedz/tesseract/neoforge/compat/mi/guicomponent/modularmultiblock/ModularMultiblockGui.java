@@ -14,24 +14,30 @@ public final class ModularMultiblockGui
 	
 	public static final class Server implements GuiComponent.Server<Data>
 	{
-		private final int height;
+		private final int y, height;
 		
 		private final Supplier<List<ModularMultiblockGuiLine>> textSupplier;
 		
-		public Server(int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
+		public Server(int y, int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
 		{
-			if(height <= 4 || height > H)
+			if(height <= 4)
 			{
-				throw new IllegalArgumentException("Provided height outside of acceptable bounds");
+				throw new IllegalArgumentException("Provided height outside of acceptable bounds: must be >4 but %d was provided".formatted(height));
 			}
+			this.y = y;
 			this.height = height;
 			this.textSupplier = textSupplier;
+		}
+		
+		public Server(int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
+		{
+			this(0, height, textSupplier);
 		}
 		
 		@Override
 		public Data copyData()
 		{
-			return new Data(height, textSupplier.get());
+			return new Data(y, height, textSupplier.get());
 		}
 		
 		@Override
@@ -49,6 +55,7 @@ public final class ModularMultiblockGui
 		@Override
 		public void writeCurrentData(RegistryFriendlyByteBuf buf)
 		{
+			buf.writeInt(y);
 			buf.writeInt(height);
 			
 			List<ModularMultiblockGuiLine> lines = textSupplier.get();
@@ -66,12 +73,12 @@ public final class ModularMultiblockGui
 		}
 	}
 	
-	private record Data(int height, List<ModularMultiblockGuiLine> text)
+	public record Data(int y, int height, List<ModularMultiblockGuiLine> text)
 	{
 	}
 	
-	public static final int X = 4;
-	public static final int Y = 16;
-	public static final int W = 166;
-	public static final int H = 80;
+	public static final int X      = 5;
+	public static final int Y      = 16;
+	public static final int WIDTH  = 166;
+	public static final int HEIGHT = 80;
 }
