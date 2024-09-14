@@ -24,7 +24,7 @@ import java.util.function.Supplier;
  */
 public final class TransferCache
 {
-	private final Optional<Supplier<IItemHandler>>  itemHandler;
+	private final Optional<Supplier<IItemHandler>> itemHandler;
 	private final Optional<Supplier<IFluidHandler>> fluidHandler;
 	
 	private BlockCapabilityCache<IItemHandler, Direction> outputCache;
