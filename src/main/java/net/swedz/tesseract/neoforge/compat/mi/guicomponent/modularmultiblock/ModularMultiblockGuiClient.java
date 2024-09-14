@@ -15,7 +15,7 @@ import java.util.List;
 
 public final class ModularMultiblockGuiClient implements GuiComponentClient
 {
-	private int height;
+	private int y, height;
 	
 	private List<ModularMultiblockGuiLine> text;
 	
@@ -27,6 +27,7 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 	@Override
 	public void readCurrentData(RegistryFriendlyByteBuf buf)
 	{
+		y = buf.readInt();
 		height = buf.readInt();
 		
 		int lineCount = buf.readVarInt();
@@ -47,34 +48,57 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 	{
 		private static final ResourceLocation TEXTURE = MI.id("textures/gui/container/multiblock_info.png");
 		
-		@Override
-		public void renderBackground(GuiGraphics graphics, int x, int y)
+		private static final int TEXTURE_WIDTH = ModularMultiblockGui.WIDTH;
+		private static final int TEXTURE_HEIGHT = ModularMultiblockGui.HEIGHT;
+		
+		private void renderInfoBackground(GuiGraphics graphics, int x, int y)
+		{
+			graphics.blit(
+					TEXTURE,
+					x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + ModularMultiblockGuiClient.this.y, 0, 0,
+					TEXTURE_WIDTH, 2, TEXTURE_WIDTH, TEXTURE_HEIGHT
+			);
+			
+			int remainingContentHeight = height - 4;
+			int maxSectionHeight = TEXTURE_HEIGHT - 4;
+			int offsetY = 0;
+			while(remainingContentHeight > 0)
+			{
+				int sectionHeight = Math.min(remainingContentHeight, maxSectionHeight);
+				graphics.blit(
+						TEXTURE,
+						x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + ModularMultiblockGuiClient.this.y + offsetY + 2, 0, 2,
+						TEXTURE_WIDTH, sectionHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT
+				);
+				offsetY += sectionHeight;
+				remainingContentHeight -= sectionHeight;
+			}
+			
+			graphics.blit(
+					TEXTURE,
+					x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + ModularMultiblockGuiClient.this.y + height - 2, 0, TEXTURE_HEIGHT - 2,
+					TEXTURE_WIDTH, 2, TEXTURE_WIDTH, TEXTURE_HEIGHT
+			);
+		}
+		
+		private void renderInfoText(GuiGraphics graphics, int x, int y)
 		{
 			Minecraft minecraftClient = Minecraft.getInstance();
 			Font font = minecraftClient.font;
 			
-			graphics.blit(
-					TEXTURE,
-					x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y, 0, 0,
-					ModularMultiblockGui.W, 2, ModularMultiblockGui.W, ModularMultiblockGui.H
-			);
-			graphics.blit(
-					TEXTURE,
-					x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + 2, 0, 2,
-					ModularMultiblockGui.W, height - 4, ModularMultiblockGui.W, ModularMultiblockGui.H
-			);
-			graphics.blit(
-					TEXTURE,
-					x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + height - 2, 0, ModularMultiblockGui.H - 2,
-					ModularMultiblockGui.W, 2, ModularMultiblockGui.W, ModularMultiblockGui.H
-			);
-			
-			int deltaY = 23;
+			int offsetY = 23;
 			for(ModularMultiblockGuiLine line : text)
 			{
-				graphics.drawString(font, line.text(), x + 9, y + deltaY, line.color(), false);
-				deltaY += 11;
+				graphics.drawString(font, line.text(), x + ModularMultiblockGui.X + 5, y + ModularMultiblockGuiClient.this.y + offsetY, line.color(), false);
+				offsetY += 11;
 			}
+		}
+		
+		@Override
+		public void renderBackground(GuiGraphics graphics, int x, int y)
+		{
+			this.renderInfoBackground(graphics, x, y);
+			this.renderInfoText(graphics, x, y);
 		}
 	}
 }
