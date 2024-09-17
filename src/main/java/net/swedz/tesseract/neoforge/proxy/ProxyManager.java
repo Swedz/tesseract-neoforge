@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.proxy;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.ModFileScanData;
@@ -10,9 +11,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public final class ProxyManager
 {
@@ -40,6 +45,112 @@ public final class ProxyManager
 			throw new IllegalArgumentException("No proxy found for class %s".formatted(proxyClass.getName()));
 		}
 		return (P) PROXIES.get(proxyClass);
+	}
+	
+	/**
+	 * Merges data from multiple proxy types into a single value.
+	 * <p>
+	 * Each proxy from the provided {@code proxyClasses} is processed in order, and for each one, the {@code merge}
+	 * function is called with the current value and the proxy. The result from the {@code merge} function becomes the
+	 * new current value. The process begins with the {@code startingValue} as the initial value.
+	 * </p>
+	 *
+	 * @param commonInterface the common interface {@code I} that is implemented by all proxies
+	 * @param startingValue   the initial value to start the merge with
+	 * @param merge           the function that merges data from a proxy of type {@code I} into the current value of
+	 *                        type {@code T}
+	 * @param proxyClasses    an array of proxy classes to merge from that implement both {@code Proxy} and the
+	 *                        specified common interface {@code I}
+	 * @return the final value after merging data from all proxies
+	 * @throws IllegalArgumentException if any proxy provided does not implement {@code I}
+	 */
+	@SafeVarargs
+	public static <T, I> T merge(Class<I> commonInterface, T startingValue, BiFunction<T, I, T> merge, Class<? extends Proxy>... proxyClasses)
+	{
+		for(Class<? extends Proxy> proxyClass : proxyClasses)
+		{
+			if(!commonInterface.isAssignableFrom(proxyClass))
+			{
+				throw new IllegalArgumentException("Cannot merge proxy class %s as it does not implement %s".formatted(proxyClass, commonInterface));
+			}
+		}
+		
+		T value = startingValue;
+		
+		for(Class<? extends Proxy> proxyClass : proxyClasses)
+		{
+			I proxy = (I) get(proxyClass);
+			value = merge.apply(value, proxy);
+		}
+		
+		return value;
+	}
+	
+	/**
+	 * Merges data from multiple proxy types and combines the results into a list.
+	 *
+	 * @param commonInterface the common interface {@code I} that is implemented by all proxies
+	 * @param merge           the function that returns a collection of values from each proxy, which are added to the
+	 *                        resulting list
+	 * @param proxyClasses    an array of proxy classes to merge from that implement both {@code Proxy} and the
+	 *                        specified common interface {@code I}
+	 * @return the list containing all the values collected from each proxy
+	 * @throws IllegalArgumentException if any proxy provided does not implement {@code I}
+	 */
+	@SafeVarargs
+	public static <T, I> List<T> mergeList(Class<I> commonInterface, Function<I, Collection<T>> merge, Class<? extends Proxy>... proxyClasses)
+	{
+		return merge(
+				commonInterface, Lists.newArrayList(),
+				(list, proxy) ->
+				{
+					list.addAll(merge.apply(proxy));
+					return list;
+				},
+				proxyClasses
+		);
+	}
+	
+	/**
+	 * Merges data from multiple proxy types and ensures that all return {@code true}.
+	 *
+	 * @param commonInterface the common interface {@code I} that is implemented by all proxies
+	 * @param merge           the function that returns a boolean from each proxy, which is combined with the current
+	 *                        value using the {@code &&} operator.
+	 * @param proxyClasses    an array of proxy classes to merge from that implement both {@code Proxy} and the
+	 *                        specified common interface {@code I}
+	 * @return {@code true} if all proxies return {@code true}; {@code false} otherwise
+	 * @throws IllegalArgumentException if any proxy provided does not implement {@code I}
+	 */
+	@SafeVarargs
+	public static <I> boolean mergeAnd(Class<I> commonInterface, Function<I, Boolean> merge, Class<? extends Proxy>... proxyClasses)
+	{
+		return merge(
+				commonInterface, true,
+				(value, proxy) -> value && merge.apply(proxy),
+				proxyClasses
+		);
+	}
+	
+	/**
+	 * Merges data from multiple proxy types and ensures that at least one returns {@code true}.
+	 *
+	 * @param commonInterface the common interface {@code I} that is implemented by all proxies
+	 * @param merge           the function that returns a boolean from each proxy, which is combined with the current
+	 *                        value using the {@code ||} operator.
+	 * @param proxyClasses    an array of proxy classes to merge from that implement both {@code Proxy} and the
+	 *                        specified common interface {@code I}
+	 * @return {@code true} if any proxies return {@code true}; {@code false} otherwise
+	 * @throws IllegalArgumentException if any proxy provided does not implement {@code I}
+	 */
+	@SafeVarargs
+	public static <I> boolean mergeOr(Class<I> commonInterface, Function<I, Boolean> merge, Class<? extends Proxy>... proxyClasses)
+	{
+		return merge(
+				commonInterface, false,
+				(value, proxy) -> value || merge.apply(proxy),
+				proxyClasses
+		);
 	}
 	
 	private static Class<? extends Proxy> getProxyKey(Class<? extends Proxy> proxyClass)
