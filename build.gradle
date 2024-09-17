@@ -80,7 +80,7 @@ task sourceJar(type: Jar) {
 
 static def trimChangelog(String changelog, int maxLength, boolean discordFormat) {
     if(discordFormat) {
-        changelog = changelog.replaceAll(/## What's Changed\n/, '')
+        changelog = changelog.replaceAll(/## What's Changed\r?\n/, '')
 
         changelog = changelog.replaceAll(/## New Contributors/, '**New Contributors**')
     }
