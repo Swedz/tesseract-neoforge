@@ -2,7 +2,7 @@ package net.swedz.tesseract.neoforge.packet;
 
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.swedz.tesseract.neoforge.proxy.ProxyManager;
+import net.swedz.tesseract.neoforge.proxy.Proxies;
 import net.swedz.tesseract.neoforge.proxy.builtin.TesseractProxy;
 
 public record PacketContext(Class<? extends CustomPacket> packetClass, IPayloadContext handle)
@@ -30,6 +30,6 @@ public record PacketContext(Class<? extends CustomPacket> packetClass, IPayloadC
 	
 	public Player getPlayer()
 	{
-		return this.isClientbound() ? ProxyManager.get(TesseractProxy.class).getClientPlayer() : handle.player();
+		return this.isClientbound() ? Proxies.get(TesseractProxy.class).getClientPlayer() : handle.player();
 	}
 }

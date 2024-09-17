@@ -7,7 +7,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.swedz.tesseract.neoforge.TesseractText;
 import net.swedz.tesseract.neoforge.compat.mi.proxy.TesseractMIProxy;
-import net.swedz.tesseract.neoforge.proxy.ProxyManager;
+import net.swedz.tesseract.neoforge.proxy.Proxies;
 import net.swedz.tesseract.neoforge.proxy.builtin.TesseractProxy;
 
 import java.util.List;
@@ -32,14 +32,14 @@ public final class TooltipHandler
 			for(TooltipAttachment tooltip : TOOLTIPS)
 			{
 				Optional<List<? extends Component>> maybeComponents = tooltip.lines(stack);
-				if(!tooltip.requiresShift() || ProxyManager.get(TesseractProxy.class).hasShiftDown())
+				if(!tooltip.requiresShift() || Proxies.get(TesseractProxy.class).hasShiftDown())
 				{
 					maybeComponents.ifPresent(lines::addAll);
 				}
 				else if(tooltip.requiresShift() && !hasPrintRequiredShift && maybeComponents.isPresent())
 				{
 					hasPrintRequiredShift = true;
-					if(ProxyManager.get(TesseractMIProxy.class).anyShiftTooltipsAreFor(stack, item))
+					if(Proxies.get(TesseractMIProxy.class).anyShiftTooltipsAreFor(stack, item))
 					{
 						continue;
 					}

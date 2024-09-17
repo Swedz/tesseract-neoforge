@@ -54,5 +54,5 @@ Using a proxy is pretty straight forward. Proxies are referenced to by their sup
 interface itself. Here's an example of how you can grab your proxy and use it:
 
 ```java
-ProxyManager.get(MyProxy.class).yourMethodHere();
+Proxies.get(MyProxy.class).yourMethodHere();
 ```

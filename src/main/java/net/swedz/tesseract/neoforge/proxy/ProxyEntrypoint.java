@@ -24,9 +24,9 @@ public @interface ProxyEntrypoint
 	ProxyEnvironment[] environment() default ProxyEnvironment.COMMON;
 	
 	/**
-	 * The id of the mod to check is loaded before this proxy entrypoint is loaded. Only used if {@link ProxyEntrypoint#environment()} includes {@link ProxyEnvironment#MOD}.
+	 * The ids of the mods to check are loaded before this proxy entrypoint is loaded. Only used if {@link ProxyEntrypoint#environment()} includes {@link ProxyEnvironment#MOD}.
 	 *
-	 * @return the mod id
+	 * @return the mod ids
 	 */
-	String modid() default "";
+	String[] modid() default {};
 }
