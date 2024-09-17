@@ -127,10 +127,10 @@ tasks.register('buildChangelog') {
         def changelog = System.getenv("MOD_CHANGELOG")
 
         def changelogTrimmedDiscord = trimChangelog(changelog, 1024, true)
-        githubEnvFile.append("MOD_CHANGELOG_TRIMMED_DISCORD=${changelogTrimmedDiscord}\n")
+        githubEnvFile.append("MOD_CHANGELOG_TRIMMED_DISCORD<<EOF\n${changelogTrimmedDiscord}\nEOF\n")
 
         def changelogTrimmedPublish = trimChangelog(changelog, 0, false)
-        githubEnvFile.append("MOD_CHANGELOG_TRIMMED_PUBLISH=${changelogTrimmedPublish}\n")
+        githubEnvFile.append("MOD_CHANGELOG_TRIMMED_PUBLISH<<EOF\n${changelogTrimmedPublish}\nEOF\n")
     }
 }
 
