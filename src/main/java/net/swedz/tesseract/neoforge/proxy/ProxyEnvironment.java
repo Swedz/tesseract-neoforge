@@ -41,6 +41,6 @@ public enum ProxyEnvironment
 	
 	public boolean test(List<String> modIds)
 	{
-		return modIds.stream().allMatch(test);
+		return !modIds.isEmpty() ? modIds.stream().allMatch(test) : test.test("");
 	}
 }
