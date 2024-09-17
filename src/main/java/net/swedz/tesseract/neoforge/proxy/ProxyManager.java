@@ -56,7 +56,7 @@ public final class ProxyManager
 		return (Class<? extends Proxy>) lastProxyClass;
 	}
 	
-	private static boolean registerEntrypoint(
+	private static void registerEntrypoint(
 			ModFileScanData.AnnotationData annotation,
 			int priority,
 			EnumSet<ProxyEnvironment> environments,
@@ -68,22 +68,28 @@ public final class ProxyManager
 		{
 			Class<? extends Proxy> proxyClassReference = entrypointClass.asSubclass(Proxy.class);
 			Class<? extends Proxy> proxyKey = getProxyKey(proxyClassReference);
+			
 			ProxyWrapper existingProxy = proxies.get(proxyKey);
+			
 			if(existingProxy == null ||
 			   existingProxy.priority() < priority ||
 			   existingProxy.environments().contains(ProxyEnvironment.COMMON))
 			{
 				Proxy proxy = proxyClassReference.getConstructor().newInstance();
 				ProxyWrapper oldProxy = proxies.put(proxyKey, new ProxyWrapper(proxy, priority, environments));
+				
 				LOGGER.info("Loaded proxy entrypoint {} ({})", proxy.getClass().getName(), proxyKey.getSimpleName());
+				
 				if(oldProxy != null)
 				{
 					LOGGER.info("Overriding proxy entrypoint {} ({})", oldProxy.proxy().getClass().getName(), proxyKey.getSimpleName());
 				}
 			}
-			return true;
 		}
-		return false;
+		else
+		{
+			LOGGER.error("Invalid proxy entrypoint {}: does not implement Proxy", annotation.memberName());
+		}
 	}
 	
 	@ApiStatus.Internal
@@ -119,10 +125,7 @@ public final class ProxyManager
 						String[] modIds = (String[]) annotation.annotationData().getOrDefault("modid", new String[0]);
 						if(environments.stream().allMatch((e) -> e.test(modIds)))
 						{
-							if(!registerEntrypoint(annotation, priority, environments, proxies))
-							{
-								LOGGER.error("Invalid proxy entrypoint {}: does not implement Proxy", annotation.memberName());
-							}
+							registerEntrypoint(annotation, priority, environments, proxies);
 						}
 					}
 					catch (Throwable ex)
