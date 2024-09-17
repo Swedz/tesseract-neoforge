@@ -25,7 +25,8 @@ public final class ProxyManager
 	private static final Map<Class<? extends Proxy>, Proxy> PROXIES = Maps.newHashMap();
 	
 	/**
-	 * Get the active proxy for a given superclass. Proxies are referred to by their highest superclass (other than {@link Proxy} itself).
+	 * Get the active proxy for a given superclass. Proxies are referred to by their highest superclass (other than
+	 * {@link Proxy} itself).
 	 *
 	 * @param proxyClass the proxy "superclass"
 	 * @return the active proxy
