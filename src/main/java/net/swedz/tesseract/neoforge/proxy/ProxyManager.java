@@ -116,8 +116,8 @@ public final class ProxyManager
 							LOGGER.error("Nonsensical proxy entrypoint {}: has multiple environments and one is the common environment", annotation.memberName());
 							return;
 						}
-						String modId = (String) annotation.annotationData().getOrDefault("modid", "");
-						if(environments.stream().allMatch((e) -> e.test(modId)))
+						String[] modIds = (String[]) annotation.annotationData().getOrDefault("modid", new String[0]);
+						if(environments.stream().allMatch((e) -> e.test(modIds)))
 						{
 							if(!registerEntrypoint(annotation, priority, environments, proxies))
 							{

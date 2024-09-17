@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.proxy;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
 
+import java.util.Arrays;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -38,8 +39,8 @@ public enum ProxyEnvironment
 		this(() -> true);
 	}
 	
-	public boolean test(String modId)
+	public boolean test(String[] modIds)
 	{
-		return test.test(modId);
+		return Arrays.stream(modIds).allMatch(test);
 	}
 }
