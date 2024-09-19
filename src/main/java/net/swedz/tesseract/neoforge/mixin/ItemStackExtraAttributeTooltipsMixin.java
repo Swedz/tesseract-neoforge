@@ -46,7 +46,7 @@ public class ItemStackExtraAttributeTooltipsMixin
 		ItemStack stack = (ItemStack) (Object) this;
 		if(stack.getItem() instanceof ExtraAttributeTooltipsHandler handler)
 		{
-			handler.addAttributeTooltipsPre(stack, equipmentSlotGroup, (component) ->
+			handler.appendAttributeTooltipsPre(stack, equipmentSlotGroup, (component) ->
 			{
 				this.maybeAddHeader(tooltipAdder, equipmentSlotGroup, headerFlag);
 				tooltipAdder.accept(component);
@@ -70,7 +70,7 @@ public class ItemStackExtraAttributeTooltipsMixin
 		ItemStack stack = (ItemStack) (Object) this;
 		if(stack.getItem() instanceof ExtraAttributeTooltipsHandler handler)
 		{
-			handler.addAttributeTooltipsPost(stack, equipmentSlotGroup, (component) ->
+			handler.appendAttributeTooltipsPost(stack, equipmentSlotGroup, (component) ->
 			{
 				this.maybeAddHeader(tooltipAdder, equipmentSlotGroup, headerFlag);
 				tooltipAdder.accept(component);

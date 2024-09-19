@@ -18,7 +18,7 @@ public interface ExtraAttributeTooltipsHandler
 	 * @param slotGroup    the slot group
 	 * @param tooltipAdder the consumer to call to add lines to the tooltip
 	 */
-	default void addAttributeTooltipsPre(ItemStack stack, EquipmentSlotGroup slotGroup, Consumer<Component> tooltipAdder)
+	default void appendAttributeTooltipsPre(ItemStack stack, EquipmentSlotGroup slotGroup, Consumer<Component> tooltipAdder)
 	{
 	}
 	
@@ -31,7 +31,7 @@ public interface ExtraAttributeTooltipsHandler
 	 * @param slotGroup    the slot group
 	 * @param tooltipAdder the consumer to call to add lines to the tooltip
 	 */
-	default void addAttributeTooltipsPost(ItemStack stack, EquipmentSlotGroup slotGroup, Consumer<Component> tooltipAdder)
+	default void appendAttributeTooltipsPost(ItemStack stack, EquipmentSlotGroup slotGroup, Consumer<Component> tooltipAdder)
 	{
 	}
 }
