@@ -97,7 +97,7 @@ public final class MIHookTracker
 		return MACHINE_CASING_MODELS.computeIfAbsent(modId, (k) -> Lists.newArrayList());
 	}
 	
-	public static void addMachineCasingModel(String name, Consumer<MachineCasingModelsMIHookDatagenProvider> action)
+	public static void addMachineCasingModel(Consumer<MachineCasingModelsMIHookDatagenProvider> action)
 	{
 		assertTracking();
 		
@@ -113,7 +113,7 @@ public final class MIHookTracker
 	{
 		public void addToMachineJson(JsonObject json)
 		{
-			json.addProperty("casing", defaultCasing.name);
+			json.addProperty("casing", defaultCasing.key.toString());
 			
 			var defaultOverlays = new JsonObject();
 			
