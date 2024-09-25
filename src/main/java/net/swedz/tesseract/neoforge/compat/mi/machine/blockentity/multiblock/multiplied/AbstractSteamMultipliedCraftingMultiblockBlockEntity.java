@@ -25,7 +25,7 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 {
 	protected final OverclockComponent overclock;
 	
-	private boolean steel;
+	protected boolean steel;
 	
 	public AbstractSteamMultipliedCraftingMultiblockBlockEntity(BEP bep, ResourceLocation id, ShapeTemplate[] shapeTemplates,
 																List<OverclockComponent.Catalyst> overclockCatalysts)
