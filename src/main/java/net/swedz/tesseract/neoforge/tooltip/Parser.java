@@ -1,5 +1,7 @@
 package net.swedz.tesseract.neoforge.tooltip;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -9,6 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -24,6 +27,10 @@ public interface Parser<T>
 	Parser<Integer>                                           ENCHANTMENT_LEVEL = (level) -> Component.translatable("enchantment.level.%d".formatted(level));
 	Parser<EntityType>                                        ENTITY_TYPE       = (entityType) -> entityType.getDescription().copy();
 	Parser<String>                                            KEYBIND           = (key) -> Component.keybind("key.%s".formatted(key));
+	Parser<BlockPos>                                          BLOCK_POS         = (pos) -> Component.literal(pos.toShortString());
+	BiParser<ResourceKey<Level>, BlockPos>                    DIMENSION_POS     = (dimension, pos) -> Component.literal("%s (%s)".formatted(pos.toShortString(), dimension.location().toString()));
+	BiParser<Level, BlockPos>                                 LEVEL_POS         = (level, pos) -> DIMENSION_POS.parse(level.dimension(), pos);
+	Parser<GlobalPos>                                         GLOBAL_POS        = (pos) -> DIMENSION_POS.parse(pos.dimension(), pos.pos());
 	Parser<Component>                                         COMPONENT         = (component) -> component;
 	Parser<Object>                                            OBJECT            = (object) -> Component.literal(String.valueOf(object));
 	
