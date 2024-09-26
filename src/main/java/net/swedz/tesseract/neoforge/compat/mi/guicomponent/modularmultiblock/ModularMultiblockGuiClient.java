@@ -10,6 +10,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
@@ -89,8 +90,14 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 			int offsetY = 23;
 			for(ModularMultiblockGuiLine line : text)
 			{
-				graphics.drawString(font, line.text(), x + ModularMultiblockGui.X + 5, y + ModularMultiblockGuiClient.this.y + offsetY, line.color(), false);
-				offsetY += 11;
+				List<FormattedCharSequence> wrappedLines = line.wrap() ?
+						font.split(line.text(), TEXTURE_WIDTH) :
+						List.of(line.text().getVisualOrderText());
+				for(FormattedCharSequence wrappedLine : wrappedLines)
+				{
+					graphics.drawString(font, wrappedLine, x + ModularMultiblockGui.X + 5, y + ModularMultiblockGuiClient.this.y + offsetY, line.color(), false);
+					offsetY += 11;
+				}
 			}
 		}
 		
