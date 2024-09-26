@@ -21,6 +21,8 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 {
 	protected final MultipliedCrafterComponent crafter;
 	
+	protected OperatingState operatingState = OperatingState.NOT_MATCHED;
+	
 	public AbstractMultipliedCraftingMultiblockBlockEntity(BEP bep, ResourceLocation id, ShapeTemplate[] shapeTemplates)
 	{
 		super(bep, new MachineGuiParameters.Builder(id, false).backgroundHeight(200).build(), shapeTemplates);
@@ -64,6 +66,20 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 	public UUID getOwnerUuid()
 	{
 		return placedBy.placerId;
+	}
+	
+	@Override
+	protected void onRematch()
+	{
+		operatingState = OperatingState.NOT_MATCHED;
+	}
+	
+	@Override
+	public void onMatchSuccessful()
+	{
+		super.onMatchSuccessful();
+		
+		operatingState = OperatingState.TRYING_TO_RESUME;
 	}
 	
 	@Override

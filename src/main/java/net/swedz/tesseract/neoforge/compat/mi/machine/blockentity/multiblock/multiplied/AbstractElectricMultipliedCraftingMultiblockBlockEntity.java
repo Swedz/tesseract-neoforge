@@ -10,7 +10,6 @@ import aztech.modern_industrialization.machines.components.UpgradeComponent;
 import aztech.modern_industrialization.machines.guicomponents.SlotPanel;
 import aztech.modern_industrialization.machines.init.MachineTier;
 import aztech.modern_industrialization.machines.multiblocks.HatchBlockEntity;
-import aztech.modern_industrialization.machines.multiblocks.ShapeMatcher;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.util.Simulation;
 import com.google.common.collect.Lists;
@@ -64,8 +63,10 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 	}
 	
 	@Override
-	public void onSuccessfulMatch(ShapeMatcher shapeMatcher)
+	public void onMatchSuccessful()
 	{
+		super.onMatchSuccessful();
+		
 		energyInputs.clear();
 		for(HatchBlockEntity hatch : shapeMatcher.getMatchedHatches())
 		{

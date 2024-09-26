@@ -11,16 +11,11 @@ import aztech.modern_industrialization.machines.components.OrientationComponent;
 import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
 import aztech.modern_industrialization.machines.models.MachineModelClientData;
 import aztech.modern_industrialization.machines.multiblocks.MultiblockMachineBlockEntity;
-import aztech.modern_industrialization.machines.multiblocks.ShapeMatcher;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.util.Tickable;
 
 public abstract class BasicMultiblockMachineBlockEntity extends MultiblockMachineBlockEntity implements Tickable, MultiblockInventoryComponentHolder
 {
-	protected ShapeMatcher shapeMatcher;
-	
-	protected OperatingState operatingState = OperatingState.NOT_MATCHED;
-	
 	protected final ActiveShapeComponent         activeShape;
 	protected final MultiblockInventoryComponent inventory;
 	protected final IsActiveComponent            isActive;
@@ -41,78 +36,21 @@ public abstract class BasicMultiblockMachineBlockEntity extends MultiblockMachin
 		isActive.updateActive(active, this);
 	}
 	
-	public void onLink(ShapeMatcher shapeMatcher)
+	@Override
+	public void onMatchSuccessful()
 	{
-	}
-	
-	public void onUnlink(ShapeMatcher shapeMatcher)
-	{
-	}
-	
-	public void onSuccessfulMatch(ShapeMatcher shapeMatcher)
-	{
+		inventory.rebuild(shapeMatcher);
 	}
 	
 	@Override
 	public void tick()
 	{
-		if(level.isClientSide)
+		if(level.isClientSide())
 		{
 			return;
 		}
 		
 		this.link();
-	}
-	
-	protected ShapeMatcher createShapeMatcher()
-	{
-		return new ShapeMatcher(level, worldPosition, orientation.facingDirection, this.getActiveShape());
-	}
-	
-	protected void link()
-	{
-		if(shapeMatcher == null)
-		{
-			shapeMatcher = this.createShapeMatcher();
-			shapeMatcher.registerListeners(level);
-			
-			this.onLink(shapeMatcher);
-		}
-		if(shapeMatcher.needsRematch())
-		{
-			operatingState = OperatingState.NOT_MATCHED;
-			shapeValid.shapeValid = false;
-			shapeMatcher.rematch(level);
-			
-			if(shapeMatcher.isMatchSuccessful())
-			{
-				inventory.rebuild(shapeMatcher);
-				
-				this.onSuccessfulMatch(shapeMatcher);
-				
-				shapeValid.shapeValid = true;
-				operatingState = OperatingState.TRYING_TO_RESUME;
-			}
-			
-			if(shapeValid.update())
-			{
-				this.sync(false);
-			}
-		}
-	}
-	
-	@Override
-	public void unlink()
-	{
-		if(shapeMatcher != null)
-		{
-			shapeMatcher.unlinkHatches();
-			shapeMatcher.unregisterListeners(level);
-			
-			this.onUnlink(shapeMatcher);
-			
-			shapeMatcher = null;
-		}
 	}
 	
 	@Override
