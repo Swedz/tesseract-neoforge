@@ -76,21 +76,4 @@ public abstract class BasicMultiblockMachineBlockEntity extends MultiblockMachin
 	{
 		return new MachineModelClientData(null, orientation.facingDirection).active(isActive.isActive);
 	}
-	
-	public enum OperatingState
-	{
-		/**
-		 * Shape is not matched, don't do anything.
-		 */
-		NOT_MATCHED,
-		/**
-		 * Trying to resume a recipe but the output might not fit anymore.
-		 * We wait until the output fits again before resuming normal operation.
-		 */
-		TRYING_TO_RESUME,
-		/**
-		 * Normal operation.
-		 */
-		NORMAL_OPERATION
-	}
 }
