@@ -4,8 +4,13 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 
-public record ModularMultiblockGuiLine(Component text, int color)
+public record ModularMultiblockGuiLine(Component text, int color, boolean wrap)
 {
+	public ModularMultiblockGuiLine(Component text, int color)
+	{
+		this(text, color, false);
+	}
+	
 	public ModularMultiblockGuiLine(Component text)
 	{
 		this(text, 0xFFFFFF);
@@ -15,12 +20,14 @@ public record ModularMultiblockGuiLine(Component text, int color)
 	{
 		Component text = ComponentSerialization.STREAM_CODEC.decode(buf);
 		int color = buf.readInt();
-		return new ModularMultiblockGuiLine(text, color);
+		boolean wrap = buf.readBoolean();
+		return new ModularMultiblockGuiLine(text, color, wrap);
 	}
 	
 	public static void write(RegistryFriendlyByteBuf buf, ModularMultiblockGuiLine line)
 	{
 		ComponentSerialization.STREAM_CODEC.encode(buf, line.text());
 		buf.writeInt(line.color());
+		buf.writeBoolean(line.wrap());
 	}
 }
