@@ -64,11 +64,16 @@ public abstract class BasicMultiblockMachineBlockEntity extends MultiblockMachin
 		this.link();
 	}
 	
+	protected ShapeMatcher createShapeMatcher()
+	{
+		return new ShapeMatcher(level, worldPosition, orientation.facingDirection, this.getActiveShape());
+	}
+	
 	protected void link()
 	{
 		if(shapeMatcher == null)
 		{
-			shapeMatcher = new ShapeMatcher(level, worldPosition, orientation.facingDirection, this.getActiveShape());
+			shapeMatcher = this.createShapeMatcher();
 			shapeMatcher.registerListeners(level);
 			
 			this.onLink(shapeMatcher);
