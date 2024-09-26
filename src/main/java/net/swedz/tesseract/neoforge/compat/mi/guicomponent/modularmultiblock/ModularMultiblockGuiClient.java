@@ -87,16 +87,19 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 			Minecraft minecraftClient = Minecraft.getInstance();
 			Font font = minecraftClient.font;
 			
+			int spaceWidth = font.width(" ");
 			int offsetY = 23;
 			for(ModularMultiblockGuiLine line : text)
 			{
 				List<FormattedCharSequence> wrappedLines = line.wrap() ?
-						font.split(line.text(), TEXTURE_WIDTH) :
+						font.split(line.text(), TEXTURE_WIDTH - spaceWidth) :
 						List.of(line.text().getVisualOrderText());
+				int index = 0;
 				for(FormattedCharSequence wrappedLine : wrappedLines)
 				{
-					graphics.drawString(font, wrappedLine, x + ModularMultiblockGui.X + 5, y + ModularMultiblockGuiClient.this.y + offsetY, line.color(), false);
+					graphics.drawString(font, wrappedLine, x + ModularMultiblockGui.X + 5 + (index > 0 ? spaceWidth : 0), y + ModularMultiblockGuiClient.this.y + offsetY, line.color(), false);
 					offsetY += 11;
+					index++;
 				}
 			}
 		}
