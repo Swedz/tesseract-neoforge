@@ -53,6 +53,13 @@ public class TextLine implements Component
 		return this;
 	}
 	
+	public TextLine arg(Object arg)
+	{
+		return arg instanceof Component c && !c.getStyle().isEmpty() ?
+				this.arg(c, Parser.COMPONENT) :
+				this.arg(arg, Parser.OBJECT);
+	}
+	
 	protected void markDirty()
 	{
 		component = null;

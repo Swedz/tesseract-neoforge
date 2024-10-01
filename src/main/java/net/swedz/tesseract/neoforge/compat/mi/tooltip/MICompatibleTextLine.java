@@ -73,12 +73,11 @@ public final class MICompatibleTextLine extends TextLine
 		return this;
 	}
 	
+	@Override
 	public MICompatibleTextLine arg(Object arg)
 	{
-		if(arg instanceof Component component && !component.getStyle().isEmpty())
-		{
-			return this.arg(component, Parser.COMPONENT);
-		}
-		return this.arg(arg, MITooltips.DEFAULT_PARSER);
+		return arg instanceof Component c && !c.getStyle().isEmpty() ?
+				this.arg(c, Parser.COMPONENT) :
+				this.arg(arg, MITooltips.DEFAULT_PARSER);
 	}
 }
