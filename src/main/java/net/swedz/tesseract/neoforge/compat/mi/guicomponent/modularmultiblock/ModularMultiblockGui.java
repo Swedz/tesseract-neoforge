@@ -6,6 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.Tesseract;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public final class ModularMultiblockGui
@@ -16,9 +17,9 @@ public final class ModularMultiblockGui
 	{
 		private final int y, height;
 		
-		private final Supplier<List<ModularMultiblockGuiLine>> textSupplier;
+		private final Consumer<ModularMultiblockGuiContent> contentAdder;
 		
-		public Server(int y, int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
+		public Server(int y, int height, Consumer<ModularMultiblockGuiContent> contentAdder)
 		{
 			if(height <= 4)
 			{
@@ -26,7 +27,17 @@ public final class ModularMultiblockGui
 			}
 			this.y = y;
 			this.height = height;
-			this.textSupplier = textSupplier;
+			this.contentAdder = contentAdder;
+		}
+		
+		public Server(int y, int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
+		{
+			this(y, height, (c) -> c.addAll(textSupplier.get()));
+		}
+		
+		public Server(int height, Consumer<ModularMultiblockGuiContent> contentAdder)
+		{
+			this(0, height, contentAdder);
 		}
 		
 		public Server(int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
@@ -34,10 +45,17 @@ public final class ModularMultiblockGui
 			this(0, height, textSupplier);
 		}
 		
+		private ModularMultiblockGuiContent content()
+		{
+			ModularMultiblockGuiContent content = new ModularMultiblockGuiContent();
+			contentAdder.accept(content);
+			return content;
+		}
+		
 		@Override
 		public Data copyData()
 		{
-			return new Data(y, height, textSupplier.get());
+			return new Data(y, height, this.content().lines());
 		}
 		
 		@Override
@@ -58,7 +76,7 @@ public final class ModularMultiblockGui
 			buf.writeInt(y);
 			buf.writeInt(height);
 			
-			List<ModularMultiblockGuiLine> lines = textSupplier.get();
+			List<ModularMultiblockGuiLine> lines = this.content().lines();
 			buf.writeVarInt(lines.size());
 			for(ModularMultiblockGuiLine line : lines)
 			{

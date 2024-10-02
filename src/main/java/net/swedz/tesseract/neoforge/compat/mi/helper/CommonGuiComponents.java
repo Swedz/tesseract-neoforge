@@ -6,14 +6,14 @@ import aztech.modern_industrialization.machines.components.IsActiveComponent;
 import aztech.modern_industrialization.machines.guicomponents.ShapeSelection;
 import aztech.modern_industrialization.machines.multiblocks.MultiblockMachineBlockEntity;
 import aztech.modern_industrialization.util.TextHelper;
-import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccess;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGui;
-import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGuiLine;
 
 import java.util.List;
 import java.util.function.Supplier;
+
+import static net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGuiLine.*;
 
 public final class CommonGuiComponents
 {
@@ -40,34 +40,30 @@ public final class CommonGuiComponents
 	
 	public static ModularMultiblockGui.Server standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess crafter, Supplier<Long> baseEuSupplier, IsActiveComponent isActive, int y, int height)
 	{
-		return new ModularMultiblockGui.Server(y, height, () ->
+		return new ModularMultiblockGui.Server(y, height, (content) ->
 		{
-			List<ModularMultiblockGuiLine> text = Lists.newArrayList();
-			
 			boolean shapeValid = machine.isShapeValid();
 			boolean active = isActive.isActive;
 			
-			text.add(shapeValid ? new ModularMultiblockGuiLine(MIText.MultiblockShapeValid.text()) : new ModularMultiblockGuiLine(MIText.MultiblockShapeInvalid.text(), 0xFF0000));
+			content.add((shapeValid ? MIText.MultiblockShapeValid : MIText.MultiblockShapeInvalid).text(), shapeValid ? WHITE : RED);
 			if(shapeValid)
 			{
-				text.add(new ModularMultiblockGuiLine(MIText.MultiblockStatusActive.text()));
+				content.add(MIText.MultiblockStatusActive.text());
 				
 				if(crafter != null && crafter.hasActiveRecipe())
 				{
-					text.add(new ModularMultiblockGuiLine(MIText.Progress.text(String.format("%.1f", crafter.getProgress() * 100) + " %")));
+					content.add(MIText.Progress.text(String.format("%.1f", crafter.getProgress() * 100) + " %"));
 					
 					if(crafter.getEfficiencyTicks() != 0 || crafter.getMaxEfficiencyTicks() != 0)
 					{
-						text.add(new ModularMultiblockGuiLine(MIText.EfficiencyTicks.text(crafter.getEfficiencyTicks(), crafter.getMaxEfficiencyTicks())));
+						content.add(MIText.EfficiencyTicks.text(crafter.getEfficiencyTicks(), crafter.getMaxEfficiencyTicks()));
 					}
 					
-					text.add(new ModularMultiblockGuiLine(MIText.BaseEuRecipe.text(TextHelper.getEuTextTick(baseEuSupplier.get()))));
+					content.add(MIText.BaseEuRecipe.text(TextHelper.getEuTextTick(baseEuSupplier.get())));
 					
-					text.add(new ModularMultiblockGuiLine(MIText.CurrentEuRecipe.text(TextHelper.getEuTextTick(crafter.getCurrentRecipeEu()))));
+					content.add(MIText.CurrentEuRecipe.text(TextHelper.getEuTextTick(crafter.getCurrentRecipeEu())));
 				}
 			}
-			
-			return text;
 		});
 	}
 	

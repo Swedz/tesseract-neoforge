@@ -11,7 +11,7 @@ public final class ChargeInventoryHelper
 	public static long charge(ItemStack stack, long maxEu, boolean simulate)
 	{
 		ILongEnergyStorage energy = stack.getCapability(EnergyApi.ITEM);
-		return energy != null ? energy.receive(Math.max(0, maxEu), simulate) : 0;
+		return energy != null ? Math.max(0, energy.receive(Math.max(0, maxEu), simulate)) : 0;
 	}
 	
 	public static long charge(Collection<ItemStack> items, long maxEu, boolean simulate)
@@ -19,10 +19,14 @@ public final class ChargeInventoryHelper
 		long eu = 0;
 		for(ItemStack stack : items)
 		{
-			eu += charge(stack, Math.max(0, maxEu - eu), simulate);
-			if(eu == maxEu)
+			long charged = charge(stack, Math.max(0, maxEu - eu), simulate);
+			if(charged > 0)
 			{
-				break;
+				eu += charged;
+				if(eu == maxEu)
+				{
+					break;
+				}
 			}
 		}
 		return eu;
