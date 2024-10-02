@@ -21,10 +21,12 @@ public final class ComponentHelper
 		MutableComponent mutable;
 		if(component.getContents() instanceof TranslatableContents translatable)
 		{
-			Object[] strippedArgs = new Object[translatable.getArgs().length];
-			for(int i = 0; i < translatable.getArgs().length; i++)
+			long start2 = System.nanoTime();
+			Object[] args = translatable.getArgs();
+			Object[] strippedArgs = new Object[args.length];
+			for(int i = 0; i < args.length; i++)
 			{
-				Object arg = translatable.getArgs()[i];
+				Object arg = args[i];
 				strippedArgs[i] = arg instanceof Component c ? stripStyle(c) : arg;
 			}
 			mutable = Component.translatable(translatable.getKey(), strippedArgs);
