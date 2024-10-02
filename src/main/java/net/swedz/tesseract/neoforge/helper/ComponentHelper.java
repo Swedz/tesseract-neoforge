@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.contents.TranslatableContents;
 
 import java.util.List;
 
@@ -20,6 +21,17 @@ public final class ComponentHelper
 		MutableComponent mutable = component.copy();
 		
 		mutable.setStyle(Style.EMPTY);
+		
+		if(mutable.getContents() instanceof TranslatableContents translatable)
+		{
+			Object[] strippedArgs = new Object[translatable.getArgs().length];
+			for(int i = 0; i < translatable.getArgs().length; i++)
+			{
+				Object arg = translatable.getArgs()[i];
+				strippedArgs[i] = arg instanceof Component c ? stripStyle(c) : arg;
+			}
+			mutable = Component.translatable(translatable.getKey(), strippedArgs);
+		}
 		
 		List<Component> siblings = Lists.newArrayList(component.getSiblings());
 		mutable.getSiblings().clear();
