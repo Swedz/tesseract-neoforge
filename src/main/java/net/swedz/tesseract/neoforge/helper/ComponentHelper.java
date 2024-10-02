@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
@@ -45,5 +46,16 @@ public final class ComponentHelper
 		}
 		
 		return mutable;
+	}
+	
+	/**
+	 * Strip the style from a {@link FormattedCharSequence}.
+	 *
+	 * @param charSequence the {@link FormattedCharSequence}
+	 * @return the stripped {@link FormattedCharSequence}
+	 */
+	public static FormattedCharSequence stripStyle(FormattedCharSequence charSequence)
+	{
+		return (sink) -> charSequence.accept((index, style, point) -> sink.accept(index, Style.EMPTY, point));
 	}
 }
