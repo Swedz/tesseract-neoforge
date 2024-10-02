@@ -18,11 +18,8 @@ public final class ComponentHelper
 	 */
 	public static Component stripStyle(Component component)
 	{
-		MutableComponent mutable = component.copy();
-		
-		mutable.setStyle(Style.EMPTY);
-		
-		if(mutable.getContents() instanceof TranslatableContents translatable)
+		MutableComponent mutable;
+		if(component.getContents() instanceof TranslatableContents translatable)
 		{
 			Object[] strippedArgs = new Object[translatable.getArgs().length];
 			for(int i = 0; i < translatable.getArgs().length; i++)
@@ -31,6 +28,11 @@ public final class ComponentHelper
 				strippedArgs[i] = arg instanceof Component c ? stripStyle(c) : arg;
 			}
 			mutable = Component.translatable(translatable.getKey(), strippedArgs);
+		}
+		else
+		{
+			mutable = component.copy();
+			mutable.setStyle(Style.EMPTY);
 		}
 		
 		List<Component> siblings = Lists.newArrayList(component.getSiblings());
