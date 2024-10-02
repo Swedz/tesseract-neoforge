@@ -67,7 +67,7 @@ public final class ModularMultiblockGuiContent
 	
 	public ModularMultiblockGuiContent addAll(Collection<ModularMultiblockGuiLine> lines)
 	{
-		this.lines.addAll(lines);
+		lines.forEach(this::add);
 		return this;
 	}
 	
