@@ -11,7 +11,7 @@ import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
 import static aztech.modern_industrialization.MITooltips.*;
 
-public final class MICompatibleTextLine extends TextLine
+public final class MICompatibleTextLine extends TextLine implements MIParsable
 {
 	public static MICompatibleTextLine line(TranslatableTextEnum text, Style style)
 	{
@@ -67,6 +67,7 @@ public final class MICompatibleTextLine extends TextLine
 		return this;
 	}
 	
+	@Override
 	public <T> MICompatibleTextLine arg(T arg, MITooltips.Parser<T> parser)
 	{
 		this.arg(arg, MITooltipCompat.wrap(parser));
@@ -79,5 +80,13 @@ public final class MICompatibleTextLine extends TextLine
 		return arg instanceof Component c && !c.getStyle().isEmpty() ?
 				this.arg(c, Parser.COMPONENT) :
 				this.arg(arg, MITooltips.DEFAULT_PARSER);
+	}
+	
+	@Override
+	public MICompatibleTextLine withStyle(Style style)
+	{
+		MICompatibleTextLine line = new MICompatibleTextLine(text, style);
+		line.arguments.addAll(arguments);
+		return line;
 	}
 }
