@@ -11,6 +11,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.swedz.tesseract.neoforge.helper.ComponentHelper;
 
 import java.util.List;
 
@@ -97,7 +98,12 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 				int index = 0;
 				for(FormattedCharSequence wrappedLine : wrappedLines)
 				{
-					graphics.drawString(font, wrappedLine, x + ModularMultiblockGui.X + 5 + (index > 0 ? spaceWidth : 0), y + ModularMultiblockGuiClient.this.y + offsetY, line.color(), false);
+					graphics.drawString(
+							font, ComponentHelper.stripStyle(wrappedLine),
+							x + ModularMultiblockGui.X + 5 + (index > 0 ? spaceWidth : 0),
+							y + ModularMultiblockGuiClient.this.y + offsetY,
+							line.color(), false
+					);
 					offsetY += 11;
 					index++;
 				}

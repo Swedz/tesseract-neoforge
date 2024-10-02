@@ -13,8 +13,11 @@ public record ModularMultiblockGuiLine(Component text, int color, boolean wrap)
 	
 	public ModularMultiblockGuiLine(Component text)
 	{
-		this(text, 0xFFFFFF);
+		this(text, WHITE);
 	}
+	
+	public static final int WHITE = 0xFFFFFF;
+	public static final int RED   = 0xFF0000;
 	
 	public static ModularMultiblockGuiLine read(RegistryFriendlyByteBuf buf)
 	{
