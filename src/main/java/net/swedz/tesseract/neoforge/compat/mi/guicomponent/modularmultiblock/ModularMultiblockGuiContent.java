@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock;
 
 import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
+import net.swedz.tesseract.neoforge.helper.ComponentHelper;
 import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
 import java.util.Collection;
@@ -12,12 +13,24 @@ public final class ModularMultiblockGuiContent
 {
 	private final List<ModularMultiblockGuiLine> lines = Lists.newArrayList();
 	
+	private boolean allowStyling;
+	
 	ModularMultiblockGuiContent()
 	{
 	}
 	
+	public ModularMultiblockGuiContent allowStyling()
+	{
+		allowStyling = true;
+		return this;
+	}
+	
 	public ModularMultiblockGuiContent add(ModularMultiblockGuiLine line)
 	{
+		if(!allowStyling)
+		{
+			line = new ModularMultiblockGuiLine(ComponentHelper.stripStyle(line.text()), line.color(), line.wrap());
+		}
 		lines.add(line);
 		return this;
 	}
