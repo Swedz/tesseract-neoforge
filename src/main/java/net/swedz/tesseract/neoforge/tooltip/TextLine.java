@@ -9,7 +9,7 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
-public class TextLine implements Component
+public class TextLine implements Component, Parsable
 {
 	public static TextLine line(TranslatableTextEnum text, Style style)
 	{
@@ -39,6 +39,7 @@ public class TextLine implements Component
 		this(text, null);
 	}
 	
+	@Override
 	public <T> TextLine arg(T arg, Parser<T> parser)
 	{
 		arguments.add(parser.parse(arg));
@@ -46,11 +47,20 @@ public class TextLine implements Component
 		return this;
 	}
 	
+	@Override
 	public <A, B> TextLine arg(A a, B b, BiParser<A, B> parser)
 	{
 		arguments.add(parser.parse(a, b));
 		this.markDirty();
 		return this;
+	}
+	
+	@Override
+	public TextLine arg(Object arg)
+	{
+		return arg instanceof Component c && !c.getStyle().isEmpty() ?
+				this.arg(c, Parser.COMPONENT) :
+				this.arg(arg, Parser.OBJECT);
 	}
 	
 	protected void markDirty()
@@ -75,6 +85,13 @@ public class TextLine implements Component
 			component = this.createComponent();
 		}
 		return component;
+	}
+	
+	public TextLine withStyle(Style style)
+	{
+		TextLine line = new TextLine(text, style);
+		line.arguments.addAll(arguments);
+		return line;
 	}
 	
 	@Override

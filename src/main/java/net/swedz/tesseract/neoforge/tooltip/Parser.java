@@ -18,26 +18,49 @@ import net.minecraft.world.level.material.Fluid;
 
 public interface Parser<T>
 {
-	Parser<ItemStack>                                         ITEM_STACK        = (stack) -> stack.getHoverName().copy();
-	Parser<Item>                                              ITEM              = (item) -> ITEM_STACK.parse(item.getDefaultInstance());
-	Parser<Block>                                             BLOCK             = Block::getName;
-	Parser<BlockState>                                        BLOCK_STATE       = (blockState) -> BLOCK.parse(blockState.getBlock());
-	Parser<Fluid>                                             FLUID             = (fluid) -> fluid.getFluidType().getDescription();
-	BiParser<HolderLookup.Provider, ResourceKey<Enchantment>> ENCHANTMENT       = (registries, enchantment) -> registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment).value().description().copy();
-	Parser<Integer>                                           ENCHANTMENT_LEVEL = (level) -> Component.translatable("enchantment.level.%d".formatted(level));
-	Parser<EntityType>                                        ENTITY_TYPE       = (entityType) -> entityType.getDescription().copy();
-	Parser<String>                                            KEYBIND           = (key) -> Component.keybind("key.%s".formatted(key));
-	Parser<BlockPos>                                          BLOCK_POS         = (pos) -> Component.literal(pos.toShortString());
-	BiParser<ResourceKey<Level>, BlockPos>                    DIMENSION_POS     = (dimension, pos) -> Component.literal("%s (%s)".formatted(pos.toShortString(), dimension.location().toString()));
-	BiParser<Level, BlockPos>                                 LEVEL_POS         = (level, pos) -> DIMENSION_POS.parse(level.dimension(), pos);
-	Parser<GlobalPos>                                         GLOBAL_POS        = (pos) -> DIMENSION_POS.parse(pos.dimension(), pos.pos());
-	Parser<Component>                                         COMPONENT         = (component) -> component;
-	Parser<Object>                                            OBJECT            = (object) -> Component.literal(String.valueOf(object));
+	// @formatter:off
+	Parser<Component>                                         COMPONENT                 = (component) -> component;
+	Parser<Object>                                            OBJECT                    = (object) -> Component.literal(String.valueOf(object));
+	
+	Parser<Integer>                                           INTEGER_PERCENTAGE        = (value) -> Component.literal(String.valueOf(value)).append("%");
+	Parser<Integer>                                           INTEGER_PERCENTAGE_SPACED = (value) -> Component.literal(String.valueOf(value)).append(" %");
+	BiParser<Double, Integer>                                 DOUBLE                    = (value, precision) -> Component.literal(("%." + precision + "f").formatted(value));
+	BiParser<Double, Integer>                                 DOUBLE_PERCENTAGE         = (value, precision) -> DOUBLE.parse(value * 100, precision).copy().append("%");
+	BiParser<Double, Integer>                                 DOUBLE_PERCENTAGE_SPACED  = (value, precision) -> DOUBLE.parse(value * 100, precision).copy().append(" %");
+	BiParser<Float, Integer>                                  FLOAT                     = (value, precision) -> Component.literal(("%." + precision + "f").formatted(value));
+	BiParser<Float, Integer>                                  FLOAT_PERCENTAGE          = (value, precision) -> FLOAT.parse(value * 100, precision).copy().append("%");
+	BiParser<Float, Integer>                                  FLOAT_PERCENTAGE_SPACED   = (value, precision) -> FLOAT.parse(value * 100, precision).copy().append(" %");
+	
+	Parser<ItemStack>                                         ITEM_STACK                = (stack) -> stack.getHoverName().copy();
+	Parser<Item>                                              ITEM                      = (item) -> ITEM_STACK.parse(item.getDefaultInstance());
+	
+	Parser<Block>                                             BLOCK                     = Block::getName;
+	Parser<BlockState>                                        BLOCK_STATE               = (blockState) -> BLOCK.parse(blockState.getBlock());
+	
+	Parser<Fluid>                                             FLUID                     = (fluid) -> fluid.getFluidType().getDescription();
+	
+	BiParser<HolderLookup.Provider, ResourceKey<Enchantment>> ENCHANTMENT               = (registries, enchantment) -> registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment).value().description().copy();
+	Parser<Integer>                                           ENCHANTMENT_LEVEL         = (level) -> Component.translatable("enchantment.level.%d".formatted(level));
+	
+	Parser<EntityType>                                        ENTITY_TYPE               = (entityType) -> entityType.getDescription().copy();
+	
+	Parser<String>                                            KEYBIND                   = (key) -> Component.keybind("key.%s".formatted(key));
+	
+	Parser<BlockPos>                                          BLOCK_POS                 = (pos) -> Component.literal(pos.toShortString());
+	BiParser<ResourceKey<Level>, BlockPos>                    DIMENSION_POS             = (dimension, pos) -> Component.literal("%s (%s)".formatted(pos.toShortString(), dimension.location().toString()));
+	BiParser<Level, BlockPos>                                 LEVEL_POS                 = (level, pos) -> DIMENSION_POS.parse(level.dimension(), pos);
+	Parser<GlobalPos>                                         GLOBAL_POS                = (pos) -> DIMENSION_POS.parse(pos.dimension(), pos.pos());
+	// @formatter:on
 	
 	Component parse(T value);
 	
 	default Parser<T> withStyle(Style style)
 	{
 		return (value) -> this.parse(value).copy().setStyle(style);
+	}
+	
+	default Parser<T> plain()
+	{
+		return (value) -> this.parse(value).plainCopy();
 	}
 }

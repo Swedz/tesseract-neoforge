@@ -19,4 +19,10 @@ public interface BiParser<A, B> extends Parser<Map.Entry<A, B>>
 	{
 		return (a, b) -> this.parse(a, b).copy().setStyle(style);
 	}
+	
+	@Override
+	default BiParser<A, B> plain()
+	{
+		return (a, b) -> this.parse(a, b).plainCopy();
+	}
 }
