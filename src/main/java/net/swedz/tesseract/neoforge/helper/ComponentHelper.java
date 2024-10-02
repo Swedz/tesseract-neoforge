@@ -1,8 +1,11 @@
 package net.swedz.tesseract.neoforge.helper;
 
+import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+
+import java.util.List;
 
 public final class ComponentHelper
 {
@@ -18,8 +21,9 @@ public final class ComponentHelper
 		
 		mutable.setStyle(Style.EMPTY);
 		
+		List<Component> siblings = Lists.newArrayList(component.getSiblings());
 		mutable.getSiblings().clear();
-		for(Component sibling : component.getSiblings())
+		for(Component sibling : siblings)
 		{
 			mutable.append(stripStyle(sibling));
 		}
