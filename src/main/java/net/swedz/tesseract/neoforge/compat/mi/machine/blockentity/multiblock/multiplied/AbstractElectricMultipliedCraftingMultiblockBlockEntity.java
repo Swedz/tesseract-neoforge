@@ -84,7 +84,7 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 		}
 		if(!result.consumesAction())
 		{
-			result = this.mapComponentOrDefault(UpgradeComponent.class, upgrade -> upgrade.onUse(this, player, hand), result);
+			result = icomponents.mapOrDefault(UpgradeComponent.class, upgrade -> upgrade.onUse(this, player, hand), result);
 		}
 		if(!result.consumesAction())
 		{
@@ -92,7 +92,7 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 		}
 		if(!result.consumesAction())
 		{
-			result = this.mapComponentOrDefault(OverdriveComponent.class, (overdrive) -> overdrive.onUse(this, player, hand), result);
+			result = icomponents.mapOrDefault(OverdriveComponent.class, (overdrive) -> overdrive.onUse(this, player, hand), result);
 		}
 		return result;
 	}
