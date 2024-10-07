@@ -78,4 +78,16 @@ public final class CommonModelBuilders
 		return (builder) -> builder
 				.simpleBlockWithItem(block.get(), builder.cubeAll(block.get()));
 	}
+	
+	public static Consumer<BlockStateProvider> blockTopEnd(BlockHolder block)
+	{
+		return (builder) -> builder.simpleBlockWithItem(
+				block.get(),
+				builder.models().cubeColumn(
+						block.identifier().id(),
+						ResourceLocation.fromNamespaceAndPath(block.identifier().modId(), "block/%s_side".formatted(block.identifier().id())),
+						ResourceLocation.fromNamespaceAndPath(block.identifier().modId(), "block/%s_end".formatted(block.identifier().id()))
+				)
+		);
+	}
 }
