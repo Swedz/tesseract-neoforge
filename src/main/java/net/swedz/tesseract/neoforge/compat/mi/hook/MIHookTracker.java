@@ -113,7 +113,7 @@ public final class MIHookTracker
 	{
 		public void addToMachineJson(JsonObject json)
 		{
-			json.addProperty("casing", defaultCasing.key.toString());
+			json.addProperty("casing", defaultCasing.key.getNamespace().equals(MI.ID) ? defaultCasing.key.getPath() : defaultCasing.key.toString());
 			
 			var defaultOverlays = new JsonObject();
 			
