@@ -1,10 +1,10 @@
 package net.swedz.tesseract.neoforge.material;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 
 import java.util.Optional;
 
+import static net.swedz.tesseract.neoforge.material.Material.*;
 import static net.swedz.tesseract.neoforge.material.part.VanillaMaterialParts.*;
 import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.*;
 
@@ -48,9 +48,4 @@ public interface VanillaMaterials
 			.set(BLAST_RESISTANCE, 0.8f)
 			.set(NEEDS_TOOL, Optional.empty())
 			.add(GEM, BLOCK);
-	
-	static Material create(String id, String englishName)
-	{
-		return new Material(ResourceLocation.withDefaultNamespace(id), englishName);
-	}
 }

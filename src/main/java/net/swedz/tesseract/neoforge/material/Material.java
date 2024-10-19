@@ -1,7 +1,6 @@
 package net.swedz.tesseract.neoforge.material;
 
 import com.google.common.collect.Sets;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
@@ -16,27 +15,26 @@ import java.util.Set;
 
 public final class Material
 {
-	private final ResourceLocation id;
-	private final String           englishName;
+	private final String id, englishName;
 	
 	private final MaterialPropertyMap properties = new MaterialPropertyMap();
 	
 	private final Set<MaterialPart> parts = Sets.newHashSet();
 	
-	public Material(ResourceLocation id, String englishName)
+	private Material(String id, String englishName)
 	{
 		this.id = id;
 		this.englishName = englishName;
 	}
 	
-	public ResourceLocation id()
+	public static Material create(String id, String englishName)
 	{
-		return id;
+		return new Material(id, englishName);
 	}
 	
-	public String rawId()
+	public String id()
 	{
-		return id.getPath();
+		return id;
 	}
 	
 	public String englishName()
@@ -71,16 +69,22 @@ public final class Material
 		return Collections.unmodifiableSet(parts);
 	}
 	
-	public Material add(MaterialPart... parts)
+	public Material add(Collection<MaterialPart> parts)
 	{
-		this.parts.addAll(Arrays.asList(parts));
+		for(MaterialPart part : parts)
+		{
+			if(this.parts.contains(part))
+			{
+				throw new IllegalStateException("Already added part '%s' to material '%s'".formatted(part.id(), id));
+			}
+		}
+		this.parts.addAll(parts);
 		return this;
 	}
 	
-	public Material add(Collection<MaterialPart> parts)
+	public Material add(MaterialPart... parts)
 	{
-		this.parts.addAll(parts);
-		return this;
+		return this.add(Arrays.asList(parts));
 	}
 	
 	public boolean has(MaterialPart part)
@@ -88,7 +92,7 @@ public final class Material
 		return parts.contains(part);
 	}
 	
-	public Material copy(ResourceLocation id)
+	public Material copy()
 	{
 		Material copy = new Material(id, englishName);
 		copy.properties().putAll(properties);

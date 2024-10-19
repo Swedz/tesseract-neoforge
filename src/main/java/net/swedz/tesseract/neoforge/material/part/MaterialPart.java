@@ -16,6 +16,44 @@ import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.
 
 public abstract class MaterialPart<H extends RegisteredObjectHolder>
 {
+	protected final String id, englishName;
+	
+	protected final Formatter formatterId, formatterEnglishName;
+	
+	public MaterialPart(String id, String englishName,
+						Formatter formatterId, Formatter formatterEnglishName)
+	{
+		this.id = id;
+		this.englishName = englishName;
+		this.formatterId = formatterId;
+		this.formatterEnglishName = formatterEnglishName;
+	}
+	
+	public MaterialPart(MaterialPart inherit)
+	{
+		this(inherit.id, inherit.englishName, inherit.formatterId, inherit.formatterEnglishName);
+	}
+	
+	public String id()
+	{
+		return id;
+	}
+	
+	public String id(Material material)
+	{
+		return formatterId.format(material.id(), id);
+	}
+	
+	protected String englishName()
+	{
+		return englishName;
+	}
+	
+	protected String englishName(Material material)
+	{
+		return formatterEnglishName.format(material.englishName(), englishName);
+	}
+	
 	public MaterialPropertyMap getPropertyOverrides()
 	{
 		return new MaterialPropertyMap();
@@ -30,9 +68,21 @@ public abstract class MaterialPart<H extends RegisteredObjectHolder>
 	
 	public abstract H register(MaterialRegistry registry, Material material);
 	
+	public final MaterialPart<H> withoutSuffix()
+	{
+		return new MaterialPart<>(id, englishName, (m, p) -> m, (m, p) -> m)
+		{
+			@Override
+			public H register(MaterialRegistry registry, Material material)
+			{
+				return MaterialPart.this.register(registry, material);
+			}
+		};
+	}
+	
 	public final MaterialPart<H> with(ExtraRegister<H> action)
 	{
-		return new MaterialPart<>()
+		return new MaterialPart<>(this)
 		{
 			@Override
 			public H register(MaterialRegistry registry, Material material)
@@ -51,7 +101,7 @@ public abstract class MaterialPart<H extends RegisteredObjectHolder>
 	
 	public final MaterialPart<H> withProperties(PropertyOverridesRegister<H> action)
 	{
-		return new MaterialPart<>()
+		return new MaterialPart<>(this)
 		{
 			@Override
 			public MaterialPropertyMap getPropertyOverrides()
@@ -81,13 +131,13 @@ public abstract class MaterialPart<H extends RegisteredObjectHolder>
 	
 	public static MaterialPart<ItemHolder<Item>> item(String id, String englishName, Formatter formatterId, Formatter formatterEnglishName)
 	{
-		return new MaterialPart<>()
+		return new MaterialPart<>(id, englishName, formatterId, formatterEnglishName)
 		{
 			@Override
 			public ItemHolder<Item> register(MaterialRegistry registry, Material material)
 			{
-				ResourceLocation itemId = registry.id(formatterId.format(material.rawId(), id));
-				String itemName = formatterEnglishName.format(material.englishName(), englishName);
+				ResourceLocation itemId = registry.id(this.id(material));
+				String itemName = this.englishName(material);
 				
 				var holder = new ItemHolder<>(itemId, itemName, registry.itemRegistry(), Item::new);
 				
@@ -101,11 +151,6 @@ public abstract class MaterialPart<H extends RegisteredObjectHolder>
 		};
 	}
 	
-	public static MaterialPart<ItemHolder<Item>> item()
-	{
-		return item(null, null, (m, p) -> m, (m, p) -> m);
-	}
-	
 	public static MaterialPart<ItemHolder<Item>> item(String id, String englishName)
 	{
 		return item(id, englishName, "%s_%s"::formatted, "%s %s"::formatted);
@@ -113,13 +158,13 @@ public abstract class MaterialPart<H extends RegisteredObjectHolder>
 	
 	public static MaterialPart<BlockWithItemHolder<Block, BlockItem>> block(String id, String englishName, Formatter formatterId, Formatter formatterEnglishName)
 	{
-		return new MaterialPart<>()
+		return new MaterialPart<>(id, englishName, formatterId, formatterEnglishName)
 		{
 			@Override
 			public BlockWithItemHolder<Block, BlockItem> register(MaterialRegistry registry, Material material)
 			{
-				ResourceLocation itemId = registry.id(formatterId.format(material.rawId(), id));
-				String itemName = formatterEnglishName.format(material.englishName(), englishName);
+				ResourceLocation itemId = registry.id(this.id(material));
+				String itemName = this.englishName(material);
 				
 				var holder = new BlockWithItemHolder<>(
 						itemId, itemName,
@@ -147,11 +192,6 @@ public abstract class MaterialPart<H extends RegisteredObjectHolder>
 				return holder;
 			}
 		};
-	}
-	
-	public static MaterialPart<BlockWithItemHolder<Block, BlockItem>> block()
-	{
-		return block(null, null, (m, p) -> m, (m, p) -> m);
 	}
 	
 	public static MaterialPart<BlockWithItemHolder<Block, BlockItem>> block(String id, String englishName)

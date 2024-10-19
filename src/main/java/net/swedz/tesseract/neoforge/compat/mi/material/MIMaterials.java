@@ -1,47 +1,47 @@
 package net.swedz.tesseract.neoforge.compat.mi.material;
 
-import aztech.modern_industrialization.MI;
 import net.swedz.tesseract.neoforge.material.Material;
 import net.swedz.tesseract.neoforge.material.VanillaMaterials;
 
 import java.util.Optional;
 
 import static net.swedz.tesseract.neoforge.compat.mi.material.part.MIMaterialParts.*;
+import static net.swedz.tesseract.neoforge.material.Material.*;
 import static net.swedz.tesseract.neoforge.material.part.VanillaMaterialParts.*;
 import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.*;
 
 public interface MIMaterials
 {
-	Material GOLD = copy(VanillaMaterials.GOLD)
+	Material GOLD = VanillaMaterials.GOLD.copy()
 			.add(BOLT, RING, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, PLATE, TINY_DUST)
 			.add(DRILL_HEAD, DRILL);
 	
-	Material IRON = copy(VanillaMaterials.IRON)
+	Material IRON = VanillaMaterials.IRON.copy()
 			.add(BOLT, RING, GEAR, ROD, DOUBLE_INGOT, DUST, LARGE_PLATE, PLATE, TINY_DUST);
 	
-	Material COPPER = copy(VanillaMaterials.COPPER)
+	Material COPPER = VanillaMaterials.COPPER.copy()
 			.add(BOLT, BLADE, RING, ROTOR, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, NUGGET, PLATE, TINY_DUST)
 			.add(WIRE, FINE_WIRE)
 			.add(DRILL_HEAD, DRILL);
 	
-	Material COAL = copy(VanillaMaterials.COAL)
+	Material COAL = VanillaMaterials.COAL.copy()
 			.add(ITEM_PURE_NON_METAL);
 	
-	Material DIAMOND = copy(VanillaMaterials.DIAMOND)
+	Material DIAMOND = VanillaMaterials.DIAMOND.copy()
 			.add(ITEM_PURE_NON_METAL)
 			.add(PLATE, LARGE_PLATE);
 	
-	Material EMERALD = copy(VanillaMaterials.EMERALD)
+	Material EMERALD = VanillaMaterials.EMERALD.copy()
 			.add(ITEM_PURE_NON_METAL)
 			.add(PLATE);
 	
-	Material LAPIS = copy(VanillaMaterials.LAPIS)
+	Material LAPIS = VanillaMaterials.LAPIS.copy()
 			.add(ITEM_PURE_NON_METAL);
 	
-	Material REDSTONE = copy(VanillaMaterials.REDSTONE)
+	Material REDSTONE = VanillaMaterials.REDSTONE.copy()
 			.add(TINY_DUST, CRUSHED_DUST);
 	
-	Material QUARTZ = copy(VanillaMaterials.QUARTZ)
+	Material QUARTZ = VanillaMaterials.QUARTZ.copy()
 			.add(ITEM_PURE_NON_METAL);
 	
 	Material BRICK = create("brick", "Brick")
@@ -275,14 +275,4 @@ public interface MIMaterials
 	Material SULFUR = create("sulfur", "Sulfur")
 			.add(DUST, TINY_DUST)
 			.add(BLOCK);
-	
-	static Material copy(Material other)
-	{
-		return other.copy(MI.id(other.rawId()));
-	}
-	
-	static Material create(String id, String englishName)
-	{
-		return new Material(MI.id(id), englishName);
-	}
 }
