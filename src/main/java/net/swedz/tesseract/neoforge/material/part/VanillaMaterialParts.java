@@ -46,4 +46,7 @@ public interface VanillaMaterialParts
 			.with(blockModel(CommonModelBuilders::blockCubeAll))
 			.with(blockDropsSelf())
 			.with((r, m, h) -> h.item().tag(TagHelper.itemCommonWithChild("storage_blocks", "raw_%s".formatted(m.id()))));
+	
+	MaterialPart<ItemHolder<Item>> SCRAP = item("scrap", "Scrap")
+			.with(itemModel(CommonModelBuilders::generated));
 }

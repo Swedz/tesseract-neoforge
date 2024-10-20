@@ -68,9 +68,9 @@ public abstract class MaterialPart<H extends RegisteredObjectHolder>
 	
 	public abstract H register(MaterialRegistry registry, Material material);
 	
-	public final MaterialPart<H> withoutSuffix()
+	public final MaterialPart<H> as(Formatter formatterId, Formatter formatterEnglishName)
 	{
-		return new MaterialPart<>(id, englishName, (m, p) -> m, (m, p) -> m)
+		return new MaterialPart<>(id, englishName, formatterId, formatterEnglishName)
 		{
 			@Override
 			public H register(MaterialRegistry registry, Material material)
@@ -78,6 +78,11 @@ public abstract class MaterialPart<H extends RegisteredObjectHolder>
 				return MaterialPart.this.register(registry, material);
 			}
 		};
+	}
+	
+	public final MaterialPart<H> withoutSuffix()
+	{
+		return this.as((m, p) -> m, (m, p) -> m);
 	}
 	
 	public final MaterialPart<H> with(ExtraRegister<H> action)
@@ -127,6 +132,12 @@ public abstract class MaterialPart<H extends RegisteredObjectHolder>
 	public final <T> MaterialPart<H> withProperty(MaterialProperty<T> property, T value)
 	{
 		return this.withProperties(() -> new MaterialPropertyMap().set(property, value));
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return id.hashCode();
 	}
 	
 	public static MaterialPart<ItemHolder<Item>> item(String id, String englishName, Formatter formatterId, Formatter formatterEnglishName)

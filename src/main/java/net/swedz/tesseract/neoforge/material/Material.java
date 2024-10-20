@@ -1,8 +1,9 @@
 package net.swedz.tesseract.neoforge.material;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.Maps;
 import net.minecraft.tags.TagKey;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
+import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyTag;
@@ -10,21 +11,40 @@ import net.swedz.tesseract.neoforge.material.property.MaterialPropertyTag;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
-public final class Material
+public class Material
 {
-	private final String id, englishName;
+	private static final Map<String, Material> MATERIAL_IDS = Maps.newHashMap();
 	
-	private final MaterialPropertyMap properties = new MaterialPropertyMap();
+	protected final String id, englishName;
 	
-	private final Set<MaterialPart> parts = Sets.newHashSet();
+	protected final MaterialPropertyMap properties;
 	
-	private Material(String id, String englishName)
+	protected final Map<MaterialPart, RegisteredMaterialPart> parts;
+	
+	protected Material(String id, String englishName)
 	{
 		this.id = id;
 		this.englishName = englishName;
+		
+		this.properties = new MaterialPropertyMap();
+		
+		this.parts = Maps.newHashMap();
+		
+		if(MATERIAL_IDS.put(id, this) != null)
+		{
+			throw new IllegalArgumentException("There is already an existing material with the id '%s'".formatted(id));
+		}
+	}
+	
+	protected Material(Material other)
+	{
+		this.id = other.id;
+		this.englishName = other.englishName;
+		this.properties = other.properties;
+		this.parts = other.parts;
 	}
 	
 	public static Material create(String id, String englishName)
@@ -32,12 +52,17 @@ public final class Material
 		return new Material(id, englishName);
 	}
 	
-	public String id()
+	public static Material defer(Material other)
+	{
+		return new Material(other);
+	}
+	
+	public final String id()
 	{
 		return id;
 	}
 	
-	public String englishName()
+	public final String englishName()
 	{
 		return englishName;
 	}
@@ -64,39 +89,56 @@ public final class Material
 		return properties.get(property);
 	}
 	
-	public Set<MaterialPart> parts()
+	public Map<MaterialPart, RegisteredMaterialPart> parts()
 	{
-		return Collections.unmodifiableSet(parts);
+		return Collections.unmodifiableMap(parts);
 	}
 	
-	public Material add(Collection<MaterialPart> parts)
+	public Material add(MaterialPart part, RegisteredMaterialPart registered)
+	{
+		parts.put(part, registered);
+		return this;
+	}
+	
+	public Material add(String modId, Collection<MaterialPart> parts)
 	{
 		for(MaterialPart part : parts)
 		{
-			if(this.parts.contains(part))
+			if(this.parts.containsKey(part))
 			{
 				throw new IllegalStateException("Already added part '%s' to material '%s'".formatted(part.id(), id));
 			}
 		}
-		this.parts.addAll(parts);
+		for(MaterialPart part : parts)
+		{
+			this.parts.put(part, RegisteredMaterialPart.of(modId, part.id(this)));
+		}
 		return this;
 	}
 	
-	public Material add(MaterialPart... parts)
+	public Material add(String modId, MaterialPart... parts)
 	{
-		return this.add(Arrays.asList(parts));
+		return this.add(modId, Arrays.asList(parts));
 	}
 	
 	public boolean has(MaterialPart part)
 	{
-		return parts.contains(part);
+		return parts.containsKey(part);
 	}
 	
-	public Material copy()
+	public RegisteredMaterialPart get(MaterialPart part)
 	{
-		Material copy = new Material(id, englishName);
-		copy.properties().putAll(properties);
-		copy.add(parts);
-		return copy;
+		RegisteredMaterialPart registered = parts.get(part);
+		if(registered == null)
+		{
+			throw new IllegalArgumentException("No '%s' part registered on the material '%s'".formatted(part.id(), id));
+		}
+		return registered;
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return id.hashCode();
 	}
 }

@@ -5,54 +5,56 @@ import net.swedz.tesseract.neoforge.material.VanillaMaterials;
 
 import java.util.Optional;
 
+import static net.swedz.tesseract.neoforge.compat.mi.material.MIMaterial.*;
 import static net.swedz.tesseract.neoforge.compat.mi.material.part.MIMaterialParts.*;
-import static net.swedz.tesseract.neoforge.material.Material.*;
 import static net.swedz.tesseract.neoforge.material.part.VanillaMaterialParts.*;
 import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.*;
 
 public interface MIMaterials
 {
-	Material GOLD = VanillaMaterials.GOLD.copy()
+	Material GOLD = defer(VanillaMaterials.GOLD)
 			.add(BOLT, RING, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, PLATE, TINY_DUST)
 			.add(DRILL_HEAD, DRILL);
 	
-	Material IRON = VanillaMaterials.IRON.copy()
+	Material IRON = defer(VanillaMaterials.IRON)
 			.add(BOLT, RING, GEAR, ROD, DOUBLE_INGOT, DUST, LARGE_PLATE, PLATE, TINY_DUST);
 	
-	Material COPPER = VanillaMaterials.COPPER.copy()
+	Material COPPER = defer(VanillaMaterials.COPPER)
 			.add(BOLT, BLADE, RING, ROTOR, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, NUGGET, PLATE, TINY_DUST)
 			.add(WIRE, FINE_WIRE)
 			.add(DRILL_HEAD, DRILL);
 	
-	Material COAL = VanillaMaterials.COAL.copy()
+	Material COAL = defer(VanillaMaterials.COAL)
 			.add(ITEM_PURE_NON_METAL);
 	
-	Material DIAMOND = VanillaMaterials.DIAMOND.copy()
+	Material DIAMOND = defer(VanillaMaterials.DIAMOND)
 			.add(ITEM_PURE_NON_METAL)
 			.add(PLATE, LARGE_PLATE);
 	
-	Material EMERALD = VanillaMaterials.EMERALD.copy()
+	Material EMERALD = defer(VanillaMaterials.EMERALD)
 			.add(ITEM_PURE_NON_METAL)
 			.add(PLATE);
 	
-	Material LAPIS = VanillaMaterials.LAPIS.copy()
+	Material LAPIS = defer(VanillaMaterials.LAPIS)
 			.add(ITEM_PURE_NON_METAL);
 	
-	Material REDSTONE = VanillaMaterials.REDSTONE.copy()
+	Material REDSTONE = defer(VanillaMaterials.REDSTONE)
 			.add(TINY_DUST, CRUSHED_DUST);
 	
-	Material QUARTZ = VanillaMaterials.QUARTZ.copy()
+	Material QUARTZ = defer(VanillaMaterials.QUARTZ)
 			.add(ITEM_PURE_NON_METAL);
 	
 	Material BRICK = create("brick", "Brick")
 			.set(HARDNESS, 2f)
 			.set(NEEDS_TOOL, Optional.empty())
-			.add(INGOT, DUST, TINY_DUST);
+			.add("minecraft", INGOT.withoutSuffix())
+			.add(DUST, TINY_DUST);
 	
 	Material FIRE_CLAY = create("fire_clay", "Fire Clay")
 			.set(HARDNESS, 2f)
 			.set(NEEDS_TOOL, Optional.empty())
-			.add(INGOT, DUST, TINY_DUST);
+			.add(INGOT.as((m, p) -> "%s_brick".formatted(m), (m, p) -> "%s Brick".formatted(m)))
+			.add(DUST, TINY_DUST);
 	
 	Material COKE = create("coke", "Coke")
 			.add(GEM, DUST, BLOCK);
