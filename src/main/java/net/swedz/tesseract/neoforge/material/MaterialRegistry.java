@@ -31,6 +31,8 @@ public abstract class MaterialRegistry
 	
 	public final RegisteredMaterialPart create(Material material, MaterialPart part)
 	{
-		return part.register(this, material);
+		RegisteredMaterialPart registered = part.register(this, material);
+		material.add(part, registered);
+		return registered;
 	}
 }
