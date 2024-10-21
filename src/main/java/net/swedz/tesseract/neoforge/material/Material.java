@@ -1,14 +1,19 @@
 package net.swedz.tesseract.neoforge.material;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
+import net.swedz.tesseract.neoforge.material.part.recipe.MaterialRecipeGroup;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyHolder;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -22,6 +27,8 @@ public class Material implements MaterialPropertyHolder
 	
 	protected final Map<MaterialPart, RegisteredMaterialPart> parts = Maps.newHashMap();
 	
+	protected final List<MaterialRecipeGroup> recipeGroups = Lists.newArrayList();
+	
 	public Material(ResourceLocation id, String englishName)
 	{
 		this.id = id;
@@ -33,6 +40,7 @@ public class Material implements MaterialPropertyHolder
 		M copy = creator.apply(this.id, this.englishName);
 		copy.properties.putAll(this.properties);
 		copy.parts.putAll(this.parts);
+		copy.recipeGroups.addAll(this.recipeGroups);
 		return copy;
 	}
 	
@@ -140,5 +148,21 @@ public class Material implements MaterialPropertyHolder
 			throw new IllegalArgumentException("No '%s' part registered on material '%s'".formatted(part.id().toString(), this.id().toString()));
 		}
 		return registered;
+	}
+	
+	public List<MaterialRecipeGroup> recipes()
+	{
+		return Collections.unmodifiableList(recipeGroups);
+	}
+	
+	public Material recipes(Collection<MaterialRecipeGroup> recipeGroups)
+	{
+		this.recipeGroups.addAll(recipeGroups);
+		return this;
+	}
+	
+	public Material recipes(MaterialRecipeGroup... recipeGroups)
+	{
+		return this.recipes(Arrays.asList(recipeGroups));
 	}
 }

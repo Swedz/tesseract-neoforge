@@ -3,8 +3,10 @@ package net.swedz.tesseract.neoforge.material;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
+import net.swedz.tesseract.neoforge.material.part.recipe.MaterialRecipeGroup;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public class ImmutableMaterial extends Material
@@ -42,5 +44,17 @@ public class ImmutableMaterial extends Material
 	public Material addNative(MaterialPart... parts)
 	{
 		return this.copy().addNative(parts);
+	}
+	
+	@Override
+	public Material recipes(Collection<MaterialRecipeGroup> recipeGroups)
+	{
+		return this.copy().recipes(recipeGroups);
+	}
+	
+	@Override
+	public Material recipes(MaterialRecipeGroup... recipeGroups)
+	{
+		return this.copy().recipes(recipeGroups);
 	}
 }
