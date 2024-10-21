@@ -39,6 +39,8 @@ public interface VanillaMaterialParts
 			.block(blockItemTagCommon("storage_blocks"))
 			.immutable();
 	
+	// TODO ore (+deepslate or other variants)
+	
 	MaterialPart RAW_METAL = create("raw_metal", "Raw Metal")
 			.formattingMaterialOnly("raw_%s"::formatted, "Raw %s"::formatted)
 			.itemModel(CommonModelBuilders::generated)
