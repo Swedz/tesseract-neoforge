@@ -12,44 +12,44 @@ import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.
 
 public interface MIMaterials
 {
-	Material GOLD = VanillaMaterials.GOLD.copy(MI.ID)
+	Material GOLD = VanillaMaterials.GOLD.as(MI.ID)
 			.addNative(BOLT, RING, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, PLATE, TINY_DUST)
 			.addNative(DRILL_HEAD, DRILL)
 			.immutable();
 	
-	Material IRON = VanillaMaterials.IRON.copy(MI.ID)
+	Material IRON = VanillaMaterials.IRON.as(MI.ID)
 			.addNative(BOLT, RING, GEAR, ROD, DOUBLE_INGOT, DUST, LARGE_PLATE, PLATE, TINY_DUST)
 			.immutable();
 	
-	Material COPPER = VanillaMaterials.COPPER.copy(MI.ID)
+	Material COPPER = VanillaMaterials.COPPER.as(MI.ID)
 			.addNative(BOLT, BLADE, RING, ROTOR, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, NUGGET, PLATE, TINY_DUST)
 			.addNative(WIRE, FINE_WIRE)
 			.addNative(DRILL_HEAD, DRILL)
 			.immutable();
 	
-	Material COAL = VanillaMaterials.COAL.copy(MI.ID)
+	Material COAL = VanillaMaterials.COAL.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL)
 			.immutable();
 	
-	Material DIAMOND = VanillaMaterials.DIAMOND.copy(MI.ID)
+	Material DIAMOND = VanillaMaterials.DIAMOND.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL)
 			.addNative(PLATE, LARGE_PLATE)
 			.immutable();
 	
-	Material EMERALD = VanillaMaterials.EMERALD.copy(MI.ID)
+	Material EMERALD = VanillaMaterials.EMERALD.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL)
 			.addNative(PLATE)
 			.immutable();
 	
-	Material LAPIS = VanillaMaterials.LAPIS.copy(MI.ID)
+	Material LAPIS = VanillaMaterials.LAPIS.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL)
 			.immutable();
 	
-	Material REDSTONE = VanillaMaterials.REDSTONE.copy(MI.ID)
+	Material REDSTONE = VanillaMaterials.REDSTONE.as(MI.ID)
 			.addNative(TINY_DUST, CRUSHED_DUST)
 			.immutable();
 	
-	Material QUARTZ = VanillaMaterials.QUARTZ.copy(MI.ID)
+	Material QUARTZ = VanillaMaterials.QUARTZ.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL)
 			.immutable();
 	

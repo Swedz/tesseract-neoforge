@@ -66,9 +66,9 @@ public class MaterialPart implements MaterialPropertyHolder
 		return this.copy(MaterialPart::new);
 	}
 	
-	public MaterialPart copy(String modId)
+	public MaterialPart as(String namespace)
 	{
-		return this.copy((id, name) -> new MaterialPart(ResourceLocation.fromNamespaceAndPath(modId, id.getPath()), name));
+		return this.copy((id, name) -> new MaterialPart(ResourceLocation.fromNamespaceAndPath(namespace, id.getPath()), name));
 	}
 	
 	public ImmutableMaterialPart immutable()
