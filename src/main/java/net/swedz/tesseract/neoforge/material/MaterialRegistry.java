@@ -3,9 +3,8 @@ package net.swedz.tesseract.neoforge.material;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.swedz.tesseract.neoforge.compat.mi.material.part.MIMaterialParts;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
-import net.swedz.tesseract.neoforge.registry.RegisteredObjectHolder;
+import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
@@ -30,13 +29,8 @@ public abstract class MaterialRegistry
 	
 	public abstract void onItemRegister(ItemHolder holder);
 	
-	public final <H extends RegisteredObjectHolder> H create(Material material, MaterialPart<H> part)
+	public final RegisteredMaterialPart create(Material material, MaterialPart part)
 	{
-		H holder = part.register(this, material);
-		/*
-		 * TODO this cannot be added like this because .add() expects the item/block to already be registered..........
-		 */
-		//material.add(part);
-		return holder;
+		return part.register(this, material);
 	}
 }

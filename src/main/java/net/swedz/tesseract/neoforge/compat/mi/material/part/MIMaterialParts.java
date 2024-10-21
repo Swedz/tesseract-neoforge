@@ -1,16 +1,12 @@
 package net.swedz.tesseract.neoforge.compat.mi.material.part;
 
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
+import aztech.modern_industrialization.MI;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
+import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
-import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
-import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
+import static net.swedz.tesseract.neoforge.compat.vanilla.material.part.VanillaMaterialParts.*;
 import static net.swedz.tesseract.neoforge.material.part.CommonMaterialPartRegisters.*;
-import static net.swedz.tesseract.neoforge.material.part.MaterialPart.*;
-import static net.swedz.tesseract.neoforge.material.part.VanillaMaterialParts.*;
 
 public interface MIMaterialParts
 {
@@ -18,49 +14,62 @@ public interface MIMaterialParts
 	
 	// TODO barrel
 	
-	MaterialPart<ItemHolder<Item>> BLADE = item("blade", "Blade")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart BLADE = create("blade", "Blade")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> BOLT = item("bolt", "Bolt")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart BOLT = create("bolt", "Bolt")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
 	// TODO cable
 	
-	MaterialPart<BlockWithItemHolder<Block, BlockItem>> COIL = block("coil", "Coil")
-			.with(blockModel(CommonModelBuilders::blockTopEnd))
-			.with(blockDropsSelf());
+	MaterialPart COIL = create("coil", "Coil")
+			.blockModel(CommonModelBuilders::blockTopEnd)
+			.blockLoot(CommonLootTableBuilders::self)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> CRUSHED_DUST = item("crushed_dust", "Crushed Dust")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart CRUSHED_DUST = create("crushed_dust", "Crushed Dust")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> CURVED_PLATE = item("curved_plate", "Curved Plate")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart CURVED_PLATE = create("curved_plate", "Curved Plate")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> DOUBLE_INGOT = item("double_ingot", "Double Ingot")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart DOUBLE_INGOT = create("double_ingot", "Double Ingot")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> DRILL_HEAD = item("drill_head", "Drill Head")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart DRILL_HEAD = create("drill_head", "Drill Head")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> DRILL = item("drill", "Drill")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart DRILL = create("drill", "Drill")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> FINE_WIRE = item("fine_wire", "Fine Wire")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart FINE_WIRE = create("fine_wire", "Fine Wire")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> GEAR = item("gear", "Gear")
-			.with(itemModel(CommonModelBuilders::generated))
-			.with(itemTagCommon("gears"));
+	MaterialPart GEAR = create("gear", "Gear")
+			.itemModel(CommonModelBuilders::generated)
+			.item(itemTagCommon("gears"))
+			.immutable();
 	
 	// TODO hammer
-	/*MaterialPart<ItemHolder<Item>> HAMMER = item("hammer", "Hammer")
-			.with(itemModel(CommonModelBuilders::generated));*/
+	/*MaterialPart HAMMER = create("hammer", "Hammer")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();*/
 	
-	MaterialPart<ItemHolder<Item>> HOT_INGOT = item("hot_ingot", "Hot Ingot")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart HOT_INGOT = create("hot_ingot", "Hot Ingot")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> LARGE_PLATE = item("large_plate", "Large Plate")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart LARGE_PLATE = create("large_plate", "Large Plate")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
 	// TODO machine casing
 	
@@ -68,43 +77,62 @@ public interface MIMaterialParts
 	
 	// TODO machine casing special
 	
-	MaterialPart<ItemHolder<Item>> PLATE = item("plate", "Plate")
-			.with(itemModel(CommonModelBuilders::generated))
-			.with(itemTagCommon("plates"));
+	MaterialPart PLATE = create("plate", "Plate")
+			.itemModel(CommonModelBuilders::generated)
+			.item(itemTagCommon("plates"))
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> RING = item("ring", "Ring")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart RING = create("ring", "Ring")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> ROD = item("rod", "Rod")
-			.with(itemModel(CommonModelBuilders::generated))
-			.with(itemTagCommon("rods"));
+	MaterialPart ROD = create("rod", "Rod")
+			.itemModel(CommonModelBuilders::generated)
+			.item(itemTagCommon("rods"))
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> ROD_MAGNETIC = item("rod_magnetic", "Magnetic Rod", "%s_%s"::formatted, (m, p) -> "Magnetic %s Rod".formatted(m))
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart ROD_MAGNETIC = create("rod_magnetic", "Magnetic Rod")
+			.formatting("%s_%s"::formatted, (m, p) -> "Magnetic %s Rod".formatted(m))
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> ROTOR = item("rotor", "Rotor")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart ROTOR = create("rotor", "Rotor")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
 	// TODO tank
 	
-	MaterialPart<ItemHolder<Item>> TINY_DUST = item("tiny_dust", "Tiny Dust")
-			.with(itemModel(CommonModelBuilders::generated))
-			.with(itemTagCommon("tiny_dusts"));
+	MaterialPart TINY_DUST = create("tiny_dust", "Tiny Dust")
+			.itemModel(CommonModelBuilders::generated)
+			.item(itemTagCommon("tiny_dusts"))
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> WIRE = item("wire", "Wire")
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart WIRE = create("wire", "Wire")
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> WIRE_MAGNETIC = item("wire_magnetic", "Magnetic Wire", "%s_%s"::formatted, (m, p) -> "Magnetic %s Wire".formatted(m))
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart WIRE_MAGNETIC = create("wire_magnetic", "Magnetic Wire")
+			.formatting("%s_%s"::formatted, (m, p) -> "Magnetic %s Wire".formatted(m))
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
 	// TODO fuel rods
 	
-	MaterialPart<ItemHolder<Item>> N_DOPED_PLATE = item("n_doped_plate", "N-Doped Plate", "%s_%s"::formatted, (m, p) -> "N-Doped %s Plate".formatted(m))
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart N_DOPED_PLATE = create("n_doped_plate", "N-Doped Plate")
+			.formatting("%s_%s"::formatted, (m, p) -> "N-Doped %s Plate".formatted(m))
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
-	MaterialPart<ItemHolder<Item>> P_DOPED_PLATE = item("p_doped_plate", "P-Doped Plate", "%s_%s"::formatted, (m, p) -> "P-Doped %s Plate".formatted(m))
-			.with(itemModel(CommonModelBuilders::generated));
+	MaterialPart P_DOPED_PLATE = create("p_doped_plate", "P-Doped Plate")
+			.formatting("%s_%s"::formatted, (m, p) -> "P-Doped %s Plate".formatted(m))
+			.itemModel(CommonModelBuilders::generated)
+			.immutable();
 	
 	MaterialPart[] ITEM_PURE_NON_METAL = {CRUSHED_DUST, DUST, TINY_DUST};
 	MaterialPart[] ITEM_PURE_METAL     = {INGOT, NUGGET, DUST, TINY_DUST};
+	
+	static MaterialPart create(String id, String englishName)
+	{
+		return new MaterialPart(MI.id(id), englishName);
+	}
 }

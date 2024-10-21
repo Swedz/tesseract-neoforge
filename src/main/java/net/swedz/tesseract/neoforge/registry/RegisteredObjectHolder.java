@@ -9,6 +9,7 @@ import net.swedz.tesseract.neoforge.api.MCIdentifiable;
 import net.swedz.tesseract.neoforge.api.MCIdentifier;
 import net.swedz.tesseract.neoforge.capabilities.CapabilitiesListeners;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +55,7 @@ public abstract class RegisteredObjectHolder<Thing, ActualThing extends Thing, S
 		return this.self();
 	}
 	
-	public final Self tag(List<TagKey<Thing>> tags)
+	public final Self tag(Collection<TagKey<Thing>> tags)
 	{
 		this.tags.addAll(tags);
 		return this.self();

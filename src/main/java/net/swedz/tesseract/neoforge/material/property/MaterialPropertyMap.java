@@ -5,8 +5,9 @@ import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
 import java.util.Map;
+import java.util.Optional;
 
-public final class MaterialPropertyMap
+public final class MaterialPropertyMap implements MaterialPropertyHolder
 {
 	private final Map<MaterialProperty<?>, Object> map = Maps.newHashMap();
 	
@@ -17,6 +18,13 @@ public final class MaterialPropertyMap
 		return copy;
 	}
 	
+	@Override
+	public <T> boolean has(MaterialProperty<T> property)
+	{
+		return map.containsKey(property);
+	}
+	
+	@Override
 	public <T> MaterialPropertyMap set(MaterialProperty<T> property, T value)
 	{
 		if(value == null || value.equals(property.defaultValue()))
@@ -30,6 +38,13 @@ public final class MaterialPropertyMap
 		return this;
 	}
 	
+	@Override
+	public <T> MaterialPropertyMap setOptional(MaterialProperty<Optional<T>> property, T value)
+	{
+		return this.set(property, Optional.ofNullable(value));
+	}
+	
+	@Override
 	public <T> T get(MaterialProperty<T> property)
 	{
 		return (T) map.getOrDefault(property, property.defaultValue());
@@ -40,25 +55,19 @@ public final class MaterialPropertyMap
 		map.putAll(other.map);
 	}
 	
-	public void applyItemTags(ItemHolder<?> holder)
+	public void apply(ItemHolder<?> holder)
 	{
-		for(MaterialProperty<?> property : MaterialProperty.getProperties())
+		for(MaterialProperty property : MaterialProperty.getProperties())
 		{
-			if(property instanceof MaterialPropertyTag.ItemOptional propertyTag)
-			{
-				this.get(propertyTag).ifPresent(holder::tag);
-			}
+			property.applyItem(holder, this.get(property));
 		}
 	}
 	
-	public void applyBlockTags(BlockHolder<?> holder)
+	public void apply(BlockHolder<?> holder)
 	{
-		for(MaterialProperty<?> property : MaterialProperty.getProperties())
+		for(MaterialProperty property : MaterialProperty.getProperties())
 		{
-			if(property instanceof MaterialPropertyTag.BlockOptional propertyTag)
-			{
-				this.get(propertyTag).ifPresent(holder::tag);
-			}
+			property.applyBlock(holder, this.get(property));
 		}
 	}
 }

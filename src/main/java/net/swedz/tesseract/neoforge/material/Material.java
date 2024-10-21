@@ -1,89 +1,87 @@
 package net.swedz.tesseract.neoforge.material;
 
 import com.google.common.collect.Maps;
-import net.minecraft.tags.TagKey;
+import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
+import net.swedz.tesseract.neoforge.material.property.MaterialPropertyHolder;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
-import net.swedz.tesseract.neoforge.material.property.MaterialPropertyTag;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
-public class Material
+public class Material implements MaterialPropertyHolder
 {
-	private static final Map<String, Material> MATERIAL_IDS = Maps.newHashMap();
+	protected final ResourceLocation id;
+	protected final String           englishName;
 	
-	protected final String id, englishName;
+	protected final MaterialPropertyMap properties = new MaterialPropertyMap();
 	
-	protected final MaterialPropertyMap properties;
+	protected final Map<MaterialPart, RegisteredMaterialPart> parts = Maps.newHashMap();
 	
-	protected final Map<MaterialPart, RegisteredMaterialPart> parts;
-	
-	protected Material(String id, String englishName)
+	public Material(ResourceLocation id, String englishName)
 	{
 		this.id = id;
 		this.englishName = englishName;
-		
-		this.properties = new MaterialPropertyMap();
-		
-		this.parts = Maps.newHashMap();
-		
-		if(MATERIAL_IDS.put(id, this) != null)
-		{
-			throw new IllegalArgumentException("There is already an existing material with the id '%s'".formatted(id));
-		}
 	}
 	
-	protected Material(Material other)
+	protected <M extends Material> M copy(BiFunction<ResourceLocation, String, M> creator)
 	{
-		this.id = other.id;
-		this.englishName = other.englishName;
-		this.properties = other.properties;
-		this.parts = other.parts;
+		M copy = creator.apply(this.id, this.englishName);
+		copy.properties.putAll(this.properties);
+		copy.parts.putAll(this.parts);
+		return copy;
 	}
 	
-	public static Material create(String id, String englishName)
+	public Material copy()
 	{
-		return new Material(id, englishName);
+		return this.copy(Material::new);
 	}
 	
-	public static Material defer(Material other)
+	public Material copy(String modId)
 	{
-		return new Material(other);
+		return this.copy((id, name) -> new Material(ResourceLocation.fromNamespaceAndPath(modId, id.getPath()), name));
 	}
 	
-	public final String id()
+	public ImmutableMaterial immutable()
+	{
+		return this.copy(ImmutableMaterial::new);
+	}
+	
+	public ResourceLocation id()
 	{
 		return id;
 	}
 	
-	public final String englishName()
+	public String englishName()
 	{
 		return englishName;
 	}
 	
-	public MaterialPropertyMap properties()
+	@Override
+	public <T> boolean has(MaterialProperty<T> property)
 	{
-		return properties;
+		return properties.has(property);
 	}
 	
+	@Override
 	public <T> Material set(MaterialProperty<T> property, T value)
 	{
 		properties.set(property, value);
 		return this;
 	}
 	
-	public <T> Material set(MaterialPropertyTag<T> property, TagKey<T> value)
+	@Override
+	public <T> Material setOptional(MaterialProperty<Optional<T>> property, T value)
 	{
-		properties.set(property, Optional.of(value));
+		properties.setOptional(property, value);
 		return this;
 	}
 	
+	@Override
 	public <T> T get(MaterialProperty<T> property)
 	{
 		return properties.get(property);
@@ -96,29 +94,37 @@ public class Material
 	
 	public Material add(MaterialPart part, RegisteredMaterialPart registered)
 	{
-		parts.put(part, registered);
-		return this;
-	}
-	
-	public Material add(String modId, Collection<MaterialPart> parts)
-	{
-		for(MaterialPart part : parts)
+		if(parts.put(part, registered) != null)
 		{
-			if(this.parts.containsKey(part))
-			{
-				throw new IllegalStateException("Already added part '%s' to material '%s'".formatted(part.id(), id));
-			}
-		}
-		for(MaterialPart part : parts)
-		{
-			this.parts.put(part, RegisteredMaterialPart.of(modId, part.id(this)));
+			throw new IllegalArgumentException("The part '%s' has already been added to the material '%s'".formatted(part.id().toString(), this.id().toString()));
 		}
 		return this;
 	}
 	
-	public Material add(String modId, MaterialPart... parts)
+	public Material addNative(String modId, MaterialPart part)
 	{
-		return this.add(modId, Arrays.asList(parts));
+		ResourceLocation id = ResourceLocation.fromNamespaceAndPath(modId, part.formatId(this));
+		RegisteredMaterialPart registered = part.isBlock() ? RegisteredMaterialPart.existingBlock(id) : RegisteredMaterialPart.existingItem(id);
+		return this.add(part, registered);
+	}
+	
+	public Material addNative(MaterialPart part)
+	{
+		return this.addNative(this.id().getNamespace(), part);
+	}
+	
+	public Material addNative(String modId, MaterialPart... parts)
+	{
+		for(MaterialPart part : parts)
+		{
+			this.addNative(modId, part);
+		}
+		return this;
+	}
+	
+	public Material addNative(MaterialPart... parts)
+	{
+		return this.addNative(this.id().getNamespace(), parts);
 	}
 	
 	public boolean has(MaterialPart part)
@@ -131,14 +137,8 @@ public class Material
 		RegisteredMaterialPart registered = parts.get(part);
 		if(registered == null)
 		{
-			throw new IllegalArgumentException("No '%s' part registered on the material '%s'".formatted(part.id(), id));
+			throw new IllegalArgumentException("No '%s' part registered on material '%s'".formatted(part.id().toString(), this.id().toString()));
 		}
 		return registered;
-	}
-	
-	@Override
-	public int hashCode()
-	{
-		return id.hashCode();
 	}
 }

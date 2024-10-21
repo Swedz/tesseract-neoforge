@@ -1,217 +1,247 @@
 package net.swedz.tesseract.neoforge.material.part;
 
+import com.google.common.collect.Lists;
+import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.swedz.tesseract.neoforge.material.Material;
 import net.swedz.tesseract.neoforge.material.MaterialRegistry;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
+import net.swedz.tesseract.neoforge.material.property.MaterialPropertyHolder;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
-import net.swedz.tesseract.neoforge.registry.RegisteredObjectHolder;
+import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
-import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
-public abstract class MaterialPart<H extends RegisteredObjectHolder>
+public class MaterialPart implements MaterialPropertyHolder
 {
-	protected final String id, englishName;
+	protected final ResourceLocation id;
+	protected final String           englishName;
 	
-	protected final Formatter formatterId, formatterEnglishName;
+	protected boolean isBlock = false;
 	
-	public MaterialPart(String id, String englishName,
-						Formatter formatterId, Formatter formatterEnglishName)
+	protected MaterialPartFormatter idFormatter;
+	protected MaterialPartFormatter englishNameFormatter;
+	
+	protected final List<MaterialPartExtraRegister<ItemHolder<? extends Item>>>            itemActions  = Lists.newArrayList();
+	protected final List<MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>>> blockActions = Lists.newArrayList();
+	
+	protected final MaterialPropertyMap propertyOverrides = new MaterialPropertyMap();
+	
+	public MaterialPart(ResourceLocation id, String englishName)
 	{
 		this.id = id;
 		this.englishName = englishName;
-		this.formatterId = formatterId;
-		this.formatterEnglishName = formatterEnglishName;
+		this.formattingDefault();
 	}
 	
-	public MaterialPart(MaterialPart inherit)
+	protected <P extends MaterialPart> P copy(BiFunction<ResourceLocation, String, P> creator)
 	{
-		this(inherit.id, inherit.englishName, inherit.formatterId, inherit.formatterEnglishName);
+		P copy = creator.apply(id, englishName);
+		copy.isBlock = this.isBlock;
+		copy.idFormatter = this.idFormatter;
+		copy.englishNameFormatter = this.englishNameFormatter;
+		copy.itemActions.addAll(this.itemActions);
+		copy.blockActions.addAll(this.blockActions);
+		copy.propertyOverrides.putAll(this.propertyOverrides);
+		return copy;
 	}
 	
-	public String id()
+	public MaterialPart copy()
+	{
+		return this.copy(MaterialPart::new);
+	}
+	
+	public MaterialPart copy(String modId)
+	{
+		return this.copy((id, name) -> new MaterialPart(ResourceLocation.fromNamespaceAndPath(modId, id.getPath()), name));
+	}
+	
+	public ImmutableMaterialPart immutable()
+	{
+		return this.copy(ImmutableMaterialPart::new);
+	}
+	
+	public ResourceLocation id()
 	{
 		return id;
 	}
 	
-	public String id(Material material)
-	{
-		return formatterId.format(material.id(), id);
-	}
-	
-	protected String englishName()
+	public String englishName()
 	{
 		return englishName;
 	}
 	
-	protected String englishName(Material material)
+	public boolean isBlock()
 	{
-		return formatterEnglishName.format(material.englishName(), englishName);
+		return isBlock;
 	}
 	
-	public MaterialPropertyMap getPropertyOverrides()
+	public MaterialPart asBlock()
 	{
-		return new MaterialPropertyMap();
+		isBlock = true;
+		return this;
 	}
 	
-	protected final MaterialPropertyMap getPropertyOverrides(Material material)
+	public MaterialPart formatting(MaterialPartFormatter idFormatter, MaterialPartFormatter englishNameFormatter)
 	{
-		MaterialPropertyMap properties = material.properties().copy();
-		properties.putAll(this.getPropertyOverrides());
-		return properties;
+		this.idFormatter = idFormatter;
+		this.englishNameFormatter = englishNameFormatter;
+		return this;
 	}
 	
-	public abstract H register(MaterialRegistry registry, Material material);
-	
-	public final MaterialPart<H> as(Formatter formatterId, Formatter formatterEnglishName)
+	public MaterialPart formattingDefault()
 	{
-		return new MaterialPart<>(id, englishName, formatterId, formatterEnglishName)
-		{
-			@Override
-			public H register(MaterialRegistry registry, Material material)
-			{
-				return MaterialPart.this.register(registry, material);
-			}
-		};
+		return this.formatting("%s_%s"::formatted, "%s %s"::formatted);
 	}
 	
-	public final MaterialPart<H> withoutSuffix()
+	public MaterialPart formattingMaterialOnly(MaterialPartFormatter.OnlyMaterial idFormatter, MaterialPartFormatter.OnlyMaterial englishNameFormatter)
 	{
-		return this.as((m, p) -> m, (m, p) -> m);
+		return this.formatting(idFormatter, englishNameFormatter);
 	}
 	
-	public final MaterialPart<H> with(ExtraRegister<H> action)
+	public MaterialPart formattingMaterialOnly()
 	{
-		return new MaterialPart<>(this)
-		{
-			@Override
-			public H register(MaterialRegistry registry, Material material)
-			{
-				H holder = MaterialPart.this.register(registry, material);
-				action.accept(registry, material, holder);
-				return holder;
-			}
-		};
+		return this.formattingMaterialOnly((m) -> m, (m) -> m);
 	}
 	
-	public interface ExtraRegister<H extends RegisteredObjectHolder>
+	public String formatId(Material material)
 	{
-		void accept(MaterialRegistry registry, Material material, H holder);
+		return idFormatter.format(material.id().getPath(), this.id().getPath());
 	}
 	
-	public final MaterialPart<H> withProperties(PropertyOverridesRegister<H> action)
+	public String formatEnglishName(Material material)
 	{
-		return new MaterialPart<>(this)
-		{
-			@Override
-			public MaterialPropertyMap getPropertyOverrides()
-			{
-				MaterialPropertyMap overrides = super.getPropertyOverrides();
-				overrides.putAll(action.get());
-				return overrides;
-			}
-			
-			@Override
-			public H register(MaterialRegistry registry, Material material)
-			{
-				return MaterialPart.this.register(registry, material);
-			}
-		};
+		return englishNameFormatter.format(material.englishName(), this.englishName());
 	}
 	
-	public interface PropertyOverridesRegister<H extends RegisteredObjectHolder>
+	public MaterialPart item(MaterialPartExtraRegister<ItemHolder<? extends Item>> action)
 	{
-		MaterialPropertyMap get();
+		itemActions.add(action);
+		return this;
 	}
 	
-	public final <T> MaterialPart<H> withProperty(MaterialProperty<T> property, T value)
+	public MaterialPart itemProperty(Consumer<Item.Properties> action)
 	{
-		return this.withProperties(() -> new MaterialPropertyMap().set(property, value));
+		return this.item((r, m, h) -> h.withProperties(action));
+	}
+	
+	public MaterialPart itemTag(Collection<TagKey<Item>> tags)
+	{
+		return this.item((r, m, h) -> h.tag(tags));
+	}
+	
+	public MaterialPart itemTag(TagKey<Item> tag)
+	{
+		return this.itemTag(List.of(tag));
+	}
+	
+	public MaterialPart itemModel(Function<ItemHolder<? extends Item>, Consumer<ItemModelBuilder>> modelBuilder)
+	{
+		return this.item((r, m, h) -> h.withModel(modelBuilder::apply));
+	}
+	
+	public MaterialPart block(MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> action)
+	{
+		isBlock = true;
+		blockActions.add(action);
+		return this;
+	}
+	
+	public MaterialPart blockProperty(Consumer<BlockBehaviour.Properties> action)
+	{
+		return this.block((r, m, h) -> h.withProperties(action));
+	}
+	
+	public MaterialPart blockTag(Collection<TagKey<Block>> tags)
+	{
+		return this.block((r, m, h) -> h.tag(tags));
+	}
+	
+	public MaterialPart blockTag(TagKey<Block> tag)
+	{
+		return this.blockTag(List.of(tag));
+	}
+	
+	public MaterialPart blockModel(Function<BlockHolder<Block>, Consumer<BlockStateProvider>> modelBuilder)
+	{
+		return this.block((r, m, h) -> h.withModel(modelBuilder));
+	}
+	
+	public MaterialPart blockLoot(Function<BlockHolder<Block>, Function<BlockLootSubProvider, LootTable.Builder>> lootBuilder)
+	{
+		return this.block((r, m, h) -> h.withLootTable(lootBuilder));
 	}
 	
 	@Override
-	public int hashCode()
+	public <T> boolean has(MaterialProperty<T> property)
 	{
-		return id.hashCode();
+		return propertyOverrides.has(property);
 	}
 	
-	public static MaterialPart<ItemHolder<Item>> item(String id, String englishName, Formatter formatterId, Formatter formatterEnglishName)
+	@Override
+	public <T> MaterialPart set(MaterialProperty<T> property, T value)
 	{
-		return new MaterialPart<>(id, englishName, formatterId, formatterEnglishName)
+		propertyOverrides.set(property, value);
+		return this;
+	}
+	
+	@Override
+	public <T> MaterialPart setOptional(MaterialProperty<Optional<T>> property, T value)
+	{
+		propertyOverrides.setOptional(property, value);
+		return this;
+	}
+	
+	@Override
+	public <T> T get(MaterialProperty<T> property)
+	{
+		return propertyOverrides.get(property);
+	}
+	
+	public RegisteredMaterialPart register(MaterialRegistry registry, Material material)
+	{
+		ResourceLocation id = registry.id(this.formatId(material));
+		String englishName = this.formatEnglishName(material);
+		
+		ItemHolder<?> item;
+		RegisteredMaterialPart registered;
+		if(isBlock)
 		{
-			@Override
-			public ItemHolder<Item> register(MaterialRegistry registry, Material material)
-			{
-				ResourceLocation itemId = registry.id(this.id(material));
-				String itemName = this.englishName(material);
-				
-				var holder = new ItemHolder<>(itemId, itemName, registry.itemRegistry(), Item::new);
-				
-				MaterialPropertyMap properties = this.getPropertyOverrides(material);
-				properties.applyItemTags(holder);
-				
-				registry.onItemRegister(holder);
-				
-				return holder;
-			}
-		};
-	}
-	
-	public static MaterialPart<ItemHolder<Item>> item(String id, String englishName)
-	{
-		return item(id, englishName, "%s_%s"::formatted, "%s %s"::formatted);
-	}
-	
-	public static MaterialPart<BlockWithItemHolder<Block, BlockItem>> block(String id, String englishName, Formatter formatterId, Formatter formatterEnglishName)
-	{
-		return new MaterialPart<>(id, englishName, formatterId, formatterEnglishName)
+			BlockWithItemHolder<Block, BlockItem> block = new BlockWithItemHolder<>(
+					id, englishName,
+					registry.blockRegistry(), Block::new,
+					registry.itemRegistry(), BlockItem::new
+			);
+			item = block.item();
+			registered = RegisteredMaterialPart.existingBlock(block);
+			
+			blockActions.forEach((a) -> a.apply(registry, material, block));
+			registry.onBlockRegister(block);
+		}
+		else
 		{
-			@Override
-			public BlockWithItemHolder<Block, BlockItem> register(MaterialRegistry registry, Material material)
-			{
-				ResourceLocation itemId = registry.id(this.id(material));
-				String itemName = this.englishName(material);
-				
-				var holder = new BlockWithItemHolder<>(
-						itemId, itemName,
-						registry.blockRegistry(),
-						(p) ->
-						{
-							if(material.get(REQUIRES_CORRECT_TOOL_FOR_DROPS))
-							{
-								p = p.requiresCorrectToolForDrops();
-							}
-							return new Block(p
-									.explosionResistance(material.get(BLAST_RESISTANCE))
-									.destroyTime(material.get(HARDNESS)));
-						},
-						registry.itemRegistry(),
-						BlockItem::new
-				);
-				
-				MaterialPropertyMap properties = this.getPropertyOverrides(material);
-				properties.applyBlockTags(holder);
-				properties.applyItemTags(holder.item());
-				
-				registry.onBlockRegister(holder);
-				
-				return holder;
-			}
-		};
-	}
-	
-	public static MaterialPart<BlockWithItemHolder<Block, BlockItem>> block(String id, String englishName)
-	{
-		return block(id, englishName, "%s_%s"::formatted, "%s %s"::formatted);
-	}
-	
-	public interface Formatter
-	{
-		String format(String material, String part);
+			item = new ItemHolder<>(id, englishName, registry.itemRegistry(), Item::new);
+			registered = RegisteredMaterialPart.existingItem(item);
+		}
+		
+		itemActions.forEach((a) -> a.apply(registry, material, item));
+		registry.onItemRegister(item);
+		
+		return registered;
 	}
 }
