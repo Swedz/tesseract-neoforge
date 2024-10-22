@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.material.part.recipe;
+package net.swedz.tesseract.neoforge.material.recipe;
 
 import com.google.common.collect.Maps;
 import net.minecraft.data.recipes.RecipeOutput;

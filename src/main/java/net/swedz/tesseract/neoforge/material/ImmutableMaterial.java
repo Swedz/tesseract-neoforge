@@ -3,7 +3,7 @@ package net.swedz.tesseract.neoforge.material;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
-import net.swedz.tesseract.neoforge.material.part.recipe.MaterialRecipeGroup;
+import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeGroup;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 
 import java.util.Collection;

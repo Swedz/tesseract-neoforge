@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
-import net.swedz.tesseract.neoforge.material.part.recipe.MaterialRecipeGroup;
+import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeGroup;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyHolder;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
