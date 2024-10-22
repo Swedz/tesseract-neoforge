@@ -36,7 +36,7 @@ public interface VanillaMaterialParts
 			.formatting("%s_%s"::formatted, (m, p) -> "Block of %s".formatted(m))
 			.blockModel(CommonModelBuilders::blockCubeAll)
 			.blockLoot(CommonLootTableBuilders::self)
-			.block(blockItemTagCommon("storage_blocks"))
+			.item(itemTagCommon("storage_blocks"))
 			.immutable();
 	
 	// TODO ore (+deepslate or other variants)
