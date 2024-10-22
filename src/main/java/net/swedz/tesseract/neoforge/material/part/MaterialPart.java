@@ -232,6 +232,8 @@ public class MaterialPart implements MaterialPropertyHolder
 			
 			blockActions.forEach((a) -> a.apply(registry, material, block));
 			registry.onBlockRegister(block);
+			
+			block.register();
 		}
 		else
 		{
@@ -241,6 +243,8 @@ public class MaterialPart implements MaterialPropertyHolder
 		
 		itemActions.forEach((a) -> a.apply(registry, material, item));
 		registry.onItemRegister(item);
+		
+		item.register();
 		
 		return registered;
 	}
