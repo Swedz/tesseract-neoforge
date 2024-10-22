@@ -68,6 +68,7 @@ public interface MIMaterials
 			.immutable();
 	
 	Material COKE = create("coke", "Coke")
+			.set(MAIN_PART, GEM)
 			.addNative(GEM, DUST, BLOCK)
 			.immutable();
 	
@@ -92,6 +93,7 @@ public interface MIMaterials
 			.immutable();
 	
 	Material LIGNITE_COAL = create("lignite_coal", "Lignite Coal")
+			.set(MAIN_PART, GEM)
 			.addNative(GEM, BLOCK)
 			.addNative(ITEM_PURE_NON_METAL)
 			.immutable();
@@ -104,6 +106,7 @@ public interface MIMaterials
 			.immutable();
 	
 	Material BAUXITE = create("bauxite", "Bauxite")
+			.set(MAIN_PART, DUST)
 			.addNative(ITEM_PURE_NON_METAL)
 			.addNative(BLOCK)
 			.immutable();
@@ -151,11 +154,13 @@ public interface MIMaterials
 			.immutable();
 	
 	Material SODIUM = create("sodium", "Sodium")
+			.set(MAIN_PART, DUST)
 			.addNative(DUST, TINY_DUST)
 			.addNative(BLOCK)
 			.immutable();
 	
 	Material SALT = create("salt", "Salt")
+			.set(MAIN_PART, DUST)
 			.addNative(ITEM_PURE_NON_METAL)
 			.addNative(BLOCK)
 			.immutable();
@@ -190,10 +195,12 @@ public interface MIMaterials
 			.immutable();
 	
 	Material RUBY = create("ruby", "Ruby")
+			.set(MAIN_PART, DUST)
 			.addNative(DUST, TINY_DUST)
 			.immutable();
 	
 	Material CARBON = create("carbon", "Carbon")
+			.set(MAIN_PART, DUST)
 			.addNative(DUST, TINY_DUST)
 			.addNative(PLATE, LARGE_PLATE)
 			.immutable();
@@ -207,6 +214,7 @@ public interface MIMaterials
 			.immutable();
 	
 	Material MANGANESE = create("manganese", "Manganese")
+			.set(MAIN_PART, DUST)
 			.addNative(ITEM_PURE_NON_METAL)
 			.immutable();
 	
@@ -288,6 +296,7 @@ public interface MIMaterials
 			.immutable();
 	
 	Material MONAZITE = create("monazite", "Monazite")
+			.set(MAIN_PART, DUST)
 			.addNative(ITEM_PURE_NON_METAL)
 			.addNative(BLOCK)
 			.immutable();
@@ -297,11 +306,13 @@ public interface MIMaterials
 			.immutable();
 	
 	Material NEODYMIUM = create("neodymium", "Neodymium")
+			.set(MAIN_PART, DUST)
 			.addNative(DUST, TINY_DUST)
 			.addNative(BLOCK)
 			.immutable();
 	
 	Material YTTRIUM = create("yttrium", "Yttrium")
+			.set(MAIN_PART, DUST)
 			.addNative(DUST, TINY_DUST)
 			.addNative(BLOCK)
 			.immutable();
@@ -327,11 +338,13 @@ public interface MIMaterials
 			.immutable();
 	
 	Material SOLDERING_ALLOY = create("soldering_alloy", "Soldering Alloy")
+			.set(MAIN_PART, DUST)
 			.addNative(DUST, TINY_DUST)
 			.addNative(BLOCK)
 			.immutable();
 	
 	Material SULFUR = create("sulfur", "Sulfur")
+			.set(MAIN_PART, DUST)
 			.addNative(DUST, TINY_DUST)
 			.addNative(BLOCK)
 			.immutable();

@@ -1,10 +1,6 @@
 package net.swedz.tesseract.neoforge.material.recipe;
 
 import com.google.common.collect.Maps;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.swedz.tesseract.neoforge.material.Material;
-import net.swedz.tesseract.neoforge.material.part.MaterialPart;
-import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -69,8 +65,8 @@ public final class MaterialRecipeGroup implements MaterialRecipeCreator
 	}
 	
 	@Override
-	public void create(Material material, MaterialPart part, RegisteredMaterialPart registeredPart, RecipeOutput recipes)
+	public void create(MaterialRecipeContext context)
 	{
-		creators.forEach((reference, creator) -> creator.create(material, part, registeredPart, recipes));
+		creators.forEach((reference, creator) -> creator.create(context));
 	}
 }

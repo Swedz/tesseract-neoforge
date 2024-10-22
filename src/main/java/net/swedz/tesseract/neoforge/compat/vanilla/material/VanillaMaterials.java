@@ -28,27 +28,32 @@ public interface VanillaMaterials
 	
 	Material COAL = create("coal", "Coal")
 			.set(NEEDS_TOOL, Optional.empty())
+			.set(MAIN_PART, GEM)
 			.addNative(GEM, BLOCK)
 			.immutable();
 	
 	Material DIAMOND = create("diamond", "Diamond")
 			.setOptional(NEEDS_TOOL, BlockTags.NEEDS_IRON_TOOL)
+			.set(MAIN_PART, GEM)
 			.addNative(GEM, BLOCK)
 			.immutable();
 	
 	Material EMERALD = create("emerald", "Emerald")
 			.setOptional(NEEDS_TOOL, BlockTags.NEEDS_IRON_TOOL)
+			.set(MAIN_PART, GEM)
 			.addNative(GEM, BLOCK)
 			.immutable();
 	
 	Material LAPIS = create("lapis", "Lapis")
 			.set(BLAST_RESISTANCE, 3f)
 			.set(HARDNESS, 3f)
+			.set(MAIN_PART, GEM)
 			.addNative(GEM, BLOCK)
 			.immutable();
 	
 	Material REDSTONE = create("redstone", "Redstone")
 			.set(NEEDS_TOOL, Optional.empty())
+			.set(MAIN_PART, DUST)
 			.addNative(DUST.formattingMaterialOnly(), BLOCK)
 			.immutable();
 	
@@ -56,6 +61,7 @@ public interface VanillaMaterials
 			.set(BLAST_RESISTANCE, 0.8f)
 			.set(HARDNESS, 0.8f)
 			.set(NEEDS_TOOL, Optional.empty())
+			.set(MAIN_PART, GEM)
 			.addNative(GEM, BLOCK)
 			.immutable();
 	
