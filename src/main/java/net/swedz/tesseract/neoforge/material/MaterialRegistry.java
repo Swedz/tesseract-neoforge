@@ -11,6 +11,9 @@ import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeGroup;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
+import java.util.Optional;
+import java.util.function.Function;
+
 public abstract class MaterialRegistry
 {
 	public abstract String modId();
@@ -51,11 +54,17 @@ public abstract class MaterialRegistry
 		});
 	}
 	
-	public final void createRecipesFor(Material material, RecipeOutput recipes)
+	public final void createRecipesFor(Material material, Function<MaterialRecipeGroup, Optional<MaterialRecipeGroup>> recipeGroupFilter, RecipeOutput recipes)
 	{
 		for(MaterialRecipeGroup recipeGroup : material.recipes())
 		{
-			createRecipesFor(material, recipeGroup, recipes);
+			Optional<MaterialRecipeGroup> targetRecipeGroup = recipeGroupFilter.apply(recipeGroup);
+			targetRecipeGroup.ifPresent((group) -> createRecipesFor(material, group, recipes));
 		}
+	}
+	
+	public final void createRecipesFor(Material material, RecipeOutput recipes)
+	{
+		createRecipesFor(material, Optional::of, recipes);
 	}
 }
