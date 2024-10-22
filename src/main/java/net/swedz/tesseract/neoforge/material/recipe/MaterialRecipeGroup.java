@@ -28,7 +28,10 @@ public final class MaterialRecipeGroup implements MaterialRecipeCreator
 	public MaterialRecipeGroup add(String reference, MaterialRecipeCreator creator)
 	{
 		MaterialRecipeGroup copy = new MaterialRecipeGroup(creators);
-		copy.creators.put(reference, creator);
+		if(copy.creators.put(reference, creator) != null)
+		{
+			throw new IllegalArgumentException("There is already a recipe creator with the reference '%s' on this group".formatted(reference));
+		}
 		return copy;
 	}
 	
