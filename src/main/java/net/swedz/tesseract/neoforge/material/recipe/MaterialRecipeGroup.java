@@ -1,29 +1,44 @@
 package net.swedz.tesseract.neoforge.material.recipe;
 
 import com.google.common.collect.Maps;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.swedz.tesseract.neoforge.material.Material;
+import net.swedz.tesseract.neoforge.material.MaterialRegistry;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public final class MaterialRecipeGroup implements MaterialRecipeCreator
+public final class MaterialRecipeGroup<C extends MaterialRecipeContext>
 {
-	private final Map<String, MaterialRecipeCreator> creators;
+	private final MaterialRecipeContextFactory<C>       contextFactory;
+	private final Map<String, MaterialRecipeCreator<C>> creators;
 	
-	private MaterialRecipeGroup(Map<String, MaterialRecipeCreator> creators)
+	private MaterialRecipeGroup(MaterialRecipeContextFactory<C> contextFactory, Map<String, MaterialRecipeCreator<C>> creators)
 	{
+		this.contextFactory = contextFactory;
 		this.creators = Maps.newHashMap(creators);
 	}
 	
-	public MaterialRecipeGroup()
+	public static <C extends MaterialRecipeContext> MaterialRecipeGroup<C> create(MaterialRecipeContextFactory<C> contextFactory)
 	{
-		this(Maps.newHashMap());
+		return new MaterialRecipeGroup<>(contextFactory, Maps.newHashMap());
 	}
 	
-	public MaterialRecipeGroup add(String reference, MaterialRecipeCreator creator)
+	public static MaterialRecipeGroup<MaterialRecipeContext> create()
 	{
-		MaterialRecipeGroup copy = new MaterialRecipeGroup(creators);
+		return create(MaterialRecipeContext::new);
+	}
+	
+	public MaterialRecipeGroup<C> copy()
+	{
+		return new MaterialRecipeGroup<>(contextFactory, creators);
+	}
+	
+	public MaterialRecipeGroup<C> add(String reference, MaterialRecipeCreator<C> creator)
+	{
+		MaterialRecipeGroup<C> copy = this.copy();
 		if(copy.creators.put(reference, creator) != null)
 		{
 			throw new IllegalArgumentException("There is already a recipe creator with the reference '%s' on this group".formatted(reference));
@@ -31,9 +46,9 @@ public final class MaterialRecipeGroup implements MaterialRecipeCreator
 		return copy;
 	}
 	
-	public MaterialRecipeGroup filtered(Predicate<String> predicate)
+	public MaterialRecipeGroup<C> filtered(Predicate<String> predicate)
 	{
-		MaterialRecipeGroup filtered = new MaterialRecipeGroup();
+		MaterialRecipeGroup<C> filtered = create(contextFactory);
 		creators.forEach((reference, creator) ->
 		{
 			if(predicate.test(reference))
@@ -44,29 +59,29 @@ public final class MaterialRecipeGroup implements MaterialRecipeCreator
 		return filtered;
 	}
 	
-	public MaterialRecipeGroup only(Collection<String> references)
+	public MaterialRecipeGroup<C> only(Collection<String> references)
 	{
 		return this.filtered(references::contains);
 	}
 	
-	public MaterialRecipeGroup only(String... references)
+	public MaterialRecipeGroup<C> only(String... references)
 	{
 		return this.only(Arrays.asList(references));
 	}
 	
-	public MaterialRecipeGroup excluding(Collection<String> references)
+	public MaterialRecipeGroup<C> excluding(Collection<String> references)
 	{
 		return this.filtered((reference) -> !references.contains(reference));
 	}
 	
-	public MaterialRecipeGroup excluding(String... references)
+	public MaterialRecipeGroup<C> excluding(String... references)
 	{
 		return this.excluding(Arrays.asList(references));
 	}
 	
-	@Override
-	public void create(MaterialRecipeContext context)
+	public void create(MaterialRegistry registry, Material material, RecipeOutput recipes)
 	{
+		C context = contextFactory.create(registry, material, recipes);
 		creators.forEach((reference, creator) -> creator.create(context));
 	}
 }

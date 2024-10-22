@@ -7,7 +7,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
-import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeContext;
 import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeGroup;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
@@ -51,7 +50,7 @@ public abstract class MaterialRegistry
 	
 	public final void createRecipesFor(Material material, MaterialRecipeGroup recipeGroup, RecipeOutput recipes)
 	{
-		recipeGroup.create(new MaterialRecipeContext(this, material, recipes));
+		recipeGroup.create(this, material, recipes);
 	}
 	
 	public final void createRecipesFor(Material material, Function<MaterialRecipeGroup, Optional<MaterialRecipeGroup>> recipeGroupFilter, RecipeOutput recipes)
