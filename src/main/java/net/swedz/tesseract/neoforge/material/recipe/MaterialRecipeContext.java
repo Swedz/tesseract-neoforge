@@ -47,47 +47,49 @@ public record MaterialRecipeContext(MaterialRegistry registry, Material material
 		return has;
 	}
 	
-	public void full3x3(MaterialPart small, MaterialPart big, boolean inverse)
+	public void shapeless(MaterialPart input, int inputCount, MaterialPart result, int resultCount, boolean inverse)
 	{
-		if(this.has(small, big))
+		if(this.has(input, result))
 		{
-			Item smallItem = material.get(small).asItem();
-			Item bigItem = material.get(big).asItem();
+			Item inputItem = material.get(input).asItem();
+			Item resultItem = material.get(result).asItem();
 			
-			ShapelessRecipeBuilder smallToBig = new ShapelessRecipeBuilder();
-			for(int i = 0; i < 9; i++)
+			ShapelessRecipeBuilder inputToResult = new ShapelessRecipeBuilder();
+			for(int i = 0; i < inputCount; i++)
 			{
-				smallToBig.with(smallItem);
+				inputToResult.with(inputItem);
 			}
-			smallToBig.output(bigItem, 1);
-			smallToBig.offerTo(recipes, this.id("craft/%s_from_%s".formatted(big.id().getPath(), small.id().getPath())));
+			inputToResult.output(resultItem, resultCount);
+			inputToResult.offerTo(recipes, this.id("craft/%s_from_%s".formatted(result.id().getPath(), input.id().getPath())));
 			
 			if(inverse)
 			{
-				new ShapelessRecipeBuilder()
-						.with(bigItem)
-						.output(smallItem, 9)
-						.offerTo(recipes, this.id("craft/%s_from_%s".formatted(small.id().getPath(), big.id().getPath())));
+				this.shapeless(result, resultCount, input, inputCount, false);
 			}
 		}
 	}
 	
-	public void smelting(MaterialPart inputPart, MaterialPart resultPart, boolean blasting)
+	public void shapeless3x3(MaterialPart input, MaterialPart result, boolean inverse)
 	{
-		if(this.has(inputPart, resultPart))
+		this.shapeless(input, 9, result, 1, inverse);
+	}
+	
+	public void smelting(MaterialPart input, MaterialPart result, boolean blasting)
+	{
+		if(this.has(input, result))
 		{
 			new SmeltingRecipeBuilder()
-					.input(Ingredient.of(material.get(resultPart).asItem()))
-					.output(material.get(inputPart).asItem(), 1)
+					.input(Ingredient.of(material.get(result).asItem()))
+					.output(material.get(input).asItem(), 1)
 					.cookingTime(blasting ? 100 : 200)
 					.experience(0.7f)
-					.offerTo(recipes, this.id("smelting/%s_to_%s_%s".formatted(inputPart.id().getPath(), resultPart.id().getPath(), blasting ? "blasting" : "smelting")));
+					.offerTo(recipes, this.id("smelting/%s_to_%s_%s".formatted(input.id().getPath(), result.id().getPath(), blasting ? "blasting" : "smelting")));
 		}
 	}
 	
-	public void smeltingAndBlasting(MaterialPart inputPart, MaterialPart resultPart)
+	public void smeltingAndBlasting(MaterialPart input, MaterialPart result)
 	{
-		smelting(inputPart, resultPart, true);
-		smelting(inputPart, resultPart, false);
+		smelting(input, result, true);
+		smelting(input, result, false);
 	}
 }
