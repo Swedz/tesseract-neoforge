@@ -150,7 +150,7 @@ public class Material implements MaterialPropertyHolder
 		return registered;
 	}
 	
-	public List<MaterialRecipeGroup> recipes()
+	public List<MaterialRecipeGroup> recipeGroups()
 	{
 		return Collections.unmodifiableList(recipeGroups);
 	}

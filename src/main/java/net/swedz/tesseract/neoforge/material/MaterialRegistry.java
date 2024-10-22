@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
+import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeContext;
 import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeGroup;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
@@ -35,6 +36,12 @@ public abstract class MaterialRegistry
 	
 	public abstract void onItemRegister(ItemHolder holder);
 	
+	public final boolean includes(Material material, MaterialPart part)
+	{
+		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(material.get(part).asItem());
+		return this.modId().equals(itemId.getNamespace());
+	}
+	
 	public final RegisteredMaterialPart create(Material material, MaterialPart part)
 	{
 		RegisteredMaterialPart registered = part.register(this, material);
@@ -44,19 +51,12 @@ public abstract class MaterialRegistry
 	
 	public final void createRecipesFor(Material material, MaterialRecipeGroup recipeGroup, RecipeOutput recipes)
 	{
-		material.parts().forEach((part, registeredPart) ->
-		{
-			ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(registeredPart.asItem());
-			if(itemId.getNamespace().equals(this.modId()))
-			{
-				recipeGroup.create(material, part, registeredPart, recipes);
-			}
-		});
+		recipeGroup.create(new MaterialRecipeContext(this, material, recipes));
 	}
 	
 	public final void createRecipesFor(Material material, Function<MaterialRecipeGroup, Optional<MaterialRecipeGroup>> recipeGroupFilter, RecipeOutput recipes)
 	{
-		for(MaterialRecipeGroup recipeGroup : material.recipes())
+		for(MaterialRecipeGroup recipeGroup : material.recipeGroups())
 		{
 			Optional<MaterialRecipeGroup> targetRecipeGroup = recipeGroupFilter.apply(recipeGroup);
 			targetRecipeGroup.ifPresent((group) -> createRecipesFor(material, group, recipes));

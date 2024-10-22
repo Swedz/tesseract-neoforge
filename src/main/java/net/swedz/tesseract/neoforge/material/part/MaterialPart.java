@@ -248,4 +248,10 @@ public class MaterialPart implements MaterialPropertyHolder
 		
 		return registered;
 	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj instanceof MaterialPart other && id.equals(other.id());
+	}
 }
