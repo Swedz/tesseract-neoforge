@@ -29,7 +29,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public final class MaterialPart implements MaterialPropertyHolder
+public final class MaterialPart implements MaterialPropertyHolder.Mutable
 {
 	private final ResourceLocation id;
 	private final String           englishName;

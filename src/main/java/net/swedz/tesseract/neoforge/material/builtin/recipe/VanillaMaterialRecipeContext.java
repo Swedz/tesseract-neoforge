@@ -21,8 +21,8 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 	{
 		if(this.has(input, result))
 		{
-			Item inputItem = material.get(input).asItem();
-			Item resultItem = material.get(result).asItem();
+			Item inputItem = material.getOrThrow(input).asItem();
+			Item resultItem = material.getOrThrow(result).asItem();
 			
 			ShapelessRecipeBuilder inputToResult = new ShapelessRecipeBuilder();
 			for(int i = 0; i < inputCount; i++)
@@ -49,8 +49,8 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		if(this.has(input, result))
 		{
 			new SmeltingRecipeBuilder()
-					.input(Ingredient.of(material.get(result).asItem()))
-					.output(material.get(input).asItem(), 1)
+					.input(Ingredient.of(material.getOrThrow(result).asItem()))
+					.output(material.getOrThrow(input).asItem(), 1)
 					.cookingTime(blasting ? 100 : 200)
 					.experience(0.7f)
 					.offerTo(recipes, this.id("smelting/%s_to_%s_%s".formatted(input.id().getPath(), result.id().getPath(), blasting ? "blasting" : "smelting")));

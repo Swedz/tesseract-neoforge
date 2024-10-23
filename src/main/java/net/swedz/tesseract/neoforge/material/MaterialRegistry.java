@@ -37,6 +37,10 @@ public abstract class MaterialRegistry
 	
 	public final boolean includes(Material material, MaterialPart part)
 	{
+		if(!material.has(part))
+		{
+			return false;
+		}
 		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(material.get(part).asItem());
 		return this.modId().equals(itemId.getNamespace());
 	}

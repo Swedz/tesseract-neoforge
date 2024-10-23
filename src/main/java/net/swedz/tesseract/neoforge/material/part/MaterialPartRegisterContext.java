@@ -6,11 +6,9 @@ import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyHolder;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
 
-import java.util.Optional;
-
 public record MaterialPartRegisterContext(
 		MaterialRegistry registry, Material material, MaterialPart part, MaterialPropertyMap properties
-) implements MaterialPropertyHolder
+) implements MaterialPropertyHolder, MaterialPartHolder
 {
 	public MaterialPartRegisterContext(MaterialRegistry registry, Material material, MaterialPart part)
 	{
@@ -24,20 +22,20 @@ public record MaterialPartRegisterContext(
 	}
 	
 	@Override
-	public <T> MaterialPropertyHolder set(MaterialProperty<T> property, T value)
-	{
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
-	public <T> MaterialPropertyHolder setOptional(MaterialProperty<Optional<T>> property, T value)
-	{
-		throw new UnsupportedOperationException();
-	}
-	
-	@Override
 	public <T> T get(MaterialProperty<T> property)
 	{
 		return properties.get(property);
+	}
+	
+	@Override
+	public boolean has(MaterialPart part)
+	{
+		return material.has(part);
+	}
+	
+	@Override
+	public RegisteredMaterialPart get(MaterialPart part)
+	{
+		return material.get(part);
 	}
 }

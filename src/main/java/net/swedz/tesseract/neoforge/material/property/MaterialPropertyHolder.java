@@ -6,10 +6,6 @@ public interface MaterialPropertyHolder
 {
 	<T> boolean has(MaterialProperty<T> property);
 	
-	<T> MaterialPropertyHolder set(MaterialProperty<T> property, T value);
-	
-	<T> MaterialPropertyHolder setOptional(MaterialProperty<Optional<T>> property, T value);
-	
 	<T> T get(MaterialProperty<T> property);
 	
 	default <T> T getOrThrow(MaterialProperty<T> property)
@@ -19,5 +15,12 @@ public interface MaterialPropertyHolder
 			throw new IllegalArgumentException("Could not find property '%s'".formatted(property.key().toString()));
 		}
 		return this.get(property);
+	}
+	
+	interface Mutable extends MaterialPropertyHolder
+	{
+		<T> MaterialPropertyHolder set(MaterialProperty<T> property, T value);
+		
+		<T> MaterialPropertyHolder setOptional(MaterialProperty<Optional<T>> property, T value);
 	}
 }

@@ -7,7 +7,7 @@ import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 import java.util.Map;
 import java.util.Optional;
 
-public final class MaterialPropertyMap implements MaterialPropertyHolder
+public final class MaterialPropertyMap implements MaterialPropertyHolder.Mutable
 {
 	private final Map<MaterialProperty<?>, Object> map = Maps.newHashMap();
 	

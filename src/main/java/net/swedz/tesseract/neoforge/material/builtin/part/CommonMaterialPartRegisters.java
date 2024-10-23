@@ -15,28 +15,24 @@ public final class CommonMaterialPartRegisters
 {
 	public static MaterialPartExtraRegister<ItemHolder<? extends Item>> itemTagCommon(String path)
 	{
-		return (registry, material, properties, holder) -> holder.tag(TagHelper.itemCommonWithChild(path, material.id().getPath()));
+		return (context, holder) -> holder.tag(TagHelper.itemCommonWithChild(path, context.material().id().getPath()));
 	}
 	
 	public static MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> blockItemTagCommon(String path)
 	{
-		return (registry, material, properties, holder) -> holder.item().tag(TagHelper.itemCommonWithChild(path, material.id().getPath()));
+		return (context, holder) -> holder.item().tag(TagHelper.itemCommonWithChild(path, context.material().id().getPath()));
 	}
 	
 	public static MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> oreDrop()
 	{
-		return (registry, material, properties, holder) -> holder.withLootTable((block) ->
+		return (context, holder) -> holder.withLootTable((block) ->
 		{
-			if(!properties.has(ORE_DROP_PART))
-			{
-				throw new IllegalArgumentException("No ore drop part set");
-			}
-			OrePartDrops drops = properties.get(ORE_DROP_PART);
-			if(drops == null || drops.drop() == null || !material.has(drops.drop()))
+			OrePartDrops drops = context.getOrThrow(ORE_DROP_PART);
+			if(drops == null || drops.drop() == null)
 			{
 				throw new IllegalArgumentException("Could not find ore drop part");
 			}
-			Item drop = material.get(drops.drop()).asItem();
+			Item drop = context.material().getOrThrow(drops.drop()).asItem();
 			return (provider) -> provider.createOreDrop(block.get(), drop);
 		});
 	}

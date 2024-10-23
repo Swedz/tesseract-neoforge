@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
+import net.swedz.tesseract.neoforge.material.part.MaterialPartHolder;
 import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyHolder;
@@ -17,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public final class Material implements MaterialPropertyHolder
+public final class Material implements MaterialPropertyHolder.Mutable, MaterialPartHolder.Mutable
 {
 	private final ResourceLocation id;
 	private final String           englishName;
@@ -112,6 +113,7 @@ public final class Material implements MaterialPropertyHolder
 		return Collections.unmodifiableMap(parts);
 	}
 	
+	@Override
 	public Material add(MaterialPart part, RegisteredMaterialPart registered)
 	{
 		Material copy = this.copy();
@@ -148,11 +150,13 @@ public final class Material implements MaterialPropertyHolder
 		return this.addNative(this.id().getNamespace(), parts);
 	}
 	
+	@Override
 	public boolean has(MaterialPart part)
 	{
 		return parts.containsKey(part);
 	}
 	
+	@Override
 	public RegisteredMaterialPart get(MaterialPart part)
 	{
 		RegisteredMaterialPart registered = parts.get(part);
