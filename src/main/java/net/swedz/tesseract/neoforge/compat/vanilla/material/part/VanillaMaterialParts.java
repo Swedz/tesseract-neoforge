@@ -1,7 +1,9 @@
 package net.swedz.tesseract.neoforge.compat.vanilla.material.part;
 
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.common.Tags;
 import net.swedz.tesseract.neoforge.helper.TagHelper;
+import net.swedz.tesseract.neoforge.material.part.CommonMaterialPartRegisters;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
@@ -46,6 +48,35 @@ public interface VanillaMaterialParts
 			.blockModel(CommonModelBuilders::blockCubeAll)
 			.blockLoot(CommonLootTableBuilders::self)
 			.item((r, m, h) -> h.tag(TagHelper.itemCommonWithChild("storage_blocks", "raw_%s".formatted(m.id()))));
+	
+	MaterialPart ORE = create("ore", "Ore")
+			.set(BLAST_RESISTANCE, 3f)
+			.set(HARDNESS, 3f)
+			.blockModel(CommonModelBuilders::blockCubeAll)
+			.itemAndBlockTag(Tags.Items.ORES_IN_GROUND_STONE)
+			.item(CommonMaterialPartRegisters.itemTagCommon("ores"))
+			.block(CommonMaterialPartRegisters.blockItemTagCommon("ores"))
+			.block(CommonMaterialPartRegisters.oreDrop());
+	
+	MaterialPart ORE_DEEPSLATE = create("ore_deepslate", "Deepslate Ore")
+			.set(BLAST_RESISTANCE, 3f)
+			.set(HARDNESS, 4.5f)
+			.formattingMaterialOnly("deepslate_%s_ore"::formatted, "Deepslate %s Ore"::formatted)
+			.blockModel(CommonModelBuilders::blockCubeAll)
+			.itemAndBlockTag(Tags.Items.ORES_IN_GROUND_DEEPSLATE)
+			.item(CommonMaterialPartRegisters.itemTagCommon("ores"))
+			.block(CommonMaterialPartRegisters.blockItemTagCommon("ores"))
+			.block(CommonMaterialPartRegisters.oreDrop());
+	
+	MaterialPart ORE_NETHERRACK = create("ore_netherrack", "Netherrack Ore")
+			.set(BLAST_RESISTANCE, 3f)
+			.set(HARDNESS, 3f)
+			.formattingMaterialOnly("nether_%s_ore"::formatted, "Nether %s Ore"::formatted)
+			.blockModel(CommonModelBuilders::blockCubeAll)
+			.itemAndBlockTag(Tags.Items.ORES_IN_GROUND_NETHERRACK)
+			.item(CommonMaterialPartRegisters.itemTagCommon("ores"))
+			.block(CommonMaterialPartRegisters.blockItemTagCommon("ores"))
+			.block(CommonMaterialPartRegisters.oreDrop());
 	
 	MaterialPart SCRAP = create("scrap", "Scrap")
 			.itemModel(CommonModelBuilders::generated);
