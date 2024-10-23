@@ -137,12 +137,12 @@ public final class MaterialPart implements MaterialPropertyHolder
 	
 	public MaterialPart itemProperty(Consumer<Item.Properties> action)
 	{
-		return this.item((r, m, h) -> h.withProperties(action));
+		return this.item((r, m, p, h) -> h.withProperties(action));
 	}
 	
 	public MaterialPart itemTag(Collection<TagKey<Item>> tags)
 	{
-		return this.item((r, m, h) -> h.tag(tags));
+		return this.item((r, m, p, h) -> h.tag(tags));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -153,7 +153,7 @@ public final class MaterialPart implements MaterialPropertyHolder
 	
 	public MaterialPart itemModel(Function<ItemHolder<? extends Item>, Consumer<ItemModelBuilder>> modelBuilder)
 	{
-		return this.item((r, m, h) -> h.withModel(modelBuilder::apply));
+		return this.item((r, m, p, h) -> h.withModel(modelBuilder::apply));
 	}
 	
 	public MaterialPart block(MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> action)
@@ -166,12 +166,12 @@ public final class MaterialPart implements MaterialPropertyHolder
 	
 	public MaterialPart blockProperty(Consumer<BlockBehaviour.Properties> action)
 	{
-		return this.block((r, m, h) -> h.withProperties(action));
+		return this.block((r, m, p, h) -> h.withProperties(action));
 	}
 	
 	public MaterialPart blockTag(Collection<TagKey<Block>> tags)
 	{
-		return this.block((r, m, h) -> h.tag(tags));
+		return this.block((r, m, p, h) -> h.tag(tags));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -182,12 +182,12 @@ public final class MaterialPart implements MaterialPropertyHolder
 	
 	public MaterialPart blockModel(Function<BlockHolder<Block>, Consumer<BlockStateProvider>> modelBuilder)
 	{
-		return this.block((r, m, h) -> h.withModel(modelBuilder));
+		return this.block((r, m, p, h) -> h.withModel(modelBuilder));
 	}
 	
 	public MaterialPart blockLoot(Function<BlockHolder<Block>, Function<BlockLootSubProvider, LootTable.Builder>> lootBuilder)
 	{
-		return this.block((r, m, h) -> h.withLootTable(lootBuilder));
+		return this.block((r, m, p, h) -> h.withLootTable(lootBuilder));
 	}
 	
 	public MaterialPart itemAndBlockTag(Collection<TagKey<Item>> tags)
@@ -201,6 +201,11 @@ public final class MaterialPart implements MaterialPropertyHolder
 	public MaterialPart itemAndBlockTag(TagKey<Item>... tags)
 	{
 		return this.itemAndBlockTag(Arrays.asList(tags));
+	}
+	
+	public MaterialPropertyMap properties()
+	{
+		return propertyOverrides.copy();
 	}
 	
 	@Override
@@ -244,6 +249,9 @@ public final class MaterialPart implements MaterialPropertyHolder
 		ResourceLocation id = registry.id(this.formatId(material));
 		String englishName = this.formatEnglishName(material);
 		
+		MaterialPropertyMap properties = material.properties();
+		properties.putAll(propertyOverrides);
+		
 		ItemHolder<?> item;
 		RegisteredMaterialPart registered;
 		if(isBlock)
@@ -256,7 +264,8 @@ public final class MaterialPart implements MaterialPropertyHolder
 			item = block.item();
 			registered = RegisteredMaterialPart.existingBlock(block);
 			
-			blockActions.forEach((a) -> a.apply(registry, material, block));
+			blockActions.forEach((a) -> a.apply(registry, material, properties, block));
+			properties.apply(block);
 			this.onBlockRegister(registry, material, block);
 			registry.onBlockRegister(block);
 			
@@ -268,7 +277,8 @@ public final class MaterialPart implements MaterialPropertyHolder
 			registered = RegisteredMaterialPart.existingItem(item);
 		}
 		
-		itemActions.forEach((a) -> a.apply(registry, material, item));
+		itemActions.forEach((a) -> a.apply(registry, material, properties, item));
+		properties.apply(item);
 		this.onItemRegister(registry, material, item);
 		registry.onItemRegister(item);
 		

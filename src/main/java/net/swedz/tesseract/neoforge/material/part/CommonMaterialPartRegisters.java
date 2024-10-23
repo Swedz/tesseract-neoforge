@@ -13,17 +13,17 @@ public final class CommonMaterialPartRegisters
 {
 	public static MaterialPartExtraRegister<ItemHolder<? extends Item>> itemTagCommon(String path)
 	{
-		return (registry, material, holder) -> holder.tag(TagHelper.itemCommonWithChild(path, material.id().getPath()));
+		return (registry, material, properties, holder) -> holder.tag(TagHelper.itemCommonWithChild(path, material.id().getPath()));
 	}
 	
 	public static MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> blockItemTagCommon(String path)
 	{
-		return (registry, material, holder) -> holder.item().tag(TagHelper.itemCommonWithChild(path, material.id().getPath()));
+		return (registry, material, properties, holder) -> holder.item().tag(TagHelper.itemCommonWithChild(path, material.id().getPath()));
 	}
 	
 	public static MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> oreDrop()
 	{
-		return (registry, material, holder) -> holder.withLootTable((block) ->
+		return (registry, material, properties, holder) -> holder.withLootTable((block) ->
 		{
 			MaterialPart dropPart = material.get(ORE_DROP_PART);
 			if(dropPart == null || !material.has(dropPart))

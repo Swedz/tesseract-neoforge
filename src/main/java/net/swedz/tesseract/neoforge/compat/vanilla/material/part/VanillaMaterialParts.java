@@ -47,7 +47,7 @@ public interface VanillaMaterialParts
 			.set(HARDNESS, 5f)
 			.blockModel(CommonModelBuilders::blockCubeAll)
 			.blockLoot(CommonLootTableBuilders::self)
-			.item((r, m, h) -> h.tag(TagHelper.itemCommonWithChild("storage_blocks", "raw_%s".formatted(m.id()))));
+			.item((r, m, p, h) -> h.tag(TagHelper.itemCommonWithChild("storage_blocks", "raw_%s".formatted(m.id()))));
 	
 	MaterialPart ORE = create("ore", "Ore")
 			.set(BLAST_RESISTANCE, 3f)

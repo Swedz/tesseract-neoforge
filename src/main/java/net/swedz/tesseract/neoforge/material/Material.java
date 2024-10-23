@@ -63,6 +63,11 @@ public final class Material implements MaterialPropertyHolder
 		return englishName;
 	}
 	
+	public MaterialPropertyMap properties()
+	{
+		return properties.copy();
+	}
+	
 	@Override
 	public <T> boolean has(MaterialProperty<T> property)
 	{
