@@ -7,20 +7,20 @@ import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 
 import static net.swedz.tesseract.neoforge.compat.mi.material.property.MIMaterialProperties.*;
-import static net.swedz.tesseract.neoforge.material.builtin.part.MaterialParts.*;
 import static net.swedz.tesseract.neoforge.material.builtin.part.CommonMaterialPartRegisters.*;
+import static net.swedz.tesseract.neoforge.material.builtin.part.MaterialParts.*;
 
 public interface MIMaterialParts
 {
 	MaterialPart BATTERY = create("battery", "Battery")
 			.itemModel(CommonModelBuilders::generated)
-			.item((registry, material, properties, holder) ->
+			.item((context, holder) ->
 			{
-				if(!properties.has(BATTERY_CAPACITY) || properties.get(BATTERY_CAPACITY) <= 0)
+				if(!context.has(BATTERY_CAPACITY) || context.get(BATTERY_CAPACITY) <= 0)
 				{
 					throw new IllegalArgumentException("No battery capacity set");
 				}
-				holder.withRegistrationListener((item) -> PortableStorageUnit.CAPACITY_PER_BATTERY.put(item, properties.get(BATTERY_CAPACITY).longValue()));
+				holder.withRegistrationListener((item) -> PortableStorageUnit.CAPACITY_PER_BATTERY.put(item, context.get(BATTERY_CAPACITY).longValue()));
 			});
 	
 	// TODO barrel

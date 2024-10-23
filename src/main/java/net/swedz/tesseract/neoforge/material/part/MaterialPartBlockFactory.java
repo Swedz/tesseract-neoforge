@@ -5,17 +5,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-public interface MaterialPartBlockFactory
+public interface MaterialPartBlockFactory extends MaterialPartBlockBlockFactory, MaterialPartBlockItemFactory
 {
-	Block createBlock(BlockBehaviour.Properties properties);
-	
-	BlockItem createItem(Block block, Item.Properties properties);
-	
-	static MaterialPartBlockFactory of(Function<BlockBehaviour.Properties, Block> block,
-									   BiFunction<Block, Item.Properties, BlockItem> item)
+	static MaterialPartBlockFactory of(MaterialPartBlockBlockFactory block, MaterialPartBlockItemFactory item)
 	{
 		if(block == null || item == null)
 		{
@@ -24,15 +16,15 @@ public interface MaterialPartBlockFactory
 		return new MaterialPartBlockFactory()
 		{
 			@Override
-			public Block createBlock(BlockBehaviour.Properties properties)
+			public Block createBlock(MaterialPartRegisterContext context, BlockBehaviour.Properties blockProperties)
 			{
-				return block.apply(properties);
+				return block.createBlock(context, blockProperties);
 			}
 			
 			@Override
-			public BlockItem createItem(Block block, Item.Properties properties)
+			public BlockItem createItem(MaterialPartRegisterContext context, Block block, Item.Properties itemProperties)
 			{
-				return item.apply(block, properties);
+				return item.createItem(context, block, itemProperties);
 			}
 		};
 	}
