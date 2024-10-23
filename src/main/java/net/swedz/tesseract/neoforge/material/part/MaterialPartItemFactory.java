@@ -4,5 +4,5 @@ import net.minecraft.world.item.Item;
 
 public interface MaterialPartItemFactory
 {
-	Item create(Item.Properties properties);
+	Item create(MaterialPartRegisterContext context, Item.Properties properties);
 }

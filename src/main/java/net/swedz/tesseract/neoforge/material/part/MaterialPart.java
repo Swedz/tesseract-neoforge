@@ -40,7 +40,7 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 	private MaterialPartFormatter englishNameFormatter;
 	
 	private MaterialPartBlockFactory blockFactory = MaterialPartBlockFactory.of((c, bp) -> new Block(bp), (c, b, ip) -> new BlockItem(b, ip));
-	private MaterialPartItemFactory  itemFactory  = Item::new;
+	private MaterialPartItemFactory  itemFactory  = (c, p) -> new Item(p);
 	
 	private final List<MaterialPartAction<ItemHolder<? extends Item>>>            itemActions  = Lists.newArrayList();
 	private final List<MaterialPartAction<BlockWithItemHolder<Block, BlockItem>>> blockActions = Lists.newArrayList();
@@ -305,7 +305,7 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		}
 		else
 		{
-			item = new ItemHolder<>(id, englishName, registry.itemRegistry(), (p) -> itemFactory.create(p));
+			item = new ItemHolder<>(id, englishName, registry.itemRegistry(), (p) -> itemFactory.create(context, p));
 			registered = RegisteredMaterialPart.existingItem(item);
 		}
 		
