@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -38,6 +39,9 @@ public final class MaterialPart implements MaterialPropertyHolder
 	
 	private MaterialPartFormatter idFormatter;
 	private MaterialPartFormatter englishNameFormatter;
+	
+	private MaterialPartBlockFactory blockFactory = MaterialPartBlockFactory.of(Block::new, BlockItem::new);
+	private MaterialPartItemFactory  itemFactory  = Item::new;
 	
 	private final List<MaterialPartExtraRegister<ItemHolder<? extends Item>>>            itemActions  = Lists.newArrayList();
 	private final List<MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>>> blockActions = Lists.newArrayList();
@@ -126,6 +130,21 @@ public final class MaterialPart implements MaterialPropertyHolder
 	public String formatEnglishName(Material material)
 	{
 		return englishNameFormatter.format(material.englishName(), this.englishName());
+	}
+	
+	public MaterialPart blockFactory(Function<BlockBehaviour.Properties, Block> block,
+									 BiFunction<Block, Item.Properties, BlockItem> item)
+	{
+		MaterialPart copy = this.copy();
+		copy.blockFactory = MaterialPartBlockFactory.of(block, item);
+		return copy;
+	}
+	
+	public MaterialPart itemFactory(MaterialPartItemFactory itemFactory)
+	{
+		MaterialPart copy = this.copy();
+		copy.itemFactory = itemFactory;
+		return copy;
 	}
 	
 	public MaterialPart item(MaterialPartExtraRegister<ItemHolder<? extends Item>> action)
@@ -257,8 +276,8 @@ public final class MaterialPart implements MaterialPropertyHolder
 		{
 			BlockWithItemHolder<Block, BlockItem> block = new BlockWithItemHolder<>(
 					id, englishName,
-					registry.blockRegistry(), Block::new,
-					registry.itemRegistry(), BlockItem::new
+					registry.blockRegistry(), (p) -> blockFactory.createBlock(p),
+					registry.itemRegistry(), (b, p) -> blockFactory.createItem(b, p)
 			);
 			item = block.item();
 			registered = RegisteredMaterialPart.existingBlock(block);
@@ -272,7 +291,7 @@ public final class MaterialPart implements MaterialPropertyHolder
 		}
 		else
 		{
-			item = new ItemHolder<>(id, englishName, registry.itemRegistry(), Item::new);
+			item = new ItemHolder<>(id, englishName, registry.itemRegistry(), (p) -> itemFactory.create(p));
 			registered = RegisteredMaterialPart.existingItem(item);
 		}
 		
