@@ -1,16 +1,27 @@
 package net.swedz.tesseract.neoforge.compat.mi.material.part;
 
 import aztech.modern_industrialization.MI;
+import aztech.modern_industrialization.items.PortableStorageUnit;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 
+import static net.swedz.tesseract.neoforge.compat.mi.material.property.MIMaterialProperties.*;
 import static net.swedz.tesseract.neoforge.compat.vanilla.material.part.VanillaMaterialParts.*;
 import static net.swedz.tesseract.neoforge.material.part.CommonMaterialPartRegisters.*;
 
 public interface MIMaterialParts
 {
-	// TODO battery
+	MaterialPart BATTERY = create("battery", "Battery")
+			.itemModel(CommonModelBuilders::generated)
+			.item((registry, material, properties, holder) ->
+			{
+				if(!properties.has(BATTERY_CAPACITY) || properties.get(BATTERY_CAPACITY) <= 0)
+				{
+					throw new IllegalArgumentException("No battery capacity set");
+				}
+				holder.withRegistrationListener((item) -> PortableStorageUnit.CAPACITY_PER_BATTERY.put(item, properties.get(BATTERY_CAPACITY).longValue()));
+			});
 	
 	// TODO barrel
 	
