@@ -42,10 +42,13 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 	private MaterialPartBlockFactory blockFactory = MaterialPartBlockFactory.of((c, bp) -> new Block(bp), (c, b, ip) -> new BlockItem(b, ip));
 	private MaterialPartItemFactory  itemFactory  = Item::new;
 	
-	private final List<MaterialPartExtraRegister<ItemHolder<? extends Item>>>            itemActions  = Lists.newArrayList();
-	private final List<MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>>> blockActions = Lists.newArrayList();
+	private final List<MaterialPartAction<ItemHolder<? extends Item>>>            itemActions  = Lists.newArrayList();
+	private final List<MaterialPartAction<BlockWithItemHolder<Block, BlockItem>>> blockActions = Lists.newArrayList();
 	
 	private final MaterialPropertyMap propertyOverrides = new MaterialPropertyMap();
+	
+	private final List<MaterialPartAction<ItemHolder<? extends Item>>>            itemAfterActions  = Lists.newArrayList();
+	private final List<MaterialPartAction<BlockWithItemHolder<Block, BlockItem>>> blockAfterActions = Lists.newArrayList();
 	
 	public MaterialPart(ResourceLocation id, String englishName)
 	{
@@ -63,6 +66,8 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		copy.itemActions.addAll(this.itemActions);
 		copy.blockActions.addAll(this.blockActions);
 		copy.propertyOverrides.putAll(this.propertyOverrides);
+		copy.itemAfterActions.addAll(this.itemAfterActions);
+		copy.blockAfterActions.addAll(this.blockAfterActions);
 		return copy;
 	}
 	
@@ -151,7 +156,7 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return copy;
 	}
 	
-	public MaterialPart item(MaterialPartExtraRegister<ItemHolder<? extends Item>> action)
+	public MaterialPart item(MaterialPartAction<ItemHolder<? extends Item>> action)
 	{
 		MaterialPart copy = this.copy();
 		copy.itemActions.add(action);
@@ -179,10 +184,9 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return this.item((c, h) -> h.withModel(modelBuilder::apply));
 	}
 	
-	public MaterialPart block(MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> action)
+	public MaterialPart block(MaterialPartAction<BlockWithItemHolder<Block, BlockItem>> action)
 	{
-		MaterialPart copy = this.copy();
-		copy.isBlock = true;
+		MaterialPart copy = this.asBlock();
 		copy.blockActions.add(action);
 		return copy;
 	}
@@ -259,6 +263,20 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return propertyOverrides.get(property);
 	}
 	
+	public MaterialPart itemAfter(MaterialPartAction<ItemHolder<? extends Item>> action)
+	{
+		MaterialPart copy = this.copy();
+		copy.itemAfterActions.add(action);
+		return copy;
+	}
+	
+	public MaterialPart blockAfter(MaterialPartAction<BlockWithItemHolder<Block, BlockItem>> action)
+	{
+		MaterialPart copy = this.asBlock();
+		copy.blockAfterActions.add(action);
+		return copy;
+	}
+	
 	public RegisteredMaterialPart register(MaterialRegistry registry, Material material)
 	{
 		ResourceLocation id = registry.id(this.formatId(material));
@@ -282,6 +300,7 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 			context.properties().apply(block);
 			
 			block.register();
+			blockAfterActions.forEach((a) -> a.apply(context, block));
 			registry.onBlockRegister(block);
 		}
 		else
@@ -295,6 +314,7 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		
 		item.register();
 		registry.onItemRegister(item);
+		itemAfterActions.forEach((a) -> a.apply(context, item));
 		
 		return registered;
 	}

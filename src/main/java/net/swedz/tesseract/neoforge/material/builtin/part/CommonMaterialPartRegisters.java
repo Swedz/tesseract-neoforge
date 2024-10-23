@@ -5,7 +5,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.swedz.tesseract.neoforge.material.builtin.property.OrePartDrops;
 import net.swedz.tesseract.neoforge.helper.TagHelper;
-import net.swedz.tesseract.neoforge.material.part.MaterialPartExtraRegister;
+import net.swedz.tesseract.neoforge.material.part.MaterialPartAction;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
@@ -13,17 +13,17 @@ import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialPro
 
 public final class CommonMaterialPartRegisters
 {
-	public static MaterialPartExtraRegister<ItemHolder<? extends Item>> itemTagCommon(String path)
+	public static MaterialPartAction<ItemHolder<? extends Item>> itemTagCommon(String path)
 	{
 		return (context, holder) -> holder.tag(TagHelper.itemCommonWithChild(path, context.material().id().getPath()));
 	}
 	
-	public static MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> blockItemTagCommon(String path)
+	public static MaterialPartAction<BlockWithItemHolder<Block, BlockItem>> blockItemTagCommon(String path)
 	{
 		return (context, holder) -> holder.item().tag(TagHelper.itemCommonWithChild(path, context.material().id().getPath()));
 	}
 	
-	public static MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> oreDrop()
+	public static MaterialPartAction<BlockWithItemHolder<Block, BlockItem>> oreDrop()
 	{
 		return (context, holder) -> holder.withLootTable((block) ->
 		{
