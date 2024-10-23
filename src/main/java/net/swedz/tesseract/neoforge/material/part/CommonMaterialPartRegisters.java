@@ -3,11 +3,12 @@ package net.swedz.tesseract.neoforge.material.part;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.swedz.tesseract.neoforge.compat.vanilla.material.property.OreDrops;
 import net.swedz.tesseract.neoforge.helper.TagHelper;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
-import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.*;
+import static net.swedz.tesseract.neoforge.compat.vanilla.material.property.VanillaMaterialProperties.*;
 
 public final class CommonMaterialPartRegisters
 {
@@ -25,12 +26,16 @@ public final class CommonMaterialPartRegisters
 	{
 		return (registry, material, properties, holder) -> holder.withLootTable((block) ->
 		{
-			MaterialPart dropPart = material.get(ORE_DROP_PART);
-			if(dropPart == null || !material.has(dropPart))
+			if(!properties.has(ORE_DROP_PART))
 			{
-				throw new IllegalArgumentException("Could not find matching ore drop part");
+				throw new IllegalArgumentException("No ore drop part set");
 			}
-			Item drop = material.get(dropPart).asItem();
+			OreDrops drops = properties.get(ORE_DROP_PART);
+			if(drops == null || drops.drop() == null || !material.has(drops.drop()))
+			{
+				throw new IllegalArgumentException("Could not find ore drop part");
+			}
+			Item drop = material.get(drops.drop()).asItem();
 			return (provider) -> provider.createOreDrop(block.get(), drop);
 		});
 	}

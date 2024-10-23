@@ -33,6 +33,4 @@ public interface MaterialProperties
 			.block((h, v) -> v.ifPresent(h::tag));
 	
 	MaterialProperty<MaterialPart> MAIN_PART = new MaterialProperty<>("main_part", VanillaMaterialParts.INGOT);
-	
-	MaterialProperty<MaterialPart> ORE_DROP_PART = new MaterialProperty<>("ore_drop_part", VanillaMaterialParts.RAW_METAL);
 }
