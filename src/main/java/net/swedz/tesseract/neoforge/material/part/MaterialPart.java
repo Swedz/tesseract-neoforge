@@ -131,12 +131,17 @@ public final class MaterialPart implements MaterialPropertyHolder
 		return englishNameFormatter.format(material.englishName(), this.englishName());
 	}
 	
+	public MaterialPart blockFactory(MaterialPartBlockFactory blockFactory)
+	{
+		MaterialPart copy = this.copy();
+		copy.blockFactory = blockFactory;
+		return copy;
+	}
+	
 	public MaterialPart blockFactory(MaterialPartBlockBlockFactory block,
 									 MaterialPartBlockItemFactory item)
 	{
-		MaterialPart copy = this.copy();
-		copy.blockFactory = MaterialPartBlockFactory.of(block, item);
-		return copy;
+		return this.blockFactory(MaterialPartBlockFactory.of(block, item));
 	}
 	
 	public MaterialPart itemFactory(MaterialPartItemFactory itemFactory)

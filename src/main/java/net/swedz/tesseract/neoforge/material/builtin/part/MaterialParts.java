@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.material.builtin.part;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.Tags;
 import net.swedz.tesseract.neoforge.helper.TagHelper;
+import net.swedz.tesseract.neoforge.material.builtin.part.block.OrePartBlock;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
@@ -49,6 +50,7 @@ public interface MaterialParts
 			.item((c, h) -> h.tag(TagHelper.itemCommonWithChild("storage_blocks", "raw_%s".formatted(c.material().id()))));
 	
 	MaterialPart ORE = create("ore", "Ore")
+			.blockFactory(OrePartBlock.factory())
 			.set(BLAST_RESISTANCE, 3f)
 			.set(HARDNESS, 3f)
 			.blockModel(CommonModelBuilders::blockCubeAll)
@@ -58,6 +60,7 @@ public interface MaterialParts
 			.block(CommonMaterialPartRegisters.oreDrop());
 	
 	MaterialPart ORE_DEEPSLATE = create("ore_deepslate", "Deepslate Ore")
+			.blockFactory(OrePartBlock.factory())
 			.set(BLAST_RESISTANCE, 3f)
 			.set(HARDNESS, 4.5f)
 			.formattingMaterialOnly("deepslate_%s_ore"::formatted, "Deepslate %s Ore"::formatted)
@@ -68,6 +71,7 @@ public interface MaterialParts
 			.block(CommonMaterialPartRegisters.oreDrop());
 	
 	MaterialPart ORE_NETHERRACK = create("ore_netherrack", "Netherrack Ore")
+			.blockFactory(OrePartBlock.factory())
 			.set(BLAST_RESISTANCE, 3f)
 			.set(HARDNESS, 3f)
 			.formattingMaterialOnly("nether_%s_ore"::formatted, "Nether %s Ore"::formatted)
