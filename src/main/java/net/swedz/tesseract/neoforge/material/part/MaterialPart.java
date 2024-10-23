@@ -259,14 +259,6 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return propertyOverrides.get(property);
 	}
 	
-	private void onBlockRegister(MaterialRegistry registry, Material material, BlockWithItemHolder<Block, BlockItem> block)
-	{
-	}
-	
-	private void onItemRegister(MaterialRegistry registry, Material material, ItemHolder<? extends Item> item)
-	{
-	}
-	
 	public RegisteredMaterialPart register(MaterialRegistry registry, Material material)
 	{
 		ResourceLocation id = registry.id(this.formatId(material));
@@ -288,10 +280,9 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 			
 			blockActions.forEach((a) -> a.apply(context, block));
 			context.properties().apply(block);
-			this.onBlockRegister(registry, material, block);
-			registry.onBlockRegister(block);
 			
 			block.register();
+			registry.onBlockRegister(block);
 		}
 		else
 		{
@@ -301,10 +292,9 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		
 		itemActions.forEach((a) -> a.apply(context, item));
 		context.properties().apply(item);
-		this.onItemRegister(registry, material, item);
-		registry.onItemRegister(item);
 		
 		item.register();
+		registry.onItemRegister(item);
 		
 		return registered;
 	}
