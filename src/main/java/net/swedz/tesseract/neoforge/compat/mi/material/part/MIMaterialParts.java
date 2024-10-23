@@ -7,8 +7,8 @@ import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 
 import static net.swedz.tesseract.neoforge.compat.mi.material.property.MIMaterialProperties.*;
-import static net.swedz.tesseract.neoforge.compat.vanilla.material.part.VanillaMaterialParts.*;
-import static net.swedz.tesseract.neoforge.material.part.CommonMaterialPartRegisters.*;
+import static net.swedz.tesseract.neoforge.material.builtin.part.MaterialParts.*;
+import static net.swedz.tesseract.neoforge.material.builtin.part.CommonMaterialPartRegisters.*;
 
 public interface MIMaterialParts
 {

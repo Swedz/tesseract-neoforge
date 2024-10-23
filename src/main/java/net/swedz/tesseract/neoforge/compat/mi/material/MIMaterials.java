@@ -1,47 +1,47 @@
 package net.swedz.tesseract.neoforge.compat.mi.material;
 
 import aztech.modern_industrialization.MI;
-import net.swedz.tesseract.neoforge.compat.vanilla.material.VanillaMaterials;
+import net.swedz.tesseract.neoforge.material.builtin.Materials;
 import net.swedz.tesseract.neoforge.material.Material;
 
 import java.util.Optional;
 
 import static net.swedz.tesseract.neoforge.compat.mi.material.part.MIMaterialParts.*;
-import static net.swedz.tesseract.neoforge.compat.vanilla.material.part.VanillaMaterialParts.*;
-import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.*;
+import static net.swedz.tesseract.neoforge.material.builtin.part.MaterialParts.*;
+import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
 
 public interface MIMaterials
 {
-	Material GOLD = VanillaMaterials.GOLD.as(MI.ID)
+	Material GOLD = Materials.GOLD.as(MI.ID)
 			.addNative(BOLT, RING, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, PLATE, TINY_DUST)
 			.addNative(DRILL_HEAD, DRILL);
 	
-	Material IRON = VanillaMaterials.IRON.as(MI.ID)
+	Material IRON = Materials.IRON.as(MI.ID)
 			.addNative(BOLT, RING, GEAR, ROD, DOUBLE_INGOT, DUST, LARGE_PLATE, PLATE, TINY_DUST);
 	
-	Material COPPER = VanillaMaterials.COPPER.as(MI.ID)
+	Material COPPER = Materials.COPPER.as(MI.ID)
 			.addNative(BOLT, BLADE, RING, ROTOR, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, NUGGET, PLATE, TINY_DUST)
 			.addNative(WIRE, FINE_WIRE)
 			.addNative(DRILL_HEAD, DRILL);
 	
-	Material COAL = VanillaMaterials.COAL.as(MI.ID)
+	Material COAL = Materials.COAL.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL);
 	
-	Material DIAMOND = VanillaMaterials.DIAMOND.as(MI.ID)
+	Material DIAMOND = Materials.DIAMOND.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL)
 			.addNative(PLATE, LARGE_PLATE);
 	
-	Material EMERALD = VanillaMaterials.EMERALD.as(MI.ID)
+	Material EMERALD = Materials.EMERALD.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL)
 			.addNative(PLATE);
 	
-	Material LAPIS = VanillaMaterials.LAPIS.as(MI.ID)
+	Material LAPIS = Materials.LAPIS.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL);
 	
-	Material REDSTONE = VanillaMaterials.REDSTONE.as(MI.ID)
+	Material REDSTONE = Materials.REDSTONE.as(MI.ID)
 			.addNative(TINY_DUST, CRUSHED_DUST);
 	
-	Material QUARTZ = VanillaMaterials.QUARTZ.as(MI.ID)
+	Material QUARTZ = Materials.QUARTZ.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL);
 	
 	Material BRICK = create("brick", "Brick")

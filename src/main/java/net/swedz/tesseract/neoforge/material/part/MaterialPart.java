@@ -249,8 +249,7 @@ public final class MaterialPart implements MaterialPropertyHolder
 		ResourceLocation id = registry.id(this.formatId(material));
 		String englishName = this.formatEnglishName(material);
 		
-		MaterialPropertyMap properties = material.properties();
-		properties.putAll(propertyOverrides);
+		MaterialPropertyMap properties = material.properties(this);
 		
 		ItemHolder<?> item;
 		RegisteredMaterialPart registered;

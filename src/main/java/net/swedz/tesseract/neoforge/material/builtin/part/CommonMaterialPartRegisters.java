@@ -1,14 +1,15 @@
-package net.swedz.tesseract.neoforge.material.part;
+package net.swedz.tesseract.neoforge.material.builtin.part;
 
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.swedz.tesseract.neoforge.compat.vanilla.material.property.OreDrops;
+import net.swedz.tesseract.neoforge.material.builtin.property.OrePartDrops;
 import net.swedz.tesseract.neoforge.helper.TagHelper;
+import net.swedz.tesseract.neoforge.material.part.MaterialPartExtraRegister;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
-import static net.swedz.tesseract.neoforge.compat.vanilla.material.property.VanillaMaterialProperties.*;
+import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
 
 public final class CommonMaterialPartRegisters
 {
@@ -30,7 +31,7 @@ public final class CommonMaterialPartRegisters
 			{
 				throw new IllegalArgumentException("No ore drop part set");
 			}
-			OreDrops drops = properties.get(ORE_DROP_PART);
+			OrePartDrops drops = properties.get(ORE_DROP_PART);
 			if(drops == null || drops.drop() == null || !material.has(drops.drop()))
 			{
 				throw new IllegalArgumentException("Could not find ore drop part");

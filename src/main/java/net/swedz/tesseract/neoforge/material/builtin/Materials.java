@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.vanilla.material;
+package net.swedz.tesseract.neoforge.material.builtin;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -6,10 +6,10 @@ import net.swedz.tesseract.neoforge.material.Material;
 
 import java.util.Optional;
 
-import static net.swedz.tesseract.neoforge.compat.vanilla.material.part.VanillaMaterialParts.*;
-import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.*;
+import static net.swedz.tesseract.neoforge.material.builtin.part.MaterialParts.*;
+import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
 
-public interface VanillaMaterials
+public interface Materials
 {
 	Material GOLD = create("gold", "Gold")
 			.set(HARDNESS, 3f)

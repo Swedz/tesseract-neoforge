@@ -1,17 +1,16 @@
-package net.swedz.tesseract.neoforge.compat.vanilla.material.part;
+package net.swedz.tesseract.neoforge.material.builtin.part;
 
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.Tags;
 import net.swedz.tesseract.neoforge.helper.TagHelper;
-import net.swedz.tesseract.neoforge.material.part.CommonMaterialPartRegisters;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 
-import static net.swedz.tesseract.neoforge.material.part.CommonMaterialPartRegisters.*;
-import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.*;
+import static net.swedz.tesseract.neoforge.material.builtin.part.CommonMaterialPartRegisters.*;
+import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
 
-public interface VanillaMaterialParts
+public interface MaterialParts
 {
 	MaterialPart INGOT = create("ingot", "Ingot")
 			.itemModel(CommonModelBuilders::generated)

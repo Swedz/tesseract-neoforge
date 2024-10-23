@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.material.property;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
@@ -13,8 +14,8 @@ import java.util.function.BiConsumer;
 
 public final class MaterialProperty<T>
 {
-	private static final Map<String, MaterialProperty<?>> PROPERTY_IDS = Maps.newHashMap();
-	private static final Collection<MaterialProperty<?>>  PROPERTIES   = Collections.unmodifiableCollection(PROPERTY_IDS.values());
+	private static final Map<ResourceLocation, MaterialProperty<?>> PROPERTY_IDS = Maps.newHashMap();
+	private static final Collection<MaterialProperty<?>>            PROPERTIES   = Collections.unmodifiableCollection(PROPERTY_IDS.values());
 	
 	public static Collection<MaterialProperty<?>> getProperties()
 	{
@@ -26,7 +27,7 @@ public final class MaterialProperty<T>
 	private final Set<BiConsumer<ItemHolder<?>, T>>  itemActions  = Sets.newHashSet();
 	private final Set<BiConsumer<BlockHolder<?>, T>> blockActions = Sets.newHashSet();
 	
-	public MaterialProperty(String key, T defaultValue)
+	public MaterialProperty(ResourceLocation key, T defaultValue)
 	{
 		this.defaultValue = defaultValue;
 		

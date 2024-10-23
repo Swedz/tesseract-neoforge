@@ -7,7 +7,7 @@ import net.swedz.tesseract.neoforge.material.MaterialRegistry;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
 
-import static net.swedz.tesseract.neoforge.material.property.MaterialProperties.*;
+import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
 
 public class MaterialRecipeContext
 {

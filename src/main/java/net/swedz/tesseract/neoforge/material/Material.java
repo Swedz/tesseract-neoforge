@@ -68,6 +68,17 @@ public final class Material implements MaterialPropertyHolder
 		return properties.copy();
 	}
 	
+	public MaterialPropertyMap properties(MaterialPart part)
+	{
+		if(!this.has(part))
+		{
+			throw new IllegalArgumentException("Material does not have this part");
+		}
+		MaterialPropertyMap properties = this.properties();
+		properties.putAll(part.properties());
+		return properties;
+	}
+	
 	@Override
 	public <T> boolean has(MaterialProperty<T> property)
 	{

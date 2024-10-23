@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.vanilla.material.recipe;
+package net.swedz.tesseract.neoforge.material.builtin.recipe;
 
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.item.Item;

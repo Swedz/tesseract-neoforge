@@ -1,8 +1,8 @@
-package net.swedz.tesseract.neoforge.compat.vanilla.material.recipe;
+package net.swedz.tesseract.neoforge.material.builtin.recipe;
 
 import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeGroup;
 
-import static net.swedz.tesseract.neoforge.compat.vanilla.material.part.VanillaMaterialParts.*;
+import static net.swedz.tesseract.neoforge.material.builtin.part.MaterialParts.*;
 
 public interface VanillaMaterialRecipeGroups
 {
