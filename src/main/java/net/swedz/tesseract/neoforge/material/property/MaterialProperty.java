@@ -22,19 +22,26 @@ public final class MaterialProperty<T>
 		return PROPERTIES;
 	}
 	
-	private final T defaultValue;
+	private final ResourceLocation key;
+	private final T                defaultValue;
 	
 	private final Set<BiConsumer<ItemHolder<?>, T>>  itemActions  = Sets.newHashSet();
 	private final Set<BiConsumer<BlockHolder<?>, T>> blockActions = Sets.newHashSet();
 	
 	public MaterialProperty(ResourceLocation key, T defaultValue)
 	{
+		this.key = key;
 		this.defaultValue = defaultValue;
 		
 		if(PROPERTY_IDS.put(key, this) != null)
 		{
 			throw new IllegalArgumentException("Duplicate material property key '%s'".formatted(key));
 		}
+	}
+	
+	public ResourceLocation key()
+	{
+		return key;
 	}
 	
 	public T defaultValue()

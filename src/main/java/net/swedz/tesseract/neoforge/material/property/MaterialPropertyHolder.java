@@ -11,4 +11,13 @@ public interface MaterialPropertyHolder
 	<T> MaterialPropertyHolder setOptional(MaterialProperty<Optional<T>> property, T value);
 	
 	<T> T get(MaterialProperty<T> property);
+	
+	default <T> T getOrThrow(MaterialProperty<T> property)
+	{
+		if(!this.has(property))
+		{
+			throw new IllegalArgumentException("Could not find property '%s'".formatted(property.key().toString()));
+		}
+		return this.get(property);
+	}
 }

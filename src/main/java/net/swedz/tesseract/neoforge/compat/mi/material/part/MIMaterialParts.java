@@ -16,11 +16,12 @@ public interface MIMaterialParts
 			.itemModel(CommonModelBuilders::generated)
 			.item((context, holder) ->
 			{
-				if(!context.has(BATTERY_CAPACITY) || context.get(BATTERY_CAPACITY) <= 0)
+				long batteryCapacity = context.getOrThrow(BATTERY_CAPACITY);
+				if(batteryCapacity <= 0)
 				{
-					throw new IllegalArgumentException("No battery capacity set");
+					throw new IllegalArgumentException("Battery capacity must be > 0");
 				}
-				holder.withRegistrationListener((item) -> PortableStorageUnit.CAPACITY_PER_BATTERY.put(item, context.get(BATTERY_CAPACITY).longValue()));
+				holder.withRegistrationListener((item) -> PortableStorageUnit.CAPACITY_PER_BATTERY.put(item, batteryCapacity));
 			});
 	
 	// TODO barrel
