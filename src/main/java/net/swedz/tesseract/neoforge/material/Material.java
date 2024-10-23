@@ -5,10 +5,10 @@ import com.google.common.collect.Maps;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
-import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeGroup;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyHolder;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
+import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeGroup;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,18 +16,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiFunction;
 
-public class Material implements MaterialPropertyHolder
+public final class Material implements MaterialPropertyHolder
 {
-	protected final ResourceLocation id;
-	protected final String           englishName;
+	private final ResourceLocation id;
+	private final String           englishName;
 	
-	protected final MaterialPropertyMap properties = new MaterialPropertyMap();
+	private final MaterialPropertyMap properties = new MaterialPropertyMap();
 	
-	protected final Map<MaterialPart, RegisteredMaterialPart> parts = Maps.newHashMap();
+	private final Map<MaterialPart, RegisteredMaterialPart> parts = Maps.newHashMap();
 	
-	protected final List<MaterialRecipeGroup> recipeGroups = Lists.newArrayList();
+	private final List<MaterialRecipeGroup> recipeGroups = Lists.newArrayList();
 	
 	public Material(ResourceLocation id, String englishName)
 	{
@@ -35,9 +34,9 @@ public class Material implements MaterialPropertyHolder
 		this.englishName = englishName;
 	}
 	
-	protected <M extends Material> M copy(BiFunction<ResourceLocation, String, M> creator)
+	private Material copy(MaterialFactory factory)
 	{
-		M copy = creator.apply(this.id, this.englishName);
+		Material copy = factory.create(this.id, this.englishName);
 		copy.properties.putAll(this.properties);
 		copy.parts.putAll(this.parts);
 		copy.recipeGroups.addAll(this.recipeGroups);
@@ -52,11 +51,6 @@ public class Material implements MaterialPropertyHolder
 	public Material as(String namespace)
 	{
 		return this.copy((id, name) -> new Material(ResourceLocation.fromNamespaceAndPath(namespace, id.getPath()), name));
-	}
-	
-	public ImmutableMaterial immutable()
-	{
-		return this.copy(ImmutableMaterial::new);
 	}
 	
 	public ResourceLocation id()
@@ -78,15 +72,17 @@ public class Material implements MaterialPropertyHolder
 	@Override
 	public <T> Material set(MaterialProperty<T> property, T value)
 	{
-		properties.set(property, value);
-		return this;
+		Material copy = this.copy();
+		copy.properties.set(property, value);
+		return copy;
 	}
 	
 	@Override
 	public <T> Material setOptional(MaterialProperty<Optional<T>> property, T value)
 	{
-		properties.setOptional(property, value);
-		return this;
+		Material copy = this.copy();
+		copy.properties.setOptional(property, value);
+		return copy;
 	}
 	
 	@Override
@@ -102,11 +98,12 @@ public class Material implements MaterialPropertyHolder
 	
 	public Material add(MaterialPart part, RegisteredMaterialPart registered)
 	{
-		if(parts.put(part, registered) != null)
+		Material copy = this.copy();
+		if(copy.parts.put(part, registered) != null)
 		{
 			throw new IllegalArgumentException("The part '%s' has already been added to the material '%s'".formatted(part.id().toString(), this.id().toString()));
 		}
-		return this;
+		return copy;
 	}
 	
 	public Material addNative(String modId, MaterialPart part)
@@ -157,8 +154,9 @@ public class Material implements MaterialPropertyHolder
 	
 	public Material recipes(Collection<MaterialRecipeGroup> recipeGroups)
 	{
-		this.recipeGroups.addAll(recipeGroups);
-		return this;
+		Material copy = this.copy();
+		copy.recipeGroups.addAll(recipeGroups);
+		return copy;
 	}
 	
 	public Material recipes(MaterialRecipeGroup... recipeGroups)

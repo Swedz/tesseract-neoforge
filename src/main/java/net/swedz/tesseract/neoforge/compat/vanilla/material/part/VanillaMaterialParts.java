@@ -13,39 +13,31 @@ public interface VanillaMaterialParts
 {
 	MaterialPart INGOT = create("ingot", "Ingot")
 			.itemModel(CommonModelBuilders::generated)
-			.item(itemTagCommon("ingots"))
-			.immutable();
+			.item(itemTagCommon("ingots"));
 	
 	MaterialPart NUGGET = create("nugget", "Nugget")
 			.itemModel(CommonModelBuilders::generated)
-			.item(itemTagCommon("nuggets"))
-			.immutable();
+			.item(itemTagCommon("nuggets"));
 	
 	MaterialPart GEM = create("gem", "Gem")
 			.formattingMaterialOnly()
 			.itemModel(CommonModelBuilders::generated)
-			.item(itemTagCommon("gems"))
-			.immutable();
+			.item(itemTagCommon("gems"));
 	
 	MaterialPart DUST = create("dust", "Dust")
 			.itemModel(CommonModelBuilders::generated)
-			.item(itemTagCommon("dusts"))
-			.immutable();
+			.item(itemTagCommon("dusts"));
 	
 	MaterialPart BLOCK = create("block", "Block")
 			.formatting("%s_%s"::formatted, (m, p) -> "Block of %s".formatted(m))
 			.blockModel(CommonModelBuilders::blockCubeAll)
 			.blockLoot(CommonLootTableBuilders::self)
-			.item(itemTagCommon("storage_blocks"))
-			.immutable();
-	
-	// TODO ore (+deepslate or other variants)
+			.item(itemTagCommon("storage_blocks"));
 	
 	MaterialPart RAW_METAL = create("raw_metal", "Raw Metal")
 			.formattingMaterialOnly("raw_%s"::formatted, "Raw %s"::formatted)
 			.itemModel(CommonModelBuilders::generated)
-			.item(itemTagCommon("raw_materials"))
-			.immutable();
+			.item(itemTagCommon("raw_materials"));
 	
 	MaterialPart RAW_METAL_BLOCK = create("raw_metal_block", "Raw Metal Block")
 			.formattingMaterialOnly("raw_%s_block"::formatted, "Block of Raw %s"::formatted)
@@ -53,12 +45,10 @@ public interface VanillaMaterialParts
 			.set(HARDNESS, 5f)
 			.blockModel(CommonModelBuilders::blockCubeAll)
 			.blockLoot(CommonLootTableBuilders::self)
-			.item((r, m, h) -> h.tag(TagHelper.itemCommonWithChild("storage_blocks", "raw_%s".formatted(m.id()))))
-			.immutable();
+			.item((r, m, h) -> h.tag(TagHelper.itemCommonWithChild("storage_blocks", "raw_%s".formatted(m.id()))));
 	
 	MaterialPart SCRAP = create("scrap", "Scrap")
-			.itemModel(CommonModelBuilders::generated)
-			.immutable();
+			.itemModel(CommonModelBuilders::generated);
 	
 	static MaterialPart create(String id, String englishName)
 	{

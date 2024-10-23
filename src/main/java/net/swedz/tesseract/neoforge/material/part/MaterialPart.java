@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.material.part;
 
 import com.google.common.collect.Lists;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
+import net.swedz.tesseract.neoforge.helper.TagHelper;
 import net.swedz.tesseract.neoforge.material.Material;
 import net.swedz.tesseract.neoforge.material.MaterialRegistry;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
@@ -20,27 +22,27 @@ import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class MaterialPart implements MaterialPropertyHolder
+public final class MaterialPart implements MaterialPropertyHolder
 {
-	protected final ResourceLocation id;
-	protected final String           englishName;
+	private final ResourceLocation id;
+	private final String           englishName;
 	
-	protected boolean isBlock = false;
+	private boolean isBlock = false;
 	
-	protected MaterialPartFormatter idFormatter;
-	protected MaterialPartFormatter englishNameFormatter;
+	private MaterialPartFormatter idFormatter;
+	private MaterialPartFormatter englishNameFormatter;
 	
-	protected final List<MaterialPartExtraRegister<ItemHolder<? extends Item>>>            itemActions  = Lists.newArrayList();
-	protected final List<MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>>> blockActions = Lists.newArrayList();
+	private final List<MaterialPartExtraRegister<ItemHolder<? extends Item>>>            itemActions  = Lists.newArrayList();
+	private final List<MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>>> blockActions = Lists.newArrayList();
 	
-	protected final MaterialPropertyMap propertyOverrides = new MaterialPropertyMap();
+	private final MaterialPropertyMap propertyOverrides = new MaterialPropertyMap();
 	
 	public MaterialPart(ResourceLocation id, String englishName)
 	{
@@ -49,9 +51,9 @@ public class MaterialPart implements MaterialPropertyHolder
 		this.formattingDefault();
 	}
 	
-	protected <P extends MaterialPart> P copy(BiFunction<ResourceLocation, String, P> creator)
+	private MaterialPart copy(MaterialPartFactory creator)
 	{
-		P copy = creator.apply(id, englishName);
+		MaterialPart copy = creator.create(this.id, this.englishName);
 		copy.isBlock = this.isBlock;
 		copy.idFormatter = this.idFormatter;
 		copy.englishNameFormatter = this.englishNameFormatter;
@@ -71,11 +73,6 @@ public class MaterialPart implements MaterialPropertyHolder
 		return this.copy((id, name) -> new MaterialPart(ResourceLocation.fromNamespaceAndPath(namespace, id.getPath()), name));
 	}
 	
-	public ImmutableMaterialPart immutable()
-	{
-		return this.copy(ImmutableMaterialPart::new);
-	}
-	
 	public ResourceLocation id()
 	{
 		return id;
@@ -93,15 +90,17 @@ public class MaterialPart implements MaterialPropertyHolder
 	
 	public MaterialPart asBlock()
 	{
-		isBlock = true;
-		return this;
+		MaterialPart copy = this.copy();
+		copy.isBlock = true;
+		return copy;
 	}
 	
 	public MaterialPart formatting(MaterialPartFormatter idFormatter, MaterialPartFormatter englishNameFormatter)
 	{
-		this.idFormatter = idFormatter;
-		this.englishNameFormatter = englishNameFormatter;
-		return this;
+		MaterialPart copy = this.copy();
+		copy.idFormatter = idFormatter;
+		copy.englishNameFormatter = englishNameFormatter;
+		return copy;
 	}
 	
 	public MaterialPart formattingDefault()
@@ -131,8 +130,9 @@ public class MaterialPart implements MaterialPropertyHolder
 	
 	public MaterialPart item(MaterialPartExtraRegister<ItemHolder<? extends Item>> action)
 	{
-		itemActions.add(action);
-		return this;
+		MaterialPart copy = this.copy();
+		copy.itemActions.add(action);
+		return copy;
 	}
 	
 	public MaterialPart itemProperty(Consumer<Item.Properties> action)
@@ -145,9 +145,10 @@ public class MaterialPart implements MaterialPropertyHolder
 		return this.item((r, m, h) -> h.tag(tags));
 	}
 	
-	public MaterialPart itemTag(TagKey<Item> tag)
+	@SuppressWarnings("unchecked")
+	public MaterialPart itemTag(TagKey<Item>... tags)
 	{
-		return this.itemTag(List.of(tag));
+		return this.itemTag(Arrays.asList(tags));
 	}
 	
 	public MaterialPart itemModel(Function<ItemHolder<? extends Item>, Consumer<ItemModelBuilder>> modelBuilder)
@@ -157,9 +158,10 @@ public class MaterialPart implements MaterialPropertyHolder
 	
 	public MaterialPart block(MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> action)
 	{
-		isBlock = true;
-		blockActions.add(action);
-		return this;
+		MaterialPart copy = this.copy();
+		copy.isBlock = true;
+		copy.blockActions.add(action);
+		return copy;
 	}
 	
 	public MaterialPart blockProperty(Consumer<BlockBehaviour.Properties> action)
@@ -172,9 +174,10 @@ public class MaterialPart implements MaterialPropertyHolder
 		return this.block((r, m, h) -> h.tag(tags));
 	}
 	
-	public MaterialPart blockTag(TagKey<Block> tag)
+	@SuppressWarnings("unchecked")
+	public MaterialPart blockTag(TagKey<Block>... tag)
 	{
-		return this.blockTag(List.of(tag));
+		return this.blockTag(Arrays.asList(tag));
 	}
 	
 	public MaterialPart blockModel(Function<BlockHolder<Block>, Consumer<BlockStateProvider>> modelBuilder)
@@ -187,6 +190,19 @@ public class MaterialPart implements MaterialPropertyHolder
 		return this.block((r, m, h) -> h.withLootTable(lootBuilder));
 	}
 	
+	public MaterialPart itemAndBlockTag(Collection<TagKey<Item>> tags)
+	{
+		MaterialPart copy = this.itemTag(tags);
+		copy = copy.blockTag(tags.stream().map((t) -> TagHelper.convert(t, BuiltInRegistries.BLOCK)).toList());
+		return copy;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public MaterialPart itemAndBlockTag(TagKey<Item>... tags)
+	{
+		return this.itemAndBlockTag(Arrays.asList(tags));
+	}
+	
 	@Override
 	public <T> boolean has(MaterialProperty<T> property)
 	{
@@ -196,21 +212,31 @@ public class MaterialPart implements MaterialPropertyHolder
 	@Override
 	public <T> MaterialPart set(MaterialProperty<T> property, T value)
 	{
-		propertyOverrides.set(property, value);
-		return this;
+		MaterialPart copy = this.copy();
+		copy.propertyOverrides.set(property, value);
+		return copy;
 	}
 	
 	@Override
 	public <T> MaterialPart setOptional(MaterialProperty<Optional<T>> property, T value)
 	{
-		propertyOverrides.setOptional(property, value);
-		return this;
+		MaterialPart copy = this.copy();
+		copy.propertyOverrides.setOptional(property, value);
+		return copy;
 	}
 	
 	@Override
 	public <T> T get(MaterialProperty<T> property)
 	{
 		return propertyOverrides.get(property);
+	}
+	
+	private void onBlockRegister(MaterialRegistry registry, Material material, BlockWithItemHolder<Block, BlockItem> block)
+	{
+	}
+	
+	private void onItemRegister(MaterialRegistry registry, Material material, ItemHolder<? extends Item> item)
+	{
 	}
 	
 	public RegisteredMaterialPart register(MaterialRegistry registry, Material material)
@@ -231,6 +257,7 @@ public class MaterialPart implements MaterialPropertyHolder
 			registered = RegisteredMaterialPart.existingBlock(block);
 			
 			blockActions.forEach((a) -> a.apply(registry, material, block));
+			this.onBlockRegister(registry, material, block);
 			registry.onBlockRegister(block);
 			
 			block.register();
@@ -242,6 +269,7 @@ public class MaterialPart implements MaterialPropertyHolder
 		}
 		
 		itemActions.forEach((a) -> a.apply(registry, material, item));
+		this.onItemRegister(registry, material, item);
 		registry.onItemRegister(item);
 		
 		item.register();
@@ -253,5 +281,11 @@ public class MaterialPart implements MaterialPropertyHolder
 	public boolean equals(Object obj)
 	{
 		return obj instanceof MaterialPart other && id.equals(other.id());
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return id.hashCode();
 	}
 }

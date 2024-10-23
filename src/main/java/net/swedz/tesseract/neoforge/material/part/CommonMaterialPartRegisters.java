@@ -11,11 +11,11 @@ public final class CommonMaterialPartRegisters
 {
 	public static MaterialPartExtraRegister<ItemHolder<? extends Item>> itemTagCommon(String path)
 	{
-		return (r, m, h) -> h.tag(TagHelper.itemCommonWithChild(path, m.id().getPath()));
+		return (registry, material, holder) -> holder.tag(TagHelper.itemCommonWithChild(path, material.id().getPath()));
 	}
 	
 	public static MaterialPartExtraRegister<BlockWithItemHolder<Block, BlockItem>> blockItemTagCommon(String path)
 	{
-		return (r, m, h) -> h.item().tag(TagHelper.itemCommonWithChild(path, m.id().getPath()));
+		return (registry, material, holder) -> holder.item().tag(TagHelper.itemCommonWithChild(path, material.id().getPath()));
 	}
 }
