@@ -3,14 +3,13 @@ package net.swedz.tesseract.neoforge.material.part;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 
 import java.util.function.Supplier;
 
-public interface RegisteredMaterialPart
+public interface RegisteredMaterialPart extends ItemLike
 {
-	Item asItem();
-	
 	default String itemReference()
 	{
 		return BuiltInRegistries.ITEM.getKey(this.asItem()).toString();
