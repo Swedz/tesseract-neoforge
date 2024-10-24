@@ -57,7 +57,8 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 	{
 		this.id = id;
 		this.englishName = englishName;
-		this.formattingDefault();
+		this.idFormatter = "%s_%s"::formatted;
+		this.englishNameFormatter = "%s %s"::formatted;
 	}
 	
 	private MaterialPart copy(MaterialPartFactory creator)
