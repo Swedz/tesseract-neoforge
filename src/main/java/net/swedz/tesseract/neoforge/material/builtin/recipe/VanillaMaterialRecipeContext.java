@@ -44,7 +44,7 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		this.shapeless(input, 9, output, 1, inverse);
 	}
 	
-	public void smelting(MaterialPart input, MaterialPart output, boolean blasting)
+	public void smelting(MaterialPart input, MaterialPart output, boolean blasting, float experience)
 	{
 		if(this.has(input, output))
 		{
@@ -52,14 +52,14 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 					.input(Ingredient.of(material.getOrThrow(output).asItem()))
 					.output(material.getOrThrow(input).asItem(), 1)
 					.cookingTime(blasting ? 100 : 200)
-					.experience(0.7f)
+					.experience(experience)
 					.offerTo(recipes, this.id("smelting/%s_to_%s_%s".formatted(input.id().getPath(), output.id().getPath(), blasting ? "blasting" : "smelting")));
 		}
 	}
 	
-	public void smeltingAndBlasting(MaterialPart input, MaterialPart output)
+	public void smeltingAndBlasting(MaterialPart input, MaterialPart output, float experience)
 	{
-		smelting(input, output, true);
-		smelting(input, output, false);
+		smelting(input, output, true, experience);
+		smelting(input, output, false, experience);
 	}
 }

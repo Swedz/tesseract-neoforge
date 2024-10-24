@@ -12,8 +12,8 @@ public interface VanillaMaterialRecipeGroups
 			.add("raw_metal_to_block", (context) -> context.shapeless3x3(RAW_METAL, RAW_METAL_BLOCK, true));
 	
 	MaterialRecipeGroup SMELTING = MaterialRecipeGroup.create(VanillaMaterialRecipeContext::new)
-			.add("raw_metal_to_primary", (context) -> context.smeltingAndBlasting(RAW_METAL, context.mainPart()))
-			.add("ore_to_primary", (context) -> context.smeltingAndBlasting(ORE, context.mainPart()))
-			.add("ore_deepslate_to_primary", (context) -> context.smeltingAndBlasting(ORE_DEEPSLATE, context.mainPart()))
-			.add("ore_netherrack_to_primary", (context) -> context.smeltingAndBlasting(ORE_NETHERRACK, context.mainPart()));
+			.add("raw_metal_to_ingot", (context) -> context.smeltingAndBlasting(RAW_METAL, INGOT, 0.7f))
+			.add("ore_to_primary", (context) -> context.smeltingAndBlasting(ORE, context.mainPart(), 0.7f))
+			.add("ore_deepslate_to_primary", (context) -> context.smeltingAndBlasting(ORE_DEEPSLATE, context.mainPart(), 0.7f))
+			.add("ore_netherrack_to_primary", (context) -> context.smeltingAndBlasting(ORE_NETHERRACK, context.mainPart(), 0.7f));
 }
