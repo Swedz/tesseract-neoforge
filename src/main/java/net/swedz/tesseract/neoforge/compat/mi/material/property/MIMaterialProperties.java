@@ -10,6 +10,11 @@ public interface MIMaterialProperties
 	
 	MaterialProperty<Long> BATTERY_CAPACITY = create("battery_capacity", 0L);
 	
+	static long batteryCapacity(CableTier tier)
+	{
+		return tier.getMaxTransfer() * 60 * 20;
+	}
+	
 	MaterialProperty<CableTier> CABLE_TIER = create("cable_tier", CableTier.LV);
 	
 	static <T> MaterialProperty<T> create(String id, T defaultValue)

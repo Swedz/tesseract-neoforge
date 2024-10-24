@@ -1,12 +1,14 @@
 package net.swedz.tesseract.neoforge.compat.mi.material;
 
 import aztech.modern_industrialization.MI;
-import net.swedz.tesseract.neoforge.material.builtin.Materials;
+import aztech.modern_industrialization.api.energy.CableTier;
 import net.swedz.tesseract.neoforge.material.Material;
+import net.swedz.tesseract.neoforge.material.builtin.Materials;
 
 import java.util.Optional;
 
 import static net.swedz.tesseract.neoforge.compat.mi.material.part.MIMaterialParts.*;
+import static net.swedz.tesseract.neoforge.compat.mi.material.property.MIMaterialProperties.*;
 import static net.swedz.tesseract.neoforge.material.builtin.part.MaterialParts.*;
 import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
 
@@ -39,7 +41,9 @@ public interface MIMaterials
 			.addNative(ITEM_PURE_NON_METAL);
 	
 	Material REDSTONE = Materials.REDSTONE.as(MI.ID)
-			.addNative(TINY_DUST, CRUSHED_DUST);
+			.set(BATTERY_CAPACITY, batteryCapacity(CableTier.LV))
+			.addNative(TINY_DUST, CRUSHED_DUST)
+			.addNative(BATTERY);
 	
 	Material QUARTZ = Materials.QUARTZ.as(MI.ID)
 			.addNative(ITEM_PURE_NON_METAL);
@@ -130,8 +134,10 @@ public interface MIMaterials
 	
 	Material SODIUM = create("sodium", "Sodium")
 			.set(MAIN_PART, DUST)
+			.set(BATTERY_CAPACITY, batteryCapacity(CableTier.HV))
 			.addNative(DUST, TINY_DUST)
-			.addNative(BLOCK);
+			.addNative(BLOCK)
+			.addNative(BATTERY);
 	
 	Material SALT = create("salt", "Salt")
 			.set(MAIN_PART, DUST)
@@ -151,10 +157,12 @@ public interface MIMaterials
 			.addNative(WIRE, FINE_WIRE);
 	
 	Material SILICON = create("silicon", "Silicon")
+			.set(BATTERY_CAPACITY, batteryCapacity(CableTier.MV))
 			.addNative(ITEM_PURE_METAL)
 			.addNative(BLOCK)
 			.addNative(N_DOPED_PLATE, P_DOPED_PLATE)
-			.addNative(PLATE, DOUBLE_INGOT);
+			.addNative(PLATE, DOUBLE_INGOT)
+			.addNative(BATTERY);
 	
 	Material STAINLESS_STEEL = create("stainless_steel", "Stainless Steel")
 			.addNative(BOLT, BLADE, RING, ROTOR, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, INGOT, LARGE_PLATE, NUGGET, PLATE, TINY_DUST)
@@ -217,8 +225,10 @@ public interface MIMaterials
 			.addNative(ROD);
 	
 	Material PLUTONIUM = create("plutonium", "Plutonium")
+			.set(BATTERY_CAPACITY, batteryCapacity(CableTier.SUPERCONDUCTOR))
 			.addNative(ITEM_PURE_METAL)
-			.addNative(BLOCK);
+			.addNative(BLOCK)
+			.addNative(BATTERY);
 	
 	Material LE_MOX = create("le_mox", "LE Mox")
 			.addNative(ITEM_PURE_METAL)
@@ -253,7 +263,9 @@ public interface MIMaterials
 			.addNative(BLOCK);
 	
 	Material CADMIUM = create("cadmium", "Cadmium")
-			.addNative(DUST, TINY_DUST, INGOT, PLATE, ROD, DOUBLE_INGOT);
+			.set(BATTERY_CAPACITY, batteryCapacity(CableTier.EV))
+			.addNative(DUST, TINY_DUST, INGOT, PLATE, ROD, DOUBLE_INGOT)
+			.addNative(BATTERY);
 	
 	Material NEODYMIUM = create("neodymium", "Neodymium")
 			.set(MAIN_PART, DUST)
