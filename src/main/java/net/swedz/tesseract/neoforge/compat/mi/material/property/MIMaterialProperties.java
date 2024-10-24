@@ -6,6 +6,8 @@ import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 
 public interface MIMaterialProperties
 {
+	MaterialProperty<Double> TIME_FACTOR = create("time_factor", 1D);
+	
 	MaterialProperty<Long> BATTERY_CAPACITY = create("battery_capacity", 0L);
 	
 	MaterialProperty<CableTier> CABLE_TIER = create("cable_tier", CableTier.LV);
