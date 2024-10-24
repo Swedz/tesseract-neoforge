@@ -22,15 +22,15 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		if(this.has(input, output))
 		{
 			Item inputItem = material.getOrThrow(input).asItem();
-			Item resultItem = material.getOrThrow(output).asItem();
+			Item outputItem = material.getOrThrow(output).asItem();
 			
-			ShapelessRecipeBuilder inputToResult = new ShapelessRecipeBuilder();
+			ShapelessRecipeBuilder recipe = new ShapelessRecipeBuilder();
 			for(int i = 0; i < inputCount; i++)
 			{
-				inputToResult.with(inputItem);
+				recipe.with(inputItem);
 			}
-			inputToResult.output(resultItem, outputCount);
-			inputToResult.offerTo(recipes, this.id("craft/%s_from_%s".formatted(output.id().getPath(), input.id().getPath())));
+			recipe.output(outputItem, outputCount);
+			recipe.offerTo(recipes, this.id("craft/%s_from_%s".formatted(output.id().getPath(), input.id().getPath())));
 			
 			if(inverse)
 			{
