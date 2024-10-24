@@ -14,20 +14,20 @@ import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialPro
 public interface MaterialParts
 {
 	MaterialPart INGOT = create("ingot", "Ingot")
-			.itemModel(CommonModelBuilders::generated)
+			.itemModelBuilder(CommonModelBuilders::generated)
 			.item(itemTagCommon("ingots"));
 	
 	MaterialPart NUGGET = create("nugget", "Nugget")
-			.itemModel(CommonModelBuilders::generated)
+			.itemModelBuilder(CommonModelBuilders::generated)
 			.item(itemTagCommon("nuggets"));
 	
 	MaterialPart GEM = create("gem", "Gem")
 			.formattingMaterialOnly()
-			.itemModel(CommonModelBuilders::generated)
+			.itemModelBuilder(CommonModelBuilders::generated)
 			.item(itemTagCommon("gems"));
 	
 	MaterialPart DUST = create("dust", "Dust")
-			.itemModel(CommonModelBuilders::generated)
+			.itemModelBuilder(CommonModelBuilders::generated)
 			.item(itemTagCommon("dusts"));
 	
 	MaterialPart BLOCK = create("block", "Block")
@@ -38,7 +38,7 @@ public interface MaterialParts
 	
 	MaterialPart RAW_METAL = create("raw_metal", "Raw Metal")
 			.formattingMaterialOnly("raw_%s"::formatted, "Raw %s"::formatted)
-			.itemModel(CommonModelBuilders::generated)
+			.itemModelBuilder(CommonModelBuilders::generated)
 			.item(itemTagCommon("raw_materials"));
 	
 	MaterialPart RAW_METAL_BLOCK = create("raw_metal_block", "Raw Metal Block")
@@ -82,7 +82,7 @@ public interface MaterialParts
 			.block(CommonMaterialPartRegisters.oreDrop());
 	
 	MaterialPart SCRAP = create("scrap", "Scrap")
-			.itemModel(CommonModelBuilders::generated);
+			.itemModelBuilder(CommonModelBuilders::generated);
 	
 	static MaterialPart create(String id, String englishName)
 	{
