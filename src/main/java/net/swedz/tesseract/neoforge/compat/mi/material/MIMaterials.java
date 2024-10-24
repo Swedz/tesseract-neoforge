@@ -2,8 +2,10 @@ package net.swedz.tesseract.neoforge.compat.mi.material;
 
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.api.energy.CableTier;
+import net.minecraft.util.valueproviders.UniformInt;
 import net.swedz.tesseract.neoforge.material.Material;
 import net.swedz.tesseract.neoforge.material.builtin.Materials;
+import net.swedz.tesseract.neoforge.material.builtin.property.OrePartDrops;
 
 import java.util.Optional;
 
@@ -46,7 +48,8 @@ public interface MIMaterials
 			.addNative(BATTERY);
 	
 	Material QUARTZ = Materials.QUARTZ.as(MI.ID)
-			.addNative(ITEM_PURE_NON_METAL);
+			.addNative(ITEM_PURE_NON_METAL)
+			.addNative(ORE);
 	
 	Material BRICK = create("brick", "Brick")
 			.set(HARDNESS, 2f)
@@ -73,7 +76,8 @@ public interface MIMaterials
 			.addNative(BOLT, BLADE, RING, ROTOR, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, INGOT, NUGGET, PLATE, TINY_DUST)
 			.addNative(WIRE)
 			.addNative(RAW_METAL, RAW_METAL_BLOCK)
-			.addNative(BLOCK);
+			.addNative(BLOCK)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material STEEL = create("steel", "Steel")
 			.addNative(BOLT, RING, ROD, GEAR, CURVED_PLATE, DOUBLE_INGOT, DUST, INGOT, LARGE_PLATE, NUGGET, PLATE, TINY_DUST)
@@ -83,8 +87,10 @@ public interface MIMaterials
 	
 	Material LIGNITE_COAL = create("lignite_coal", "Lignite Coal")
 			.set(MAIN_PART, GEM)
+			.set(ORE_DROP_PART, OrePartDrops.experience(GEM, UniformInt.of(0, 2)))
 			.addNative(GEM, BLOCK)
-			.addNative(ITEM_PURE_NON_METAL);
+			.addNative(ITEM_PURE_NON_METAL)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material ALUMINUM = create("aluminum", "Aluminum")
 			.addNative(BOLT, BLADE, RING, ROTOR, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, INGOT, LARGE_PLATE, NUGGET, PLATE, TINY_DUST)
@@ -94,13 +100,16 @@ public interface MIMaterials
 	
 	Material BAUXITE = create("bauxite", "Bauxite")
 			.set(MAIN_PART, DUST)
+			.set(ORE_DROP_PART, OrePartDrops.experience(DUST, UniformInt.of(1, 4)))
 			.addNative(ITEM_PURE_NON_METAL)
-			.addNative(BLOCK);
+			.addNative(BLOCK)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material LEAD = create("lead", "Lead")
 			.addNative(DOUBLE_INGOT, DUST, INGOT, NUGGET, PLATE, TINY_DUST)
 			.addNative(BLOCK)
-			.addNative(RAW_METAL, RAW_METAL_BLOCK);
+			.addNative(RAW_METAL, RAW_METAL_BLOCK)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material BATTERY_ALLOY = create("battery_alloy", "Battery Alloy")
 			.addNative(TINY_DUST, DUST, INGOT, DOUBLE_INGOT, PLATE, CURVED_PLATE, NUGGET)
@@ -119,12 +128,14 @@ public interface MIMaterials
 	Material ANTIMONY = create("antimony", "Antimony")
 			.addNative(ITEM_PURE_METAL)
 			.addNative(RAW_METAL, RAW_METAL_BLOCK)
-			.addNative(BLOCK);
+			.addNative(BLOCK)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material NICKEL = create("nickel", "Nickel")
 			.addNative(DOUBLE_INGOT, DUST, INGOT, NUGGET, PLATE, TINY_DUST)
 			.addNative(RAW_METAL, RAW_METAL_BLOCK)
-			.addNative(BLOCK);
+			.addNative(BLOCK)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material SILVER = create("silver", "Silver")
 			.addNative(DOUBLE_INGOT, DUST, INGOT, NUGGET, PLATE, TINY_DUST)
@@ -141,15 +152,18 @@ public interface MIMaterials
 	
 	Material SALT = create("salt", "Salt")
 			.set(MAIN_PART, DUST)
+			.set(ORE_DROP_PART, OrePartDrops.experience(DUST, UniformInt.of(1, 3)))
 			.addNative(ITEM_PURE_NON_METAL)
-			.addNative(BLOCK);
+			.addNative(BLOCK)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material TITANIUM = create("titanium", "Titanium")
 			.addNative(BOLT, BLADE, RING, ROTOR, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, INGOT, LARGE_PLATE, NUGGET, PLATE, TINY_DUST)
 			.addNative(BLOCK)
 			.addNative(RAW_METAL, RAW_METAL_BLOCK)
 			.addNative(HOT_INGOT)
-			.addNative(DRILL_HEAD, DRILL);
+			.addNative(DRILL_HEAD, DRILL)
+			.addNative(ORE);
 	
 	Material ELECTRUM = create("electrum", "Electrum")
 			.addNative(DOUBLE_INGOT, DUST, INGOT, NUGGET, PLATE, TINY_DUST)
@@ -212,7 +226,8 @@ public interface MIMaterials
 			.addNative(ITEM_PURE_METAL)
 			.addNative(BLOCK)
 			.addNative(ROD)
-			.addNative(RAW_METAL, RAW_METAL_BLOCK);
+			.addNative(RAW_METAL, RAW_METAL_BLOCK)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material LE_URANIUM = create("le_uranium", "LE Uranium")
 			.addNative(ITEM_PURE_METAL)
@@ -244,7 +259,8 @@ public interface MIMaterials
 			.addNative(ITEM_PURE_METAL)
 			.addNative(PLATE, DOUBLE_INGOT, WIRE, FINE_WIRE, HOT_INGOT)
 			.addNative(BLOCK)
-			.addNative(RAW_METAL, RAW_METAL_BLOCK);
+			.addNative(RAW_METAL, RAW_METAL_BLOCK)
+			.addNative(ORE);
 	
 	Material KANTHAL = create("kanthal", "Kanthal")
 			.addNative(TINY_DUST, DUST, PLATE, INGOT, NUGGET, WIRE, DOUBLE_INGOT, HOT_INGOT)
@@ -255,12 +271,15 @@ public interface MIMaterials
 			.addNative(ITEM_PURE_METAL)
 			.addNative(CURVED_PLATE)
 			.addNative(BLOCK)
-			.addNative(RAW_METAL, RAW_METAL_BLOCK);
+			.addNative(RAW_METAL, RAW_METAL_BLOCK)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material MONAZITE = create("monazite", "Monazite")
 			.set(MAIN_PART, DUST)
+			.set(ORE_DROP_PART, OrePartDrops.experience(DUST, UniformInt.of(1, 4)))
 			.addNative(ITEM_PURE_NON_METAL)
-			.addNative(BLOCK);
+			.addNative(BLOCK)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material CADMIUM = create("cadmium", "Cadmium")
 			.set(BATTERY_CAPACITY, batteryCapacity(CableTier.EV))
@@ -285,7 +304,8 @@ public interface MIMaterials
 			.addNative(ITEM_PURE_METAL)
 			.addNative(PLATE, LARGE_PLATE, DOUBLE_INGOT)
 			.addNative(BLOCK)
-			.addNative(RAW_METAL, RAW_METAL_BLOCK);
+			.addNative(RAW_METAL, RAW_METAL_BLOCK)
+			.addNative(ORE, ORE_DEEPSLATE);
 	
 	Material BLASTPROOF_ALLOY = create("blastproof_alloy", "Blastproof Alloy")
 			.addNative(INGOT, PLATE, LARGE_PLATE, CURVED_PLATE);
