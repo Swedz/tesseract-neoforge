@@ -36,6 +36,8 @@ public interface MaterialProperties
 	
 	MaterialProperty<MaterialPart> MAIN_PART = create("main_part", MaterialParts.INGOT);
 	
+	MaterialProperty<Integer> MEAN_RGB = create("mean_rgb", 0);
+	
 	MaterialProperty<OrePartDrops> ORE_DROP_PART = create("ore_drop_part", new OrePartDrops(MaterialParts.RAW_METAL));
 	
 	static <T> MaterialProperty<T> create(String id, T defaultValue)

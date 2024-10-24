@@ -12,6 +12,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.swedz.tesseract.neoforge.helper.TagHelper;
 import net.swedz.tesseract.neoforge.material.Material;
 import net.swedz.tesseract.neoforge.material.MaterialRegistry;
@@ -179,9 +180,14 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return this.itemTag(Arrays.asList(tags));
 	}
 	
-	public MaterialPart itemModel(Function<ItemHolder<? extends Item>, Consumer<ItemModelBuilder>> modelBuilder)
+	public MaterialPart itemModel(Function<ItemHolder<? extends Item>, Consumer<ItemModelProvider>> modelProvider)
 	{
-		return this.item((c, h) -> h.withModel(modelBuilder::apply));
+		return this.item((c, h) -> h.withModel(modelProvider::apply));
+	}
+	
+	public MaterialPart itemModelBuilder(Function<ItemHolder<? extends Item>, Consumer<ItemModelBuilder>> modelBuilder)
+	{
+		return this.item((c, h) -> h.withModelBuilder(modelBuilder::apply));
 	}
 	
 	public MaterialPart block(MaterialPartAction<BlockWithItemHolder<Block, BlockItem>> action)
