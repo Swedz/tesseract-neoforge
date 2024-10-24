@@ -22,7 +22,7 @@ public class BlockWithItemHolder<BlockType extends Block, ItemType extends Block
 	{
 		super(location, englishName, registerBlocks, blockCreator);
 		this.itemHolder = new ItemHolder<>(location, englishName, registerItems, (p) -> itemCreator.apply(this.get(), p))
-				.withModel(CommonModelBuilders::block);
+				.withModelBuilder(CommonModelBuilders::block);
 	}
 	
 	public ItemHolder<ItemType> item()
