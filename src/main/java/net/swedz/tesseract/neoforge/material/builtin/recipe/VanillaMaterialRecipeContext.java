@@ -26,7 +26,7 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		super(registry, material, recipes);
 	}
 	
-	public void shapeless(MaterialPart input, int inputCount, MaterialPart output, int outputCount, boolean inverse)
+	public VanillaMaterialRecipeContext shapeless(MaterialPart input, int inputCount, MaterialPart output, int outputCount, boolean inverse)
 	{
 		if(this.has(input, output))
 		{
@@ -46,11 +46,12 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 				this.shapeless(output, outputCount, input, inputCount, false);
 			}
 		}
+		return this;
 	}
 	
-	public void shapeless3x3(MaterialPart input, MaterialPart output, boolean inverse)
+	public VanillaMaterialRecipeContext shapeless3x3(MaterialPart input, MaterialPart output, boolean inverse)
 	{
-		this.shapeless(input, 9, output, 1, inverse);
+		return this.shapeless(input, 9, output, 1, inverse);
 	}
 	
 	public final class ShapedRecipeMap
@@ -88,7 +89,7 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		}
 	}
 	
-	public void shaped(MaterialPart output, int outputCount, Consumer<ShapedRecipeMap> keyMapAction, String... pattern)
+	public VanillaMaterialRecipeContext shaped(MaterialPart output, int outputCount, Consumer<ShapedRecipeMap> keyMapAction, String... pattern)
 	{
 		ShapedRecipeMap keyMap = new ShapedRecipeMap(pattern);
 		keyMapAction.accept(keyMap);
@@ -105,9 +106,10 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 			keyMap.apply(recipe);
 			recipe.offerTo(recipes, this.id("craft/%s".formatted(id)));
 		}
+		return this;
 	}
 	
-	public void smelting(MaterialPart input, MaterialPart output, boolean blasting, float experience)
+	public VanillaMaterialRecipeContext smelting(MaterialPart input, MaterialPart output, boolean blasting, float experience)
 	{
 		if(this.has(input, output))
 		{
@@ -118,21 +120,23 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 					.experience(experience)
 					.offerTo(recipes, this.id("smelting/%s_to_%s_%s".formatted(input.id().getPath(), output.id().getPath(), blasting ? "blasting" : "smelting")));
 		}
+		return this;
 	}
 	
-	public void smelting(MaterialPart input, MaterialPart output, float experience)
+	public VanillaMaterialRecipeContext smelting(MaterialPart input, MaterialPart output, float experience)
 	{
-		this.smelting(input, output, false, experience);
+		return this.smelting(input, output, false, experience);
 	}
 	
-	public void blasting(MaterialPart input, MaterialPart output, float experience)
+	public VanillaMaterialRecipeContext blasting(MaterialPart input, MaterialPart output, float experience)
 	{
-		this.smelting(input, output, true, experience);
+		return this.smelting(input, output, true, experience);
 	}
 	
-	public void smeltingAndBlasting(MaterialPart input, MaterialPart output, float experience)
+	public VanillaMaterialRecipeContext smeltingAndBlasting(MaterialPart input, MaterialPart output, float experience)
 	{
 		smelting(input, output, experience);
 		blasting(input, output, experience);
+		return this;
 	}
 }
