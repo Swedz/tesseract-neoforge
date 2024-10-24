@@ -176,12 +176,13 @@ public class MIMachineRecipeBuilder extends MIRecipeJson<MIMachineRecipeBuilder>
 	public MIMachineRecipeBuilder addPartInput(Material material, MaterialPart part, int count, float probability)
 	{
 		involvedParts.add(part);
-		return this.addItemInput(material.get(part).itemReference(), count, probability);
+		return material.has(part) ? this.addItemInput(material.get(part).itemReference(), count, probability) : this;
 	}
 	
 	public MIMachineRecipeBuilder addPartInput(Material material, MaterialPart part, int count)
 	{
-		return this.addItemInput(material.get(part).itemReference(), count, 1f);
+		involvedParts.add(part);
+		return material.has(part) ? this.addItemInput(material.get(part).itemReference(), count, 1f) : this;
 	}
 	
 	public MIMachineRecipeBuilder addPartInput(MaterialPart part, int count, float probability)
@@ -197,12 +198,13 @@ public class MIMachineRecipeBuilder extends MIRecipeJson<MIMachineRecipeBuilder>
 	public MIMachineRecipeBuilder addPartOutput(Material material, MaterialPart part, int count, float probability)
 	{
 		involvedParts.add(part);
-		return this.addItemOutput(material.get(part).itemReference(), count, probability);
+		return material.has(part) ? this.addItemOutput(material.get(part).itemReference(), count, probability) : this;
 	}
 	
 	public MIMachineRecipeBuilder addPartOutput(Material material, MaterialPart part, int count)
 	{
-		return this.addItemOutput(material.get(part).itemReference(), count, 1f);
+		involvedParts.add(part);
+		return material.has(part) ? this.addItemOutput(material.get(part).itemReference(), count, 1f) : this;
 	}
 	
 	public MIMachineRecipeBuilder addPartOutput(MaterialPart part, int count, float probability)
