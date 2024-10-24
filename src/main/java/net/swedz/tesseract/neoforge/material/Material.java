@@ -187,4 +187,11 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 	{
 		return this.recipes(Arrays.asList(recipeGroups));
 	}
+	
+	public Material clearRecipes()
+	{
+		Material copy = this.copy();
+		copy.recipeGroups.clear();
+		return copy;
+	}
 }

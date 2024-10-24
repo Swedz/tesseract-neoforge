@@ -69,14 +69,14 @@ public class MaterialRecipeGroup<C extends MaterialRecipeContext>
 		return this.only(Arrays.asList(references));
 	}
 	
-	public MaterialRecipeGroup<C> excluding(Collection<String> references)
+	public MaterialRecipeGroup<C> without(Collection<String> references)
 	{
 		return this.filtered((reference) -> !references.contains(reference));
 	}
 	
-	public MaterialRecipeGroup<C> excluding(String... references)
+	public MaterialRecipeGroup<C> without(String... references)
 	{
-		return this.excluding(Arrays.asList(references));
+		return this.without(Arrays.asList(references));
 	}
 	
 	public void create(MaterialRegistry registry, Material material, RecipeOutput recipes)

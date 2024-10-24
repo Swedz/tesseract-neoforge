@@ -54,6 +54,11 @@ public class MIMachineMaterialRecipeContext extends MaterialRecipeContext
 		return this.machine(id, type, 2, (int) (200 * this.get(TIME_FACTOR)), output, outputCount, builder);
 	}
 	
+	public MIMachineMaterialRecipeContext machine(String id, MachineRecipeType type, int eu, int duration, MaterialPart input, int inputCount, MaterialPart output, int outputCount)
+	{
+		return this.machine(id, type, eu, duration, output, outputCount, (b) -> b.addPartInput(input, inputCount));
+	}
+	
 	public MIMachineMaterialRecipeContext machine(String id, MachineRecipeType type, MaterialPart input, int inputCount, MaterialPart output, int outputCount)
 	{
 		return this.machine(id, type, output, outputCount, (b) -> b.addPartInput(input, inputCount));

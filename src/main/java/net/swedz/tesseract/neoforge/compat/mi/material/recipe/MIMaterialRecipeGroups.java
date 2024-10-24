@@ -60,8 +60,8 @@ public interface MIMaterialRecipeGroups
 			.add("recycle_drill_head", (c) -> c.maceratorRecycling(DRILL_HEAD, 7 * 9 + 4))
 			.add("recycle_wire", (c) -> c.maceratorRecycling(WIRE, 4))
 			
-			.add("ore_to_crushed", (c) -> c.machine("ore_to_crushed", MACERATOR, ORE, 1, CRUSHED_DUST, 3))
-			.add("ore_to_raw", (c) -> c.machine("ore_to_raw", MACERATOR, ORE, 1, RAW_METAL, 3))
+			.add("ore_to_crushed_dust", (c) -> c.machine("ore_to_crushed", MACERATOR, ORE, 1, CRUSHED_DUST, 3))
+			.add("ore_to_raw_metal", (c) -> c.machine("ore_to_raw", MACERATOR, ORE, 1, RAW_METAL, 3))
 			.add("crushed_dust_to_dust", (c) -> c.machine("crushed_dust", MACERATOR, DUST, 1, (b) -> b.addPartInput(CRUSHED_DUST, 1).addPartOutput(DUST, 1, 0.5f)))
 			.add("raw_metal_to_dust", (c) -> c.machine("raw_metal", MACERATOR, DUST, 1, (b) -> b.addPartInput(RAW_METAL, 1).addPartOutput(DUST, 1, 0.5f)))
 			
@@ -95,12 +95,46 @@ public interface MIMaterialRecipeGroups
 			.add("vacuum_freezer_cool_ingot", (c) -> c.machine("hot_ingot", VACUUM_FREEZER, 32, 250, INGOT, 1, (b) -> b.addPartInput(HOT_INGOT, 1)))
 			.add("heat_exchanger_cool_ingot", (c) -> c.machine("hot_ingot", HEAT_EXCHANGER, 8, 10, INGOT, 1, (b) -> b.addPartInput(HOT_INGOT, 1).addFluidInput(MIFluids.CRYOFLUID, 100).addFluidOutput(MIFluids.ARGON, 65).addFluidOutput(MIFluids.HELIUM, 25)));
 	
+	MaterialRecipeGroup<MIMachineMaterialRecipeContext> DUST_TO_GEM = MaterialRecipeGroup.create(MIMachineMaterialRecipeContext::new)
+			.add("dust_to_gem", (c) -> c.machine(c.material().id().getPath(), COMPRESSOR, DUST, 1, GEM, 1));
+	
 	MaterialRecipeGroup<VanillaMaterialRecipeContext> SMELTING = VanillaMaterialRecipeGroups.SMELTING
 			.add("tiny_dust_to_nugget", (c) -> c.smeltingAndBlasting(TINY_DUST, NUGGET, 0.08f))
 			.add("crushed_dust_to_ingot", (c) -> c.smeltingAndBlasting(CRUSHED_DUST, INGOT, 0.7f))
 			.add("dust_to_ingot", (c) -> c.smeltingAndBlasting(DUST, INGOT, 0.7f))
 			.add("rod_magnetic_to_rod", (c) -> c.smelting(ROD_MAGNETIC, ROD, 0f))
 			.add("wire_magnetic_to_wire", (c) -> c.smelting(WIRE_MAGNETIC, WIRE, 0f));
+	
+	static MaterialRecipeGroup<MIMachineMaterialRecipeContext> blastFurnace(boolean hotIngot, int eu, int duration)
+	{
+		MaterialRecipeGroup<MIMachineMaterialRecipeContext> recipeGroup = MaterialRecipeGroup.create(MIMachineMaterialRecipeContext::new);
+		if(hotIngot)
+		{
+			recipeGroup = recipeGroup.add("dust_to_hot_ingot", (c) -> c.machine("dust", BLAST_FURNACE, eu, duration, DUST, 1, HOT_INGOT, 1));
+		}
+		else
+		{
+			recipeGroup = recipeGroup
+					.add("dust_to_ingot", (c) -> c.machine("dust", BLAST_FURNACE, eu, duration, DUST, 1, INGOT, 1))
+					.add("tiny_dust_to_nugget", (c) -> c.machine("tiny_dust", BLAST_FURNACE, eu, duration / 10, TINY_DUST, 1, NUGGET, 1));
+		}
+		return recipeGroup;
+	}
+	
+	static MaterialRecipeGroup<MIMachineMaterialRecipeContext> blastFurnace(boolean hotIngot, int eu)
+	{
+		return blastFurnace(hotIngot, eu, 200);
+	}
+	
+	static MaterialRecipeGroup<MIMachineMaterialRecipeContext> blastFurnace(int eu)
+	{
+		return blastFurnace(false, eu);
+	}
+	
+	static MaterialRecipeGroup<MIMachineMaterialRecipeContext> blastFurnace()
+	{
+		return blastFurnace(32);
+	}
 	
 	MaterialRecipeGroup<MIForgeHammerMaterialRecipeContext> FORGE_HAMMER = MaterialRecipeGroup.create(MIForgeHammerMaterialRecipeContext::new)
 			.add("ingot_to_dust", (c) -> c.hammer(INGOT, 1, DUST, 1))
