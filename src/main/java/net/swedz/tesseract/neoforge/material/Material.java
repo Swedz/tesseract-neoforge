@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
+
 public final class Material implements MaterialPropertyHolder.Mutable, MaterialPartHolder.Mutable
 {
 	private final ResourceLocation id;
@@ -127,7 +129,9 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 	public Material addNative(String modId, MaterialPart part)
 	{
 		ResourceLocation id = ResourceLocation.fromNamespaceAndPath(modId, part.formatId(this));
-		RegisteredMaterialPart registered = part.isBlock() ? RegisteredMaterialPart.existingBlock(id) : RegisteredMaterialPart.existingItem(id);
+		RegisteredMaterialPart registered = part.isBlock() ?
+				RegisteredMaterialPart.existingBlock(id) :
+				RegisteredMaterialPart.existingItem(this.properties(part).get(ITEM_REFERENCE).format(modId, this, part), id);
 		return this.add(part, registered);
 	}
 	

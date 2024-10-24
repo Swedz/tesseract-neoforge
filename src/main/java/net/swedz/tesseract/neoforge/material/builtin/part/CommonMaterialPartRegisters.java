@@ -32,7 +32,7 @@ public final class CommonMaterialPartRegisters
 			{
 				throw new IllegalArgumentException("Could not find ore drop part");
 			}
-			Item drop = context.material().getOrThrow(drops.drop()).asItem();
+			Item drop = context.material().get(drops.drop()).asItem();
 			return (provider) -> provider.createOreDrop(block.get(), drop);
 		});
 	}

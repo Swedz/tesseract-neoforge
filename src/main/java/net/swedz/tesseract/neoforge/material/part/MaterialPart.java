@@ -30,6 +30,8 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
+
 public final class MaterialPart implements MaterialPropertyHolder.Mutable
 {
 	private final ResourceLocation id;
@@ -312,7 +314,7 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		else
 		{
 			item = new ItemHolder<>(id, englishName, registry.itemRegistry(), (p) -> itemFactory.create(context, p));
-			registered = RegisteredMaterialPart.existingItem(item);
+			registered = RegisteredMaterialPart.existingItem(context.get(ITEM_REFERENCE).format(registry.modId(), material, this), item);
 		}
 		
 		itemActions.forEach((a) -> a.apply(context, item));

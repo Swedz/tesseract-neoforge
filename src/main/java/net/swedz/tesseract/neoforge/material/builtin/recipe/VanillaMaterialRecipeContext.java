@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.material.builtin.recipe;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -15,9 +16,8 @@ import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
 import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeContext;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
-
-import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
 
 public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 {
@@ -30,8 +30,8 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 	{
 		if(this.has(input, output))
 		{
-			Item inputItem = material.getOrThrow(input).asItem();
-			Item outputItem = material.getOrThrow(output).asItem();
+			Item inputItem = material.get(input).asItem();
+			Item outputItem = material.get(output).asItem();
 			
 			ShapelessRecipeBuilder recipe = new ShapelessRecipeBuilder();
 			for(int i = 0; i < inputCount; i++)
@@ -57,7 +57,7 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 	{
 		private final String[]                            pattern;
 		private final List<Consumer<ShapedRecipeBuilder>> actions       = Lists.newArrayList();
-		private final List<MaterialPart>                  involvedParts = Lists.newArrayList();
+		private final Set<MaterialPart>                   involvedParts = Sets.newHashSet();
 		
 		public ShapedRecipeMap(String... pattern)
 		{
@@ -74,7 +74,7 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		{
 			involvedParts.add(part);
 			MaterialPropertyMap properties = material.properties(part);
-			actions.add((r) -> r.define(key, properties.get(ITEM_REFERENCE).format(registry, material, part)));
+			actions.add((r) -> r.define(key, material.get(part).itemReference()));
 			return this;
 		}
 		
@@ -92,11 +92,11 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 	{
 		ShapedRecipeMap keyMap = new ShapedRecipeMap(pattern);
 		keyMapAction.accept(keyMap);
-		List<MaterialPart> parts = Lists.newArrayList(keyMap.involvedParts);
+		Set<MaterialPart> parts = Sets.newHashSet(keyMap.involvedParts);
 		parts.add(output);
 		if(this.has(parts.toArray(new MaterialPart[0])))
 		{
-			Item outputItem = material.getOrThrow(output).asItem();
+			Item outputItem = material.get(output).asItem();
 			
 			String id = output.id().getPath();
 			
@@ -112,8 +112,8 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		if(this.has(input, output))
 		{
 			new SmeltingRecipeBuilder()
-					.input(Ingredient.of(material.getOrThrow(output).asItem()))
-					.output(material.getOrThrow(input).asItem(), 1)
+					.input(Ingredient.of(material.get(output).asItem()))
+					.output(material.get(input).asItem(), 1)
 					.cookingTime(blasting ? 100 : 200)
 					.experience(experience)
 					.offerTo(recipes, this.id("smelting/%s_to_%s_%s".formatted(input.id().getPath(), output.id().getPath(), blasting ? "blasting" : "smelting")));

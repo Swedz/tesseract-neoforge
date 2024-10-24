@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.material.builtin.property;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -35,7 +36,7 @@ public interface MaterialProperties
 	MaterialProperty<Optional<TagKey<Block>>> MINEABLE = create("mineable", Optional.of(BlockTags.MINEABLE_WITH_PICKAXE))
 			.block((h, v) -> v.ifPresent(h::tag));
 	
-	MaterialProperty<MaterialPartItemReferenceFormatter> ITEM_REFERENCE = create("item_reference", (registry, material, part) -> registry.id(part.formatId(material)).toString());
+	MaterialProperty<MaterialPartItemReferenceFormatter> ITEM_REFERENCE = create("item_reference", (namespace, material, part) -> ResourceLocation.fromNamespaceAndPath(namespace, part.formatId(material)).toString());
 	
 	MaterialProperty<MaterialPart> MAIN_PART = create("main_part", MaterialParts.INGOT);
 	

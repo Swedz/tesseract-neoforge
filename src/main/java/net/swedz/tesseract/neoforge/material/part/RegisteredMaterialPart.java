@@ -11,11 +11,16 @@ public interface RegisteredMaterialPart
 {
 	Item asItem();
 	
+	default String itemReference()
+	{
+		return BuiltInRegistries.ITEM.getKey(this.asItem()).toString();
+	}
+	
 	boolean hasBlock();
 	
 	Block asBlock();
 	
-	static RegisteredMaterialPart existingItem(Supplier<? extends Item> item)
+	static RegisteredMaterialPart existingItem(String itemReference, Supplier<? extends Item> item)
 	{
 		return new RegisteredMaterialPart()
 		{
@@ -23,6 +28,12 @@ public interface RegisteredMaterialPart
 			public Item asItem()
 			{
 				return item.get();
+			}
+			
+			@Override
+			public String itemReference()
+			{
+				return itemReference == null ? RegisteredMaterialPart.super.itemReference() : itemReference;
 			}
 			
 			@Override
@@ -39,14 +50,14 @@ public interface RegisteredMaterialPart
 		};
 	}
 	
-	static RegisteredMaterialPart existingItem(ResourceLocation itemId)
+	static RegisteredMaterialPart existingItem(String itemReference, ResourceLocation itemId)
 	{
-		return existingItem(() -> BuiltInRegistries.ITEM.get(itemId));
+		return existingItem(itemReference, () -> BuiltInRegistries.ITEM.get(itemId));
 	}
 	
-	static RegisteredMaterialPart existingItem(String itemId)
+	static RegisteredMaterialPart existingItem(String itemReference, String itemId)
 	{
-		return existingItem(ResourceLocation.tryParse(itemId));
+		return existingItem(itemReference, ResourceLocation.parse(itemId));
 	}
 	
 	static RegisteredMaterialPart existingBlock(Supplier<? extends Block> block)
