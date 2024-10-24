@@ -11,6 +11,7 @@ import aztech.modern_industrialization.pipes.electricity.ElectricityNetworkNode;
 import aztech.modern_industrialization.pipes.impl.PipeItem;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
+import net.swedz.tesseract.neoforge.material.part.MaterialPartItemReferenceFormatter;
 import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 
@@ -91,6 +92,7 @@ public interface MIMaterialParts
 			.itemModelBuilder(CommonModelBuilders::generated);
 	
 	MaterialPart GEAR = create("gear", "Gear")
+			.set(ITEM_REFERENCE, MaterialPartItemReferenceFormatter.tag())
 			.itemModelBuilder(CommonModelBuilders::generated)
 			.item(itemTagCommon("gears"));
 	
@@ -111,6 +113,7 @@ public interface MIMaterialParts
 	// TODO machine casing special
 	
 	MaterialPart PLATE = create("plate", "Plate")
+			.set(ITEM_REFERENCE, MaterialPartItemReferenceFormatter.tag())
 			.itemModelBuilder(CommonModelBuilders::generated)
 			.item(itemTagCommon("plates"));
 	
@@ -118,6 +121,7 @@ public interface MIMaterialParts
 			.itemModelBuilder(CommonModelBuilders::generated);
 	
 	MaterialPart ROD = create("rod", "Rod")
+			.set(ITEM_REFERENCE, MaterialPartItemReferenceFormatter.tag())
 			.itemModelBuilder(CommonModelBuilders::generated)
 			.item(itemTagCommon("rods"));
 	
@@ -131,6 +135,7 @@ public interface MIMaterialParts
 	// TODO tank
 	
 	MaterialPart TINY_DUST = create("tiny_dust", "Tiny Dust")
+			.set(ITEM_REFERENCE, MaterialPartItemReferenceFormatter.tag())
 			.itemModelBuilder(CommonModelBuilders::generated)
 			.item(itemTagCommon("tiny_dusts"));
 	

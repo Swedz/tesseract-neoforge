@@ -37,8 +37,8 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 	
 	private boolean isBlock = false;
 	
-	private MaterialPartFormatter idFormatter;
-	private MaterialPartFormatter englishNameFormatter;
+	private MaterialPartStringFormatter idFormatter;
+	private MaterialPartStringFormatter englishNameFormatter;
 	
 	private MaterialPartBlockFactory blockFactory = MaterialPartBlockFactory.of((c, bp) -> new Block(bp), (c, b, ip) -> new BlockItem(b, ip));
 	private MaterialPartItemFactory  itemFactory  = (c, p) -> new Item(p);
@@ -104,7 +104,7 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return copy;
 	}
 	
-	public MaterialPart formatting(MaterialPartFormatter idFormatter, MaterialPartFormatter englishNameFormatter)
+	public MaterialPart formatting(MaterialPartStringFormatter idFormatter, MaterialPartStringFormatter englishNameFormatter)
 	{
 		MaterialPart copy = this.copy();
 		copy.idFormatter = idFormatter;
@@ -117,7 +117,7 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return this.formatting("%s_%s"::formatted, "%s %s"::formatted);
 	}
 	
-	public MaterialPart formattingMaterialOnly(MaterialPartFormatter.OnlyMaterial idFormatter, MaterialPartFormatter.OnlyMaterial englishNameFormatter)
+	public MaterialPart formattingMaterialOnly(MaterialPartStringFormatter.OnlyMaterial idFormatter, MaterialPartStringFormatter.OnlyMaterial englishNameFormatter)
 	{
 		return this.formatting(idFormatter, englishNameFormatter);
 	}

@@ -1,10 +1,10 @@
 package net.swedz.tesseract.neoforge.material.part;
 
-public interface MaterialPartFormatter
+public interface MaterialPartStringFormatter
 {
 	String format(String material, String part);
 	
-	interface OnlyMaterial extends MaterialPartFormatter
+	interface OnlyMaterial extends MaterialPartStringFormatter
 	{
 		String format(String material);
 		

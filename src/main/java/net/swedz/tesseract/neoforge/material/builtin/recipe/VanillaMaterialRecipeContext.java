@@ -11,10 +11,13 @@ import net.swedz.tesseract.neoforge.compat.vanilla.recipe.SmeltingRecipeBuilder;
 import net.swedz.tesseract.neoforge.material.Material;
 import net.swedz.tesseract.neoforge.material.MaterialRegistry;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
+import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
 import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeContext;
 
 import java.util.List;
 import java.util.function.Consumer;
+
+import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
 
 public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 {
@@ -70,8 +73,9 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		public ShapedRecipeMap add(char key, MaterialPart part)
 		{
 			involvedParts.add(part);
-			// TODO use a tag if the part has a "primary tag"
-			return this.add(key, material.get(part).asItem());
+			MaterialPropertyMap properties = material.properties(part);
+			actions.add((r) -> r.define(key, properties.get(ITEM_REFERENCE).format(registry, material, part)));
+			return this;
 		}
 		
 		private void apply(ShapedRecipeBuilder recipe)

@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.material.builtin.part.MaterialParts;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
+import net.swedz.tesseract.neoforge.material.part.MaterialPartItemReferenceFormatter;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 
 import java.util.Optional;
@@ -33,6 +34,8 @@ public interface MaterialProperties
 	
 	MaterialProperty<Optional<TagKey<Block>>> MINEABLE = create("mineable", Optional.of(BlockTags.MINEABLE_WITH_PICKAXE))
 			.block((h, v) -> v.ifPresent(h::tag));
+	
+	MaterialProperty<MaterialPartItemReferenceFormatter> ITEM_REFERENCE = create("item_reference", (registry, material, part) -> registry.id(part.formatId(material)).toString());
 	
 	MaterialProperty<MaterialPart> MAIN_PART = create("main_part", MaterialParts.INGOT);
 	
