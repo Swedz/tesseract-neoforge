@@ -10,12 +10,12 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public final class MaterialRecipeGroup<C extends MaterialRecipeContext>
+public class MaterialRecipeGroup<C extends MaterialRecipeContext>
 {
-	private final MaterialRecipeContextFactory<C>       contextFactory;
-	private final Map<String, MaterialRecipeCreator<C>> creators;
+	protected final MaterialRecipeContextFactory<C>       contextFactory;
+	protected final Map<String, MaterialRecipeCreator<C>> creators;
 	
-	private MaterialRecipeGroup(MaterialRecipeContextFactory<C> contextFactory, Map<String, MaterialRecipeCreator<C>> creators)
+	protected MaterialRecipeGroup(MaterialRecipeContextFactory<C> contextFactory, Map<String, MaterialRecipeCreator<C>> creators)
 	{
 		this.contextFactory = contextFactory;
 		this.creators = Maps.newHashMap(creators);
@@ -83,5 +83,18 @@ public final class MaterialRecipeGroup<C extends MaterialRecipeContext>
 	{
 		C context = contextFactory.create(registry, material, recipes);
 		creators.forEach((reference, creator) -> creator.create(context));
+	}
+	
+	public <T extends MaterialRecipeContext> MaterialRecipeGroup<T> then(MaterialRecipeContextFactory<T> contextFactory)
+	{
+		return new MaterialRecipeGroup<>(contextFactory, Maps.newHashMap())
+		{
+			@Override
+			public void create(MaterialRegistry registry, Material material, RecipeOutput recipes)
+			{
+				MaterialRecipeGroup.this.create(registry, material, recipes);
+				super.create(registry, material, recipes);
+			}
+		};
 	}
 }
