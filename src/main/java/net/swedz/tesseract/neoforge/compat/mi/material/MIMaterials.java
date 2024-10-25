@@ -30,6 +30,7 @@ public interface MIMaterials
 			.addNative(BOLT, BLADE, RING, ROTOR, GEAR, ROD, CURVED_PLATE, DOUBLE_INGOT, DUST, NUGGET, PLATE, TINY_DUST)
 			.addNative(WIRE, FINE_WIRE)
 			.addNative(DRILL_HEAD, DRILL)
+			.addNative(CABLE.set(CABLE_TIER, CableTier.LV))
 			.recipes(STANDARD, STANDARD_MACHINES.without("ore_to_raw_metal"), SMELTING, FORGE_HAMMER.without("ore_to_raw_metal", "ore_to_raw_metal_with_tool", "ore_to_dust_with_tool"));
 	
 	Material COAL = Materials.COAL.as(MI.ID).clearRecipes()
@@ -92,6 +93,7 @@ public interface MIMaterials
 			.addNative(RAW_METAL, RAW_METAL_BLOCK)
 			.addNative(BLOCK)
 			.addNative(ORE, ORE_DEEPSLATE)
+			.addNative(CABLE.set(CABLE_TIER, CableTier.LV))
 			.recipes(STANDARD, STANDARD_MACHINES, SMELTING, FORGE_HAMMER);
 	
 	Material STEEL = create("steel", "Steel")
@@ -114,6 +116,7 @@ public interface MIMaterials
 			.addNative(WIRE)
 			.addNative(BLOCK)
 			.addNative(DRILL_HEAD, DRILL)
+			.addNative(CABLE.set(CABLE_TIER, CableTier.HV))
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace());
 	
 	Material BAUXITE = create("bauxite", "Bauxite")
@@ -146,6 +149,7 @@ public interface MIMaterials
 			.addNative(TINY_DUST, DUST, INGOT, DOUBLE_INGOT, PLATE, WIRE, NUGGET, WIRE_MAGNETIC)
 			.addNative(COIL)
 			.addNative(BLOCK)
+			.addNative(CABLE.set(CABLE_TIER, CableTier.MV))
 			.recipes(STANDARD, STANDARD_MACHINES, SMELTING);
 	
 	Material ANTIMONY = create("antimony", "Antimony")
@@ -167,6 +171,7 @@ public interface MIMaterials
 			.addNative(WIRE)
 			.addNative(RAW_METAL, RAW_METAL_BLOCK)
 			.addNative(BLOCK)
+			.addNative(CABLE.set(CABLE_TIER, CableTier.LV))
 			.recipes(STANDARD, STANDARD_MACHINES, SMELTING);
 	
 	Material SODIUM = create("sodium", "Sodium")
@@ -198,6 +203,7 @@ public interface MIMaterials
 			.addNative(DOUBLE_INGOT, DUST, INGOT, NUGGET, PLATE, TINY_DUST)
 			.addNative(BLOCK)
 			.addNative(WIRE, FINE_WIRE)
+			.addNative(CABLE.set(CABLE_TIER, CableTier.MV))
 			.recipes(STANDARD, STANDARD_MACHINES, SMELTING);
 	
 	Material SILICON = create("silicon", "Silicon")
@@ -250,6 +256,7 @@ public interface MIMaterials
 			.addNative(ITEM_PURE_METAL)
 			.addNative(PLATE, WIRE, DOUBLE_INGOT, HOT_INGOT)
 			.addNative(BLOCK)
+			.addNative(CABLE.set(CABLE_TIER, CableTier.EV))
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace(64));
 	
 	Material URANIUM_235 = create("uranium_235", "Uranium 235")
@@ -307,12 +314,14 @@ public interface MIMaterials
 			.addNative(BLOCK)
 			.addNative(RAW_METAL, RAW_METAL_BLOCK)
 			.addNative(ORE)
+			.addNative(CABLE.set(CABLE_TIER, CableTier.EV))
 			.recipes(STANDARD, STANDARD_MACHINES.without("raw_metal_to_dust"), blastFurnace(true, 128, 600));
 	
 	Material KANTHAL = create("kanthal", "Kanthal")
 			.addNative(TINY_DUST, DUST, PLATE, INGOT, NUGGET, WIRE, DOUBLE_INGOT, HOT_INGOT)
 			.addNative(COIL)
 			.addNative(BLOCK)
+			.addNative(CABLE.set(CABLE_TIER, CableTier.HV))
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace(true, 32, 400));
 	
 	Material IRIDIUM = create("iridium", "Iridium")
@@ -353,6 +362,7 @@ public interface MIMaterials
 	Material SUPERCONDUCTOR = create("superconductor", "Superconductor")
 			.addNative(TINY_DUST, DUST, PLATE, INGOT, NUGGET, WIRE, DOUBLE_INGOT, HOT_INGOT)
 			.addNative(COIL)
+			.addNative(CABLE.set(CABLE_TIER, CableTier.SUPERCONDUCTOR))
 			.recipes(STANDARD.without("cable"), STANDARD_MACHINES.without("cable_rubber", "cable_synthetic_rubber", "cable_styrene_rubber"));
 	
 	Material TUNGSTEN = create("tungsten", "Tungsten")
