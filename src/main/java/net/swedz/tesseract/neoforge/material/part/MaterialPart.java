@@ -310,25 +310,29 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 			item = block.item();
 			registered = RegisteredMaterialPart.existingBlock(block);
 			
-			blockActions.forEach((a) -> a.apply(context, block));
 			context.properties().apply(block);
+			context.properties().apply(item);
+			blockActions.forEach((a) -> a.apply(context, block));
+			itemActions.forEach((a) -> a.apply(context, item));
 			
 			block.register();
 			blockAfterActions.forEach((a) -> a.apply(context, block));
+			itemAfterActions.forEach((a) -> a.apply(context, item));
 			registry.onBlockRegister(block);
+			registry.onItemRegister(item);
 		}
 		else
 		{
 			item = new ItemHolder<>(id, englishName, registry.itemRegistry(), (p) -> itemFactory.create(context, p));
 			registered = RegisteredMaterialPart.existingItem(context.get(ITEM_REFERENCE).format(registry.modId(), material, this), item);
+			
+			context.properties().apply(item);
+			itemActions.forEach((a) -> a.apply(context, item));
+			
+			item.register();
+			itemAfterActions.forEach((a) -> a.apply(context, item));
+			registry.onItemRegister(item);
 		}
-		
-		itemActions.forEach((a) -> a.apply(context, item));
-		context.properties().apply(item);
-		
-		item.register();
-		registry.onItemRegister(item);
-		itemAfterActions.forEach((a) -> a.apply(context, item));
 		
 		return registered;
 	}
