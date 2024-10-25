@@ -25,6 +25,8 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 	private final ResourceLocation id;
 	private final String           englishName;
 	
+	private Optional<MaterialRegistry> registry = Optional.empty();
+	
 	private final MaterialPropertyMap properties = new MaterialPropertyMap();
 	
 	private final Map<MaterialPart, RegisteredMaterialPart> parts = Maps.newHashMap();
@@ -54,6 +56,13 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 	public Material as(String namespace)
 	{
 		return this.copy((id, name) -> new Material(ResourceLocation.fromNamespaceAndPath(namespace, id.getPath()), name));
+	}
+	
+	public Material as(MaterialRegistry registry)
+	{
+		Material material = this.as(registry.modId());
+		material.registry = Optional.of(registry);
+		return material;
 	}
 	
 	public ResourceLocation id()
@@ -111,12 +120,22 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 		return Collections.unmodifiableMap(parts);
 	}
 	
-	void addInternal(MaterialPart part, RegisteredMaterialPart registered)
+	private void addInternal(MaterialPart part, RegisteredMaterialPart registered)
 	{
 		if(parts.put(part, registered) != null)
 		{
 			throw new IllegalArgumentException("The part '%s' has already been added to the material '%s'".formatted(part.id().toString(), this.id().toString()));
 		}
+	}
+	
+	public Material add(MaterialPart part)
+	{
+		if(registry.isEmpty())
+		{
+			throw new IllegalStateException("Cannot add parts directly without a registry being provided to the material");
+		}
+		RegisteredMaterialPart registered = part.register(registry.get(), this);
+		return this.add(part, registered);
 	}
 	
 	@Override

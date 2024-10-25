@@ -6,7 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
-import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
 import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeGroup;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
@@ -43,13 +42,6 @@ public abstract class MaterialRegistry
 		}
 		ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(material.get(part).asItem());
 		return this.modId().equals(itemId.getNamespace());
-	}
-	
-	public final RegisteredMaterialPart create(Material material, MaterialPart part)
-	{
-		RegisteredMaterialPart registered = part.register(this, material);
-		material.addInternal(part, registered);
-		return registered;
 	}
 	
 	public final void createRecipesFor(Material material, MaterialRecipeGroup recipeGroup, RecipeOutput recipes)
