@@ -138,6 +138,16 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 		return this.add(part, registered);
 	}
 	
+	public Material add(MaterialPart... parts)
+	{
+		Material copy = this;
+		for(MaterialPart part : parts)
+		{
+			copy = copy.add(part);
+		}
+		return copy;
+	}
+	
 	@Override
 	public Material add(MaterialPart part, RegisteredMaterialPart registered)
 	{
