@@ -191,4 +191,16 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 		copy.recipeGroups.clear();
 		return copy;
 	}
+	
+	@Override
+	public int hashCode()
+	{
+		return id.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj instanceof Material other && id.equals(other.id());
+	}
 }

@@ -329,14 +329,14 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 	}
 	
 	@Override
-	public boolean equals(Object obj)
-	{
-		return obj instanceof MaterialPart other && id.equals(other.id());
-	}
-	
-	@Override
 	public int hashCode()
 	{
 		return id.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj)
+	{
+		return obj instanceof MaterialPart other && id.equals(other.id());
 	}
 }
