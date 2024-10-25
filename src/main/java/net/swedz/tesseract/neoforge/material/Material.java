@@ -138,11 +138,12 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 	
 	public Material addNative(String modId, MaterialPart... parts)
 	{
+		Material copy = this;
 		for(MaterialPart part : parts)
 		{
-			this.addNative(modId, part);
+			copy = copy.addNative(modId, part);
 		}
-		return this;
+		return copy;
 	}
 	
 	public Material addNative(MaterialPart... parts)
