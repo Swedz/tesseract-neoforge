@@ -2,7 +2,6 @@ package net.swedz.tesseract.neoforge.material;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.MaterialPartHolder;
@@ -112,14 +111,19 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 		return Collections.unmodifiableMap(parts);
 	}
 	
+	void addInternal(MaterialPart part, RegisteredMaterialPart registered)
+	{
+		if(parts.put(part, registered) != null)
+		{
+			throw new IllegalArgumentException("The part '%s' has already been added to the material '%s'".formatted(part.id().toString(), this.id().toString()));
+		}
+	}
+	
 	@Override
 	public Material add(MaterialPart part, RegisteredMaterialPart registered)
 	{
 		Material copy = this.copy();
-		if(copy.parts.put(part, registered) != null)
-		{
-			throw new IllegalArgumentException("The part '%s' has already been added to the material '%s'".formatted(part.id().toString(), this.id().toString()));
-		}
+		copy.addInternal(part, registered);
 		return copy;
 	}
 	
