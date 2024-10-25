@@ -130,6 +130,11 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return this.formattingMaterialOnly((m) -> m, (m) -> m);
 	}
 	
+	public MaterialPart formattingRaw(String id, String englishName)
+	{
+		return this.formatting((m, p) -> id, (m, p) -> englishName);
+	}
+	
 	public String formatId(Material material)
 	{
 		return idFormatter.format(material.id().getPath(), this.id().getPath());
