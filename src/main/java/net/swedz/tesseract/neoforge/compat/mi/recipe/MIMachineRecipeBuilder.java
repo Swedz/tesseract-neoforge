@@ -198,13 +198,13 @@ public class MIMachineRecipeBuilder extends MIRecipeJson<MIMachineRecipeBuilder>
 	public MIMachineRecipeBuilder addPartOutput(Material material, MaterialPart part, int count, float probability)
 	{
 		involvedParts.add(part);
-		return material.has(part) ? this.addItemOutput(material.get(part).itemReference(), count, probability) : this;
+		return material.has(part) ? this.addItemOutput(material.get(part).asItem(), count, probability) : this;
 	}
 	
 	public MIMachineRecipeBuilder addPartOutput(Material material, MaterialPart part, int count)
 	{
 		involvedParts.add(part);
-		return material.has(part) ? this.addItemOutput(material.get(part).itemReference(), count, 1f) : this;
+		return material.has(part) ? this.addItemOutput(material.get(part).asItem(), count, 1f) : this;
 	}
 	
 	public MIMachineRecipeBuilder addPartOutput(MaterialPart part, int count, float probability)
