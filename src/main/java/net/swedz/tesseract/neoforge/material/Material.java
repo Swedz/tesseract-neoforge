@@ -42,6 +42,7 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 	private Material copy(MaterialFactory factory)
 	{
 		Material copy = factory.create(this.id, this.englishName);
+		copy.registry = this.registry;
 		copy.properties.putAll(this.properties);
 		copy.parts.putAll(this.parts);
 		copy.recipeGroups.addAll(this.recipeGroups);
