@@ -32,7 +32,7 @@ public interface Materials
 	Material COPPER = create("copper", "Copper")
 			.set(HARDNESS, 3f)
 			.set(ORE_DROP_PART, OrePartDrops.drops(RAW_METAL, UniformInt.of(2, 5)))
-			.addNative(INGOT, NUGGET, BLOCK, RAW_METAL, RAW_METAL_BLOCK)
+			.addNative(INGOT, BLOCK, RAW_METAL, RAW_METAL_BLOCK)
 			.addNative(ORE, ORE_DEEPSLATE)
 			.recipes(STANDARD, SMELTING);
 	
