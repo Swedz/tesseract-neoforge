@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.material;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.MaterialPartHolder;
@@ -125,6 +126,10 @@ public final class Material implements MaterialPropertyHolder.Mutable, MaterialP
 	public Material addNative(String modId, MaterialPart part)
 	{
 		ResourceLocation id = ResourceLocation.fromNamespaceAndPath(modId, part.formatId(this));
+		if(BuiltInRegistries.ITEM.getOptional(id).isEmpty())
+		{
+			throw new IllegalArgumentException("Cannot add native item '%s' since it does not exist".formatted(id));
+		}
 		RegisteredMaterialPart registered = part.isBlock() ?
 				RegisteredMaterialPart.existingBlock(id) :
 				RegisteredMaterialPart.existingItem(this.properties(part).get(ITEM_REFERENCE).format(modId, this, part), id);
