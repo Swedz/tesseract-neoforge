@@ -65,7 +65,7 @@ public interface Materials
 			.set(HARDNESS, 3f)
 			.set(MAIN_PART, GEM)
 			.set(ORE_DROP_PART, OrePartDrops.of(GEM, UniformInt.of(4, 9), UniformInt.of(2, 5)))
-			.addNative(GEM, BLOCK)
+			.addNative(GEM.formattingRaw("lapis_lazuli", "Lapis Lazuli"), BLOCK)
 			.addNative(ORE, ORE_DEEPSLATE)
 			.recipes(STANDARD, SMELTING);
 	
