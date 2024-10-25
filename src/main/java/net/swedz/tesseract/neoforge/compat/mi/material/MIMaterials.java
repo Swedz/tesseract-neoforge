@@ -73,7 +73,7 @@ public interface MIMaterials
 			.set(HARDNESS, 2f)
 			.set(NEEDS_TOOL, Optional.empty())
 			.addNative(INGOT.formattingMaterialOnly("%s_brick"::formatted, "%s Brick"::formatted))
-			.addNative(DUST, TINY_DUST)
+			.addNative(DUST)
 			.recipes(SMELTING);
 	
 	Material COKE = create("coke", "Coke")
