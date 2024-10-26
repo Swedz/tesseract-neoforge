@@ -412,7 +412,7 @@ public interface MIMaterials
 			.addNative(PLASMA_HANDLING_MACHINE_CASING.set(BLAST_RESISTANCE, 6000f))
 			.addNative(BARREL.set(BARREL_CAPACITY, (long) Integer.MAX_VALUE).formattingRaw("quantum_barrel", "Quantum Barrel"))
 			.addNative(TANK.set(TANK_CAPACITY, (long) Integer.MAX_VALUE).formattingRaw("quantum_tank", "Quantum Tank"))
-			.recipes(STANDARD.without("barrel"), STANDARD_MACHINES.without("main_to_plate", "barrel"), SMELTING);
+			.recipes(STANDARD.without("barrel", "tank"), STANDARD_MACHINES.without("main_to_plate", "barrel", "tank"), SMELTING);
 	
 	Material MONAZITE = create("monazite", "Monazite")
 			.set(MAIN_PART, DUST)
