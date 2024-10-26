@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.material.builtin.recipe;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
@@ -68,6 +69,12 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		public ShapedRecipeMap add(char key, ItemLike item)
 		{
 			actions.add((r) -> r.define(key, item));
+			return this;
+		}
+		
+		public ShapedRecipeMap add(char key, TagKey<Item> tag)
+		{
+			actions.add((r) -> r.define(key, tag));
 			return this;
 		}
 		

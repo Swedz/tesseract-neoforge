@@ -21,6 +21,8 @@ public interface MIMaterialProperties
 	
 	MaterialProperty<CableTier> CABLE_TIER = create("cable_tier", CableTier.LV);
 	
+	MaterialProperty<Long> BARREL_CAPACITY = create("barrel_capacity", 0L);
+	
 	static <T> MaterialProperty<T> create(String id, T defaultValue)
 	{
 		return new MaterialProperty<>(MI.id(id), defaultValue);

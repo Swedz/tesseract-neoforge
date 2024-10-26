@@ -34,6 +34,28 @@ import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialPro
 
 public final class MaterialPart implements MaterialPropertyHolder.Mutable
 {
+	private static final MaterialPartRegister DEFAULT_REGISTER = (context) ->
+	{
+		RegisteredMaterialPart registered;
+		if(context.part().isBlock())
+		{
+			BlockWithItemHolder<Block, BlockItem> block = new BlockWithItemHolder<>(
+					context.id(), context.englishName(),
+					context.registry().blockRegistry(), (p) -> context.blockFactory().createBlock(context, p),
+					context.registry().itemRegistry(), (b, p) -> context.blockFactory().createItem(context, b, p)
+			);
+			registered = RegisteredMaterialPart.existingBlock(block);
+			context.register(block);
+		}
+		else
+		{
+			ItemHolder<? extends Item> item = new ItemHolder<>(context.id(), context.englishName(), context.registry().itemRegistry(), (p) -> context.itemFactory().create(context, p));
+			registered = RegisteredMaterialPart.existingItem(context.get(ITEM_REFERENCE).format(context.registry().modId(), context.material(), context.part()), item);
+			context.register(item);
+		}
+		return registered;
+	};
+	
 	private final ResourceLocation id;
 	private final String           englishName;
 	
@@ -52,6 +74,8 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 	
 	private final List<MaterialPartAction<ItemHolder<? extends Item>>>            itemAfterActions  = Lists.newArrayList();
 	private final List<MaterialPartAction<BlockWithItemHolder<Block, BlockItem>>> blockAfterActions = Lists.newArrayList();
+	
+	private MaterialPartRegister register = DEFAULT_REGISTER;
 	
 	public MaterialPart(ResourceLocation id, String englishName)
 	{
@@ -72,6 +96,7 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		copy.propertyOverrides.putAll(this.propertyOverrides);
 		copy.itemAfterActions.addAll(this.itemAfterActions);
 		copy.blockAfterActions.addAll(this.blockAfterActions);
+		copy.register = this.register;
 		return copy;
 	}
 	
@@ -308,50 +333,31 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return copy;
 	}
 	
+	public MaterialPart withRegister(MaterialPartRegister register)
+	{
+		MaterialPart copy = this.copy();
+		copy.register = register;
+		return copy;
+	}
+	
+	public MaterialPart withRegisterDefault()
+	{
+		return this.withRegister(DEFAULT_REGISTER);
+	}
+	
 	public RegisteredMaterialPart register(MaterialRegistry registry, Material material)
 	{
 		ResourceLocation id = registry.id(this.formatId(material));
 		String englishName = this.formatEnglishName(material);
 		
-		MaterialPartRegisterContext context = new MaterialPartRegisterContext(registry, material, this);
+		MaterialPartRegisterContext context = new MaterialPartRegisterContext(
+				id, englishName,
+				registry, material, this,
+				blockFactory, itemFactory,
+				itemActions, blockActions, itemAfterActions, blockAfterActions
+		);
 		
-		ItemHolder<?> item;
-		RegisteredMaterialPart registered;
-		if(isBlock)
-		{
-			BlockWithItemHolder<Block, BlockItem> block = new BlockWithItemHolder<>(
-					id, englishName,
-					registry.blockRegistry(), (p) -> blockFactory.createBlock(context, p),
-					registry.itemRegistry(), (b, p) -> blockFactory.createItem(context, b, p)
-			);
-			item = block.item();
-			registered = RegisteredMaterialPart.existingBlock(block);
-			
-			context.properties().apply(block);
-			context.properties().apply(item);
-			blockActions.forEach((a) -> a.apply(context, block));
-			itemActions.forEach((a) -> a.apply(context, item));
-			
-			block.register();
-			blockAfterActions.forEach((a) -> a.apply(context, block));
-			itemAfterActions.forEach((a) -> a.apply(context, item));
-			registry.onBlockRegister(block);
-			registry.onItemRegister(item);
-		}
-		else
-		{
-			item = new ItemHolder<>(id, englishName, registry.itemRegistry(), (p) -> itemFactory.create(context, p));
-			registered = RegisteredMaterialPart.existingItem(context.get(ITEM_REFERENCE).format(registry.modId(), material, this), item);
-			
-			context.properties().apply(item);
-			itemActions.forEach((a) -> a.apply(context, item));
-			
-			item.register();
-			itemAfterActions.forEach((a) -> a.apply(context, item));
-			registry.onItemRegister(item);
-		}
-		
-		return registered;
+		return register.register(context);
 	}
 	
 	@Override

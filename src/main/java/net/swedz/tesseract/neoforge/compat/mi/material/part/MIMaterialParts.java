@@ -1,7 +1,12 @@
 package net.swedz.tesseract.neoforge.compat.mi.material.part;
 
 import aztech.modern_industrialization.MI;
+import aztech.modern_industrialization.MITags;
 import aztech.modern_industrialization.api.energy.CableTier;
+import aztech.modern_industrialization.blocks.storage.StorageBehaviour;
+import aztech.modern_industrialization.blocks.storage.barrel.BarrelBlock;
+import aztech.modern_industrialization.blocks.storage.barrel.BarrelBlockEntity;
+import aztech.modern_industrialization.blocks.storage.barrel.BarrelItem;
 import aztech.modern_industrialization.datagen.model.DelegatingModelBuilder;
 import aztech.modern_industrialization.items.ForgeTool;
 import aztech.modern_industrialization.items.PortableStorageUnit;
@@ -13,13 +18,26 @@ import aztech.modern_industrialization.pipes.electricity.ElectricityNetwork;
 import aztech.modern_industrialization.pipes.electricity.ElectricityNetworkData;
 import aztech.modern_industrialization.pipes.electricity.ElectricityNetworkNode;
 import aztech.modern_industrialization.pipes.impl.PipeItem;
+import aztech.modern_industrialization.proxy.CommonProxy;
+import aztech.modern_industrialization.thirdparty.fabrictransfer.api.bridge.SlotItemHandler;
+import aztech.modern_industrialization.thirdparty.fabrictransfer.api.item.ItemVariant;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.swedz.tesseract.neoforge.capabilities.CapabilitiesListeners;
 import net.swedz.tesseract.neoforge.compat.mi.material.property.IsotopeFuel;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.material.part.MaterialPartItemFactory;
 import net.swedz.tesseract.neoforge.material.part.MaterialPartItemReferenceFormatter;
+import net.swedz.tesseract.neoforge.material.part.RegisteredMaterialPart;
 import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
+import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
+
+import java.util.concurrent.atomic.AtomicReference;
 
 import static net.swedz.tesseract.neoforge.compat.mi.material.property.MIMaterialProperties.*;
 import static net.swedz.tesseract.neoforge.material.builtin.part.CommonMaterialPartRegisters.*;
@@ -40,17 +58,43 @@ public interface MIMaterialParts
 				holder.withRegistrationListener((item) -> PortableStorageUnit.CAPACITY_PER_BATTERY.put(item, batteryCapacity));
 			});
 	
-	// TODO barrel
-	/*MaterialPart BARREL = create("barrel", "Barrel")
-			.blockFactory((c, p) -> new BarrelBlock(p, BarrelBlock.withStackCapacity(c.getOrThrow(BARREL_CAPACITY))), (c, b, p) -> new BarrelItem((BarrelBlock) b, p))
+	MaterialPart BARREL = create("barrel", "Barrel")
 			.blockModel((b) -> (provider) ->
 			{
 				Block block = b.get();
 				String id = BuiltInRegistries.BLOCK.getKey(block).getPath();
-				ResourceLocation side = provider.modLoc("block/%s_side".formatted(id));
-				ResourceLocation top = provider.modLoc("block/%s_top".formatted(id));
-				provider.simpleBlock(block, provider.models().cubeColumn(id, side, top));
-			});*/
+				provider.simpleBlock(block, provider.models().cubeColumn(id, provider.modLoc("block/%s_side".formatted(id)), provider.modLoc("block/%s_top".formatted(id))));
+			})
+			.itemModelBuilder(CommonModelBuilders::itemBlockEntity)
+			.itemTag(MITags.BARRELS)
+			.withRegister((context) ->
+			{
+				AtomicReference<BlockEntityType<BarrelBlockEntity>> bet = new AtomicReference<>();
+				
+				StorageBehaviour<ItemVariant> storageBehaviour = BarrelBlock.withStackCapacity(context.getOrThrow(BARREL_CAPACITY));
+				
+				EntityBlock factory = (pos, state) -> new BarrelBlockEntity(bet.get(), pos, state);
+				BlockWithItemHolder<Block, BlockItem> blockHolder = new BlockWithItemHolder<>(
+						context.id(), context.englishName(),
+						context.registry().blockRegistry(), (p) -> new BarrelBlock(factory, storageBehaviour),
+						context.registry().itemRegistry(), (b, p) -> new BarrelItem((BarrelBlock) b, p)
+				);
+				RegisteredMaterialPart registered = RegisteredMaterialPart.existingBlock(blockHolder);
+				context.register(blockHolder);
+				
+				context.registry().blockEntityRegistry().register(context.id().getPath(), () ->
+				{
+					bet.set((BlockEntityType) BlockEntityType.Builder.of(factory::newBlockEntity, blockHolder.get()).build(null));
+					return bet.get();
+				});
+				
+				CapabilitiesListeners.register(context.registry().modId(), (event) ->
+						event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, bet.get(), (be, side) -> new SlotItemHandler(be)));
+				
+				CommonProxy.INSTANCE.registerPartBarrelClient(bet::get, context.get(MEAN_RGB));
+				
+				return registered;
+			});
 	
 	MaterialPart BLADE = create("blade", "Blade")
 			.itemModelBuilder(CommonModelBuilders::generated);
