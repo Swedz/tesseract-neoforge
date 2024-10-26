@@ -44,9 +44,27 @@ public class MIMachineMaterialRecipeContext extends MaterialRecipeContext
 		return this;
 	}
 	
-	public MIMachineMaterialRecipeContext machine(MachineRecipeType type, int eu, int duration, MaterialPart output, int outputCount, Consumer<MIMachineRecipeBuilder> builder)
+	public MIMachineMaterialRecipeContext machine(String id, MachineRecipeType type, int eu, int duration, MaterialPart output, int outputCount)
 	{
-		return this.machine(output.id().getPath(), type, eu, duration, output, outputCount, builder);
+		return this.machine(id, type, eu, duration, output, outputCount, (b) ->
+		{
+		});
+	}
+	
+	public MIMachineMaterialRecipeContext machine(String id, MachineRecipeType type, int eu, int duration, MaterialPart input, int inputCount, MaterialPart output, int outputCount, Consumer<MIMachineRecipeBuilder> builder)
+	{
+		return this.machine(id, type, eu, duration, output, outputCount, (b) ->
+		{
+			b.addPartInput(input, inputCount);
+			builder.accept(b);
+		});
+	}
+	
+	public MIMachineMaterialRecipeContext machine(String id, MachineRecipeType type, int eu, int duration, MaterialPart input, int inputCount, MaterialPart output, int outputCount)
+	{
+		return this.machine(id, type, eu, duration, input, inputCount, output, outputCount, (b) ->
+		{
+		});
 	}
 	
 	public MIMachineMaterialRecipeContext machine(String id, MachineRecipeType type, MaterialPart output, int outputCount, Consumer<MIMachineRecipeBuilder> builder)
@@ -54,19 +72,47 @@ public class MIMachineMaterialRecipeContext extends MaterialRecipeContext
 		return this.machine(id, type, 2, (int) (200 * this.get(TIME_FACTOR)), output, outputCount, builder);
 	}
 	
-	public MIMachineMaterialRecipeContext machine(String id, MachineRecipeType type, int eu, int duration, MaterialPart input, int inputCount, MaterialPart output, int outputCount)
+	public MIMachineMaterialRecipeContext machine(String id, MachineRecipeType type, MaterialPart output, int outputCount)
 	{
-		return this.machine(id, type, eu, duration, output, outputCount, (b) -> b.addPartInput(input, inputCount));
+		return this.machine(id, type, output, outputCount, (b) ->
+		{
+		});
+	}
+	
+	public MIMachineMaterialRecipeContext machine(String id, MachineRecipeType type, MaterialPart input, int inputCount, MaterialPart output, int outputCount, Consumer<MIMachineRecipeBuilder> builder)
+	{
+		return this.machine(id, type, 2, (int) (200 * this.get(TIME_FACTOR)), input, inputCount, output, outputCount, builder);
 	}
 	
 	public MIMachineMaterialRecipeContext machine(String id, MachineRecipeType type, MaterialPart input, int inputCount, MaterialPart output, int outputCount)
 	{
-		return this.machine(id, type, output, outputCount, (b) -> b.addPartInput(input, inputCount));
+		return this.machine(id, type, input, inputCount, output, outputCount, (b) ->
+		{
+		});
 	}
 	
-	public MIMachineMaterialRecipeContext machine(MachineRecipeType type, MaterialPart input, int inputCount, MaterialPart output, int outputCount)
+	public MIMachineMaterialRecipeContext machine(MachineRecipeType type, int eu, int duration, MaterialPart output, int outputCount, Consumer<MIMachineRecipeBuilder> builder)
 	{
-		return this.machine(input.id().getPath(), type, output, outputCount, (b) -> b.addPartInput(input, inputCount));
+		return this.machine(output.id().getPath(), type, eu, duration, output, outputCount, builder);
+	}
+	
+	public MIMachineMaterialRecipeContext machine(MachineRecipeType type, int eu, int duration, MaterialPart output, int outputCount)
+	{
+		return this.machine(output.id().getPath(), type, eu, duration, output, outputCount, (b) ->
+		{
+		});
+	}
+	
+	public MIMachineMaterialRecipeContext machine(MachineRecipeType type, int eu, int duration, MaterialPart input, int inputCount, MaterialPart output, int outputCount, Consumer<MIMachineRecipeBuilder> builder)
+	{
+		return this.machine(output.id().getPath(), type, eu, duration, input, inputCount, output, outputCount, builder);
+	}
+	
+	public MIMachineMaterialRecipeContext machine(MachineRecipeType type, int eu, int duration, MaterialPart input, int inputCount, MaterialPart output, int outputCount)
+	{
+		return this.machine(type, eu, duration, input, inputCount, output, outputCount, (b) ->
+		{
+		});
 	}
 	
 	public MIMachineMaterialRecipeContext machine(MachineRecipeType type, MaterialPart output, int outputCount, Consumer<MIMachineRecipeBuilder> builder)
@@ -74,11 +120,30 @@ public class MIMachineMaterialRecipeContext extends MaterialRecipeContext
 		return this.machine(output.id().getPath(), type, output, outputCount, builder);
 	}
 	
+	public MIMachineMaterialRecipeContext machine(MachineRecipeType type, MaterialPart output, int outputCount)
+	{
+		return this.machine(output.id().getPath(), type, output, outputCount, (b) ->
+		{
+		});
+	}
+	
+	public MIMachineMaterialRecipeContext machine(MachineRecipeType type, MaterialPart input, int inputCount, MaterialPart output, int outputCount, Consumer<MIMachineRecipeBuilder> builder)
+	{
+		return this.machine(output.id().getPath(), type, input, inputCount, output, outputCount, builder);
+	}
+	
+	public MIMachineMaterialRecipeContext machine(MachineRecipeType type, MaterialPart input, int inputCount, MaterialPart output, int outputCount)
+	{
+		return this.machine(type, input, inputCount, output, outputCount, (b) ->
+		{
+		});
+	}
+	
 	public MIMachineMaterialRecipeContext packAndUnpack(MaterialPart small, int smallCount, MaterialPart big, int bigCount)
 	{
 		return this
-				.machine(big.id().getPath(), PACKER, big, bigCount, (b) -> b.addPartInput(small, smallCount))
-				.machine(small.id().getPath(), UNPACKER, small, smallCount, (b) -> b.addPartInput(big, bigCount));
+				.machine(PACKER, small, smallCount, big, bigCount)
+				.machine(UNPACKER, big, bigCount, small, smallCount);
 	}
 	
 	public MIMachineMaterialRecipeContext maceratorRecycling(MaterialPart part, int tinyDust)
@@ -90,12 +155,12 @@ public class MIMachineMaterialRecipeContext extends MaterialRecipeContext
 			output = DUST;
 			outputCount /= 9;
 		}
-		return this.machine(part.id().getPath(), MACERATOR, output, outputCount, (b) -> b.addPartInput(part, 1));
+		return this.machine(part.id().getPath(), MACERATOR, part, 1, output, outputCount);
 	}
 	
 	public MIMachineMaterialRecipeContext cuttingMachine(String id, MaterialPart input, int inputCount, MaterialPart output, int outputCount)
 	{
-		return this.machine(id, CUTTING_MACHINE, output, outputCount, (b) -> b.addPartInput(input, inputCount).addFluidInput(MIFluids.LUBRICANT, 1));
+		return this.machine(id, CUTTING_MACHINE, input, inputCount, output, outputCount, (b) -> b.addFluidInput(MIFluids.LUBRICANT, 1));
 	}
 	
 	public MIMachineMaterialRecipeContext cuttingMachine(MaterialPart input, int inputCount, MaterialPart output, int outputCount)
