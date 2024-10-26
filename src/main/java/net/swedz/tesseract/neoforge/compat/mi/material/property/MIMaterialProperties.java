@@ -8,14 +8,6 @@ public interface MIMaterialProperties
 {
 	MaterialProperty<Double> TIME_FACTOR = create("time_factor", TimeFactor.AVERAGE);
 	
-	interface TimeFactor
-	{
-		double SOFT      = 0.5;
-		double AVERAGE   = 1;
-		double HARD      = 2;
-		double VERY_HARD = 4;
-	}
-	
 	MaterialProperty<Long> BATTERY_CAPACITY = create("battery_capacity", 0L);
 	
 	static long batteryCapacity(CableTier tier)

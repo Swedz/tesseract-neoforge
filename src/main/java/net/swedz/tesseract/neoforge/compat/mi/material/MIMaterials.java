@@ -11,7 +11,7 @@ import java.util.Optional;
 
 import static net.swedz.tesseract.neoforge.compat.mi.material.part.MIMaterialParts.*;
 import static net.swedz.tesseract.neoforge.compat.mi.material.property.MIMaterialProperties.*;
-import static net.swedz.tesseract.neoforge.compat.mi.material.property.MIMaterialProperties.TimeFactor.*;
+import static net.swedz.tesseract.neoforge.compat.mi.material.property.TimeFactor.*;
 import static net.swedz.tesseract.neoforge.compat.mi.material.recipe.MIMaterialRecipeGroups.*;
 import static net.swedz.tesseract.neoforge.material.builtin.part.MaterialParts.*;
 import static net.swedz.tesseract.neoforge.material.builtin.property.MaterialProperties.*;
