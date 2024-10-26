@@ -7,7 +7,12 @@ import aztech.modern_industrialization.blocks.storage.StorageBehaviour;
 import aztech.modern_industrialization.blocks.storage.barrel.BarrelBlock;
 import aztech.modern_industrialization.blocks.storage.barrel.BarrelBlockEntity;
 import aztech.modern_industrialization.blocks.storage.barrel.BarrelItem;
+import aztech.modern_industrialization.blocks.storage.tank.AbstractTankBlockEntity;
+import aztech.modern_industrialization.blocks.storage.tank.TankBlock;
+import aztech.modern_industrialization.blocks.storage.tank.TankBlockEntity;
+import aztech.modern_industrialization.blocks.storage.tank.TankItem;
 import aztech.modern_industrialization.datagen.model.DelegatingModelBuilder;
+import aztech.modern_industrialization.items.ContainerItem;
 import aztech.modern_industrialization.items.ForgeTool;
 import aztech.modern_industrialization.items.PortableStorageUnit;
 import aztech.modern_industrialization.nuclear.INeutronBehaviour;
@@ -19,7 +24,9 @@ import aztech.modern_industrialization.pipes.electricity.ElectricityNetworkData;
 import aztech.modern_industrialization.pipes.electricity.ElectricityNetworkNode;
 import aztech.modern_industrialization.pipes.impl.PipeItem;
 import aztech.modern_industrialization.proxy.CommonProxy;
+import aztech.modern_industrialization.thirdparty.fabrictransfer.api.bridge.SlotFluidHandler;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.bridge.SlotItemHandler;
+import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.item.ItemVariant;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
@@ -27,6 +34,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidType;
 import net.swedz.tesseract.neoforge.capabilities.CapabilitiesListeners;
 import net.swedz.tesseract.neoforge.compat.mi.material.property.IsotopeFuel;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
@@ -198,7 +206,50 @@ public interface MIMaterialParts
 	MaterialPart ROTOR = create("rotor", "Rotor")
 			.itemModelBuilder(CommonModelBuilders::generated);
 	
-	// TODO tank
+	MaterialPart TANK = create("tank", "Tank")
+			.blockModel((b) -> (provider) ->
+			{
+				Block block = b.get();
+				provider.simpleBlock(block, provider.models()
+						.getBuilder(provider.blockTexture(block).getPath())
+						.parent(provider.models().getExistingFile(provider.modLoc("base/tank")))
+						.texture("0", provider.blockTexture(block).toString()));
+			})
+			.itemModelBuilder(CommonModelBuilders::itemBlockEntity)
+			.itemTag(MITags.TANKS)
+			.withRegister((context) ->
+			{
+				AtomicReference<BlockEntityType<AbstractTankBlockEntity>> bet = new AtomicReference<>();
+				
+				StorageBehaviour<FluidVariant> storageBehaviour = StorageBehaviour.uniformQuantity(FluidType.BUCKET_VOLUME * context.getOrThrow(TANK_CAPACITY));
+				
+				EntityBlock factory = (pos, state) -> new TankBlockEntity(bet.get(), pos, state);
+				BlockWithItemHolder<Block, BlockItem> blockHolder = new BlockWithItemHolder<>(
+						context.id(), context.englishName(),
+						context.registry().blockRegistry(), (p) -> new TankBlock(factory, storageBehaviour),
+						context.registry().itemRegistry(), (b, p) -> new TankItem((TankBlock) b, p)
+				);
+				RegisteredMaterialPart registered = RegisteredMaterialPart.existingBlock(blockHolder);
+				context.register(blockHolder);
+				
+				context.registry().blockEntityRegistry().register(context.id().getPath(), () ->
+				{
+					bet.set((BlockEntityType) BlockEntityType.Builder.of(factory::newBlockEntity, blockHolder.get()).build(null));
+					return bet.get();
+				});
+				
+				CapabilitiesListeners.register(context.registry().modId(), (event) ->
+				{
+					event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, bet.get(), (be, side) -> new SlotFluidHandler(be));
+					
+					TankItem item = (TankItem) blockHolder.asItem();
+					event.registerItem(Capabilities.FluidHandler.ITEM, (stack, __) -> new ContainerItem.FluidHandler(stack, item), item);
+				});
+				
+				CommonProxy.INSTANCE.registerPartTankClient(bet::get, context.get(MEAN_RGB));
+				
+				return registered;
+			});
 	
 	MaterialPart TINY_DUST = create("tiny_dust", "Tiny Dust")
 			.set(ITEM_REFERENCE, MaterialPartItemReferenceFormatter.tag())

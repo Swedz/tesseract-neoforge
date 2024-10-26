@@ -26,8 +26,8 @@ public interface MIMaterialRecipeGroups
 			.add("hammer", (c) -> c.shaped(HAMMER, 1, (r) -> r.add('p', LARGE_PLATE).add('s', Items.STICK), "ppp", "psp", " s "))
 			.add("ring", (c) -> c.shaped(RING, 2, (r) -> r.add('b', BOLT).add('R', ROD), "bRb", "R R", "bRb"))
 			.add("cable", (c) -> c.shaped(CABLE, 3, (r) -> r.add('r', MIItem.RUBBER_SHEET).add('w', WIRE), "rrr", "www", "rrr"))
-			// TODO tank
 			.add("barrel", (c) -> c.shaped(BARREL, 1, (r) -> r.add('#', PLATE).add('b', Tags.Items.BARRELS_WOODEN), "###", "#b#", "###"))
+			.add("tank", (c) -> c.shaped(TANK, 1, (r) -> r.add('#', PLATE).add('g', Tags.Items.GLASS_BLOCKS), "###", "#g#", "###"))
 			.add("drill_head", (c) -> c.shaped(DRILL_HEAD, 1, (r) -> r.add('G', GEAR).add('b', BOLT).add('c', CURVED_PLATE).add('R', ROD).add('p', PLATE), "bcp", "GRc", "bGb"));
 	
 	MaterialRecipeGroup<MIMachineMaterialRecipeContext> STANDARD_MACHINES = MaterialRecipeGroup.create(MIMachineMaterialRecipeContext::new)
@@ -38,8 +38,8 @@ public interface MIMaterialRecipeGroups
 			.add("coil", (c) -> c.machine(ASSEMBLER, CABLE, 8, COIL, 1))
 			.add("large_plate", (c) -> c.machine(PACKER, PLATE, 4, LARGE_PLATE, 1))
 			.add("cable_rubber", (c) -> c.machine(PACKER, CABLE, 3, (b) -> b.addItemInput(MIItem.RUBBER_SHEET, 6).addPartInput(WIRE, 3)))
-			// TODO tank
 			.add("barrel", (c) -> c.machine(ASSEMBLER, BARREL, 1, (b) -> b.addPartInput(PLATE, 8).addItemInput(Tags.Items.BARRELS_WOODEN, 1)))
+			.add("tank", (c) -> c.machine(ASSEMBLER, TANK, 1, (b) -> b.addPartInput(PLATE, 8).addItemInput(Tags.Items.GLASS_BLOCKS, 1)))
 			
 			.add("recycle_double_ingot", (c) -> c.maceratorRecycling(DOUBLE_INGOT, 18))
 			.add("recycle_plate", (c) -> c.maceratorRecycling(PLATE, 9))

@@ -29,6 +29,7 @@ public interface MIMaterials
 			.addNative(BOLT, RING, GEAR, ROD, DOUBLE_INGOT, DUST, LARGE_PLATE, PLATE, TINY_DUST)
 			.addNative(HAMMER)
 			.addNative(BARREL.set(BARREL_CAPACITY, 1L))
+			.addNative(TANK.set(TANK_CAPACITY, 1L))
 			.recipes(STANDARD, STANDARD_MACHINES, SMELTING, FORGE_HAMMER);
 	
 	Material COPPER = Materials.COPPER.as(MI.ID).clearRecipes()
@@ -104,6 +105,7 @@ public interface MIMaterials
 			.addNative(DRILL_HEAD, DRILL)
 			.addNative(MACHINE_CASING, MACHINE_CASING_PIPE, PLATED_BRICKS)
 			.addNative(BARREL.set(BARREL_CAPACITY, 32L))
+			.addNative(TANK.set(TANK_CAPACITY, 4L))
 			.recipes(STANDARD, STANDARD_MACHINES, SMELTING, FORGE_HAMMER);
 	
 	Material TIN = create("tin", "Tin")
@@ -124,6 +126,7 @@ public interface MIMaterials
 			.addNative(HAMMER)
 			.addNative(MACHINE_CASING, MACHINE_CASING_PIPE)
 			.addNative(BARREL.set(BARREL_CAPACITY, 128L))
+			.addNative(TANK.set(TANK_CAPACITY, 16L))
 			.recipes(STANDARD, STANDARD_MACHINES, SMELTING, FORGE_HAMMER);
 	
 	Material LIGNITE_COAL = create("lignite_coal", "Lignite Coal")
@@ -144,6 +147,7 @@ public interface MIMaterials
 			.addNative(MACHINE_CASING.formattingRaw("advanced_machine_casing", "Advanced Machine Casing"))
 			.addNative(MACHINE_CASING_SPECIAL.formattingRaw("frostproof_machine_casing", "Frostproof Machine Casing"))
 			.addNative(BARREL.set(BARREL_CAPACITY, 512L))
+			.addNative(TANK.set(TANK_CAPACITY, 64L))
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace());
 	
 	Material BAUXITE = create("bauxite", "Bauxite")
@@ -236,6 +240,7 @@ public interface MIMaterials
 			.addNative(MACHINE_CASING.formattingRaw("highly_advanced_machine_casing", "Highly Advanced Machine Casing"))
 			.addNative(MACHINE_CASING_PIPE, SOLID_MACHINE_CASING)
 			.addNative(BARREL.set(BARREL_CAPACITY, 8192L))
+			.addNative(TANK.set(TANK_CAPACITY, 1024L))
 			.recipes(STANDARD, STANDARD_MACHINES.without("raw_metal_to_dust"), blastFurnace(true, 128, 400));
 	
 	Material ELECTRUM = create("electrum", "Electrum")
@@ -266,6 +271,7 @@ public interface MIMaterials
 			.addNative(MACHINE_CASING.formattingRaw("turbo_machine_casing", "Turbo Machine Casing"))
 			.addNative(MACHINE_CASING_PIPE, CLEAN_MACHINE_CASING)
 			.addNative(BARREL.set(BARREL_CAPACITY, 2048L))
+			.addNative(TANK.set(TANK_CAPACITY, 256L))
 			.recipes(STANDARD, STANDARD_MACHINES.without("rod_to_magnetic"), blastFurnace(true, 32, 400));
 	
 	Material RUBY = create("ruby", "Ruby")
@@ -405,7 +411,7 @@ public interface MIMaterials
 			.addNative(MACHINE_CASING_PIPE.set(BLAST_RESISTANCE, 6000f))
 			.addNative(PLASMA_HANDLING_MACHINE_CASING.set(BLAST_RESISTANCE, 6000f))
 			.addNative(BARREL.set(BARREL_CAPACITY, (long) Integer.MAX_VALUE).formattingRaw("quantum_barrel", "Quantum Barrel"))
-			// TODO without tank
+			.addNative(TANK.set(TANK_CAPACITY, (long) Integer.MAX_VALUE).formattingRaw("quantum_tank", "Quantum Tank"))
 			.recipes(STANDARD.without("barrel"), STANDARD_MACHINES.without("main_to_plate", "barrel"), SMELTING);
 	
 	Material MONAZITE = create("monazite", "Monazite")

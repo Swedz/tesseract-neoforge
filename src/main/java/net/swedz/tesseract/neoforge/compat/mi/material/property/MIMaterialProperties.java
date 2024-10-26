@@ -23,6 +23,8 @@ public interface MIMaterialProperties
 	
 	MaterialProperty<Long> BARREL_CAPACITY = create("barrel_capacity", 0L);
 	
+	MaterialProperty<Long> TANK_CAPACITY = create("tank_capacity", 0L);
+	
 	static <T> MaterialProperty<T> create(String id, T defaultValue)
 	{
 		return new MaterialProperty<>(MI.id(id), defaultValue);
