@@ -80,11 +80,6 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return this.copy(MaterialPart::new);
 	}
 	
-	public MaterialPart as(String namespace)
-	{
-		return this.copy((id, name) -> new MaterialPart(ResourceLocation.fromNamespaceAndPath(namespace, id.getPath()), name));
-	}
-	
 	public ResourceLocation id()
 	{
 		return id;
