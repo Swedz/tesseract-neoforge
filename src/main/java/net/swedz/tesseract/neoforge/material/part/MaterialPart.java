@@ -172,6 +172,17 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return copy;
 	}
 	
+	public MaterialPart itemOn(String modId, MaterialPartAction<ItemHolder<? extends Item>> action)
+	{
+		return this.item((c, h) ->
+		{
+			if(h.identifier().modId().equals(modId))
+			{
+				action.apply(c, h);
+			}
+		});
+	}
+	
 	public MaterialPart itemProperty(Consumer<Item.Properties> action)
 	{
 		return this.item((c, h) -> h.withProperties(action));
@@ -203,6 +214,17 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		MaterialPart copy = this.asBlock();
 		copy.blockActions.add(action);
 		return copy;
+	}
+	
+	public MaterialPart blockOn(String modId, MaterialPartAction<BlockWithItemHolder<Block, BlockItem>> action)
+	{
+		return this.block((c, h) ->
+		{
+			if(h.identifier().modId().equals(modId))
+			{
+				action.apply(c, h);
+			}
+		});
 	}
 	
 	public MaterialPart blockProperty(Consumer<BlockBehaviour.Properties> action)
