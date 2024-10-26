@@ -26,6 +26,7 @@ public interface MIMaterials
 	
 	Material IRON = Materials.IRON.as(MI.ID).clearRecipes()
 			.addNative(BOLT, RING, GEAR, ROD, DOUBLE_INGOT, DUST, LARGE_PLATE, PLATE, TINY_DUST)
+			.addNative(HAMMER)
 			.recipes(STANDARD, STANDARD_MACHINES, SMELTING, FORGE_HAMMER);
 	
 	Material COPPER = Materials.COPPER.as(MI.ID).clearRecipes()
@@ -45,6 +46,7 @@ public interface MIMaterials
 			.set(TIME_FACTOR, VERY_HARD)
 			.addNative(ITEM_PURE_NON_METAL)
 			.addNative(PLATE, LARGE_PLATE)
+			.addNative(HAMMER)
 			.recipes(STANDARD, STANDARD_MACHINES, SMELTING);
 	
 	Material EMERALD = Materials.EMERALD.as(MI.ID).clearRecipes()
@@ -116,6 +118,7 @@ public interface MIMaterials
 			.addNative(ROD_MAGNETIC)
 			.addNative(BLOCK)
 			.addNative(DRILL_HEAD, DRILL)
+			.addNative(HAMMER)
 			.addNative(MACHINE_CASING, MACHINE_CASING_PIPE)
 			.recipes(STANDARD, STANDARD_MACHINES, SMELTING, FORGE_HAMMER);
 	
