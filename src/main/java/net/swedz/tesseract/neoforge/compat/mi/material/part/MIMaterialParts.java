@@ -106,11 +106,26 @@ public interface MIMaterialParts
 	MaterialPart LARGE_PLATE = create("large_plate", "Large Plate")
 			.itemModelBuilder(CommonModelBuilders::generated);
 	
-	// TODO machine casing
+	MaterialPart MACHINE_CASING = create("machine_casing", "Machine Casing")
+			.blockModel(CommonModelBuilders::blockCubeAll);
 	
-	// TODO machine casing pipe
+	MaterialPart MACHINE_CASING_PIPE = create("machine_casing_pipe", "Pipe Machine Casing")
+			.blockModel(CommonModelBuilders::blockCubeAll);
 	
-	// TODO machine casing special
+	MaterialPart MACHINE_CASING_SPECIAL = create("machine_casing_special", "Special Casing")
+			.blockModel(CommonModelBuilders::blockCubeAll);
+	
+	MaterialPart PLATED_BRICKS = MACHINE_CASING_SPECIAL
+			.formattingMaterialOnly("%s_plated_bricks"::formatted, "%s Plated Bricks"::formatted);
+	
+	MaterialPart CLEAN_MACHINE_CASING = MACHINE_CASING_SPECIAL
+			.formattingMaterialOnly("clean_%s_machine_casing"::formatted, "Clean %s Machine Casing"::formatted);
+	
+	MaterialPart SOLID_MACHINE_CASING = MACHINE_CASING_SPECIAL
+			.formattingMaterialOnly("solid_%s_machine_casing"::formatted, "Solid %s Machine Casing"::formatted);
+	
+	MaterialPart PLASMA_HANDLING_MACHINE_CASING = MACHINE_CASING_SPECIAL
+			.formattingMaterialOnly("plasma_handling_%s_machine_casing"::formatted, "Plasma Handling %s Machine Casing"::formatted);
 	
 	MaterialPart PLATE = create("plate", "Plate")
 			.set(ITEM_REFERENCE, MaterialPartItemReferenceFormatter.tag())
