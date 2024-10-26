@@ -3,6 +3,8 @@ package net.swedz.tesseract.neoforge.material.builtin.property;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.swedz.tesseract.neoforge.Tesseract;
@@ -43,6 +45,8 @@ public interface MaterialProperties
 	MaterialProperty<Integer> MEAN_RGB = create("mean_rgb", 0);
 	
 	MaterialProperty<OrePartDrops> ORE_DROP_PART = create("ore_drop_part", OrePartDrops.of(MaterialParts.RAW_METAL));
+	
+	MaterialProperty<Tier> TOOL_TIER = create("tool_tier", Tiers.STONE);
 	
 	static <T> MaterialProperty<T> create(String id, T defaultValue)
 	{

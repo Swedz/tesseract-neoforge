@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.compat.mi.material.part;
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.api.energy.CableTier;
 import aztech.modern_industrialization.datagen.model.DelegatingModelBuilder;
+import aztech.modern_industrialization.items.ForgeTool;
 import aztech.modern_industrialization.items.PortableStorageUnit;
 import aztech.modern_industrialization.pipes.api.PipeNetworkType;
 import aztech.modern_industrialization.pipes.electricity.ElectricityNetwork;
@@ -96,9 +97,10 @@ public interface MIMaterialParts
 			.itemModelBuilder(CommonModelBuilders::generated)
 			.item(itemTagCommon("gears"));
 	
-	// TODO hammer
-	/*MaterialPart HAMMER = create("hammer", "Hammer")
-			.itemModelBuilder(CommonModelBuilders::generated);*/
+	MaterialPart HAMMER = create("hammer", "Hammer")
+			.itemFactory((c, p) -> new ForgeTool(c.get(TOOL_TIER), p))
+			.itemModelBuilder(CommonModelBuilders::generated)
+			.itemTag(ForgeTool.TAG);
 	
 	MaterialPart HOT_INGOT = create("hot_ingot", "Hot Ingot")
 			.itemModelBuilder(CommonModelBuilders::generated);
