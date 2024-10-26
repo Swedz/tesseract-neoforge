@@ -77,7 +77,10 @@ public interface MIMaterialRecipeGroups
 			
 			.add("main_to_block", (c) -> c.machine(PACKER, BLOCK, 1, (b) -> b.addPartInput(c.mainPart(), 9).addItemInput(MIItem.PACKER_BLOCK_TEMPLATE, 1, 0f)))
 			.add("ingot_to_double_ingot", (c) -> c.machine(PACKER, DOUBLE_INGOT, 1, (b) -> b.addPartInput(INGOT, 2).addItemInput(MIItem.PACKER_DOUBLE_INGOT_TEMPLATE, 1, 0f)))
-			// TODO fuel rod (double and quad)
+			
+			.add("fuel_rod_double", (c) -> c.machine(PACKER, FUEL_ROD_DOUBLE, 1, (b) -> b.addPartInput(FUEL_ROD, 2).addItemInput("#c:plates/nuclear_alloy", 1)))
+			.add("fuel_rod_quad", (c) -> c.machine(PACKER, FUEL_ROD_QUAD, 1, (b) -> b.addPartInput(FUEL_ROD_DOUBLE, 2).addItemInput("#c:plates/nuclear_alloy", 2)))
+			
 			.add("coil_to_cable", (c) -> c.machine(UNPACKER, COIL, 1, CABLE, 8))
 			
 			.add("plate_to_wire", (c) -> c.machine(WIREMILL, PLATE, 1, WIRE, 2))
@@ -88,7 +91,8 @@ public interface MIMaterialRecipeGroups
 			.add("drill_head", (c) -> c.machine(ASSEMBLER, DRILL_HEAD, 1, (b) -> b.addPartInput(PLATE, 1).addPartInput(CURVED_PLATE, 2).addPartInput(ROD, 1).addPartInput(GEAR, 2).addFluidInput(MIFluids.SOLDERING_ALLOY, 75)))
 			.add("cable_synthetic_rubber", (c) -> c.machine("cable_synthetic_rubber", ASSEMBLER, CABLE, 3, (b) -> b.addPartInput(WIRE, 3).addFluidInput(MIFluids.SYNTHETIC_RUBBER, 30)))
 			.add("cable_styrene_rubber", (c) -> c.machine("cable_styrene_rubber", ASSEMBLER, CABLE, 3, (b) -> b.addPartInput(WIRE, 3).addFluidInput(MIFluids.STYRENE_BUTADIENE_RUBBER, 6)))
-			// TODO fuel rod (single)
+			
+			.add("fuel_rod", (c) -> c.machine(ASSEMBLER, 16, 200, FUEL_ROD, 1, (b) -> b.addItemInput("modern_industrialization:blastproof_alloy_curved_plate", 2).addItemInput(MIItem.LARGE_MOTOR, 1).addItemInput(MIItem.ROBOT_ARM, 2).addPartInput(ROD, 18).addFluidInput(MIFluids.SOLDERING_ALLOY, 500).addFluidInput(MIFluids.HELIUM, 100)))
 			
 			.add("rod_to_magnetic", (c) -> c.machine(POLARIZER, 8, 200, ROD_MAGNETIC, 1, (b) -> b.addPartInput(ROD, 1)))
 			.add("wire_to_magnetic", (c) -> c.machine(POLARIZER, 8, 200, WIRE_MAGNETIC, 1, (b) -> b.addPartInput(WIRE, 1)))

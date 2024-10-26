@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.compat.mi.material;
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.api.energy.CableTier;
 import net.minecraft.util.valueproviders.UniformInt;
+import net.swedz.tesseract.neoforge.compat.mi.material.property.IsotopeFuel;
 import net.swedz.tesseract.neoforge.material.Material;
 import net.swedz.tesseract.neoforge.material.builtin.Materials;
 import net.swedz.tesseract.neoforge.material.builtin.property.OrePartDrops;
@@ -303,41 +304,50 @@ public interface MIMaterials
 	
 	Material URANIUM_235 = create("uranium_235", "Uranium 235")
 			.set(TIME_FACTOR, VERY_HARD)
+			.set(ISOTOPE, new IsotopeFuel(0.6, 0.35, 2400, 900, 2300, 8, 0.5))
 			.addNative(ITEM_PURE_METAL)
 			.addNative(BLOCK)
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace(128));
 	
 	Material URANIUM_238 = create("uranium_238", "Uranium 238")
 			.set(TIME_FACTOR, SOFT)
+			.set(ISOTOPE, new IsotopeFuel(0.6, 0.30, 3200, 1000, 3000, 6, 0.3))
 			.addNative(ITEM_PURE_METAL)
 			.addNative(BLOCK)
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace(128));
 	
 	Material URANIUM = create("uranium", "Uranium")
+			.set(ISOTOPE, IsotopeFuel.mix(URANIUM_238, URANIUM_235, 1D / 81))
 			.addNative(ITEM_PURE_METAL)
 			.addNative(BLOCK)
 			.addNative(ROD)
 			.addNative(RAW_METAL, RAW_METAL_BLOCK)
 			.addNative(ORE, ORE_DEEPSLATE)
+			.addNative(ALL_FUEL_RODS)
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace(128));
 	
 	Material LE_URANIUM = create("le_uranium", "LE Uranium")
 			.set(TIME_FACTOR, VERY_HARD)
+			.set(ISOTOPE, IsotopeFuel.mix(URANIUM_238, URANIUM_235, 1D / 9))
 			.addNative(ITEM_PURE_METAL)
 			.addNative(BLOCK)
 			.addNative(ROD)
+			.addNative(ALL_FUEL_RODS)
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace(128));
 	
 	Material HE_URANIUM = create("he_uranium", "HE Uranium")
 			.set(TIME_FACTOR, VERY_HARD)
+			.set(ISOTOPE, IsotopeFuel.mix(URANIUM_238, URANIUM_235, 1D / 3))
 			.addNative(ITEM_PURE_METAL)
 			.addNative(BLOCK)
 			.addNative(ROD)
+			.addNative(ALL_FUEL_RODS)
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace(128));
 	
 	Material PLUTONIUM = create("plutonium", "Plutonium")
 			.set(TIME_FACTOR, VERY_HARD)
 			.set(BATTERY_CAPACITY, batteryCapacity(CableTier.SUPERCONDUCTOR))
+			.set(ISOTOPE, new IsotopeFuel(0.9, 0.25, 2100, 600, 2000, 9, 0.25))
 			.addNative(ITEM_PURE_METAL)
 			.addNative(BLOCK)
 			.addNative(BATTERY)
@@ -345,16 +355,20 @@ public interface MIMaterials
 	
 	Material LE_MOX = create("le_mox", "LE Mox")
 			.set(TIME_FACTOR, VERY_HARD)
+			.set(ISOTOPE, IsotopeFuel.mix(URANIUM_238, PLUTONIUM, 1D / 9))
 			.addNative(ITEM_PURE_METAL)
 			.addNative(BLOCK)
 			.addNative(ROD)
+			.addNative(ALL_FUEL_RODS)
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace(128));
 	
 	Material HE_MOX = create("he_mox", "HE Mox")
 			.set(TIME_FACTOR, VERY_HARD)
+			.set(ISOTOPE, IsotopeFuel.mix(URANIUM_238, PLUTONIUM, 1D / 3))
 			.addNative(ITEM_PURE_METAL)
 			.addNative(BLOCK)
 			.addNative(ROD)
+			.addNative(ALL_FUEL_RODS)
 			.recipes(STANDARD, STANDARD_MACHINES, blastFurnace(128));
 	
 	Material PLATINUM = create("platinum", "Platinum")

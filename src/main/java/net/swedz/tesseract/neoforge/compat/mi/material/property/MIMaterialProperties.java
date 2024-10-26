@@ -10,6 +10,10 @@ public interface MIMaterialProperties
 	
 	MaterialProperty<Long> BATTERY_CAPACITY = create("battery_capacity", 0L);
 	
+	MaterialProperty<Integer> NUCLEAR_FUEL_SIZE = create("nuclear_fuel_size", null);
+	
+	MaterialProperty<IsotopeFuel> ISOTOPE = create("isotope", null);
+	
 	static long batteryCapacity(CableTier tier)
 	{
 		return tier.getMaxTransfer() * 60 * 20;

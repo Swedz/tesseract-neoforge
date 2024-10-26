@@ -5,13 +5,18 @@ import aztech.modern_industrialization.api.energy.CableTier;
 import aztech.modern_industrialization.datagen.model.DelegatingModelBuilder;
 import aztech.modern_industrialization.items.ForgeTool;
 import aztech.modern_industrialization.items.PortableStorageUnit;
+import aztech.modern_industrialization.nuclear.INeutronBehaviour;
+import aztech.modern_industrialization.nuclear.NuclearConstant;
+import aztech.modern_industrialization.nuclear.NuclearFuel;
 import aztech.modern_industrialization.pipes.api.PipeNetworkType;
 import aztech.modern_industrialization.pipes.electricity.ElectricityNetwork;
 import aztech.modern_industrialization.pipes.electricity.ElectricityNetworkData;
 import aztech.modern_industrialization.pipes.electricity.ElectricityNetworkNode;
 import aztech.modern_industrialization.pipes.impl.PipeItem;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.swedz.tesseract.neoforge.compat.mi.material.property.IsotopeFuel;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
+import net.swedz.tesseract.neoforge.material.part.MaterialPartItemFactory;
 import net.swedz.tesseract.neoforge.material.part.MaterialPartItemReferenceFormatter;
 import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
@@ -163,7 +168,36 @@ public interface MIMaterialParts
 			.formatting("%s_%s"::formatted, (m, p) -> "Magnetic %s Wire".formatted(m))
 			.itemModelBuilder(CommonModelBuilders::generated);
 	
-	// TODO fuel rods
+	static MaterialPartItemFactory fuelRodFactory()
+	{
+		return (c, p) ->
+		{
+			int size = c.getOrThrow(NUCLEAR_FUEL_SIZE);
+			IsotopeFuel fuel = c.getOrThrow(ISOTOPE);
+			NuclearFuel.NuclearFuelParams fuelParams = new NuclearFuel.NuclearFuelParams(
+					NuclearConstant.DESINTEGRATION_BY_ROD * size, fuel.maxTemp, fuel.tempLimitLow, fuel.tempLimitHigh, fuel.neutronsMultiplication, fuel.directEnergyFactor, size
+			);
+			INeutronBehaviour neutronBehaviour = INeutronBehaviour.of(NuclearConstant.ScatteringType.HEAVY, fuel, size);
+			return new NuclearFuel(p.stacksTo(1), fuelParams, neutronBehaviour, c.registry().id("%s_fuel_rod_depleted".formatted(c.material().id().getPath())));
+		};
+	}
+	
+	MaterialPart FUEL_ROD_DEPLETED = create("fuel_rod_depleted", "Depleted Fuel Rod")
+			.formattingMaterialOnly("%s_fuel_rod_depleted"::formatted, "Depleted %s Fuel Rod"::formatted);
+	
+	MaterialPart FUEL_ROD = create("fuel_rod", "Fuel Rod")
+			.set(NUCLEAR_FUEL_SIZE, 1)
+			.itemFactory(fuelRodFactory());
+	
+	MaterialPart FUEL_ROD_DOUBLE = create("fuel_rod_double", "Double Fuel Rod")
+			.set(NUCLEAR_FUEL_SIZE, 2)
+			.itemFactory(fuelRodFactory());
+	
+	MaterialPart FUEL_ROD_QUAD = create("fuel_rod_quad", "Quad Fuel Rod")
+			.set(NUCLEAR_FUEL_SIZE, 4)
+			.itemFactory(fuelRodFactory());
+	
+	MaterialPart[] ALL_FUEL_RODS = {FUEL_ROD, FUEL_ROD_DOUBLE, FUEL_ROD_QUAD, FUEL_ROD_DEPLETED};
 	
 	MaterialPart N_DOPED_PLATE = create("n_doped_plate", "N-Doped Plate")
 			.formatting("%s_%s"::formatted, (m, p) -> "N-Doped %s Plate".formatted(m))
