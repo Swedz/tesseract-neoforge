@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import net.swedz.tesseract.neoforge.registry.AccessibleBlockLootSubProvider;
 import net.swedz.tesseract.neoforge.registry.ModeledRegisteredObjectHolder;
 import net.swedz.tesseract.neoforge.registry.registerable.BlockRegisterableWrapper;
 
@@ -17,7 +18,7 @@ public class BlockHolder<BlockType extends Block> extends ModeledRegisteredObjec
 {
 	protected final BlockRegisterableWrapper<BlockType> registerableBlock;
 	
-	protected Function<BlockLootSubProvider, LootTable.Builder> lootTableBuilder;
+	protected Function<AccessibleBlockLootSubProvider, LootTable.Builder> lootTableBuilder;
 	
 	public BlockHolder(ResourceLocation location, String englishName,
 					   DeferredRegister.Blocks registerBlocks, Function<BlockBehaviour.Properties, BlockType> blockCreator)
@@ -37,7 +38,7 @@ public class BlockHolder<BlockType extends Block> extends ModeledRegisteredObjec
 		return this.self();
 	}
 	
-	public BlockHolder<BlockType> withLootTable(Function<BlockHolder<BlockType>, Function<BlockLootSubProvider, LootTable.Builder>> builder)
+	public BlockHolder<BlockType> withLootTable(Function<BlockHolder<BlockType>, Function<AccessibleBlockLootSubProvider, LootTable.Builder>> builder)
 	{
 		lootTableBuilder = builder.apply(this.self());
 		return this.self();
@@ -48,9 +49,18 @@ public class BlockHolder<BlockType extends Block> extends ModeledRegisteredObjec
 		return lootTableBuilder != null;
 	}
 	
-	public Function<BlockLootSubProvider, LootTable.Builder> getLootTableBuilder()
+	public Function<AccessibleBlockLootSubProvider, LootTable.Builder> getLootTableBuilder()
 	{
 		return lootTableBuilder;
+	}
+	
+	public LootTable.Builder buildLootTable(BlockLootSubProvider provider)
+	{
+		if(!this.hasLootTable())
+		{
+			throw new IllegalStateException("Cannot build loot table without a loot table builder");
+		}
+		return lootTableBuilder.apply(new AccessibleBlockLootSubProvider(provider));
 	}
 	
 	@Override
