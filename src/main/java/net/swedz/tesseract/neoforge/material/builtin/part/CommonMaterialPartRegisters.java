@@ -44,7 +44,7 @@ public final class CommonMaterialPartRegisters
 			Block block = holder.get();
 			return (provider) ->
 			{
-				HolderLookup.RegistryLookup<Enchantment> lookup = provider.registries.lookupOrThrow(Registries.ENCHANTMENT);
+				HolderLookup.RegistryLookup<Enchantment> lookup = provider.registries().lookupOrThrow(Registries.ENCHANTMENT);
 				return provider.createSilkTouchDispatchTable(block, provider.applyExplosionDecay(
 						block,
 						LootItem.lootTableItem(drop)

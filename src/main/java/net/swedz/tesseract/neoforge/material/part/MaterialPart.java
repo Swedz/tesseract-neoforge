@@ -2,7 +2,6 @@ package net.swedz.tesseract.neoforge.material.part;
 
 import com.google.common.collect.Lists;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
@@ -19,6 +18,7 @@ import net.swedz.tesseract.neoforge.material.MaterialRegistry;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyHolder;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
+import net.swedz.tesseract.neoforge.registry.AccessibleBlockLootSubProvider;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
@@ -268,7 +268,7 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return this.block((c, h) -> h.withModel(modelBuilder));
 	}
 	
-	public MaterialPart blockLoot(Function<BlockHolder<Block>, Function<BlockLootSubProvider, LootTable.Builder>> lootBuilder)
+	public MaterialPart blockLoot(Function<BlockHolder<Block>, Function<AccessibleBlockLootSubProvider, LootTable.Builder>> lootBuilder)
 	{
 		return this.block((c, h) -> h.withLootTable(lootBuilder));
 	}
