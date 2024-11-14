@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.registry;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
@@ -20,6 +21,21 @@ public final class AccessibleBlockLootSubProvider
 	public AccessibleBlockLootSubProvider(BlockLootSubProvider provider)
 	{
 		this.provider = provider;
+	}
+	
+	public HolderLookup.Provider registries()
+	{
+		return provider.registries;
+	}
+
+	public float[] normalLeavesSaplingChances()
+	{
+		return BlockLootSubProvider.NORMAL_LEAVES_SAPLING_CHANCES;
+	}
+	
+	public float[] normalLeavesStickChances()
+	{
+		return BlockLootSubProvider.NORMAL_LEAVES_STICK_CHANCES;
 	}
 	
 	public LootItemCondition.Builder hasSilkTouch()
