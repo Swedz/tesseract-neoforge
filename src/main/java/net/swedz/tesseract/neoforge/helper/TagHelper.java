@@ -9,6 +9,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
+import java.util.Collection;
 import java.util.List;
 
 public final class TagHelper
@@ -48,8 +49,18 @@ public final class TagHelper
 		return TagKey.create(to, from.location());
 	}
 	
+	public static <F, T> List<TagKey<T>> convert(Collection<TagKey<F>> from, ResourceKey<? extends Registry<T>> to)
+	{
+		return from.stream().map((f) -> convert(f, to)).toList();
+	}
+	
 	public static <F, T> TagKey<T> convert(TagKey<F> from, Registry<T> to)
 	{
 		return convert(from, to.key());
+	}
+	
+	public static <F, T> List<TagKey<T>> convert(Collection<TagKey<F>> from, Registry<T> to)
+	{
+		return from.stream().map((f) -> convert(f, to)).toList();
 	}
 }
