@@ -40,10 +40,10 @@ public final class CommonMaterialPartRegisters
 			{
 				throw new IllegalArgumentException("Could not find ore drop part");
 			}
-			Item drop = context.material().get(drops.drop()).asItem();
-			Block block = holder.get();
 			return (provider) ->
 			{
+				Item drop = context.material().get(drops.drop()).asItem();
+				Block block = holder.get();
 				HolderLookup.RegistryLookup<Enchantment> lookup = provider.registries().lookupOrThrow(Registries.ENCHANTMENT);
 				return provider.createSilkTouchDispatchTable(block, provider.applyExplosionDecay(
 						block,
