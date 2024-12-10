@@ -11,6 +11,7 @@ import aztech.modern_industrialization.machines.components.OrientationComponent;
 import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
 import aztech.modern_industrialization.machines.models.MachineModelClientData;
 import aztech.modern_industrialization.machines.multiblocks.MultiblockMachineBlockEntity;
+import aztech.modern_industrialization.machines.multiblocks.ShapeMatcher;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.util.Tickable;
 
@@ -37,9 +38,12 @@ public abstract class BasicMultiblockMachineBlockEntity extends MultiblockMachin
 	}
 	
 	@Override
-	public void onMatchSuccessful()
+	protected void onRematch(ShapeMatcher shapeMatcher)
 	{
-		inventory.rebuild(shapeMatcher);
+		if(shapeMatcher.isMatchSuccessful())
+		{
+			inventory.rebuild(shapeMatcher);
+		}
 	}
 	
 	@Override

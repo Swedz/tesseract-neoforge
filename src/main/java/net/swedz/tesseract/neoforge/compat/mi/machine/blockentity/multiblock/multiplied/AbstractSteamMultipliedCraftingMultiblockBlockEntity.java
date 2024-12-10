@@ -4,6 +4,7 @@ import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.components.OverclockComponent;
 import aztech.modern_industrialization.machines.helper.SteamHelper;
 import aztech.modern_industrialization.machines.multiblocks.HatchBlockEntity;
+import aztech.modern_industrialization.machines.multiblocks.ShapeMatcher;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.util.Simulation;
 import com.google.common.collect.Lists;
@@ -37,9 +38,9 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 	}
 	
 	@Override
-	public void onMatchSuccessful()
+	protected void onRematch(ShapeMatcher shapeMatcher)
 	{
-		super.onMatchSuccessful();
+		super.onRematch(shapeMatcher);
 		
 		steel = false;
 		for(HatchBlockEntity hatch : shapeMatcher.getMatchedHatches())

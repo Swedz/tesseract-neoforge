@@ -6,7 +6,7 @@ import aztech.modern_industrialization.machines.MachineBlockEntity;
 import aztech.modern_industrialization.stats.PlayerStatistics;
 import aztech.modern_industrialization.stats.PlayerStatisticsData;
 import aztech.modern_industrialization.util.Simulation;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.machine.EfficiencyMIHookContext;
@@ -43,7 +43,7 @@ public interface ModularCrafterAccessBehavior
 	{
 		long maxRecipeEu = this.getBaseMaxRecipeEu();
 		if(this instanceof MachineBlockEntity machineBlockEntity &&
-				machineBlockEntity instanceof CrafterComponentHolder crafterComponentHolder)
+		   machineBlockEntity instanceof CrafterComponentHolder crafterComponentHolder)
 		{
 			CrafterAccess crafter = crafterComponentHolder.getCrafterComponent();
 			EfficiencyMIHookContext context = new EfficiencyMIHookContext(
@@ -62,7 +62,7 @@ public interface ModularCrafterAccessBehavior
 	}
 	
 	// can't use getWorld() or the remapping will fail
-	Level getCrafterWorld();
+	ServerLevel getCrafterWorld();
 	
 	default int getMaxFluidOutputs()
 	{

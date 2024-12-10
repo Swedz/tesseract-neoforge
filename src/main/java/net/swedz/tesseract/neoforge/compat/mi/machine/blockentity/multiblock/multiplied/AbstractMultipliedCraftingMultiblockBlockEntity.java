@@ -5,10 +5,11 @@ import aztech.modern_industrialization.api.machine.holder.CrafterComponentHolder
 import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
 import aztech.modern_industrialization.machines.guicomponents.ReiSlotLocking;
+import aztech.modern_industrialization.machines.multiblocks.ShapeMatcher;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccessBehavior;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.MultipliedCrafterComponent;
@@ -57,9 +58,9 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 	}
 	
 	@Override
-	public Level getCrafterWorld()
+	public ServerLevel getCrafterWorld()
 	{
-		return level;
+		return (ServerLevel) level;
 	}
 	
 	@Override
@@ -69,17 +70,15 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 	}
 	
 	@Override
-	protected void onRematch()
+	protected void onRematch(ShapeMatcher shapeMatcher)
 	{
-		operatingState = OperatingState.NOT_MATCHED;
-	}
-	
-	@Override
-	public void onMatchSuccessful()
-	{
-		super.onMatchSuccessful();
+		super.onRematch(shapeMatcher);
 		
-		operatingState = OperatingState.TRYING_TO_RESUME;
+		operatingState = OperatingState.NOT_MATCHED;
+		if(shapeMatcher.isMatchSuccessful())
+		{
+			operatingState = OperatingState.TRYING_TO_RESUME;
+		}
 	}
 	
 	@Override

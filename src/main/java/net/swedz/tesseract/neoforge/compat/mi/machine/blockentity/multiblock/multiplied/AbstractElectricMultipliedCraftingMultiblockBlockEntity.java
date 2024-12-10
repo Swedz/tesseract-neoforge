@@ -10,6 +10,7 @@ import aztech.modern_industrialization.machines.components.UpgradeComponent;
 import aztech.modern_industrialization.machines.guicomponents.SlotPanel;
 import aztech.modern_industrialization.machines.init.MachineTier;
 import aztech.modern_industrialization.machines.multiblocks.HatchBlockEntity;
+import aztech.modern_industrialization.machines.multiblocks.ShapeMatcher;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.util.Simulation;
 import com.google.common.collect.Lists;
@@ -63,9 +64,9 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 	}
 	
 	@Override
-	public void onMatchSuccessful()
+	protected void onRematch(ShapeMatcher shapeMatcher)
 	{
-		super.onMatchSuccessful();
+		super.onRematch(shapeMatcher);
 		
 		energyInputs.clear();
 		for(HatchBlockEntity hatch : shapeMatcher.getMatchedHatches())
@@ -84,7 +85,7 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 		}
 		if(!result.consumesAction())
 		{
-			result = icomponents.mapOrDefault(UpgradeComponent.class, upgrade -> upgrade.onUse(this, player, hand), result);
+			result = components.mapOrDefault(UpgradeComponent.class, upgrade -> upgrade.onUse(this, player, hand), result);
 		}
 		if(!result.consumesAction())
 		{
@@ -92,7 +93,7 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 		}
 		if(!result.consumesAction())
 		{
-			result = icomponents.mapOrDefault(OverdriveComponent.class, (overdrive) -> overdrive.onUse(this, player, hand), result);
+			result = components.mapOrDefault(OverdriveComponent.class, (overdrive) -> overdrive.onUse(this, player, hand), result);
 		}
 		return result;
 	}

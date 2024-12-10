@@ -149,7 +149,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 				lastInvHash = currentHash;
 			}
 			
-			ServerLevel serverWorld = (ServerLevel) behavior.getCrafterWorld();
+			ServerLevel serverWorld = behavior.getCrafterWorld();
 			MachineRecipeType recipeType = this.getRecipeType();
 			List<RecipeHolder<MachineRecipe>> recipes = new ArrayList<>(recipeType.getFluidOnlyRecipes(serverWorld));
 			for(ConfigurableItemStack stack : inventory.getItemInputs())
@@ -647,7 +647,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		{
 			return;
 		}
-		Optional<RecipeHolder<MachineRecipe>> optionalMachineRecipe = recipeType.getRecipes(behavior.getCrafterWorld()).stream()
+		Optional<RecipeHolder<MachineRecipe>> optionalMachineRecipe = recipeType.getRecipesWithCache(behavior.getCrafterWorld()).stream()
 				.filter((recipe) -> recipe.id().equals(recipeId)).findFirst();
 		if(optionalMachineRecipe.isEmpty())
 		{
