@@ -6,6 +6,7 @@ import aztech.modern_industrialization.fluid.MIFluid;
 import aztech.modern_industrialization.fluid.MIFluidBlock;
 import aztech.modern_industrialization.fluid.MIFluidType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -52,6 +53,7 @@ public class MIFluidHolder extends FluidHolder<MIFluid, MIFluidHolder.FakedMIFlu
 				bucketSortOrder
 		);
 		this.properties = properties;
+		this.block().withModel((holder) -> (provider) -> provider.simpleBlock(holder.get(), provider.models().getExistingFile(provider.blockTexture(Blocks.AIR))));
 	}
 	
 	public MIFluidProperties properties()
