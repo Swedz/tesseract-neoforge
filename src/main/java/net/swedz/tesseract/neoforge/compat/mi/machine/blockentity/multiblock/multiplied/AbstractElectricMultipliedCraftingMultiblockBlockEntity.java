@@ -64,8 +64,10 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 	}
 	
 	@Override
-	public void onSuccessfulMatch(ShapeMatcher shapeMatcher)
+	protected void onRematch(ShapeMatcher shapeMatcher)
 	{
+		super.onRematch(shapeMatcher);
+		
 		energyInputs.clear();
 		for(HatchBlockEntity hatch : shapeMatcher.getMatchedHatches())
 		{
@@ -83,7 +85,7 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 		}
 		if(!result.consumesAction())
 		{
-			result = this.mapComponentOrDefault(UpgradeComponent.class, upgrade -> upgrade.onUse(this, player, hand), result);
+			result = components.mapOrDefault(UpgradeComponent.class, upgrade -> upgrade.onUse(this, player, hand), result);
 		}
 		if(!result.consumesAction())
 		{
@@ -91,7 +93,7 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 		}
 		if(!result.consumesAction())
 		{
-			result = this.mapComponentOrDefault(OverdriveComponent.class, (overdrive) -> overdrive.onUse(this, player, hand), result);
+			result = components.mapOrDefault(OverdriveComponent.class, (overdrive) -> overdrive.onUse(this, player, hand), result);
 		}
 		return result;
 	}

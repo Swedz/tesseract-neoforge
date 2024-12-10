@@ -38,8 +38,10 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 	}
 	
 	@Override
-	public void onSuccessfulMatch(ShapeMatcher shapeMatcher)
+	protected void onRematch(ShapeMatcher shapeMatcher)
 	{
+		super.onRematch(shapeMatcher);
+		
 		steel = false;
 		for(HatchBlockEntity hatch : shapeMatcher.getMatchedHatches())
 		{

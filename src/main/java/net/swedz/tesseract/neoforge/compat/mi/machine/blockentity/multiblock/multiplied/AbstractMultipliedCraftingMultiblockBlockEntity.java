@@ -5,10 +5,11 @@ import aztech.modern_industrialization.api.machine.holder.CrafterComponentHolder
 import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
 import aztech.modern_industrialization.machines.guicomponents.ReiSlotLocking;
+import aztech.modern_industrialization.machines.multiblocks.ShapeMatcher;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccessBehavior;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.MultipliedCrafterComponent;
@@ -20,6 +21,8 @@ import java.util.UUID;
 public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends BasicMultiblockMachineBlockEntity implements CrafterComponentHolder, ModularCrafterAccessBehavior
 {
 	protected final MultipliedCrafterComponent crafter;
+	
+	protected OperatingState operatingState = OperatingState.NOT_MATCHED;
 	
 	public AbstractMultipliedCraftingMultiblockBlockEntity(BEP bep, ResourceLocation id, ShapeTemplate[] shapeTemplates)
 	{
@@ -55,15 +58,27 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 	}
 	
 	@Override
-	public Level getCrafterWorld()
+	public ServerLevel getCrafterWorld()
 	{
-		return level;
+		return (ServerLevel) level;
 	}
 	
 	@Override
 	public UUID getOwnerUuid()
 	{
 		return placedBy.placerId;
+	}
+	
+	@Override
+	protected void onRematch(ShapeMatcher shapeMatcher)
+	{
+		super.onRematch(shapeMatcher);
+		
+		operatingState = OperatingState.NOT_MATCHED;
+		if(shapeMatcher.isMatchSuccessful())
+		{
+			operatingState = OperatingState.TRYING_TO_RESUME;
+		}
 	}
 	
 	@Override
@@ -103,5 +118,22 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 	
 	public void tickExtra()
 	{
+	}
+	
+	public enum OperatingState
+	{
+		/**
+		 * Shape is not matched, don't do anything.
+		 */
+		NOT_MATCHED,
+		/**
+		 * Trying to resume a recipe but the output might not fit anymore.
+		 * We wait until the output fits again before resuming normal operation.
+		 */
+		TRYING_TO_RESUME,
+		/**
+		 * Normal operation.
+		 */
+		NORMAL_OPERATION
 	}
 }

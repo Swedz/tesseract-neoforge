@@ -1,6 +1,5 @@
 package net.swedz.tesseract.neoforge.datagen.mi.client;
 
-import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.machines.models.MachineBakedModel;
 import aztech.modern_industrialization.machines.models.MachineCasing;
 import aztech.modern_industrialization.machines.models.UseBlockModelUnbakedModel;
@@ -20,18 +19,15 @@ import java.util.function.Consumer;
 
 public final class MachineCasingModelsMIHookDatagenProvider extends ModelProvider<BlockModelBuilder>
 {
-	private final String actualModId;
-	
-	public MachineCasingModelsMIHookDatagenProvider(GatherDataEvent event, String actualModId)
+	public MachineCasingModelsMIHookDatagenProvider(GatherDataEvent event, String modId)
 	{
-		super(event.getGenerator().getPackOutput(), MI.ID, MachineBakedModel.CASING_FOLDER, BlockModelBuilder::new, event.getExistingFileHelper());
-		this.actualModId = actualModId;
+		super(event.getGenerator().getPackOutput(), modId, MachineBakedModel.CASING_FOLDER, BlockModelBuilder::new, event.getExistingFileHelper());
 	}
 	
 	@Override
 	protected void registerModels()
 	{
-		for(Consumer<MachineCasingModelsMIHookDatagenProvider> action : MIHookTracker.getMachineCasingModels(actualModId))
+		for(Consumer<MachineCasingModelsMIHookDatagenProvider> action : MIHookTracker.getMachineCasingModels(modid))
 		{
 			action.accept(this);
 		}
@@ -39,18 +35,18 @@ public final class MachineCasingModelsMIHookDatagenProvider extends ModelProvide
 	
 	public void imitateBlock(MachineCasing casing, Block block)
 	{
-		getBuilder(casing.name)
+		getBuilder(casing.key.toString())
 				.customLoader((bmb, existingFileHelper) -> new UseBlockModelModelBuilder<>(block, bmb, existingFileHelper));
 	}
 	
 	public void cubeBottomTop(MachineCasing casing, ResourceLocation side, ResourceLocation bottom, ResourceLocation top)
 	{
-		this.cubeBottomTop(casing.name, side, bottom, top);
+		this.cubeBottomTop(casing.key.toString(), side, bottom, top);
 	}
 	
 	public void cubeAll(MachineCasing casing, ResourceLocation side)
 	{
-		this.cubeAll(casing.name, side);
+		this.cubeAll(casing.key.toString(), side);
 	}
 	
 	@Override

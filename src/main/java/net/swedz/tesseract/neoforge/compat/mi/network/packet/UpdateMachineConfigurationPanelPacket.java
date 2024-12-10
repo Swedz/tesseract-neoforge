@@ -35,7 +35,7 @@ public record UpdateMachineConfigurationPanelPacket(
 		AbstractContainerMenu menu = ctx.getPlayer().containerMenu;
 		if(menu.containerId == syncId && menu instanceof MachineMenuServer machineMenu)
 		{
-			ConfigurationPanel.Server configurationPanel = machineMenu.blockEntity.getComponent(ConfigurationPanel.ID);
+			ConfigurationPanel.Server configurationPanel = machineMenu.blockEntity.guiComponents.get(ConfigurationPanel.ID);
 			configurationPanel.behavior.handleClick(line, clickedLeftButton ? -1 : +1);
 		}
 	}

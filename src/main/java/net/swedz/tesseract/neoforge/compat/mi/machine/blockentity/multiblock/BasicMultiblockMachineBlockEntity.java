@@ -17,10 +17,6 @@ import aztech.modern_industrialization.util.Tickable;
 
 public abstract class BasicMultiblockMachineBlockEntity extends MultiblockMachineBlockEntity implements Tickable, MultiblockInventoryComponentHolder
 {
-	protected ShapeMatcher shapeMatcher;
-	
-	protected OperatingState operatingState = OperatingState.NOT_MATCHED;
-	
 	protected final ActiveShapeComponent         activeShape;
 	protected final MultiblockInventoryComponent inventory;
 	protected final IsActiveComponent            isActive;
@@ -41,78 +37,24 @@ public abstract class BasicMultiblockMachineBlockEntity extends MultiblockMachin
 		isActive.updateActive(active, this);
 	}
 	
-	public void onLink(ShapeMatcher shapeMatcher)
+	@Override
+	protected void onRematch(ShapeMatcher shapeMatcher)
 	{
-	}
-	
-	public void onUnlink(ShapeMatcher shapeMatcher)
-	{
-	}
-	
-	public void onSuccessfulMatch(ShapeMatcher shapeMatcher)
-	{
+		if(shapeMatcher.isMatchSuccessful())
+		{
+			inventory.rebuild(shapeMatcher);
+		}
 	}
 	
 	@Override
 	public void tick()
 	{
-		if(level.isClientSide)
+		if(level.isClientSide())
 		{
 			return;
 		}
 		
 		this.link();
-	}
-	
-	protected ShapeMatcher createShapeMatcher()
-	{
-		return new ShapeMatcher(level, worldPosition, orientation.facingDirection, this.getActiveShape());
-	}
-	
-	protected void link()
-	{
-		if(shapeMatcher == null)
-		{
-			shapeMatcher = this.createShapeMatcher();
-			shapeMatcher.registerListeners(level);
-			
-			this.onLink(shapeMatcher);
-		}
-		if(shapeMatcher.needsRematch())
-		{
-			operatingState = OperatingState.NOT_MATCHED;
-			shapeValid.shapeValid = false;
-			shapeMatcher.rematch(level);
-			
-			if(shapeMatcher.isMatchSuccessful())
-			{
-				inventory.rebuild(shapeMatcher);
-				
-				this.onSuccessfulMatch(shapeMatcher);
-				
-				shapeValid.shapeValid = true;
-				operatingState = OperatingState.TRYING_TO_RESUME;
-			}
-			
-			if(shapeValid.update())
-			{
-				this.sync(false);
-			}
-		}
-	}
-	
-	@Override
-	public void unlink()
-	{
-		if(shapeMatcher != null)
-		{
-			shapeMatcher.unlinkHatches();
-			shapeMatcher.unregisterListeners(level);
-			
-			this.onUnlink(shapeMatcher);
-			
-			shapeMatcher = null;
-		}
 	}
 	
 	@Override
@@ -137,22 +79,5 @@ public abstract class BasicMultiblockMachineBlockEntity extends MultiblockMachin
 	protected MachineModelClientData getMachineModelData()
 	{
 		return new MachineModelClientData(null, orientation.facingDirection).active(isActive.isActive);
-	}
-	
-	public enum OperatingState
-	{
-		/**
-		 * Shape is not matched, don't do anything.
-		 */
-		NOT_MATCHED,
-		/**
-		 * Trying to resume a recipe but the output might not fit anymore.
-		 * We wait until the output fits again before resuming normal operation.
-		 */
-		TRYING_TO_RESUME,
-		/**
-		 * Normal operation.
-		 */
-		NORMAL_OPERATION
 	}
 }
