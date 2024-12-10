@@ -6,29 +6,29 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class ModeledRegisteredObjectHolder<Thing, ActualThing extends Thing, ModelBuilderType, Self extends ModeledRegisteredObjectHolder<Thing, ActualThing, ModelBuilderType, Self>> extends RegisteredObjectHolder<Thing, ActualThing, Self>
+public abstract class ModeledRegisteredObjectHolder<Thing, ActualThing extends Thing, ModelProviderType, Self extends ModeledRegisteredObjectHolder<Thing, ActualThing, ModelProviderType, Self>> extends RegisteredObjectHolder<Thing, ActualThing, Self>
 {
-	protected Optional<Consumer<ModelBuilderType>> modelBuilder = Optional.empty();
+	protected Optional<Consumer<ModelProviderType>> modelProvider = Optional.empty();
 	
 	public ModeledRegisteredObjectHolder(ResourceLocation location, String englishName)
 	{
 		super(location, englishName);
 	}
 	
-	public boolean hasModelBuilder()
+	public boolean hasModelProvider()
 	{
-		return modelBuilder.isPresent();
+		return modelProvider.isPresent();
 	}
 	
-	public Consumer<ModelBuilderType> modelBuilder()
+	public Consumer<ModelProviderType> modelProvider()
 	{
-		return modelBuilder.orElseThrow();
+		return modelProvider.orElseThrow();
 	}
 	
-	public Self withModel(Function<Self, Consumer<ModelBuilderType>> modelBuilderCreator)
+	public Self withModel(Function<Self, Consumer<ModelProviderType>> modelProvider)
 	{
 		this.guaranteeUnlocked();
-		this.modelBuilder = Optional.of(modelBuilderCreator.apply(this.self()));
+		this.modelProvider = Optional.of(modelProvider.apply(this.self()));
 		return this.self();
 	}
 }

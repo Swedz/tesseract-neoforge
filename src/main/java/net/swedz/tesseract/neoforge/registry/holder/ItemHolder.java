@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.swedz.tesseract.neoforge.registry.ModeledRegisteredObjectHolder;
 import net.swedz.tesseract.neoforge.registry.SortOrder;
@@ -12,7 +13,7 @@ import net.swedz.tesseract.neoforge.registry.registerable.ItemRegisterableWrappe
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ItemHolder<Type extends Item> extends ModeledRegisteredObjectHolder<Item, Type, ItemModelBuilder, ItemHolder<Type>> implements ItemLike
+public class ItemHolder<Type extends Item> extends ModeledRegisteredObjectHolder<Item, Type, ItemModelProvider, ItemHolder<Type>> implements ItemLike
 {
 	private final ItemRegisterableWrapper<Type> registerableItem;
 	
@@ -44,6 +45,11 @@ public class ItemHolder<Type extends Item> extends ModeledRegisteredObjectHolder
 	{
 		this.sortOrder = sortOrder;
 		return this;
+	}
+	
+	public ItemHolder<Type> withModelBuilder(Function<ItemHolder<Type>, Consumer<ItemModelBuilder>> modelBuilder)
+	{
+		return this.withModel((holder) -> (provider) -> modelBuilder.apply(holder).accept(provider.getBuilder("item/%s".formatted(holder.identifier().id()))));
 	}
 	
 	@Override
