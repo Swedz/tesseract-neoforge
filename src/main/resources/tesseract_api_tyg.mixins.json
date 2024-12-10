@@ -1,0 +1,14 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "net.swedz.tesseract.neoforge.compat.tyg.mixin",
+    "plugin": "net.swedz.tesseract.neoforge.compat.tyg.TYGMixinPlugin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "TYGTreeGrowthEventMixin"
+    ],
+    "client": [],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

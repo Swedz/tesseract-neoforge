@@ -18,6 +18,9 @@ config = "${mod_id}.mixins.json"
 [[mixins]]
 config = "${mod_id}_mi.mixins.json"
 
+[[mixins]]
+config = "${mod_id}_tyg.mixins.json"
+
 [[accessTransformers]]
 file = "${mod_id}.accesstransformer.cfg"
 
