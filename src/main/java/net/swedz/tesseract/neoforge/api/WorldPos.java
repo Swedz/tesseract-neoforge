@@ -32,6 +32,11 @@ public record WorldPos(ResourceKey<Level> dimension, BlockPos pos)
 			WorldPos::new
 	);
 	
+	public WorldPos
+	{
+		pos = pos.immutable();
+	}
+	
 	public WorldPos(Level level, BlockPos pos)
 	{
 		this(level.dimension(), pos);
