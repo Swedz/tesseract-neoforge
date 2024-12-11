@@ -6,7 +6,11 @@
     "compatibilityLevel": "JAVA_21",
     "mixins": [
         "ActiveRecipeHolderMixin",
+        "accessor.CasingComponentAccessor",
         "accessor.MIMachineRecipeTypesAccessor",
+        "accessor.OverdriveComponentAccessor",
+        "accessor.RedstoneControlComponentAccessor",
+        "accessor.UpgradeComponentAccessor",
         "fix.MakeMachineBlockEntityUseProperTitleMixin",
         "hook.efficiency.CrafterComponentBehaviorEfficiencyHookMixin",
         "hook.efficiency.CrafterComponentEfficiencyHookMixin",
