@@ -7,8 +7,10 @@ import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.Mod
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGuiClient;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.recipeefficiency.ModularRecipeEfficiencyBar;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.recipeefficiency.ModularRecipeEfficiencyBarClient;
-import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookListener;
+import net.swedz.tesseract.neoforge.compat.mi.guicomponent.slotpanel.ModularSlotPanel;
+import net.swedz.tesseract.neoforge.compat.mi.guicomponent.slotpanel.ModularSlotPanelClient;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEntrypoint;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookListener;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.ClientGuiComponentsMIHookContext;
 
 @MIHookEntrypoint
@@ -20,6 +22,7 @@ public final class TesseractMIHookListener implements MIHookListener
 		hook.register(ConfigurationPanel.ID, ConfigurationPanelClient::new);
 		hook.register(ModularMultiblockGui.ID, ModularMultiblockGuiClient::new);
 		hook.register(ModularRecipeEfficiencyBar.ID, ModularRecipeEfficiencyBarClient::new);
+		hook.register(ModularSlotPanel.ID, ModularSlotPanelClient::new);
 	}
 	
 	@Override
