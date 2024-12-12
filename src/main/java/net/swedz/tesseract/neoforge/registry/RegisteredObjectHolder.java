@@ -23,7 +23,8 @@ public abstract class RegisteredObjectHolder<Thing, ActualThing extends Thing, S
 	
 	protected final Set<TagKey<Thing>> tags = Sets.newHashSet();
 	
-	protected final List<Consumer<? super ActualThing>> registrationListeners = Lists.newArrayList();
+	protected final List<Consumer<? super ActualThing>> registrationListeners       = Lists.newArrayList();
+	protected final List<Consumer<? super ActualThing>> clientRegistrationListeners = Lists.newArrayList();
 	
 	private boolean locked;
 	
@@ -69,6 +70,17 @@ public abstract class RegisteredObjectHolder<Thing, ActualThing extends Thing, S
 	public Self withRegistrationListener(Consumer<? super ActualThing> listener)
 	{
 		registrationListeners.add(listener);
+		return this.self();
+	}
+	
+	public void triggerClientRegistrationListener()
+	{
+		clientRegistrationListeners.forEach((listener) -> listener.accept(this.get()));
+	}
+	
+	public Self withClientRegistrationListener(Consumer<? super ActualThing> listener)
+	{
+		clientRegistrationListeners.add(listener);
 		return this.self();
 	}
 	
