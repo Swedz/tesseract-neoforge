@@ -443,31 +443,36 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 				{
 					stackId++;
 					ItemVariant key = stack.getResource();
-					if(key.getItem() == output.variant().getItem() || key.isBlank())
+					if(key.equals(output.variant()) || key.isBlank())
 					{
 						// If simulating or chanced output, respect the adjusted capacity.
 						// If putting the output, don't respect the adjusted capacity in case it was
 						// reduced during the processing.
-						int remainingCapacity = simulate || output.probability() < 1 ? (int) stack.getRemainingCapacityFor(output.variant())
-								: output.variant().getMaxStackSize() - (int) stack.getAmount();
+						int remainingCapacity = simulate || output.probability() < 1 ?
+								(int) stack.getRemainingCapacityFor(output.variant()) :
+								output.variant().getMaxStackSize() - (int) stack.getAmount();
 						int ins = Math.min(remainingAmount, remainingCapacity);
-						if(key.isBlank())
+						if(ins > 0)
 						{
-							if((stack.isMachineLocked() || stack.isPlayerLocked() || loopRun == 1) && stack.isValid(new ItemStack(output.variant().getItem())))
+							if(key.isBlank())
 							{
-								stack.setAmount(ins);
-								stack.setKey(output.variant());
+								if((stack.isMachineLocked() || stack.isPlayerLocked() || loopRun == 1) && stack.isValid(output.getStack()))
+								{
+									stack.setAmount(ins);
+									stack.setKey(output.variant());
+								}
+								else
+								{
+									ins = 0;
+								}
 							}
 							else
 							{
-								ins = 0;
+								stack.increment(ins);
 							}
 						}
-						else
-						{
-							stack.increment(ins);
-						}
 						remainingAmount -= ins;
+						// ins changed inside of previous if, need to check again!
 						if(ins > 0)
 						{
 							locksToToggle.add(stackId - 1);
