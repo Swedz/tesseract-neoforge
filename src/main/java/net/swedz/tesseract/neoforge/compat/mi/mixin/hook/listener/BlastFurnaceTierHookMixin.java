@@ -17,7 +17,10 @@ public class BlastFurnaceTierHookMixin
 {
 	@ModifyVariable(
 			method = "<clinit>",
-			at = @At(value = "INVOKE", target = "Ljava/util/List;sort(Ljava/util/Comparator;)V")
+			at = @At(
+					value = "INVOKE",
+					target = "Ljava/util/List;sort(Ljava/util/Comparator;)V"
+			)
 	)
 	private static List clinit(List value)
 	{

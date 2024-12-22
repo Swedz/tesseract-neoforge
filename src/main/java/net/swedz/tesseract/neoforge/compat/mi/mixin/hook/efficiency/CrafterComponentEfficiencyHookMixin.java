@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.compat.mi.mixin.hook.efficiency;
 
 import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.recipe.condition.MachineProcessCondition;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
@@ -15,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(
 		value = CrafterComponent.class,
@@ -119,10 +119,14 @@ public abstract class CrafterComponentEfficiencyHookMixin
 			at = @At(
 					value = "INVOKE",
 					target = "Laztech/modern_industrialization/machines/components/CrafterComponent;clearActiveRecipeIfPossible()V"
-			),
-			locals = LocalCapture.CAPTURE_FAILHARD
+			)
 	)
-	private void tickRecipeReset(CallbackInfoReturnable<Boolean> cir, boolean isActive, boolean isEnabled, boolean recipeStarted, long eu, boolean finishedRecipe)
+	private void tickRecipeReset(CallbackInfoReturnable<Boolean> callback,
+								 @Local(name = "isActive") boolean isActive,
+								 @Local(name = "isEnabled") boolean isEnabled,
+								 @Local(name = "recipeStarted") boolean recipeStarted,
+								 @Local(name = "eu") long eu,
+								 @Local(name = "finishedRecipe") boolean finishedRecipe)
 	{
 		EfficiencyMIHookContext context = new EfficiencyMIHookContext(
 				conditionContext.getBlockEntity(), this.hasActiveRecipe(),

@@ -16,7 +16,7 @@ public class MachineProcessConditionsHookMixin
 {
 	@Inject(
 			method = "<clinit>",
-			at = @At("RETURN")
+			at = @At("TAIL")
 	)
 	private static void clinit(CallbackInfo callback)
 	{
