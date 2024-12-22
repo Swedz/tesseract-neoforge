@@ -86,7 +86,8 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	@Override
 	protected RecipeHolder<MachineRecipe> getRecipeById(ResourceLocation recipeId)
 	{
-		return this.getRecipeType().getRecipe(behavior.getCrafterWorld(), recipeId);
+		MachineRecipeType type = this.getRecipeType();
+		return type != null ? type.getRecipe(behavior.getCrafterWorld(), recipeId) : null;
 	}
 	
 	@Override
