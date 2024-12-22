@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(FarmBlock.class)
 public class FarmlandLoseMoistureEventMixin
@@ -24,13 +23,12 @@ public class FarmlandLoseMoistureEventMixin
 					ordinal = 0,
 					shift = At.Shift.BEFORE
 			),
-			locals = LocalCapture.CAPTURE_FAILHARD,
 			cancellable = true
 	)
 	private void beforeSetBlock(BlockState state, ServerLevel level, BlockPos pos, RandomSource random,
-								CallbackInfo callback,
-								int moistureLevel)
+								CallbackInfo callback)
 	{
+		int moistureLevel = state.getValue(FarmBlock.MOISTURE);
 		int moistureBefore = moistureLevel + 1;
 		FarmlandLoseMoistureEvent event = new FarmlandLoseMoistureEvent(level, pos, state, moistureBefore, moistureLevel);
 		NeoForge.EVENT_BUS.post(event);
