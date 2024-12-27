@@ -37,3 +37,10 @@ type = "optional"
 versionRange = "${modern_industrialization_version_range}"
 ordering = "AFTER"
 side = "BOTH"
+
+[[dependencies.${ mod_id }]]
+modId = "ohthetreesyoullgrow"
+type = "optional"
+versionRange = "${ohthetreesyoullgrow_version_range}"
+ordering = "AFTER"
+side = "BOTH"
