@@ -6,7 +6,6 @@
     "mixins": [
         "DataComponentTooltipProviderMixin",
         "DynamicDyedItemDyeColorMixin",
-        "ItemStackExtraAttributeTooltipsMixin",
         "event.FarmlandLoseMoistureEventMixin",
         "event.ItemHurtEventMixin",
         "event.TreeGrowthEventMixin"
