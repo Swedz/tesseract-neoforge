@@ -12,6 +12,14 @@ import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.ViewerSetupM
 
 public interface MIHookListener
 {
+	default void beforeInit()
+	{
+	}
+	
+	default void afterInit()
+	{
+	}
+	
 	default void blastFurnaceTiers(BlastFurnaceTiersMIHookContext hook)
 	{
 	}

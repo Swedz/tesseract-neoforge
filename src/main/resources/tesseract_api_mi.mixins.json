@@ -15,6 +15,7 @@
         "hook.efficiency.CrafterComponentBehaviorEfficiencyHookMixin",
         "hook.efficiency.CrafterComponentEfficiencyHookMixin",
         "hook.efficiency.EBFEfficiencyHookMixin",
+        "hook.listener.BeforeAfterInitHookMixin",
         "hook.listener.BlastFurnaceTierHookMixin",
         "hook.listener.MachineCasingsHookMixin",
         "hook.listener.MachineProcessConditionsHookMixin",
