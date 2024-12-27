@@ -28,7 +28,8 @@ public class TYGTreeGrowthEventMixin
 	private void onTreeGrowth(FeaturePlaceContext context,
 							  CallbackInfoReturnable<Boolean> callback,
 							  @Local(name = "leavePositions") Set<BlockPos> leavePositions,
-							  @Local(name = "trunkPositions") Set<BlockPos> trunkPositions)
+							  @Local(name = "trunkPositions") Set<BlockPos> trunkPositions,
+							  @Local(name = "decorationPositions") Set<BlockPos> decorationPositions)
 	{
 		LevelAccessor level = context.level();
 		BlockPos origin = context.origin();
@@ -36,6 +37,7 @@ public class TYGTreeGrowthEventMixin
 		List<BlockPos> positions = Lists.newArrayList();
 		positions.addAll(trunkPositions);
 		positions.addAll(leavePositions);
+		positions.addAll(decorationPositions);
 		TreeGrowthEvent event = new TreeGrowthEvent(level, origin, level.getBlockState(origin), positions);
 		NeoForge.EVENT_BUS.post(event);
 	}
