@@ -18,6 +18,9 @@ config = "${mod_id}.mixins.json"
 [[mixins]]
 config = "${mod_id}_mi.mixins.json"
 
+[[mixins]]
+config = "${mod_id}_tyg.mixins.json"
+
 [[accessTransformers]]
 file = "${mod_id}.accesstransformer.cfg"
 
@@ -32,5 +35,12 @@ side = "BOTH"
 modId = "modern_industrialization"
 type = "optional"
 versionRange = "${modern_industrialization_version_range}"
+ordering = "AFTER"
+side = "BOTH"
+
+[[dependencies.${ mod_id }]]
+modId = "ohthetreesyoullgrow"
+type = "optional"
+versionRange = "${ohthetreesyoullgrow_version_range}"
 ordering = "AFTER"
 side = "BOTH"
