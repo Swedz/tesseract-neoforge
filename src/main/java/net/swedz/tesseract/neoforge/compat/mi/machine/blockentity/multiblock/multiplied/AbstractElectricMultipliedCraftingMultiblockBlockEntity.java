@@ -21,6 +21,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.swedz.tesseract.neoforge.TesseractText;
+import net.swedz.tesseract.neoforge.compat.mi.api.MachineTierHolder;
 import net.swedz.tesseract.neoforge.compat.mi.helper.ModularLubricantHelper;
 
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.List;
 import static net.swedz.tesseract.neoforge.compat.mi.TesseractMITooltips.*;
 import static net.swedz.tesseract.neoforge.compat.mi.tooltip.MICompatibleTextLine.*;
 
-public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity implements EnergyListComponentHolder
+public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity implements EnergyListComponentHolder, MachineTierHolder
 {
 	protected final MachineTier machineTier;
 	
@@ -61,6 +62,12 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 	public List<? extends EnergyAccess> getEnergyComponents()
 	{
 		return energyInputs;
+	}
+	
+	@Override
+	public MachineTier getMachineTier()
+	{
+		return machineTier;
 	}
 	
 	@Override
