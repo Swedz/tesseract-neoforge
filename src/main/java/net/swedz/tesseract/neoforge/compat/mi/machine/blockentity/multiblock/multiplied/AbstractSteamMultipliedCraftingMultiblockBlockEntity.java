@@ -15,13 +15,14 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.swedz.tesseract.neoforge.TesseractText;
+import net.swedz.tesseract.neoforge.compat.mi.api.SteamMachineTierHolder;
 
 import java.util.List;
 
 import static net.swedz.tesseract.neoforge.compat.mi.TesseractMITooltips.*;
 import static net.swedz.tesseract.neoforge.compat.mi.tooltip.MICompatibleTextLine.*;
 
-public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity
+public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity implements SteamMachineTierHolder
 {
 	protected final OverclockComponent overclock;
 	
@@ -35,6 +36,12 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 		overclock = new OverclockComponent(overclockCatalysts);
 		
 		this.registerComponents(overclock);
+	}
+	
+	@Override
+	public boolean isSteelTier()
+	{
+		return steel;
 	}
 	
 	@Override

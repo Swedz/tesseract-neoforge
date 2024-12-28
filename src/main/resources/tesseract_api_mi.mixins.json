@@ -10,6 +10,7 @@
         "accessor.MIMachineRecipeTypesAccessor",
         "accessor.OverdriveComponentAccessor",
         "accessor.RedstoneControlComponentAccessor",
+        "accessor.SteamCraftingMultiblockBlockEntityAccessor",
         "accessor.UpgradeComponentAccessor",
         "fix.MakeMachineBlockEntityUseProperTitleMixin",
         "hook.efficiency.CrafterComponentBehaviorEfficiencyHookMixin",
