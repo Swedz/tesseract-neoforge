@@ -5,7 +5,6 @@ import com.google.common.collect.Maps;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import net.swedz.tesseract.neoforge.helper.AnnotationDataHelper;
-import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +30,7 @@ public final class LoadedProxies
 	public <P extends Proxy> P get(Class<P> proxyClass)
 	{
 		Objects.requireNonNull(proxyClass);
+		this.tryInitEntrypoints();
 		if(!proxies.containsKey(proxyClass))
 		{
 			throw new IllegalArgumentException("No proxy found for class %s".formatted(proxyClass.getName()));
@@ -49,11 +49,13 @@ public final class LoadedProxies
 			}
 		}
 		
+		this.tryInitEntrypoints();
+		
 		T value = startingValue;
 		
 		for(Class<? extends Proxy> proxyClass : proxyClasses)
 		{
-			I proxy = (I) get(proxyClass);
+			I proxy = (I) this.get(proxyClass);
 			value = merge.apply(value, proxy);
 		}
 		
@@ -63,7 +65,7 @@ public final class LoadedProxies
 	@SafeVarargs
 	public final <T, I> List<T> mergeList(Class<I> commonInterface, Function<I, Collection<T>> merge, Class<? extends Proxy>... proxyClasses)
 	{
-		return merge(
+		return this.merge(
 				commonInterface, Lists.newArrayList(),
 				(list, proxy) ->
 				{
@@ -77,7 +79,7 @@ public final class LoadedProxies
 	@SafeVarargs
 	public final <I> boolean mergeAnd(Class<I> commonInterface, Function<I, Boolean> merge, Class<? extends Proxy>... proxyClasses)
 	{
-		return merge(
+		return this.merge(
 				commonInterface, true,
 				(value, proxy) -> value && merge.apply(proxy),
 				proxyClasses
@@ -87,7 +89,7 @@ public final class LoadedProxies
 	@SafeVarargs
 	public final <I> boolean mergeOr(Class<I> commonInterface, Function<I, Boolean> merge, Class<? extends Proxy>... proxyClasses)
 	{
-		return merge(
+		return this.merge(
 				commonInterface, false,
 				(value, proxy) -> value || merge.apply(proxy),
 				proxyClasses
@@ -138,8 +140,15 @@ public final class LoadedProxies
 		}
 	}
 	
-	@ApiStatus.Internal
-	public void initEntrypoints()
+	private void tryInitEntrypoints()
+	{
+		if(!initialized)
+		{
+			initEntrypoints();
+		}
+	}
+	
+	private void initEntrypoints()
 	{
 		if(initialized)
 		{

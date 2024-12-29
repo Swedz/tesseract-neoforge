@@ -1,7 +1,5 @@
 package net.swedz.tesseract.neoforge.proxy;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -10,12 +8,6 @@ import java.util.function.Function;
 public final class Proxies
 {
 	private static final LoadedProxies PROXIES = new LoadedProxies();
-	
-	@ApiStatus.Internal
-	public static void initEntrypoints()
-	{
-		PROXIES.initEntrypoints();
-	}
 	
 	/**
 	 * Get the active proxy for a given superclass. Proxies are referred to by their highest superclass (other than
