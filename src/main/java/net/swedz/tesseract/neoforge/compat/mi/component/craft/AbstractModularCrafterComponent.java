@@ -1,7 +1,6 @@
 package net.swedz.tesseract.neoforge.compat.mi.component.craft;
 
 import aztech.modern_industrialization.api.machine.component.InventoryAccess;
-import aztech.modern_industrialization.inventory.AbstractConfigurableStack;
 import aztech.modern_industrialization.inventory.ConfigurableFluidStack;
 import aztech.modern_industrialization.inventory.ConfigurableItemStack;
 import aztech.modern_industrialization.machines.IComponent;
@@ -16,8 +15,6 @@ import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.machine.EfficiencyMIHookContext;
-
-import java.util.List;
 
 import static aztech.modern_industrialization.util.Simulation.*;
 
@@ -78,7 +75,7 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	protected boolean takeInputs(R recipe, boolean simulate)
 	{
 		return this.takeItemInputs(recipe, simulate) &&
-				this.takeFluidInputs(recipe, simulate);
+			   this.takeFluidInputs(recipe, simulate);
 	}
 	
 	protected abstract boolean takeItemInputs(R recipe, boolean simulate);
@@ -88,7 +85,7 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	protected boolean putOutputs(R recipe, boolean simulate, boolean toggleLock)
 	{
 		return this.putItemOutputs(recipe, simulate, toggleLock) &&
-				this.putFluidOutputs(recipe, simulate, toggleLock);
+			   this.putFluidOutputs(recipe, simulate, toggleLock);
 	}
 	
 	protected abstract boolean putItemOutputs(R recipe, boolean simulate, boolean toggleLock);
@@ -249,8 +246,8 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	protected boolean tryStartRecipe(R recipe)
 	{
 		if(this.takeInputs(recipe, true) &&
-				this.putOutputs(recipe, true, false) &&
-				this.doConditionsMatchForRecipe(recipe))
+		   this.putOutputs(recipe, true, false) &&
+		   this.doConditionsMatchForRecipe(recipe))
 		{
 			this.takeInputs(recipe, false);
 			this.putOutputs(recipe, true, true);
@@ -450,17 +447,6 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 			if(stack.isMachineLocked())
 			{
 				stack.disableMachineLock();
-			}
-		}
-	}
-	
-	protected static void lockAll(List<? extends AbstractConfigurableStack<?, ?>> stacks)
-	{
-		for(AbstractConfigurableStack stack : stacks)
-		{
-			if(stack.isEmpty() && stack.getLockedInstance() == null)
-			{
-				stack.togglePlayerLock();
 			}
 		}
 	}
