@@ -23,7 +23,6 @@ import net.swedz.tesseract.neoforge.compat.mi.helper.CrafterComponentHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public final class MultipliedCrafterComponent extends AbstractModularCrafterComponent<RecipeHolder<MachineRecipe>>
@@ -404,9 +403,9 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		{
 			return;
 		}
-		Optional<RecipeHolder<MachineRecipe>> optionalMachineRecipe = recipeType.getRecipesWithCache(behavior.getCrafterWorld()).stream()
-				.filter((recipe) -> recipe.id().equals(recipeId)).findFirst();
-		optionalMachineRecipe.ifPresent((recipe) ->
-				CrafterComponentHelper.lockRecipe(recipe.value(), inventory, this.inventory));
+		recipeType.getRecipesWithCache(behavior.getCrafterWorld()).stream()
+				.filter((recipe) -> recipe.id().equals(recipeId))
+				.findFirst()
+				.ifPresent((recipe) -> CrafterComponentHelper.lockRecipe(recipe.value(), inventory, this.inventory));
 	}
 }
