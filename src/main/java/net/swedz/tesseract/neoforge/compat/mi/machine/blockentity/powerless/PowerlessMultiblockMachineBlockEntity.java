@@ -5,8 +5,10 @@ import aztech.modern_industrialization.api.machine.component.CrafterAccess;
 import aztech.modern_industrialization.api.machine.holder.CrafterComponentHolder;
 import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.components.CrafterComponent;
+import aztech.modern_industrialization.machines.components.RedstoneControlComponent;
 import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
 import aztech.modern_industrialization.machines.guicomponents.ReiSlotLocking;
+import aztech.modern_industrialization.machines.guicomponents.SlotPanel;
 import aztech.modern_industrialization.machines.models.MachineModelClientData;
 import aztech.modern_industrialization.machines.multiblocks.ShapeMatcher;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
@@ -27,11 +29,13 @@ public class PowerlessMultiblockMachineBlockEntity extends BasicMultiblockMachin
 	
 	protected final CrafterComponent crafter;
 	
+	protected final RedstoneControlComponent redstoneControl;
+	
 	protected OperatingState operatingState = OperatingState.NOT_MATCHED;
 	
 	public PowerlessMultiblockMachineBlockEntity(
 			BEP bep, MachineGuiParameters guiParams, ShapeTemplate shape,
-			MachineRecipeType recipeType, int baseRecipeEU
+			MachineRecipeType recipeType, int baseRecipeEU, boolean hasRedstoneControl
 	)
 	{
 		super(bep, guiParams, new ShapeTemplate[]{shape});
@@ -41,7 +45,16 @@ public class PowerlessMultiblockMachineBlockEntity extends BasicMultiblockMachin
 		
 		this.crafter = new CrafterComponent(this, inventory, new Behavior());
 		
+		this.redstoneControl = hasRedstoneControl ? new RedstoneControlComponent() : null;
+		
 		this.registerComponents(crafter, isActive);
+		
+		if(hasRedstoneControl)
+		{
+			this.registerComponents(redstoneControl);
+			this.registerGuiComponent(new SlotPanel.Server(this)
+					.withRedstoneControl(redstoneControl));
+		}
 		
 		this.registerGuiComponent(new ReiSlotLocking.Server(crafter::lockRecipe, () -> operatingState != OperatingState.NOT_MATCHED));
 		this.registerGuiComponent(new ModularMultiblockGui.Server(ModularMultiblockGui.HEIGHT, (content) ->
@@ -123,6 +136,12 @@ public class PowerlessMultiblockMachineBlockEntity extends BasicMultiblockMachin
 	
 	private class Behavior implements CrafterComponent.Behavior
 	{
+		@Override
+		public boolean isEnabled()
+		{
+			return redstoneControl == null || redstoneControl.doAllowNormalOperation(PowerlessMultiblockMachineBlockEntity.this);
+		}
+		
 		@Override
 		public long consumeEu(long max, Simulation simulation)
 		{

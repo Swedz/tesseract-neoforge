@@ -9,10 +9,12 @@ import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.components.IsActiveComponent;
 import aztech.modern_industrialization.machines.components.MachineInventoryComponent;
 import aztech.modern_industrialization.machines.components.OrientationComponent;
+import aztech.modern_industrialization.machines.components.RedstoneControlComponent;
 import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
 import aztech.modern_industrialization.machines.guicomponents.AutoExtract;
 import aztech.modern_industrialization.machines.guicomponents.ProgressBar;
 import aztech.modern_industrialization.machines.guicomponents.ReiSlotLocking;
+import aztech.modern_industrialization.machines.guicomponents.SlotPanel;
 import aztech.modern_industrialization.machines.models.MachineModelClientData;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.util.Simulation;
@@ -30,10 +32,12 @@ public class PowerlessMachineBlockEntity extends MachineBlockEntity implements T
 	protected final CrafterComponent          crafter;
 	protected final IsActiveComponent         isActive;
 	
+	protected final RedstoneControlComponent redstoneControl;
+	
 	public PowerlessMachineBlockEntity(
 			BEP bep, MachineGuiParameters guiParams, ProgressBar.Parameters progressBarParams,
 			MachineInventoryComponent inventory,
-			MachineRecipeType recipeType, int baseRecipeEU
+			MachineRecipeType recipeType, int baseRecipeEU, boolean hasRedstoneControl
 	)
 	{
 		super(
@@ -52,7 +56,16 @@ public class PowerlessMachineBlockEntity extends MachineBlockEntity implements T
 		this.crafter = new CrafterComponent(this, inventory, new Behavior());
 		this.isActive = new IsActiveComponent();
 		
+		this.redstoneControl = hasRedstoneControl ? new RedstoneControlComponent() : null;
+		
 		this.registerComponents(inventory, crafter, isActive);
+		
+		if(hasRedstoneControl)
+		{
+			this.registerComponents(redstoneControl);
+			this.registerGuiComponent(new SlotPanel.Server(this)
+					.withRedstoneControl(redstoneControl));
+		}
 		
 		this.registerGuiComponent(new AutoExtract.Server(orientation));
 		this.registerGuiComponent(new ProgressBar.Server(progressBarParams, crafter::getProgress));
@@ -105,6 +118,12 @@ public class PowerlessMachineBlockEntity extends MachineBlockEntity implements T
 	
 	private class Behavior implements CrafterComponent.Behavior
 	{
+		@Override
+		public boolean isEnabled()
+		{
+			return redstoneControl == null || redstoneControl.doAllowNormalOperation(PowerlessMachineBlockEntity.this);
+		}
+		
 		@Override
 		public long consumeEu(long max, Simulation simulation)
 		{
