@@ -20,6 +20,6 @@ public class MachineCasingsHookMixin
 	)
 	private static void init(CallbackInfo callback)
 	{
-		MIHooks.triggerHookListeners((hook) -> hook.machineCasings(new MachineCasingsMIHookContext()));
+		MIHooks.triggerHookListeners((hook, listener) -> listener.machineCasings(new MachineCasingsMIHookContext(hook)));
 	}
 }

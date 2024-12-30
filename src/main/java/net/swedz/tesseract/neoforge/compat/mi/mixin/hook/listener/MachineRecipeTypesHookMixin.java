@@ -20,6 +20,6 @@ public class MachineRecipeTypesHookMixin
 	)
 	private static void init(CallbackInfo callback)
 	{
-		MIHooks.triggerHookListeners((hook) -> hook.machineRecipeTypes(new MachineRecipeTypesMIHookContext()));
+		MIHooks.triggerHookListeners((hook, listener) -> listener.machineRecipeTypes(new MachineRecipeTypesMIHookContext(hook)));
 	}
 }

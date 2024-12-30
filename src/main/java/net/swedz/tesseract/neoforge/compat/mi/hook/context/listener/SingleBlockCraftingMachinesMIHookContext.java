@@ -8,12 +8,18 @@ import aztech.modern_industrialization.machines.guicomponents.RecipeEfficiencyBa
 import aztech.modern_industrialization.machines.init.SingleBlockCraftingMachines;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
 
 import java.util.function.Consumer;
 
-public final class SingleBlockCraftingMachinesMIHookContext implements MIHookContext
+public final class SingleBlockCraftingMachinesMIHookContext extends MIHookContext
 {
+	public SingleBlockCraftingMachinesMIHookContext(MIHook hook)
+	{
+		super(hook);
+	}
+	
 	public void register(String englishName, String machine, MachineRecipeType type,
 						 int itemInputCount, int itemOutputCount, int fluidInputCount, int fluidOutputCount,
 						 Consumer<MachineGuiParameters.Builder> guiParams,
@@ -51,6 +57,7 @@ public final class SingleBlockCraftingMachinesMIHookContext implements MIHookCon
 						 SingleBlockCraftingMachines.Config extraConfig)
 	{
 		HackedMachineRegistrationHelper.registerMachineTiers(
+				hook,
 				englishName, machine, type,
 				itemInputCount, itemOutputCount, fluidInputCount, fluidOutputCount,
 				guiParams, progressBarParams, efficiencyBarParams, energyBarParams,

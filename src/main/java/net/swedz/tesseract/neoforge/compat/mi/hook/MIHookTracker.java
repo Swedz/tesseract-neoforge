@@ -16,56 +16,6 @@ import java.util.function.Consumer;
 @ApiStatus.Internal
 public final class MIHookTracker
 {
-	private static String TRACKING_MOD_ID;
-	
-	public static void startTracking(String modId)
-	{
-		if(isTracking())
-		{
-			throw new IllegalStateException("Tried to start tracking while there is already an active tracker");
-		}
-		
-		TRACKING_MOD_ID = modId;
-	}
-	
-	public static void stopTracking()
-	{
-		TRACKING_MOD_ID = null;
-	}
-	
-	public static boolean isTracking()
-	{
-		return TRACKING_MOD_ID != null;
-	}
-	
-	public static void assertTracking()
-	{
-		if(!isTracking())
-		{
-			throw new IllegalStateException("Tracker is not open right now");
-		}
-	}
-	
-	public static void assertNotTracking()
-	{
-		if(isTracking())
-		{
-			throw new IllegalStateException("Tracker is open right now");
-		}
-	}
-	
-	public static String getTrackingModId()
-	{
-		return TRACKING_MOD_ID;
-	}
-	
-	public static ResourceLocation id(String id)
-	{
-		assertTracking();
-		
-		return ResourceLocation.fromNamespaceAndPath(TRACKING_MOD_ID, id);
-	}
-	
 	private static final Map<ResourceLocation, String>                                         REI_CATEGORY_NAMES    = Maps.newHashMap();
 	private static final Map<ResourceLocation, MachineModelProperties>                         MACHINE_MODELS        = Maps.newHashMap();
 	private static final Map<String, List<Consumer<MachineCasingModelsMIHookDatagenProvider>>> MACHINE_CASING_MODELS = Maps.newHashMap();
@@ -97,11 +47,9 @@ public final class MIHookTracker
 		return MACHINE_CASING_MODELS.computeIfAbsent(modId, (k) -> Lists.newArrayList());
 	}
 	
-	public static void addMachineCasingModel(Consumer<MachineCasingModelsMIHookDatagenProvider> action)
+	public static void addMachineCasingModel(MIHook hook, Consumer<MachineCasingModelsMIHookDatagenProvider> action)
 	{
-		assertTracking();
-		
-		MACHINE_CASING_MODELS.computeIfAbsent(TRACKING_MOD_ID, (k) -> Lists.newArrayList()).add(action);
+		MACHINE_CASING_MODELS.computeIfAbsent(hook.modId(), (k) -> Lists.newArrayList()).add(action);
 	}
 	
 	public record MachineModelProperties(

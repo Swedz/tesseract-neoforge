@@ -1,19 +1,15 @@
 package net.swedz.tesseract.neoforge.compat.mi.hack;
 
-import aztech.modern_industrialization.MIFluids;
 import aztech.modern_industrialization.api.energy.CableTier;
 import aztech.modern_industrialization.compat.rei.machines.MachineCategoryParams;
 import aztech.modern_industrialization.compat.rei.machines.ReiMachineRecipes;
 import aztech.modern_industrialization.compat.rei.machines.SteamMode;
-import aztech.modern_industrialization.inventory.ConfigurableFluidStack;
-import aztech.modern_industrialization.inventory.ConfigurableItemStack;
 import aztech.modern_industrialization.inventory.SlotPositions;
 import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.MachineBlock;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
 import aztech.modern_industrialization.machines.blockentities.ElectricCraftingMachineBlockEntity;
 import aztech.modern_industrialization.machines.blockentities.SteamCraftingMachineBlockEntity;
-import aztech.modern_industrialization.machines.components.MachineInventoryComponent;
 import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
 import aztech.modern_industrialization.machines.guicomponents.EnergyBar;
 import aztech.modern_industrialization.machines.guicomponents.ProgressBar;
@@ -35,9 +31,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import net.swedz.tesseract.neoforge.compat.mi.helper.MachineInventoryHelper;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
-import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.mixin.accessor.MIMachineRecipeTypesAccessor;
 import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
@@ -62,12 +59,13 @@ public final class HackedMachineRegistrationHelper
 	 * @see MachineRegistrationHelper#registerMachine(String, String, Function, Consumer[])
 	 */
 	@SafeVarargs
-	public static Supplier<BlockEntityType<?>> registerMachine(String englishName, String name,
+	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
+															   String englishName, String name,
 															   Function<BEP, MachineBlockEntity> factory,
 															   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		MIHookRegistry registry = MIHooks.getRegistry(MIHookTracker.getTrackingModId());
-		ResourceLocation id = MIHookTracker.id(name);
+		MIHookRegistry registry = hook.registry();
+		ResourceLocation id = hook.id(name);
 		
 		AtomicReference<BlockEntityType<?>> bet = new AtomicReference<>();
 		BiFunction<BlockPos, BlockState, MachineBlockEntity> ctor = (pos, state) -> factory.apply(new BEP(bet.get(), pos, state));
@@ -124,23 +122,23 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see MachineRegistrationHelper#addMachineModel(String, String, MachineCasing, boolean, boolean, boolean, boolean)
 	 */
-	public static void addMachineModel(String name, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active)
+	public static void addMachineModel(MIHook hook, String name, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active)
 	{
-		MIHookTracker.addMachineModel(MIHookTracker.id(name), defaultCasing, overlay, front, top, side, active);
+		MIHookTracker.addMachineModel(hook.id(name), defaultCasing, overlay, front, top, side, active);
 	}
 	
 	/**
 	 * @see MachineRegistrationHelper#addMachineModel(String, String, MachineCasing, boolean, boolean, boolean)
 	 */
-	public static void addMachineModel(String name, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side)
+	public static void addMachineModel(MIHook hook, String name, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side)
 	{
-		addMachineModel(name, defaultCasing, overlay, front, top, side, true);
+		addMachineModel(hook, name, defaultCasing, overlay, front, top, side, true);
 	}
 	
 	/**
 	 * @see MachineRegistrationHelper#addMachineModel(String, String, String, boolean, boolean, boolean)
 	 */
-	public static void addMachineModel(String name, MachineTier tier, String overlay, boolean front, boolean top, boolean side, boolean active)
+	public static void addMachineModel(MIHook hook, String name, MachineTier tier, String overlay, boolean front, boolean top, boolean side, boolean active)
 	{
 		MachineCasing defaultCasing = switch (tier)
 		{
@@ -149,21 +147,22 @@ public final class HackedMachineRegistrationHelper
 			case LV -> CableTier.LV.casing;
 			default -> throw new RuntimeException("Invalid tier: " + tier);
 		};
-		addMachineModel(name, defaultCasing, overlay, front, top, side, active);
+		addMachineModel(hook, name, defaultCasing, overlay, front, top, side, active);
 	}
 	
 	/**
 	 * @see MachineRegistrationHelper#addMachineModel(String, String, MachineCasing, boolean, boolean, boolean, boolean)
 	 */
-	public static void addMachineModel(String name, MachineTier tier, String overlay, boolean front, boolean top, boolean side)
+	public static void addMachineModel(MIHook hook, String name, MachineTier tier, String overlay, boolean front, boolean top, boolean side)
 	{
-		addMachineModel(name, tier, overlay, front, top, side, true);
+		addMachineModel(hook, name, tier, overlay, front, top, side, true);
 	}
 	
 	/**
 	 * @see SingleBlockCraftingMachines#registerMachineTiers(String, String, MachineRecipeType, int, int, int, int, Consumer, ProgressBar.Parameters, RecipeEfficiencyBar.Parameters, EnergyBar.Parameters, Consumer, Consumer, boolean, boolean, boolean, int, int, Config)
 	 */
-	public static void registerMachineTiers(String englishName, String machineName, MachineRecipeType type, int itemInputCount, int itemOutputCount,
+	public static void registerMachineTiers(MIHook hook,
+											String englishName, String machineName, MachineRecipeType type, int itemInputCount, int itemOutputCount,
 											int fluidInputCount,
 											int fluidOutputCount, Consumer<MachineGuiParameters.Builder> guiParams, ProgressBar.Parameters progressBarParams,
 											RecipeEfficiencyBar.Parameters efficiencyBarParams, EnergyBar.Parameters energyBarParams, Consumer<SlotPositions.Builder> itemPositions,
@@ -188,14 +187,16 @@ public final class HackedMachineRegistrationHelper
 			String englishPrefix = i == 0 ? "Bronze " : "Steel ";
 			int steamBuckets = i == 0 ? 2 : 4;
 			String id = prefix + "_" + machineName;
-			MachineGuiParameters.Builder guiParamsBuilder = new MachineGuiParameters.Builder(MIHookTracker.id(id), true);
+			MachineGuiParameters.Builder guiParamsBuilder = new MachineGuiParameters.Builder(hook.id(id), true);
 			guiParams.accept(guiParamsBuilder);
 			MachineGuiParameters builtGuiParams = guiParamsBuilder.build();
 			
-			registerMachine(englishPrefix + englishName, id,
+			registerMachine(
+					hook,
+					englishPrefix + englishName, id,
 					(bet) -> new SteamCraftingMachineBlockEntity(
 							bet, type,
-							buildComponent(itemInputCount, itemOutputCount, fluidInputCount, fluidOutputCount, items, fluids, steamBuckets, ioBucketCapacity),
+							MachineInventoryHelper.buildInventoryComponent(itemInputCount, itemOutputCount, fluidInputCount, fluidOutputCount, items, fluids, steamBuckets, ioBucketCapacity),
 							builtGuiParams, progressBarParams, tier, extraConfig.steamOverclockCatalysts
 					),
 					(bet) ->
@@ -207,7 +208,7 @@ public final class HackedMachineRegistrationHelper
 						MachineBlockEntity.registerFluidApi(bet);
 					}
 			);
-			addMachineModel(id, tier, machineName, frontOverlay, topOverlay, sideOverlay);
+			addMachineModel(hook, id, tier, machineName, frontOverlay, topOverlay, sideOverlay);
 		}
 		if((tiers & TIER_ELECTRIC) > 0)
 		{
@@ -216,7 +217,7 @@ public final class HackedMachineRegistrationHelper
 			
 			String id = tiers == TIER_ELECTRIC ? machineName : "electric_" + machineName;
 			
-			MachineGuiParameters.Builder guiParamsBuilder = new MachineGuiParameters.Builder(MIHookTracker.id(id), true);
+			MachineGuiParameters.Builder guiParamsBuilder = new MachineGuiParameters.Builder(hook.id(id), true);
 			guiParams.accept(guiParamsBuilder);
 			MachineGuiParameters builtGuiParams = guiParamsBuilder.build();
 			
@@ -228,10 +229,11 @@ public final class HackedMachineRegistrationHelper
 			}
 			
 			registerMachine(
+					hook,
 					electricEnglishName, id,
 					(bet) -> new ElectricCraftingMachineBlockEntity(
 							bet, type,
-							buildComponent(itemInputCount, itemOutputCount, fluidInputCount, fluidOutputCount, items, fluids, 0, ioBucketCapacity),
+							MachineInventoryHelper.buildInventoryComponent(itemInputCount, itemOutputCount, fluidInputCount, fluidOutputCount, items, fluids, 0, ioBucketCapacity),
 							builtGuiParams,
 							energyBarParams, progressBarParams, efficiencyBarParams, MachineTier.LV, 3200
 					),
@@ -248,12 +250,13 @@ public final class HackedMachineRegistrationHelper
 						}
 					}
 			);
-			addMachineModel(id, MachineTier.LV, machineName, frontOverlay, topOverlay, sideOverlay);
+			addMachineModel(hook, id, MachineTier.LV, machineName, frontOverlay, topOverlay, sideOverlay);
 		}
 		
 		SlotPositions items = new SlotPositions.Builder().buildWithConsumer(itemPositions);
 		SlotPositions fluids = new SlotPositions.Builder().buildWithConsumer(fluidPositions);
 		registerReiTiers(
+				hook,
 				englishName, machineName, type,
 				new MachineCategoryParams(
 						null, null, items.sublist(0, itemInputCount),
@@ -268,7 +271,7 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see SingleBlockCraftingMachines#registerReiTiers(String, String, MachineRecipeType, MachineCategoryParams, int)
 	 */
-	private static void registerReiTiers(String englishName, String machine, MachineRecipeType recipeType, MachineCategoryParams categoryParams, int tiers)
+	private static void registerReiTiers(MIHook hook, String englishName, String machine, MachineRecipeType recipeType, MachineCategoryParams categoryParams, int tiers)
 	{
 		List<MachineCategoryParams> previousCategories = new ArrayList<>();
 		int previousMaxEu = 0;
@@ -279,7 +282,7 @@ public final class HackedMachineRegistrationHelper
 				int minEu = previousMaxEu + 1;
 				int maxEu = i == 0 ? 2 : i == 1 ? 4 : Integer.MAX_VALUE;
 				String prefix = i == 0 ? "bronze_" : i == 1 ? "steel_" : tiers == TIER_ELECTRIC ? "" : "electric_";
-				ResourceLocation itemId = MIHookTracker.id(prefix + machine);
+				ResourceLocation itemId = hook.id(prefix + machine);
 				String englishPrefix = i == 0 ? "Bronze " : i == 1 ? "Steel " : "Electric ";
 				String fullEnglishName = tiers == TIER_ELECTRIC || previousMaxEu == 0 ? englishName : englishPrefix + englishName;
 				MachineCategoryParams category = new MachineCategoryParams(
@@ -304,47 +307,13 @@ public final class HackedMachineRegistrationHelper
 	}
 	
 	/**
-	 * @see SingleBlockCraftingMachines#buildComponent(int, int, int, int, SlotPositions, SlotPositions, int, int)
-	 */
-	private static MachineInventoryComponent buildComponent(int itemInputCount, int itemOutputCount, int fluidInputCount, int fluidOutputCount,
-															SlotPositions itemPositions, SlotPositions fluidPositions, int steamBuckets, int ioBucketCapacity)
-	{
-		
-		List<ConfigurableItemStack> itemInputStacks = new ArrayList<>();
-		for(int i = 0; i < itemInputCount; ++i)
-		{
-			itemInputStacks.add(ConfigurableItemStack.standardInputSlot());
-		}
-		List<ConfigurableItemStack> itemOutputStacks = new ArrayList<>();
-		for(int i = 0; i < itemOutputCount; ++i)
-		{
-			itemOutputStacks.add(ConfigurableItemStack.standardOutputSlot());
-		}
-		List<ConfigurableFluidStack> fluidInputStacks = new ArrayList<>();
-		if(steamBuckets > 0)
-		{
-			fluidInputStacks.add(ConfigurableFluidStack.lockedInputSlot(1000L * steamBuckets, MIFluids.STEAM.asFluid()));
-		}
-		for(int i = 0; i < fluidInputCount; ++i)
-		{
-			fluidInputStacks.add(ConfigurableFluidStack.standardInputSlot(1000L * ioBucketCapacity));
-		}
-		List<ConfigurableFluidStack> fluidOutputStacks = new ArrayList<>();
-		for(int i = 0; i < fluidOutputCount; ++i)
-		{
-			fluidOutputStacks.add(ConfigurableFluidStack.standardOutputSlot(1000L * ioBucketCapacity));
-		}
-		return new MachineInventoryComponent(itemInputStacks, itemOutputStacks, fluidInputStacks, fluidOutputStacks, itemPositions, fluidPositions);
-	}
-	
-	/**
 	 * @see MIMachineRecipeTypes#create(String, Function)
 	 */
-	public static MachineRecipeType createMachineRecipeType(String name, Function<ResourceLocation, MachineRecipeType> creator)
+	public static MachineRecipeType createMachineRecipeType(MIHook hook, String name, Function<ResourceLocation, MachineRecipeType> creator)
 	{
-		MIHookRegistry registry = MIHooks.getRegistry(MIHookTracker.getTrackingModId());
+		MIHookRegistry registry = hook.registry();
 		
-		MachineRecipeType type = creator.apply(MIHookTracker.id(name));
+		MachineRecipeType type = creator.apply(hook.id(name));
 		registry.recipeSerializerRegistry().register(name, () -> type);
 		registry.recipeTypeRegistry().register(name, () -> type);
 		registry.onMachineRecipeTypeRegister(type);
