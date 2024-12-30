@@ -1,7 +1,6 @@
 package net.swedz.tesseract.neoforge.compat.mi.mixin.hook.listener;
 
 import aztech.modern_industrialization.MI;
-import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookListener;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -20,7 +19,7 @@ public class BeforeAfterInitHookMixin
 	)
 	private void beforeInit(CallbackInfo callback)
 	{
-		MIHooks.triggerHookListeners(MIHookListener::beforeInit);
+		MIHooks.triggerHookListeners((hook, listener) -> listener.beforeInit());
 	}
 	
 	@Inject(
@@ -29,6 +28,6 @@ public class BeforeAfterInitHookMixin
 	)
 	private void afterInit(CallbackInfo callback)
 	{
-		MIHooks.triggerHookListeners(MIHookListener::afterInit);
+		MIHooks.triggerHookListeners((hook, listener) -> listener.afterInit());
 	}
 }

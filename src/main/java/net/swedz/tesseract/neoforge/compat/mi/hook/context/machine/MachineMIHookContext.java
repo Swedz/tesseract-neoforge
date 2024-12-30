@@ -1,9 +1,8 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook.context.machine;
 
 import aztech.modern_industrialization.machines.MachineBlockEntity;
-import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
 
-public class MachineMIHookContext implements MIHookContext
+public class MachineMIHookContext
 {
 	private final MachineBlockEntity machineBlockEntity;
 	

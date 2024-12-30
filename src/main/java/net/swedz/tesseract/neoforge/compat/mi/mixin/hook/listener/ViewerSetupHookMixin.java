@@ -29,10 +29,10 @@ public class ViewerSetupHookMixin
 	private static void clinit(CallbackInfoReturnable<List<ViewerCategory<?>>> callback,
 							   @Local(name = "registry") List<ViewerCategory<?>> registry)
 	{
-		MIHooks.triggerHookListeners((hook) ->
+		MIHooks.triggerHookListeners((hook, listener) ->
 		{
-			ViewerSetupMIHookContext context = new ViewerSetupMIHookContext();
-			hook.viewerSetup(context);
+			ViewerSetupMIHookContext context = new ViewerSetupMIHookContext(hook);
+			listener.viewerSetup(context);
 			registry.addAll(context.getRegisteredCategories());
 		});
 	}

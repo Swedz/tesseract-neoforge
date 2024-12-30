@@ -21,6 +21,6 @@ public class GuiComponentsClientHookMixin
 	)
 	private static void cinit(CallbackInfo callback)
 	{
-		MIHooks.triggerHookListeners((hook) -> hook.clientGuiComponents(new ClientGuiComponentsMIHookContext()));
+		MIHooks.triggerHookListeners((hook, listener) -> listener.clientGuiComponents(new ClientGuiComponentsMIHookContext(hook)));
 	}
 }

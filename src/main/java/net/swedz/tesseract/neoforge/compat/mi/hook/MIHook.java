@@ -1,12 +1,31 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook;
 
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.Objects;
 
 public final class MIHook
 {
+	private final String modId;
+	
 	private MIHookRegistry   registry           = MIHookRegistry.NONE;
 	private MIHookListener   listener           = MIHookListener.NONE;
 	private MIHookEfficiency efficiencyListener = MIHookEfficiency.NONE;
+	
+	public MIHook(String modId)
+	{
+		this.modId = modId;
+	}
+	
+	public String modId()
+	{
+		return modId;
+	}
+	
+	public ResourceLocation id(String path)
+	{
+		return ResourceLocation.fromNamespaceAndPath(modId, path);
+	}
 	
 	public MIHookRegistry registry()
 	{

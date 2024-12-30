@@ -24,10 +24,10 @@ public class BlastFurnaceTierHookMixin
 	)
 	private static List clinit(List value)
 	{
-		MIHooks.triggerHookListeners((hook) ->
+		MIHooks.triggerHookListeners((hook, listener) ->
 		{
-			BlastFurnaceTiersMIHookContext context = new BlastFurnaceTiersMIHookContext();
-			hook.blastFurnaceTiers(context);
+			BlastFurnaceTiersMIHookContext context = new BlastFurnaceTiersMIHookContext(hook);
+			listener.blastFurnaceTiers(context);
 			value.addAll(context.getRegisteredTiers());
 		});
 		return value;

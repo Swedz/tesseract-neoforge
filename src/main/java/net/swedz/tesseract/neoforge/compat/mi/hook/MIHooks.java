@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public final class MIHooks
 {
@@ -73,7 +72,7 @@ public final class MIHooks
 	private static MIHook getHook(String modId)
 	{
 		MIHookEntrypointLoader.ensureLoaded();
-		return HOOKS.computeIfAbsent(modId, (k) -> new MIHook());
+		return HOOKS.computeIfAbsent(modId, MIHook::new);
 	}
 	
 	@ApiStatus.Internal
@@ -88,16 +87,12 @@ public final class MIHooks
 	}
 	
 	@ApiStatus.Internal
-	public static void triggerHookListeners(Consumer<MIHookListener> action)
+	public static void triggerHookListeners(BiConsumer<MIHook, MIHookListener> action)
 	{
 		MIHookEntrypointLoader.ensureLoaded();
-		for(Map.Entry<String, MIHook> entry : HOOKS.entrySet())
+		for(var entry : HOOKS.entrySet())
 		{
-			MIHookTracker.startTracking(entry.getKey());
-			
-			action.accept(entry.getValue().listener());
-			
-			MIHookTracker.stopTracking();
+			action.accept(entry.getValue(), entry.getValue().listener());
 		}
 	}
 	
