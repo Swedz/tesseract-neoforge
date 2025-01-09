@@ -9,7 +9,7 @@ version = "${mod_version}"
 displayName = "${mod_name}"
 authors = "${mod_authors}"
 description = '''${mod_description}'''
-logoFile = "assets/tesseract/logo.png"
+logoFile = "assets/${mod_id}/logo.png"
 displayURL = "${mod_github}"
 
 [[mixins]]
