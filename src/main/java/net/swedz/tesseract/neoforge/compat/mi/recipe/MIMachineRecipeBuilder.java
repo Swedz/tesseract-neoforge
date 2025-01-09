@@ -141,7 +141,7 @@ public class MIMachineRecipeBuilder extends MIRecipeJson<MIMachineRecipeBuilder>
 		
 		for(MachineRecipe.FluidInput fluidInput : recipe.fluidInputs)
 		{
-			inversedRecipe.addFluidOutput(fluidInput.fluid(), (int) fluidInput.amount(), fluidInput.probability());
+			inversedRecipe.addFluidOutput(fluidInput.getInputFluids().getFirst(), (int) fluidInput.amount(), fluidInput.probability());
 		}
 		
 		for(MachineRecipe.ItemOutput itemOutput : recipe.itemOutputs)
