@@ -244,7 +244,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 			long countFluidInHatches = 0;
 			for(ConfigurableFluidStack stack : inventory.getFluidInputs())
 			{
-				if(stack.getResource().equals(FluidVariant.of(input.fluid())))
+				if(CrafterComponentHelper.fluidIngredientMatch(stack.getResource(), input.fluid()))
 				{
 					countFluidInHatches += stack.getAmount();
 				}
