@@ -15,6 +15,7 @@ import net.swedz.tesseract.neoforge.event.ItemHurtEvent;
 import net.swedz.tesseract.neoforge.item.ArmorTickHandler;
 import net.swedz.tesseract.neoforge.item.ArmorUnequippedHandler;
 import net.swedz.tesseract.neoforge.item.ItemHurtHandler;
+import net.swedz.tesseract.neoforge.proxy.Proxies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +34,8 @@ public final class Tesseract
 	
 	public Tesseract(IEventBus bus)
 	{
+		Proxies.initialize();
+		
 		bus.addListener(GatherDataEvent.class, (event) ->
 				event.getGenerator().addProvider(event.includeClient(), new LanguageDatagenProvider(event)));
 		

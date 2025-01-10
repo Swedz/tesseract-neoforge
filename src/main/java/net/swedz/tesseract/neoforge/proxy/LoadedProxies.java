@@ -25,12 +25,12 @@ public final class LoadedProxies
 	
 	private final Map<Class<? extends Proxy>, LoadedProxy> proxies = Maps.newHashMap();
 	
-	private boolean initialized;
+	private boolean loaded, initialized;
 	
 	public <P extends Proxy> P get(Class<P> proxyClass)
 	{
 		Objects.requireNonNull(proxyClass);
-		this.tryInitEntrypoints();
+		this.tryLoadEntrypoints();
 		if(!proxies.containsKey(proxyClass))
 		{
 			throw new IllegalArgumentException("No proxy found for class %s".formatted(proxyClass.getName()));
@@ -49,7 +49,7 @@ public final class LoadedProxies
 			}
 		}
 		
-		this.tryInitEntrypoints();
+		this.tryLoadEntrypoints();
 		
 		T value = startingValue;
 		
@@ -140,21 +140,34 @@ public final class LoadedProxies
 		}
 	}
 	
-	private void tryInitEntrypoints()
-	{
-		if(!initialized)
-		{
-			initEntrypoints();
-		}
-	}
-	
-	private void initEntrypoints()
+	void initEntrypoints()
 	{
 		if(initialized)
 		{
-			throw new IllegalStateException("Proxy entrypoints already registered");
+			throw new IllegalStateException("Proxy entrypoints already initialized");
 		}
 		initialized = true;
+		
+		this.tryLoadEntrypoints();
+		
+		proxies.forEach((key, proxy) -> proxy.proxy().init());
+	}
+	
+	private void tryLoadEntrypoints()
+	{
+		if(!loaded)
+		{
+			loadEntrypoints();
+		}
+	}
+	
+	private void loadEntrypoints()
+	{
+		if(loaded)
+		{
+			throw new IllegalStateException("Proxy entrypoints already registered");
+		}
+		loaded = true;
 		
 		LOGGER.info("Starting proxy manager entrypoint loader");
 		
@@ -191,10 +204,7 @@ public final class LoadedProxies
 				});
 		
 		proxies.forEach((key, proxy) ->
-		{
-			proxy.proxy().init();
-			LOGGER.info("Loaded proxy entrypoint {} ({})", proxy.key().getName(), proxy.proxy().getClass().getSimpleName());
-		});
+				LOGGER.info("Loaded proxy entrypoint {} ({})", proxy.key().getName(), proxy.proxy().getClass().getSimpleName()));
 		
 		LOGGER.info("Done proxy manager entrypoint loader");
 	}
