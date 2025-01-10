@@ -1,5 +1,7 @@
 package net.swedz.tesseract.neoforge.proxy;
 
+import org.jetbrains.annotations.ApiStatus;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -8,6 +10,15 @@ import java.util.function.Function;
 public final class Proxies
 {
 	private static final LoadedProxies PROXIES = new LoadedProxies();
+	
+	/**
+	 * Runs the {@link Proxy#init()} method on all loaded proxies. This should only ever be called in Tesseract's mod constructor.
+	 */
+	@ApiStatus.Internal
+	public static void initialize()
+	{
+		PROXIES.initEntrypoints();
+	}
 	
 	/**
 	 * Get the active proxy for a given superclass. Proxies are referred to by their highest superclass (other than
