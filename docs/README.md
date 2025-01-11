@@ -25,7 +25,14 @@ Refer to [PROXIES.md](PROXIES.md) for further information.
 
 ## Behaviors
 
-When you need to supply multiple behaviors for a system and grab them depending on context, the Behavior API has you 
+When you need to supply multiple behaviors for a system and grab them depending on context, the Behavior API has you
 covered.
 
 Refer to [BEHAVIORS.md](BEHAVIORS.md) for further information.
+
+## Configs
+
+Creating configs using the `ModConfigSpec.Builder` can be messy - but Tesseract has a very simple and clean annotation
+based config API that uses a `ModConfigSpec.Builder` under the hood to keep consistent behavior!
+
+Refer to [CONFIGS.md](CONFIGS.md) for further information.
