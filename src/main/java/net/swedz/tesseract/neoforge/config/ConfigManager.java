@@ -106,12 +106,13 @@ public final class ConfigManager
 						var codec = codecs.get(type);
 						value = codec.encodeStart(TomlOps.INSTANCE, defaultValue)
 								.getOrThrow((error) -> new IllegalConfigOptionException("Unable to encode default value %s: %s".formatted(defaultValue, error)));
+						builder.define(key, value, (currentValue) -> codec.parse(TomlOps.INSTANCE, currentValue).isSuccess());
 					}
 					else
 					{
 						value = defaultValue;
+						builder.define(key, value);
 					}
-					builder.define(key, value);
 				}
 				else
 				{
