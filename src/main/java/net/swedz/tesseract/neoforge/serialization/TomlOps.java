@@ -16,9 +16,10 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
- * This is taken from Commoble's databuddy library (see <a href="https://github.com/Commoble/databuddy/blob/dc623ae7f11e6f2113e94e8e4ed18cca2dfedafa/src/main/java/net/commoble/databuddy/config/ConfigHelper.java#L208-L426">ConfigHelper</a>).
- * <br><br>
  * DynamicOps for using {@link com.mojang.serialization.Codec}s to load objects from configs.
+ *
+ * @author <a href="https://github.com/Commoble">Commoble</a>
+ * @see <a href="https://github.com/Commoble/databuddy/blob/dc623ae7f11e6f2113e94e8e4ed18cca2dfedafa/src/main/java/net/commoble/databuddy/config/ConfigHelper.java#L208-L426">net.commoble.databuddy.config.ConfigHelper.TomlConfigOps</a>
  */
 public final class TomlOps implements DynamicOps<Object>
 {
