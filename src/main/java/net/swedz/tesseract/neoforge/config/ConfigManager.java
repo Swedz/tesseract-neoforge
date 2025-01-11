@@ -7,6 +7,7 @@ import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigComment;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigKey;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigOrder;
+import net.swedz.tesseract.neoforge.config.annotation.Range;
 import net.swedz.tesseract.neoforge.config.annotation.SubSection;
 import net.swedz.tesseract.neoforge.serialization.TomlOps;
 
@@ -59,7 +60,7 @@ public final class ConfigManager
 	{
 		Assert.noneNull(builder, configClass);
 		
-		var defaultValueProxy = Proxy.newProxyInstance(configClass.getClassLoader(), new Class[]{configClass}, new DefaultValueConfigHandler());
+		var proxy = Proxy.newProxyInstance(configClass.getClassLoader(), new Class[]{configClass}, new DefaultValueConfigHandler());
 		
 		List<Method> methods = Lists.newArrayList(configClass.getMethods());
 		methods.sort((a, b) ->
@@ -108,26 +109,39 @@ public final class ConfigManager
 				
 				if(method.isDefault())
 				{
-					var defaultValue = InvocationHandler.invokeDefault(defaultValueProxy, method);
-					Object value;
-					if(codecs.has(type))
-					{
-						var codec = codecs.get(type);
-						value = codec.encodeStart(TomlOps.INSTANCE, defaultValue)
-								.getOrThrow((error) -> new IllegalConfigOptionException("Unable to encode default value %s: %s".formatted(defaultValue, error)));
-						builder.define(key, value, (currentValue) -> codec.parse(TomlOps.INSTANCE, currentValue).isSuccess());
-					}
-					else
-					{
-						value = defaultValue;
-						builder.define(key, value);
-					}
+					var defaultValue = InvocationHandler.invokeDefault(proxy, method);
+					this.defineValue(method, builder, key, defaultValue);
 				}
 				else
 				{
 					throw new IllegalConfigOptionException("Cannot retrieve default value from method %s".formatted(method.getName()));
 				}
 			}
+		}
+	}
+	
+	private void defineValue(Method method,
+							 ModConfigSpec.Builder builder, String key,
+							 Object defaultValue) throws Throwable
+	{
+		Class type = method.getReturnType();
+		
+		Object value;
+		if(codecs.has(type))
+		{
+			var codec = codecs.get(type);
+			value = codec.encodeStart(TomlOps.INSTANCE, defaultValue)
+					.getOrThrow((error) -> new IllegalConfigOptionException("Unable to encode default value %s: %s".formatted(defaultValue, error)));
+			builder.define(key, value, (currentValue) -> codec.parse(TomlOps.INSTANCE, currentValue).isSuccess());
+		}
+		else
+		{
+			value = defaultValue;
+			if(Range.maybeDefine(builder, key, value, method))
+			{
+				return;
+			}
+			builder.define(key, value);
 		}
 	}
 }
