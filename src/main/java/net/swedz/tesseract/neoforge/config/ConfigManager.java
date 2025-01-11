@@ -21,9 +21,17 @@ public final class ConfigManager
 {
 	private final ConfigCodecMap codecs = new ConfigCodecMap();
 	
+	private boolean includeDefaultValueComments;
+	
 	public ConfigCodecMap codecs()
 	{
 		return codecs;
+	}
+	
+	public ConfigManager includeDefaultValueComments()
+	{
+		includeDefaultValueComments = true;
+		return this;
 	}
 	
 	<C> ConfigInstance<C> build(ModConfigSpec spec, Class<C> configClass, String path)
@@ -136,6 +144,10 @@ public final class ConfigManager
 		}
 		else
 		{
+			if(includeDefaultValueComments)
+			{
+				builder.comment("Default: " + defaultValue);
+			}
 			value = defaultValue;
 			if(Range.maybeDefine(builder, key, value, method))
 			{
