@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.config;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigComment;
@@ -13,6 +14,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
+import java.util.Set;
 
 public final class ConfigManager
 {
@@ -71,6 +73,8 @@ public final class ConfigManager
 			return 0;
 		});
 		
+		Set<String> keys = Sets.newHashSet();
+		
 		for(var method : methods)
 		{
 			if(method.isAnnotationPresent(ConfigKey.class))
@@ -88,6 +92,11 @@ public final class ConfigManager
 				
 				String key = method.getAnnotation(ConfigKey.class).value();
 				Class type = method.getReturnType();
+				
+				if(!keys.add(key))
+				{
+					throw new IllegalConfigOptionException("Duplicate config key: %s".formatted(key));
+				}
 				
 				if(method.isAnnotationPresent(SubSection.class))
 				{
