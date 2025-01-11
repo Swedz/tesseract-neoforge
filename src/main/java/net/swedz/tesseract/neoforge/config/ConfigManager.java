@@ -153,6 +153,11 @@ public final class ConfigManager
 			{
 				return;
 			}
+			if(value instanceof Enum enumValue)
+			{
+				builder.defineEnum(key, enumValue);
+				return;
+			}
 			builder.define(key, value);
 		}
 	}
