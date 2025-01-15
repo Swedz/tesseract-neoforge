@@ -12,11 +12,11 @@ import net.swedz.tesseract.neoforge.proxy.builtin.TesseractProxy;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.PriorityQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public final class TooltipHandler
 {
-	private static final PriorityQueue<TooltipAttachment> TOOLTIPS = new PriorityQueue<>();
+	private static final ConcurrentLinkedQueue<TooltipAttachment> TOOLTIPS = new ConcurrentLinkedQueue<>();
 	
 	static void register(TooltipAttachment tooltip)
 	{
