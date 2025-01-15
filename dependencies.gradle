@@ -1,0 +1,47 @@
+repositories {
+	mavenLocal()
+	maven {
+		name = "Modmaven"
+		url = "https://modmaven.dev"
+		content {
+			// GrandPower
+			includeGroup "dev.technici4n"
+			// Modern Industrialization
+			includeGroup "aztech"
+		}
+	}
+	maven {
+		name = "shedaniel"
+		url = "https://maven.shedaniel.me"
+		content {
+			// Cloth Config
+			includeGroup "me.shedaniel.cloth"
+		}
+	}
+	maven {
+		name = "TerraformersMC"
+		url = "https://maven.terraformersmc.com/releases/"
+		content {
+			// EMI
+			includeGroup "dev.emi"
+		}
+	}
+}
+
+dependencies {
+	if (project.runtime_include_emi.toBoolean()) {
+		localImplementation "dev.emi:emi-neoforge:${emi_version}"
+	} else {
+		compileOnly "dev.emi:emi-neoforge:${emi_version}"
+	}
+
+	if (project.runtime_include_mi.toBoolean()) {
+		localImplementation "aztech:Modern-Industrialization:${modern_industrialization_version}"
+		localImplementation "dev.technici4n:GrandPower:${grandpower_version}"
+		localImplementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
+	} else {
+		compileOnly "aztech:Modern-Industrialization:${modern_industrialization_version}"
+		compileOnly "dev.technici4n:GrandPower:${grandpower_version}"
+		compileOnly "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
+	}
+}
