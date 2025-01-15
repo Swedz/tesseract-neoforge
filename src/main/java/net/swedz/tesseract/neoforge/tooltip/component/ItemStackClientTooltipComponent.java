@@ -1,6 +1,5 @@
 package net.swedz.tesseract.neoforge.tooltip.component;
 
-import aztech.modern_industrialization.util.RenderHelper;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -22,6 +21,8 @@ public record ItemStackClientTooltipComponent(ItemStackTooltipComponent componen
 	@Override
 	public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics graphics)
 	{
-		RenderHelper.renderAndDecorateItem(graphics, font, component.stack(), mouseX, mouseY);
+		var stack = component.stack();
+		graphics.renderItem(stack, mouseX, mouseY);
+		graphics.renderItemDecorations(font, stack, mouseX, mouseY, null);
 	}
 }
