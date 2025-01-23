@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.compat.mi.helper.transfer;
 
+import aztech.modern_industrialization.api.energy.CableTier;
 import aztech.modern_industrialization.api.energy.EnergyApi;
 import aztech.modern_industrialization.api.energy.MIEnergyStorage;
 import com.mojang.logging.LogUtils;
@@ -27,35 +28,55 @@ public class MIEnergyTransferCache extends TransferCache<MIEnergyStorage>
 		this(EnergyApi.SIDED, sourceHandler);
 	}
 	
-	public boolean autoExtract(Level level, BlockPos pos, Direction direction, long maxAmount)
+	public boolean autoExtract(Level level, BlockPos pos, Direction direction, CableTier cableTier, long maxAmount)
 	{
 		MIEnergyStorage target = cache.output(level, pos, direction);
-		if(target != null)
+		if(target != null && (cableTier == null || target.canConnect(cableTier)))
 		{
 			return EnergyStorageUtil.move(this.sourceHandler(), target, maxAmount) > 0;
 		}
 		return false;
 	}
 	
+	public boolean autoExtract(Level level, BlockPos pos, Direction direction, CableTier cableTier)
+	{
+		return this.autoExtract(level, pos, direction, cableTier, Long.MAX_VALUE);
+	}
+	
+	public boolean autoExtract(Level level, BlockPos pos, Direction direction, long maxAmount)
+	{
+		return this.autoExtract(level, pos, direction, null, maxAmount);
+	}
+	
 	@Override
 	public boolean autoExtract(Level level, BlockPos pos, Direction direction)
 	{
-		return this.autoExtract(level, pos, direction, Long.MAX_VALUE);
+		return this.autoExtract(level, pos, direction, null, Long.MAX_VALUE);
 	}
 	
-	public boolean autoInsert(Level level, BlockPos pos, Direction direction, long maxAmount)
+	public boolean autoInsert(Level level, BlockPos pos, Direction direction, CableTier cableTier, long maxAmount)
 	{
 		MIEnergyStorage target = cache.input(level, pos, direction);
-		if(target != null)
+		if(target != null && target.canConnect(cableTier))
 		{
 			return EnergyStorageUtil.move(target, this.sourceHandler(), maxAmount) > 0;
 		}
 		return false;
 	}
 	
+	public boolean autoInsert(Level level, BlockPos pos, Direction direction, CableTier cableTier)
+	{
+		return this.autoInsert(level, pos, direction, cableTier, Long.MAX_VALUE);
+	}
+	
+	public boolean autoInsert(Level level, BlockPos pos, Direction direction, long maxAmount)
+	{
+		return this.autoInsert(level, pos, direction, null, maxAmount);
+	}
+	
 	@Override
 	public boolean autoInsert(Level level, BlockPos pos, Direction direction)
 	{
-		return this.autoInsert(level, pos, direction, Long.MAX_VALUE);
+		return this.autoInsert(level, pos, direction, null, Long.MAX_VALUE);
 	}
 }
