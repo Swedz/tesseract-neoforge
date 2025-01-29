@@ -31,4 +31,11 @@ public abstract class ModeledRegisteredObjectHolder<Thing, ActualThing extends T
 		this.modelProvider = Optional.of(modelProvider.apply(this.self()));
 		return this.self();
 	}
+	
+	public Self withoutModel()
+	{
+		this.guaranteeUnlocked();
+		this.modelProvider = Optional.empty();
+		return this.self();
+	}
 }
