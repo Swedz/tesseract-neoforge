@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.registries.datamaps.DataMapsUpdatedEvent;
+import net.swedz.tesseract.neoforge.compat.mi.guicomponent.configurationpanel.ConfigurationPanelBuilder;
 import net.swedz.tesseract.neoforge.compat.mi.helper.CommonGuiComponents;
 
 import java.util.Collections;
@@ -101,6 +102,12 @@ public abstract class MultiblockTieredShapes<T extends MultiblockTier>
 	{
 		List<Component> tierNames = tiers.stream().map(MultiblockTier::getDisplayName).toList();
 		return CommonGuiComponents.rangedShapeSelection(machine, activeShape, tierNames, useArrows);
+	}
+	
+	public void appendConfigurationPanel(ConfigurationPanelBuilder builder, MultiblockMachineBlockEntity machine, ActiveShapeComponent activeShape, boolean useArrows)
+	{
+		List<Component> tierNames = tiers.stream().map(MultiblockTier::getDisplayName).toList();
+		builder.add(tierNames, useArrows, (delta) -> activeShape.incrementShape(machine, delta), activeShape::getActiveShapeIndex);
 	}
 	
 	public final void register()
