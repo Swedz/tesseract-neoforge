@@ -29,6 +29,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.swedz.tesseract.neoforge.compat.mi.helper.MachineInventoryHelper;
@@ -61,6 +62,9 @@ public final class HackedMachineRegistrationHelper
 	@SafeVarargs
 	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
 															   String englishName, String name,
+															   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+															   Consumer<BlockBehaviour.Properties> overrideProperties,
+															   boolean defaultMineableTags,
 															   Function<BEP, MachineBlockEntity> factory,
 															   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
@@ -76,14 +80,27 @@ public final class HackedMachineRegistrationHelper
 				registry.itemRegistry(), BlockItem::new
 		);
 		blockHolder.item().sorted(registry.sortOrderMachines());
+		if(defaultMineableTags)
+		{
+			blockHolder.tag(BlockTags.NEEDS_STONE_TOOL, BlockTags.MINEABLE_WITH_PICKAXE);
+		}
 		blockHolder
-				.tag(BlockTags.NEEDS_STONE_TOOL, BlockTags.MINEABLE_WITH_PICKAXE)
 				.withLootTable(CommonLootTableBuilders::self)
-				.withProperties((p) -> p
-						.mapColor(MapColor.METAL)
-						.destroyTime(4)
-						.requiresCorrectToolForDrops()
-						.isValidSpawn(MobSpawning.NO_SPAWN))
+				.withProperties((properties) ->
+				{
+					if(overrideProperties != null)
+					{
+						overrideProperties.accept(properties);
+					}
+					else
+					{
+						properties
+								.mapColor(MapColor.METAL)
+								.destroyTime(4)
+								.requiresCorrectToolForDrops()
+								.isValidSpawn(MobSpawning.NO_SPAWN);
+					}
+				})
 				.withModel((holder) -> (provider) ->
 				{
 					MIHookTracker.MachineModelProperties machineModelProperties = MIHookTracker.getMachineModel(id);
@@ -96,8 +113,12 @@ public final class HackedMachineRegistrationHelper
 							.getBuilder(name)
 							.customLoader((bmb, exFile) -> new FakedMachineModelBuilder<>(machineModelProperties, bmb, exFile))
 							.end());
-				})
-				.register();
+				});
+		if(modifyBlock != null)
+		{
+			modifyBlock.accept(blockHolder);
+		}
+		blockHolder.register();
 		
 		registry.onBlockRegister(blockHolder);
 		registry.onItemRegister(blockHolder.item());
@@ -117,6 +138,26 @@ public final class HackedMachineRegistrationHelper
 			
 			return bet.get();
 		});
+	}
+	
+	@SafeVarargs
+	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
+															   String englishName, String name,
+															   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+															   Consumer<BlockBehaviour.Properties> overrideProperties,
+															   Function<BEP, MachineBlockEntity> factory,
+															   Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		return registerMachine(hook, englishName, name, modifyBlock, overrideProperties, true, factory, extraRegistrators);
+	}
+	
+	@SafeVarargs
+	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
+															   String englishName, String name,
+															   Function<BEP, MachineBlockEntity> factory,
+															   Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		return registerMachine(hook, englishName, name, null, null, factory, extraRegistrators);
 	}
 	
 	/**
