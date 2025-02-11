@@ -20,7 +20,7 @@ public final class TesseractClient
 	public TesseractClient(IEventBus bus)
 	{
 		NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, ItemTooltipEvent.class, (event) ->
-				TooltipHandler.attach(event.getItemStack(), event.getToolTip()));
+				TooltipHandler.attach(event.getFlags(), event.getContext(), event.getItemStack(), event.getToolTip()));
 	}
 	
 	@SubscribeEvent
