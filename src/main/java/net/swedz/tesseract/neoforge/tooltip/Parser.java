@@ -15,6 +15,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.swedz.tesseract.neoforge.api.tuple.Pair;
 
 public interface Parser<T>
 {
@@ -39,8 +40,19 @@ public interface Parser<T>
 	
 	Parser<Fluid>                                             FLUID                     = (fluid) -> fluid.getFluidType().getDescription();
 	
-	BiParser<HolderLookup.Provider, ResourceKey<Enchantment>> ENCHANTMENT               = (registries, enchantment) -> registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment).value().description().copy();
-	Parser<Integer>                                           ENCHANTMENT_LEVEL         = (level) -> Component.translatable("enchantment.level.%d".formatted(level));
+	BiParser<HolderLookup.Provider, ResourceKey<Enchantment>>                ENCHANTMENT           = (registries, enchantment) -> registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment).value().description().copy();
+	Parser<Integer>                                                          ENCHANTMENT_LEVEL     = (level) -> Component.translatable("enchantment.level.%d".formatted(level));
+	BiParser<HolderLookup.Provider, Pair<ResourceKey<Enchantment>, Integer>> ENCHANTMENT_AND_LEVEL = (registries, value) ->
+	{
+		var enchantment = registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(value.a()).value();
+		var level = value.b();
+		var component = enchantment.description().copy();
+		if(level != 1 || enchantment.getMaxLevel() != 1)
+		{
+			component.append(ENCHANTMENT_LEVEL.parse(level));
+		}
+		return component;
+	};
 	
 	Parser<EntityType>                                        ENTITY_TYPE               = (entityType) -> entityType.getDescription().copy();
 	
