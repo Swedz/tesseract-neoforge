@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.swedz.tesseract.neoforge.TesseractText;
 import net.swedz.tesseract.neoforge.compat.mi.proxy.TesseractMIProxy;
 import net.swedz.tesseract.neoforge.proxy.Proxies;
@@ -23,7 +24,7 @@ public final class TooltipHandler
 		TOOLTIPS.add(tooltip);
 	}
 	
-	public static void attach(ItemStack stack, List<Component> lines)
+	public static void attach(TooltipFlag flags, Item.TooltipContext context, ItemStack stack, List<Component> lines)
 	{
 		Item item = stack.getItem();
 		if(item != null)
@@ -31,7 +32,7 @@ public final class TooltipHandler
 			boolean hasPrintRequiredShift = false;
 			for(TooltipAttachment tooltip : TOOLTIPS)
 			{
-				Optional<List<? extends Component>> maybeComponents = tooltip.lines(stack);
+				Optional<List<? extends Component>> maybeComponents = tooltip.lines(flags, context, stack);
 				if(!tooltip.requiresShift() || Proxies.get(TesseractProxy.class).hasShiftDown())
 				{
 					maybeComponents.ifPresent(lines::addAll);

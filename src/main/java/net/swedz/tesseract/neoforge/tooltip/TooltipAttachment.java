@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.ItemLike;
 
 import java.util.List;
@@ -153,9 +154,9 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 		TooltipHandler.register(this);
 	}
 	
-	public Optional<List<? extends Component>> lines(ItemStack stack)
+	public Optional<List<? extends Component>> lines(TooltipFlag flags, Item.TooltipContext context, ItemStack stack)
 	{
-		return function.get(stack, stack.getItem());
+		return function.get(flags, context, stack, stack.getItem());
 	}
 	
 	public boolean requiresShift()
@@ -220,17 +221,17 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 	{
 		static TooltipFunction of(ItemFilter filter, TooltipFunction function)
 		{
-			return (stack, item) -> filter.test(stack, item) ? function.get(stack, item) : Optional.empty();
+			return (flags, context, stack, item) -> filter.test(stack, item) ? function.get(flags, context, stack, item) : Optional.empty();
 		}
 		
 		static TooltipFunction of(ItemFilter filter, TooltipContentFunction function)
 		{
-			return (stack, item) -> filter.test(stack, item) ? Optional.of(function.get(stack, item)) : Optional.empty();
+			return (flags, context, stack, item) -> filter.test(stack, item) ? Optional.of(function.get(flags, context, stack, item)) : Optional.empty();
 		}
 		
 		static TooltipFunction of(ItemFilter filter, List<Component> lines)
 		{
-			return TooltipFunction.of(filter, (TooltipContentFunction) (stack, item) -> lines);
+			return TooltipFunction.of(filter, (TooltipContentFunction) (flags, context, stack, item) -> lines);
 		}
 		
 		static TooltipFunction of(ItemFilter filter, Component line)
@@ -238,33 +239,33 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 			return TooltipFunction.of(filter, List.of(line));
 		}
 		
-		Optional<List<? extends Component>> get(ItemStack stack, I item);
+		Optional<List<? extends Component>> get(TooltipFlag flags, Item.TooltipContext context, ItemStack stack, I item);
 	}
 	
 	public interface SingleLineTooltipFunction<I extends Item> extends TooltipFunction<I>
 	{
-		Optional<Component> getSingleLine(ItemStack stack, I item);
+		Optional<Component> getSingleLine(TooltipFlag flags, Item.TooltipContext context, ItemStack stack, I item);
 		
 		@Override
-		default Optional<List<? extends Component>> get(ItemStack stack, I item)
+		default Optional<List<? extends Component>> get(TooltipFlag flags, Item.TooltipContext context, ItemStack stack, I item)
 		{
-			return this.getSingleLine(stack, item).map(List::of);
+			return this.getSingleLine(flags, context, stack, item).map(List::of);
 		}
 	}
 	
 	public interface TooltipContentFunction<I extends Item>
 	{
-		List<? extends Component> get(ItemStack stack, I item);
+		List<? extends Component> get(TooltipFlag flags, Item.TooltipContext context, ItemStack stack, I item);
 	}
 	
 	public interface SingleLineTooltipContentFunction<I extends Item> extends TooltipContentFunction<I>
 	{
-		Component getSingleLine(ItemStack stack, I item);
+		Component getSingleLine(TooltipFlag flags, Item.TooltipContext context, ItemStack stack, I item);
 		
 		@Override
-		default List<? extends Component> get(ItemStack stack, I item)
+		default List<? extends Component> get(TooltipFlag flags, Item.TooltipContext context, ItemStack stack, I item)
 		{
-			return List.of(this.getSingleLine(stack, item));
+			return List.of(this.getSingleLine(flags, context, stack, item));
 		}
 	}
 }
