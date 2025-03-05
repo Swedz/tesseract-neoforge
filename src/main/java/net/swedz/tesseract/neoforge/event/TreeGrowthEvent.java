@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.event;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
@@ -14,8 +15,13 @@ public class TreeGrowthEvent extends BlockEvent
 	
 	public TreeGrowthEvent(LevelAccessor level, BlockPos pos, BlockState state, List<BlockPos> positions)
 	{
-		super(level, pos, state);
-		this.positions = positions;
+		super(level, pos.immutable(), state);
+		
+		this.positions = Lists.newArrayList();
+		for(var blockPos : positions)
+		{
+			this.positions.add(blockPos.immutable());
+		}
 	}
 	
 	public List<BlockPos> getPositions()
