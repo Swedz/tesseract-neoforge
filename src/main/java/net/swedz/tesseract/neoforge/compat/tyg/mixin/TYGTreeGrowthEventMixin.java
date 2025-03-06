@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.compat.tyg.mixin;
 import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.neoforged.neoforge.common.NeoForge;
@@ -32,6 +33,10 @@ public class TYGTreeGrowthEventMixin
 							  @Local(name = "decorationPositions") Set<BlockPos> decorationPositions)
 	{
 		LevelAccessor level = context.level();
+		if(level instanceof WorldGenRegion)
+		{
+			return;
+		}
 		BlockPos origin = context.origin();
 		
 		List<BlockPos> positions = Lists.newArrayList();

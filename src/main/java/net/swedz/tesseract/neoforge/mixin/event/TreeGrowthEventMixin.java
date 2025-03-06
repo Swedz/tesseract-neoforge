@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.mixin.event;
 import com.google.common.collect.Lists;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.TreeFeature;
@@ -36,6 +37,10 @@ public class TreeGrowthEventMixin
 							  @Local(ordinal = 3) Set<BlockPos> decoratorPositions)
 	{
 		LevelAccessor level = context.level();
+		if(level instanceof WorldGenRegion)
+		{
+			return;
+		}
 		BlockPos origin = context.origin();
 		
 		List<BlockPos> positions = Lists.newArrayList();
