@@ -9,6 +9,6 @@ public final class ModLoadedHelper
 	{
 		return modId != null && !modId.isEmpty() && ModList.get() != null ?
 				ModList.get().isLoaded(modId) :
-				LoadingModList.get().getMods().stream().anyMatch((m) -> m.getModId().equals(modId));
+				LoadingModList.get().getModFileById(modId) != null;
 	}
 }
