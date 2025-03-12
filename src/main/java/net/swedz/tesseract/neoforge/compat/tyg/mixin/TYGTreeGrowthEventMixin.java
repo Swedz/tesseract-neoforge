@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.neoforged.neoforge.common.NeoForge;
 import net.swedz.tesseract.neoforge.event.TreeGrowthEvent;
@@ -14,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Mixin(
@@ -28,8 +30,8 @@ public class TYGTreeGrowthEventMixin
 	)
 	private void onTreeGrowth(FeaturePlaceContext context,
 							  CallbackInfoReturnable<Boolean> callback,
-							  @Local(name = "leavePositions") Set<BlockPos> leavePositions,
-							  @Local(name = "trunkPositions") Set<BlockPos> trunkPositions,
+							  @Local(name = "leavePositions") Map<BlockPos, BlockState> leavePositions,
+							  @Local(name = "trunkPositions") Map<BlockPos, BlockState> trunkPositions,
 							  @Local(name = "decorationPositions") Set<BlockPos> decorationPositions)
 	{
 		LevelAccessor level = context.level();
@@ -40,8 +42,8 @@ public class TYGTreeGrowthEventMixin
 		BlockPos origin = context.origin();
 		
 		List<BlockPos> positions = Lists.newArrayList();
-		positions.addAll(trunkPositions);
-		positions.addAll(leavePositions);
+		positions.addAll(trunkPositions.keySet());
+		positions.addAll(leavePositions.keySet());
 		positions.addAll(decorationPositions);
 		TreeGrowthEvent event = new TreeGrowthEvent(level, origin, level.getBlockState(origin), positions);
 		NeoForge.EVENT_BUS.post(event);
