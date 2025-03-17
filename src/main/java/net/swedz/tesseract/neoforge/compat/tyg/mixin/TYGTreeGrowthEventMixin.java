@@ -31,7 +31,7 @@ public class TYGTreeGrowthEventMixin
 	private void onTreeGrowth(FeaturePlaceContext context,
 							  CallbackInfoReturnable<Boolean> callback,
 							  @Local(name = "leavePositions") Map<BlockPos, BlockState> leavePositions,
-							  @Local(name = "trunkPositions") Map<BlockPos, BlockState> trunkPositions,
+							  @Local(name = "logPositions") Map<BlockPos, BlockState> logPositions,
 							  @Local(name = "decorationPositions") Set<BlockPos> decorationPositions)
 	{
 		LevelAccessor level = context.level();
@@ -42,7 +42,7 @@ public class TYGTreeGrowthEventMixin
 		BlockPos origin = context.origin();
 		
 		List<BlockPos> positions = Lists.newArrayList();
-		positions.addAll(trunkPositions.keySet());
+		positions.addAll(logPositions.keySet());
 		positions.addAll(leavePositions.keySet());
 		positions.addAll(decorationPositions);
 		TreeGrowthEvent event = new TreeGrowthEvent(level, origin, level.getBlockState(origin), positions);
