@@ -417,7 +417,8 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	protected long getRecipeMaxEu(long recipeEu, long totalEu, int efficiencyTicks)
 	{
 		long baseEu = Math.max(this.transformEuCost(behavior.getBaseRecipeEu()), this.transformEuCost(recipeEu));
-		return Math.min(totalEu, Math.min((int) Math.floor(baseEu * CrafterComponent.getEfficiencyOverclock(efficiencyTicks)), this.transformEuCost(behavior.getMaxRecipeEu())));
+		long overclockedEu = baseEu + efficiencyTicks * totalEu / (20 * 30);
+		return Math.min(totalEu, Math.min(overclockedEu, this.transformEuCost(behavior.getMaxRecipeEu())));
 	}
 	
 	protected int getRecipeMaxEfficiencyTicks(R recipe)
