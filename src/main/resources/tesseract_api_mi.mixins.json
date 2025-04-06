@@ -7,6 +7,7 @@
     "mixins": [
         "ActiveRecipeHolderMixin",
         "accessor.CasingComponentAccessor",
+        "accessor.CrafterComponentAccessor",
         "accessor.MIMachineRecipeTypesAccessor",
         "accessor.OverdriveComponentAccessor",
         "accessor.RedstoneControlComponentAccessor",
@@ -16,6 +17,7 @@
         "hook.efficiency.CrafterComponentBehaviorEfficiencyHookMixin",
         "hook.efficiency.CrafterComponentEfficiencyHookMixin",
         "hook.efficiency.EBFEfficiencyHookMixin",
+        "hook.efficiency.RecipeEfficiencyBarEfficiencyHookMixin",
         "hook.listener.BeforeAfterInitHookMixin",
         "hook.listener.BlastFurnaceTierHookMixin",
         "hook.listener.MachineCasingsHookMixin",
