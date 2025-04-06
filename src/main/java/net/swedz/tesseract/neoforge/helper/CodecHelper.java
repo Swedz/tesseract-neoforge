@@ -103,4 +103,10 @@ public final class CodecHelper
 	{
 		return forLowercaseEnumStream(enumClass, enumClass::getEnumConstants);
 	}
+	
+	public static Codec<Long> longRange(long minInclusive, long maxInclusive)
+	{
+		var checker = Codec.checkRange(minInclusive, maxInclusive);
+		return Codec.LONG.flatXmap(checker, checker);
+	}
 }
