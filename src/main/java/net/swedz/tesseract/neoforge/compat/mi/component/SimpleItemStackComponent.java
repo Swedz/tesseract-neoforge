@@ -10,8 +10,9 @@ import aztech.modern_industrialization.machines.components.UpgradeComponent;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
+import net.swedz.tesseract.neoforge.compat.mi.api.ComponentStackHolder;
 
-public class SimpleItemStackComponent implements IComponent, DropableComponent
+public class SimpleItemStackComponent implements IComponent, DropableComponent, ComponentStackHolder
 {
 	public interface UpdatedCallback
 	{
@@ -35,9 +36,21 @@ public class SimpleItemStackComponent implements IComponent, DropableComponent
 		this(stackTagKey, null);
 	}
 	
+	@Override
 	public ItemStack getStack()
 	{
 		return stack;
+	}
+	
+	@Override
+	public void setStack(ItemStack stack)
+	{
+		ItemStack previous = this.stack;
+		this.stack = stack;
+		if(callback != null)
+		{
+			callback.onUpdate(previous, stack);
+		}
 	}
 	
 	public void setStackServer(MachineBlockEntity machine, ItemStack stack)
