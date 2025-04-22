@@ -5,17 +5,20 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.Util;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterRenderBuffersEvent;
 import net.swedz.tesseract.neoforge.Tesseract;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static net.minecraft.client.renderer.LightTexture.*;
@@ -24,32 +27,39 @@ import static net.minecraft.client.renderer.RenderStateShard.*;
 @EventBusSubscriber(modid = Tesseract.ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class CubeOverlayRenderHelper
 {
-	public static final RenderType CUBE_OVERLAY_CUTOUT = RenderType.create(
-			"cube_overlay_cutout",
-			DefaultVertexFormat.BLOCK,
-			VertexFormat.Mode.QUADS,
-			65536, false, false,
-			RenderType.CompositeState.builder()
-					.setShaderState(POSITION_COLOR_TEX_LIGHTMAP_SHADER)
-					.setTransparencyState(NO_TRANSPARENCY)
-					.setTextureState(new RenderStateShard.TextureStateShard(Tesseract.id("textures/block/cube_overlay.png"), false, false))
-					.setLightmapState(LIGHTMAP)
-					.createCompositeState(false)
-	);
+	private static final RenderType CUBE_OVERLAY = createRenderType("cube_overlay", Tesseract.id("textures/block/cube_overlay.png"));
+	
+	public static RenderType createRenderType(String name, ResourceLocation texture)
+	{
+		return RenderType.create(
+				name,
+				DefaultVertexFormat.BLOCK,
+				VertexFormat.Mode.QUADS,
+				65536, false, false,
+				RenderType.CompositeState.builder()
+						.setShaderState(POSITION_COLOR_TEX_LIGHTMAP_SHADER)
+						.setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+						.setTextureState(new RenderStateShard.TextureStateShard(texture, false, false))
+						.setLightmapState(LIGHTMAP)
+						.createCompositeState(false)
+		);
+	}
 	
 	@SubscribeEvent
 	private static void registerRenderBuffers(RegisterRenderBuffersEvent event)
 	{
-		event.registerRenderBuffer(CUBE_OVERLAY_CUTOUT);
+		event.registerRenderBuffer(CUBE_OVERLAY);
 	}
 	
-	private static Supplier<BakedQuad[]> QUADS = Suppliers.memoize(() ->
+	private static final Function<Direction, BakedQuad> SIDE_QUADS = Util.memoize(CubeOverlayRenderHelper::createQuadForFace);
+	
+	private static final Supplier<BakedQuad[]> CUBE_QUADS = Suppliers.memoize(() ->
 	{
 		BakedQuad[] quads = new BakedQuad[6];
 		int index = 0;
 		for(Direction direction : Direction.values())
 		{
-			quads[index++] = createQuadForFace(direction);
+			quads[index++] = SIDE_QUADS.apply(direction);
 		}
 		return quads;
 	});
@@ -101,10 +111,26 @@ public final class CubeOverlayRenderHelper
 		return vertexData;
 	}
 	
+	public static void render(PoseStack matrices, VertexConsumer consumer, Direction direction, float red, float green, float blue, float alpha, int packedLight, int overlay)
+	{
+		var overlayQuad = SIDE_QUADS.apply(direction);
+		consumer.putBulkData(matrices.last(), overlayQuad, red, green, blue, alpha, packedLight, overlay);
+	}
+	
+	public static void render(PoseStack matrices, VertexConsumer consumer, Direction direction, float red, float green, float blue, float alpha, int overlay)
+	{
+		render(matrices, consumer, direction, red, green, blue, alpha, FULL_BRIGHT, overlay);
+	}
+	
+	public static void render(PoseStack matrices, VertexConsumer consumer, Direction direction, float red, float green, float blue, int overlay)
+	{
+		render(matrices, consumer, direction, red, green, blue, 1f, FULL_BRIGHT, overlay);
+	}
+	
 	public static void render(PoseStack matrices, MultiBufferSource bufferSource, float red, float green, float blue, float alpha, int packedLight, int overlay)
 	{
-		VertexConsumer consumer = bufferSource.getBuffer(CUBE_OVERLAY_CUTOUT);
-		for(BakedQuad overlayQuad : QUADS.get())
+		VertexConsumer consumer = bufferSource.getBuffer(CUBE_OVERLAY);
+		for(BakedQuad overlayQuad : CUBE_QUADS.get())
 		{
 			consumer.putBulkData(matrices.last(), overlayQuad, red, green, blue, alpha, packedLight, overlay);
 		}
