@@ -23,9 +23,7 @@
         "hook.listener.MachineCasingsHookMixin",
         "hook.listener.MachineProcessConditionsHookMixin",
         "hook.listener.MachineRecipeTypesHookMixin",
-        "hook.listener.MultiblockMachinesHookMixin",
-        "hook.listener.SingleBlockCraftingMachinesHookMixin",
-        "hook.listener.SingleBlockSpecialMachinesHookMixin",
+        "hook.listener.RegisterMachinesHookMixin",
         "hook.listener.TooltipsHookMixin",
         "hook.listener.ViewerSetupHookMixin"
     ],
