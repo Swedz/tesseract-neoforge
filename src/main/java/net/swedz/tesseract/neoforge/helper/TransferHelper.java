@@ -2,10 +2,13 @@ package net.swedz.tesseract.neoforge.helper;
 
 import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -76,6 +79,91 @@ public final class TransferHelper
 	}
 	
 	/**
+	 * Attempts to insert the stack into the item handler. It will continue to iterate over all slots until it either
+	 * has inserted all of the item, or there are no slots remaining.
+	 *
+	 * @param target   the target item handler
+	 * @param toInsert the stack to insert
+	 * @return the amount inserted
+	 */
+	public static int insert(IItemHandler target, ItemStack toInsert)
+	{
+		int amountInserted = 0;
+		
+		for(int slot = 0; slot < target.getSlots(); slot++)
+		{
+			if(target.isItemValid(slot, toInsert))
+			{
+				var stack = target.getStackInSlot(slot);
+				if(stack.isEmpty() || ItemStack.isSameItemSameComponents(stack, toInsert))
+				{
+					int amountToInsert = Math.min(toInsert.getCount() - amountInserted, target.getSlotLimit(slot));
+					var remaining = target.insertItem(slot, toInsert.copyWithCount(amountToInsert), false);
+					amountInserted += (amountToInsert - remaining.getCount());
+					if(amountInserted >= toInsert.getCount())
+					{
+						break;
+					}
+				}
+			}
+		}
+		
+		return amountInserted;
+	}
+	
+	/**
+	 * Attempts to extract items matching a predicate into a single stack. The first extracted item will determine what
+	 * base item and components to use - all other matching stacks will be checked against this as well as the
+	 * predicate.
+	 * <br><br>
+	 * Taken from {@link aztech.modern_industrialization.util.TransferHelper#extractMatching(Inventory, Predicate, int, boolean)} and is unchanged.
+	 *
+	 * @param inventory  the player inventory to use as the source
+	 * @param predicate  the predicate to check against
+	 * @param maxAmount  the max amount of items to extract
+	 * @param containers whether item containing items in the inventory should be searched as well
+	 * @return the extracted and combined stack
+	 */
+	public static ItemStack extractMatching(Inventory inventory, Predicate<ItemStack> predicate, int maxAmount, boolean containers)
+	{
+		int sourceSlots = inventory.getContainerSize();
+		
+		var ret = extractMatching(new PlayerInvWrapper(inventory), predicate, maxAmount);
+		
+		if(containers)
+		{
+			if(!ret.isEmpty())
+			{
+				final var finalRet = ret;
+				predicate = other -> ItemStack.isSameItemSameComponents(finalRet, other);
+			}
+			for(int slot = 0; slot < sourceSlots && maxAmount > ret.getCount(); ++slot)
+			{
+				var stack = inventory.getItem(slot);
+				if(stack.getCount() != 1)
+				{
+					continue;
+				}
+				var capability = stack.getCapability(Capabilities.ItemHandler.ITEM);
+				if(capability != null)
+				{
+					var extracted = extractMatching(capability, predicate, maxAmount - ret.getCount());
+					if(ret.isEmpty())
+					{
+						ret = extracted;
+					}
+					else
+					{
+						ret.grow(extracted.getCount());
+					}
+				}
+			}
+		}
+		
+		return ret;
+	}
+	
+	/**
 	 * Attempts to extract items matching a predicate into a single stack. The first extracted item will determine what
 	 * base item and components to use - all other matching stacks will be checked against this as well as the
 	 * predicate.
@@ -83,7 +171,7 @@ public final class TransferHelper
 	 * Taken from {@link aztech.modern_industrialization.util.TransferHelper#extractMatching(IItemHandler, Predicate, int)} and is unchanged.
 	 *
 	 * @param source    the source item handler
-	 * @param predicate the predicate to check against
+	 * @param predicate the predicate to check against, if null then no filter will be used
 	 * @param maxAmount the max amount of items to extract
 	 * @return the extracted and combined stack
 	 */
@@ -95,10 +183,10 @@ public final class TransferHelper
 		int slot;
 		for(slot = 0; slot < sourceSlots && ret.isEmpty(); ++slot)
 		{
-			ItemStack stack = source.getStackInSlot(slot);
-			if(predicate.test(stack))
+			var stack = source.getStackInSlot(slot);
+			if(predicate == null || predicate.test(stack))
 			{
-				ret = source.extractItem(slot, maxAmount, false);
+				ret = source.extractItem(slot, Math.min(stack.getCount(), maxAmount), false);
 			}
 		}
 		if(ret.isEmpty())
@@ -106,18 +194,30 @@ public final class TransferHelper
 			return ItemStack.EMPTY;
 		}
 		
-		++slot;
-		for(; slot < sourceSlots && maxAmount < ret.getCount(); ++slot)
+		for(; slot < sourceSlots && maxAmount > ret.getCount(); ++slot)
 		{
-			ItemStack stack = source.getStackInSlot(slot);
-			if(ItemStack.matches(stack, ret))
+			var stack = source.getStackInSlot(slot);
+			if(ItemStack.isSameItemSameComponents(stack, ret))
 			{
-				ItemStack extracted = source.extractItem(slot, maxAmount - ret.getCount(), true);
+				var extracted = source.extractItem(slot, Math.min(stack.getCount(), maxAmount - ret.getCount()), false);
 				ret.grow(extracted.getCount());
 			}
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * Attempts to extract items. The first extracted item will determine what base item and components to use - all
+	 * other subsequent stacks will be checked against this.
+	 *
+	 * @param source    the source item handler
+	 * @param maxAmount the max amount of items to extract
+	 * @return the extracted and combined stack
+	 */
+	public static ItemStack extractFirst(IItemHandler source, int maxAmount)
+	{
+		return extractMatching(source, null, maxAmount);
 	}
 	
 	/**
