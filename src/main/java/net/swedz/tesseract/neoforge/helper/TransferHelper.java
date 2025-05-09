@@ -84,9 +84,10 @@ public final class TransferHelper
 	 *
 	 * @param target   the target item handler
 	 * @param toInsert the stack to insert
+	 * @param simulate whether the extraction should be simulated or not
 	 * @return the amount inserted
 	 */
-	public static int insert(IItemHandler target, ItemStack toInsert)
+	public static int insert(IItemHandler target, ItemStack toInsert, boolean simulate)
 	{
 		int amountInserted = 0;
 		
@@ -98,7 +99,7 @@ public final class TransferHelper
 				if(stack.isEmpty() || ItemStack.isSameItemSameComponents(stack, toInsert))
 				{
 					int amountToInsert = Math.min(toInsert.getCount() - amountInserted, target.getSlotLimit(slot));
-					var remaining = target.insertItem(slot, toInsert.copyWithCount(amountToInsert), false);
+					var remaining = target.insertItem(slot, toInsert.copyWithCount(amountToInsert), simulate);
 					amountInserted += (amountToInsert - remaining.getCount());
 					if(amountInserted >= toInsert.getCount())
 					{
@@ -112,6 +113,19 @@ public final class TransferHelper
 	}
 	
 	/**
+	 * Attempts to insert the stack into the item handler. It will continue to iterate over all slots until it either
+	 * has inserted all of the item, or there are no slots remaining.
+	 *
+	 * @param target   the target item handler
+	 * @param toInsert the stack to insert
+	 * @return the amount inserted
+	 */
+	public static int insert(IItemHandler target, ItemStack toInsert)
+	{
+		return insert(target, toInsert, false);
+	}
+	
+	/**
 	 * Attempts to extract items matching a predicate into a single stack. The first extracted item will determine what
 	 * base item and components to use - all other matching stacks will be checked against this as well as the
 	 * predicate.
@@ -122,13 +136,14 @@ public final class TransferHelper
 	 * @param predicate  the predicate to check against
 	 * @param maxAmount  the max amount of items to extract
 	 * @param containers whether item containing items in the inventory should be searched as well
+	 * @param simulate   whether the extraction should be simulated or not
 	 * @return the extracted and combined stack
 	 */
-	public static ItemStack extractMatching(Inventory inventory, Predicate<ItemStack> predicate, int maxAmount, boolean containers)
+	public static ItemStack extractMatching(Inventory inventory, Predicate<ItemStack> predicate, int maxAmount, boolean containers, boolean simulate)
 	{
 		int sourceSlots = inventory.getContainerSize();
 		
-		var ret = extractMatching(new PlayerInvWrapper(inventory), predicate, maxAmount);
+		var ret = extractMatching(new PlayerInvWrapper(inventory), predicate, maxAmount, simulate);
 		
 		if(containers)
 		{
@@ -147,7 +162,7 @@ public final class TransferHelper
 				var capability = stack.getCapability(Capabilities.ItemHandler.ITEM);
 				if(capability != null)
 				{
-					var extracted = extractMatching(capability, predicate, maxAmount - ret.getCount());
+					var extracted = extractMatching(capability, predicate, maxAmount - ret.getCount(), simulate);
 					if(ret.isEmpty())
 					{
 						ret = extracted;
@@ -168,14 +183,33 @@ public final class TransferHelper
 	 * base item and components to use - all other matching stacks will be checked against this as well as the
 	 * predicate.
 	 * <br><br>
+	 * Taken from {@link aztech.modern_industrialization.util.TransferHelper#extractMatching(Inventory, Predicate, int, boolean)} and is unchanged.
+	 *
+	 * @param inventory  the player inventory to use as the source
+	 * @param predicate  the predicate to check against
+	 * @param maxAmount  the max amount of items to extract
+	 * @param containers whether item containing items in the inventory should be searched as well
+	 * @return the extracted and combined stack
+	 */
+	public static ItemStack extractMatching(Inventory inventory, Predicate<ItemStack> predicate, int maxAmount, boolean containers)
+	{
+		return extractMatching(inventory, predicate, maxAmount, containers, false);
+	}
+	
+	/**
+	 * Attempts to extract items matching a predicate into a single stack. The first extracted item will determine what
+	 * base item and components to use - all other matching stacks will be checked against this as well as the
+	 * predicate.
+	 * <br><br>
 	 * Taken from {@link aztech.modern_industrialization.util.TransferHelper#extractMatching(IItemHandler, Predicate, int)} and is unchanged.
 	 *
 	 * @param source    the source item handler
 	 * @param predicate the predicate to check against, if null then no filter will be used
 	 * @param maxAmount the max amount of items to extract
+	 * @param simulate  whether the extraction should be simulated or not
 	 * @return the extracted and combined stack
 	 */
-	public static ItemStack extractMatching(IItemHandler source, Predicate<ItemStack> predicate, int maxAmount)
+	public static ItemStack extractMatching(IItemHandler source, Predicate<ItemStack> predicate, int maxAmount, boolean simulate)
 	{
 		int sourceSlots = source.getSlots();
 		
@@ -186,7 +220,7 @@ public final class TransferHelper
 			var stack = source.getStackInSlot(slot);
 			if(predicate == null || predicate.test(stack))
 			{
-				ret = source.extractItem(slot, Math.min(stack.getCount(), maxAmount), false);
+				ret = source.extractItem(slot, Math.min(stack.getCount(), maxAmount), simulate);
 			}
 		}
 		if(ret.isEmpty())
@@ -199,12 +233,43 @@ public final class TransferHelper
 			var stack = source.getStackInSlot(slot);
 			if(ItemStack.isSameItemSameComponents(stack, ret))
 			{
-				var extracted = source.extractItem(slot, Math.min(stack.getCount(), maxAmount - ret.getCount()), false);
+				var extracted = source.extractItem(slot, Math.min(stack.getCount(), maxAmount - ret.getCount()), simulate);
 				ret.grow(extracted.getCount());
 			}
 		}
 		
 		return ret;
+	}
+	
+	/**
+	 * Attempts to extract items matching a predicate into a single stack. The first extracted item will determine what
+	 * base item and components to use - all other matching stacks will be checked against this as well as the
+	 * predicate.
+	 * <br><br>
+	 * Taken from {@link aztech.modern_industrialization.util.TransferHelper#extractMatching(IItemHandler, Predicate, int)} and is unchanged.
+	 *
+	 * @param source    the source item handler
+	 * @param predicate the predicate to check against, if null then no filter will be used
+	 * @param maxAmount the max amount of items to extract
+	 * @return the extracted and combined stack
+	 */
+	public static ItemStack extractMatching(IItemHandler source, Predicate<ItemStack> predicate, int maxAmount)
+	{
+		return extractMatching(source, predicate, maxAmount, false);
+	}
+	
+	/**
+	 * Attempts to extract items. The first extracted item will determine what base item and components to use - all
+	 * other subsequent stacks will be checked against this.
+	 *
+	 * @param source    the source item handler
+	 * @param maxAmount the max amount of items to extract
+	 * @param simulate  whether the extraction should be simulated or not
+	 * @return the extracted and combined stack
+	 */
+	public static ItemStack extractFirst(IItemHandler source, int maxAmount, boolean simulate)
+	{
+		return extractMatching(source, null, maxAmount, simulate);
 	}
 	
 	/**
@@ -217,7 +282,7 @@ public final class TransferHelper
 	 */
 	public static ItemStack extractFirst(IItemHandler source, int maxAmount)
 	{
-		return extractMatching(source, null, maxAmount);
+		return extractFirst(source, maxAmount, false);
 	}
 	
 	/**
