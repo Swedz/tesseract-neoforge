@@ -286,6 +286,88 @@ public final class TransferHelper
 	}
 	
 	/**
+	 * Attempts to extract items matching a predicate and accumulates the total amount of items extracted.
+	 *
+	 * @param inventory  the player inventory to use as the source
+	 * @param predicate  the predicate to check against, if null then no filter will be used
+	 * @param maxAmount  the max amount of items to extract
+	 * @param containers whether item containing items in the inventory should be searched as well
+	 * @param simulate   whether the extraction should be simulated or not
+	 * @return the amount of extracted items
+	 */
+	public static int extractAny(Inventory inventory, Predicate<ItemStack> predicate, int maxAmount, boolean containers, boolean simulate)
+	{
+		int count = extractAny(new PlayerInvWrapper(inventory), predicate, maxAmount, simulate);
+		if(containers)
+		{
+			for(int slot = 0; slot < inventory.getContainerSize() && maxAmount > count; ++slot)
+			{
+				var stack = inventory.getItem(slot);
+				if(stack.getCount() != 1)
+				{
+					continue;
+				}
+				var capability = stack.getCapability(Capabilities.ItemHandler.ITEM);
+				if(capability != null)
+				{
+					count += extractAny(capability, predicate, count, simulate);
+				}
+			}
+		}
+		return count;
+	}
+	
+	/**
+	 * Attempts to extract items matching a predicate and accumulates the total amount of items extracted.
+	 *
+	 * @param inventory  the player inventory to use as the source
+	 * @param predicate  the predicate to check against, if null then no filter will be used
+	 * @param maxAmount  the max amount of items to extract
+	 * @param containers whether item containing items in the inventory should be searched as well
+	 * @return the amount of extracted items
+	 */
+	public static int extractAny(Inventory inventory, Predicate<ItemStack> predicate, int maxAmount, boolean containers)
+	{
+		return extractAny(inventory, predicate, maxAmount, containers, false);
+	}
+	
+	/**
+	 * Attempts to extract items matching a predicate and accumulates the total amount of items extracted.
+	 *
+	 * @param source    the source item handler
+	 * @param predicate the predicate to check against, if null then no filter will be used
+	 * @param maxAmount the max amount of items to extract
+	 * @param simulate  whether the extraction should be simulated or not
+	 * @return the amount of extracted items
+	 */
+	public static int extractAny(IItemHandler source, Predicate<ItemStack> predicate, int maxAmount, boolean simulate)
+	{
+		int count = 0;
+		for(int slot = 0; slot < source.getSlots(); ++slot)
+		{
+			var stack = source.getStackInSlot(slot);
+			if(predicate == null || predicate.test(stack))
+			{
+				count += source.extractItem(slot, Math.min(stack.getCount(), maxAmount - count), simulate).getCount();
+			}
+		}
+		return count;
+	}
+	
+	/**
+	 * Attempts to extract items matching a predicate and accumulates the total amount of items extracted.
+	 *
+	 * @param source    the source item handler
+	 * @param predicate the predicate to check against, if null then no filter will be used
+	 * @param maxAmount the max amount of items to extract
+	 * @return the amount of extracted items
+	 */
+	public static int extractAny(IItemHandler source, Predicate<ItemStack> predicate, int maxAmount)
+	{
+		return extractAny(source, predicate, maxAmount, false);
+	}
+	
+	/**
 	 * Attempt to move energy from one energy handler to another.
 	 * <br><br>
 	 * Taken from {@link dev.technici4n.grandpower.api.EnergyStorageUtil#move(dev.technici4n.grandpower.api.ILongEnergyStorage, dev.technici4n.grandpower.api.ILongEnergyStorage, long)} and adapted for standard {@link IEnergyStorage}s.
