@@ -310,7 +310,7 @@ public final class TransferHelper
 				var capability = stack.getCapability(Capabilities.ItemHandler.ITEM);
 				if(capability != null)
 				{
-					count += extractAny(capability, predicate, count, simulate);
+					count += extractAny(capability, predicate, maxAmount - count, simulate);
 				}
 			}
 		}
