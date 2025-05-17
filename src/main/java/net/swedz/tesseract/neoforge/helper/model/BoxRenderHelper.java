@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.helper;
+package net.swedz.tesseract.neoforge.helper.model;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

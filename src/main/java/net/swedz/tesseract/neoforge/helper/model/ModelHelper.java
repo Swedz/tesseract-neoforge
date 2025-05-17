@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.helper;
+package net.swedz.tesseract.neoforge.helper.model;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
