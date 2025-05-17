@@ -8,6 +8,7 @@
         "DynamicDyedItemDyeColorMixin",
         "event.FarmlandLoseMoistureEventMixin",
         "event.ItemHurtEventMixin",
+        "event.PlayerInventoryChangeEventMixin",
         "event.TreeGrowthEventMixin"
     ],
     "client": [],
