@@ -84,14 +84,16 @@ public final class TransferHelper
 	 *
 	 * @param target   the target item handler
 	 * @param toInsert the stack to insert
+	 * @param reversed whether the insertion order should be reversed or not
 	 * @param simulate whether the extraction should be simulated or not
 	 * @return the amount inserted
 	 */
-	public static int insert(IItemHandler target, ItemStack toInsert, boolean simulate)
+	public static int insert(IItemHandler target, ItemStack toInsert, boolean reversed, boolean simulate)
 	{
 		int amountInserted = 0;
 		
-		for(int slot = 0; slot < target.getSlots(); slot++)
+		int slot = reversed ? target.getSlots() - 1 : 0;
+		while(slot >= 0 && slot < target.getSlots())
 		{
 			if(target.isItemValid(slot, toInsert))
 			{
@@ -107,9 +109,31 @@ public final class TransferHelper
 					}
 				}
 			}
+			if(reversed)
+			{
+				slot--;
+			}
+			else
+			{
+				slot++;
+			}
 		}
 		
 		return amountInserted;
+	}
+	
+	/**
+	 * Attempts to insert the stack into the item handler. It will continue to iterate over all slots until it either
+	 * has inserted all of the item, or there are no slots remaining.
+	 *
+	 * @param target   the target item handler
+	 * @param toInsert the stack to insert
+	 * @param simulate whether the extraction should be simulated or not
+	 * @return the amount inserted
+	 */
+	public static int insert(IItemHandler target, ItemStack toInsert, boolean simulate)
+	{
+		return insert(target, toInsert, false, simulate);
 	}
 	
 	/**
