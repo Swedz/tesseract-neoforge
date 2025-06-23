@@ -5,8 +5,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.swedz.tesseract.neoforge.helper.TransferHelper;
 
 import java.util.function.Supplier;
 
@@ -28,7 +28,7 @@ public class FluidTransferCache extends TransferCache<IFluidHandler>
 		IFluidHandler target = cache.output(level, pos, direction);
 		if(target != null)
 		{
-			return !FluidUtil.tryFluidTransfer(target, this.sourceHandler(), Integer.MAX_VALUE, true).isEmpty();
+			return !TransferHelper.tryFluidTransfer(this.sourceHandler(), target, Integer.MAX_VALUE, true).isEmpty();
 		}
 		return false;
 	}
@@ -39,7 +39,7 @@ public class FluidTransferCache extends TransferCache<IFluidHandler>
 		IFluidHandler target = cache.input(level, pos, direction);
 		if(target != null)
 		{
-			return !FluidUtil.tryFluidTransfer(this.sourceHandler(), target, Integer.MAX_VALUE, true).isEmpty();
+			return !TransferHelper.tryFluidTransfer(target, this.sourceHandler(), Integer.MAX_VALUE, true).isEmpty();
 		}
 		return false;
 	}
