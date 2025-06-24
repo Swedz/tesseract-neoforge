@@ -6,6 +6,8 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
@@ -389,6 +391,57 @@ public final class TransferHelper
 	public static int extractAny(IItemHandler source, Predicate<ItemStack> predicate, int maxAmount)
 	{
 		return extractAny(source, predicate, maxAmount, false);
+	}
+	
+	/**
+	 * Fixed version of NeoForge's {@link net.neoforged.neoforge.fluids.FluidUtil#tryFluidTransfer(IFluidHandler, IFluidHandler, int, boolean)}
+	 * method. This one correctly handles multi-tank to multi-tank transfer.
+	 * <br><br>
+	 * Taken from {@link aztech.modern_industrialization.util.TransferHelper#tryFluidTransfer(IFluidHandler, IFluidHandler, int, boolean)}
+	 * and modified to follow my standards.
+	 *
+	 * @param source    the source fluid handler
+	 * @param target    the target fluid handler
+	 * @param maxAmount the largest amount of fluid that should be transferred, use {@link Integer#MAX_VALUE} to
+	 *                  transfer as much as possible.
+	 * @param simulated whether the transfer should be simulated
+	 * @return the {@link FluidStack} that was transferred from the source to the destination, null on failure
+	 */
+	public static FluidStack tryFluidTransfer(IFluidHandler source, IFluidHandler target, int maxAmount, boolean simulated)
+	{
+		int tanks = source.getTanks();
+		for(int i = 0; i < tanks; ++i)
+		{
+			FluidStack toTry = source.getFluidInTank(i).copy();
+			if(toTry.getAmount() > maxAmount)
+			{
+				toTry.setAmount(maxAmount);
+			}
+			FluidStack drainable = source.drain(toTry, IFluidHandler.FluidAction.SIMULATE);
+			if(drainable.isEmpty())
+			{
+				continue;
+			}
+			int fillableAmount = target.fill(drainable, IFluidHandler.FluidAction.SIMULATE);
+			if(fillableAmount > 0)
+			{
+				drainable.setAmount(fillableAmount);
+				if(!simulated)
+				{
+					FluidStack drained = source.drain(drainable, IFluidHandler.FluidAction.EXECUTE);
+					if(!drained.isEmpty())
+					{
+						drained.setAmount(target.fill(drained, IFluidHandler.FluidAction.EXECUTE));
+						return drained;
+					}
+				}
+				else
+				{
+					return drainable;
+				}
+			}
+		}
+		return FluidStack.EMPTY;
 	}
 	
 	/**
