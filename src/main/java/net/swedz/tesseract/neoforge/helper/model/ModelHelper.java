@@ -14,7 +14,7 @@ import java.util.List;
 
 public final class ModelHelper
 {
-	public static LinkedHashMap<String, Material> gatherTextures(JsonObject json, String name)
+	public static LinkedHashMap<String, Material> gatherTextures(ResourceLocation atlas, JsonObject json, String name)
 	{
 		Assert.notNull(name);
 		if(json == null || !json.has(name))
@@ -24,12 +24,17 @@ public final class ModelHelper
 		LinkedHashMap<String, Material> textures = Maps.newLinkedHashMap();
 		for(var entry : json.getAsJsonObject(name).entrySet())
 		{
-			textures.put(entry.getKey(), new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.parse(entry.getValue().getAsString())));
+			textures.put(entry.getKey(), new Material(atlas, ResourceLocation.parse(entry.getValue().getAsString())));
 		}
 		return textures;
 	}
 	
-	public static List<Material> gatherLayerTextures(JsonObject json, String name)
+	public static LinkedHashMap<String, Material> gatherTextures(JsonObject json, String name)
+	{
+		return gatherTextures(InventoryMenu.BLOCK_ATLAS, json, name);
+	}
+	
+	public static List<Material> gatherLayerTextures(ResourceLocation atlas, JsonObject json, String name)
 	{
 		Assert.notNull(name);
 		if(json == null || !json.has(name))
@@ -40,9 +45,14 @@ public final class ModelHelper
 		ImmutableList.Builder<Material> builder = ImmutableList.builder();
 		for(int index = 0; json.has("layer" + index); index++)
 		{
-			builder.add(new Material(InventoryMenu.BLOCK_ATLAS, ResourceLocation.parse(json.get("layer" + index).getAsString())));
+			builder.add(new Material(atlas, ResourceLocation.parse(json.get("layer" + index).getAsString())));
 		}
 		return builder.build();
+	}
+	
+	public static List<Material> gatherLayerTextures(JsonObject json, String name)
+	{
+		return gatherLayerTextures(InventoryMenu.BLOCK_ATLAS, json, name);
 	}
 	
 	public static List<Material> gatherTextures(IGeometryBakingContext context)
