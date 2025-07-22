@@ -1,0 +1,6 @@
+{
+  "eu_cost_transformer.tesseract_api.percentage": "%d%%",
+  "text.tesseract_api.mi_machine_batcher_recipe": "Pode processar %s receitas em lotes.",
+  "text.tesseract_api.mi_machine_batcher_size_and_cost": "Processa lotes de até %d com %s do custo em EU.",
+  "text.tesseract_api.tooltips_shift_required": "Pressione [Shift] para mais informações"
+}
