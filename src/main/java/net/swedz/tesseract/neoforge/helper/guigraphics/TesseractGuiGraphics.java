@@ -348,12 +348,6 @@ public final class TesseractGuiGraphics implements BlitGuiGraphics, FillGuiGraph
 	}
 	
 	@Override
-	public int drawString(String text, float x, float y)
-	{
-		return internal.drawString(font, text, x, y, this.getColorARGB(), this.isStringDropShadow());
-	}
-	
-	@Override
 	public int drawString(FormattedCharSequence text, float x, float y)
 	{
 		return internal.drawString(font, text, x, y, this.getColorARGB(), this.isStringDropShadow());
