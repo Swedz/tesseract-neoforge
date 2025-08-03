@@ -312,7 +312,7 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see SingleBlockCraftingMachines#registerReiTiers(String, String, MachineRecipeType, MachineCategoryParams, int)
 	 */
-	private static void registerReiTiers(MIHook hook, String englishName, String machine, MachineRecipeType recipeType, MachineCategoryParams categoryParams, int tiers)
+	public static void registerReiTiers(MIHook hook, String englishName, String machine, MachineRecipeType recipeType, MachineCategoryParams categoryParams, int tiers)
 	{
 		List<MachineCategoryParams> previousCategories = new ArrayList<>();
 		int previousMaxEu = 0;

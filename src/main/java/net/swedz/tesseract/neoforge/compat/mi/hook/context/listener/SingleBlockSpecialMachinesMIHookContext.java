@@ -1,8 +1,10 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook.context.listener;
 
+import aztech.modern_industrialization.compat.rei.machines.MachineCategoryParams;
 import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
 import aztech.modern_industrialization.machines.models.MachineCasing;
+import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
@@ -113,5 +115,10 @@ public final class SingleBlockSpecialMachinesMIHookContext extends MIHookContext
 							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
 		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, null, null, factory, extraRegistrators);
+	}
+	
+	public void registerReiTiers(String englishName, String machine, MachineRecipeType recipeType, MachineCategoryParams categoryParams, int tiers)
+	{
+		HackedMachineRegistrationHelper.registerReiTiers(hook, englishName, machine, recipeType, categoryParams, tiers);
 	}
 }
