@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.compat.mi.mixin.hook.listener;
 
 import aztech.modern_industrialization.MI;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
+import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.HatchMIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.MultiblockMachinesMIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.SingleBlockCraftingMachinesMIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.SingleBlockSpecialMachinesMIHookContext;
@@ -24,6 +25,7 @@ public class RegisterMachinesHookMixin
 	{
 		MIHooks.triggerHookListeners((hook, listener) ->
 		{
+			listener.hatches(new HatchMIHookContext(hook));
 			listener.singleBlockSpecialMachines(new SingleBlockSpecialMachinesMIHookContext(hook));
 			listener.singleBlockCraftingMachines(new SingleBlockCraftingMachinesMIHookContext(hook));
 			listener.multiblockMachines(new MultiblockMachinesMIHookContext(hook));
