@@ -13,7 +13,6 @@
         "accessor.RedstoneControlComponentAccessor",
         "accessor.SteamCraftingMultiblockBlockEntityAccessor",
         "accessor.UpgradeComponentAccessor",
-        "fix.MakeMachineBlockEntityUseProperTitleMixin",
         "hook.efficiency.CrafterComponentBehaviorEfficiencyHookMixin",
         "hook.efficiency.CrafterComponentEfficiencyHookMixin",
         "hook.efficiency.EBFEfficiencyHookMixin",
