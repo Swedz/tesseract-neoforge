@@ -1,8 +1,14 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook.context.listener;
 
+import aztech.modern_industrialization.compat.rei.machines.MachineCategoryParams;
+import aztech.modern_industrialization.compat.rei.machines.SteamMode;
+import aztech.modern_industrialization.inventory.SlotPositions;
 import aztech.modern_industrialization.machines.BEP;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
+import aztech.modern_industrialization.machines.guicomponents.ProgressBar;
 import aztech.modern_industrialization.machines.models.MachineCasing;
+import aztech.modern_industrialization.machines.recipe.MachineRecipe;
+import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
@@ -12,6 +18,7 @@ import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public final class MultiblockMachinesMIHookContext extends MIHookContext
 {
@@ -113,5 +120,21 @@ public final class MultiblockMachinesMIHookContext extends MIHookContext
 							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
 		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, null, null, factory, extraRegistrators);
+	}
+	
+	public void registerRecipeCategory(String id, String englishName, MachineRecipeType recipeType, MachineCategoryParams params)
+	{
+		HackedMachineRegistrationHelper.registerRecipeCategory(hook, id, englishName, recipeType, params);
+	}
+	
+	public void registerRecipeCategory(String id, String englishName, MachineRecipeType recipeType,
+									   SlotPositions itemInputs, SlotPositions itemOutputs,
+									   SlotPositions fluidInputs, SlotPositions fluidOutputs,
+									   ProgressBar.Parameters progressBarParams,
+									   Predicate<MachineRecipe> recipePredicate,
+									   boolean isMultiblock,
+									   SteamMode steamMode)
+	{
+		HackedMachineRegistrationHelper.registerRecipeCategory(hook, id, englishName, recipeType, itemInputs, itemOutputs, fluidInputs, fluidOutputs, progressBarParams, recipePredicate, isMultiblock, steamMode);
 	}
 }

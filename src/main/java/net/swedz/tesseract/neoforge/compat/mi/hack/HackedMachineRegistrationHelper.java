@@ -20,6 +20,7 @@ import aztech.modern_industrialization.machines.init.MachineTier;
 import aztech.modern_industrialization.machines.init.SingleBlockCraftingMachines;
 import aztech.modern_industrialization.machines.models.MachineCasing;
 import aztech.modern_industrialization.machines.models.MachineCasings;
+import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.util.MobSpawning;
 import net.minecraft.core.BlockPos;
@@ -47,6 +48,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import static aztech.modern_industrialization.machines.init.SingleBlockCraftingMachines.*;
@@ -306,6 +308,42 @@ public final class HackedMachineRegistrationHelper
 						null, null, false, SteamMode.BOTH
 				),
 				tiers
+		);
+	}
+	
+	public static void registerRecipeCategory(MIHook hook, String id, String englishName, MachineRecipeType recipeType, MachineCategoryParams params)
+	{
+		var machineId = hook.id(id);
+		params = new MachineCategoryParams(
+				englishName, machineId,
+				params.itemInputs, params.itemOutputs, params.fluidInputs, params.fluidOutputs,
+				params.progressBarParams, recipeType, params.recipePredicate,
+				params.isMultiblock, params.steamMode
+		);
+		MIHookTracker.addReiCategoryName(machineId, englishName);
+		ReiMachineRecipes.registerCategory(machineId, params);
+		ReiMachineRecipes.registerMachineClickArea(machineId, params.progressBarParams.toRectangle());
+		params.workstations.add(machineId);
+		ReiMachineRecipes.registerRecipeCategoryForMachine(machineId, params.category);
+	}
+	
+	public static void registerRecipeCategory(MIHook hook, String id, String englishName, MachineRecipeType recipeType,
+											  SlotPositions itemInputs, SlotPositions itemOutputs,
+											  SlotPositions fluidInputs, SlotPositions fluidOutputs,
+											  ProgressBar.Parameters progressBarParams,
+											  Predicate<MachineRecipe> recipePredicate,
+											  boolean isMultiblock,
+											  SteamMode steamMode)
+	{
+		var machineId = hook.id(id);
+		registerRecipeCategory(
+				hook, id, englishName, recipeType,
+				new MachineCategoryParams(
+						null, null,
+						itemInputs, itemOutputs, fluidInputs, fluidOutputs,
+						progressBarParams, null, recipePredicate,
+						isMultiblock, steamMode
+				)
 		);
 	}
 	
