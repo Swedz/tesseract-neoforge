@@ -4,6 +4,7 @@ import aztech.modern_industrialization.machines.init.MIMachineRecipeTypes;
 import aztech.modern_industrialization.machines.recipe.MIRecipeJson;
 import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
+import aztech.modern_industrialization.machines.recipe.condition.MachineProcessCondition;
 import com.google.common.collect.Sets;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -171,6 +172,12 @@ public class MIMachineRecipeBuilder extends MIRecipeJson<MIMachineRecipeBuilder>
 	public Set<MaterialPart> involvedParts()
 	{
 		return Sets.newHashSet(involvedParts);
+	}
+	
+	public MIMachineRecipeBuilder addCondition(MachineProcessCondition condition)
+	{
+		recipe.conditions.add(condition);
+		return this;
 	}
 	
 	public MIMachineRecipeBuilder addPartInput(Material material, MaterialPart part, int count, float probability)
