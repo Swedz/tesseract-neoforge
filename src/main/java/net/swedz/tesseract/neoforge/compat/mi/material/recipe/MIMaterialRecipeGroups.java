@@ -77,6 +77,7 @@ public interface MIMaterialRecipeGroups
 			.add("rod_to_bolt", (c) -> c.cuttingMachine(ROD, 1, BOLT, 2))
 			
 			.add("main_to_block", (c) -> c.machine(PACKER, BLOCK, 1, (b) -> b.addPartInput(c.mainPart(), 9).addItemInput(MIItem.PACKER_BLOCK_TEMPLATE, 1, 0f)))
+			.add("block_to_main", (c) -> c.machine(UNPACKER, c.mainPart(), 9, (b) -> b.addPartInput(BLOCK, 1).addItemInput(MIItem.PACKER_BLOCK_TEMPLATE, 1, 0f)))
 			.add("ingot_to_double_ingot", (c) -> c.machine(PACKER, DOUBLE_INGOT, 1, (b) -> b.addPartInput(INGOT, 2).addItemInput(MIItem.PACKER_DOUBLE_INGOT_TEMPLATE, 1, 0f)))
 			
 			.add("fuel_rod_double", (c) -> c.machine(PACKER, FUEL_ROD_DOUBLE, 1, (b) -> b.addPartInput(FUEL_ROD, 2).addItemInput("#c:plates/nuclear_alloy", 1)))
