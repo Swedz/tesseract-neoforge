@@ -15,7 +15,7 @@ import static net.swedz.tesseract.neoforge.material.builtin.part.MaterialParts.*
 public interface MIMaterialRecipeGroups
 {
 	MaterialRecipeGroup<VanillaMaterialRecipeContext> STANDARD = VanillaMaterialRecipeGroups.STANDARD
-			.add("tiny_dust_to_dust", (c) -> c.shapeless3x3(TINY_DUST, DUST, true))
+			.add("tiny_dust_to_dust", (c) -> c.compacting(TINY_DUST, DUST, true))
 			.add("deepslate_to_ore", (c) -> c.shapeless(ORE_DEEPSLATE, 1, ORE, 1, false))
 			.add("netherrack_to_ore", (c) -> c.shapeless(ORE_NETHERRACK, 1, ORE, 1, false))
 			.add("blade", (c) -> c.shaped(BLADE, 4, (r) -> r.add('P', CURVED_PLATE).add('R', ROD), "P", "P", "I"))

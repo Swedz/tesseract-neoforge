@@ -50,9 +50,24 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		return this;
 	}
 	
-	public VanillaMaterialRecipeContext shapeless3x3(MaterialPart input, MaterialPart output, boolean inverse)
+	public VanillaMaterialRecipeContext compacting(MaterialPart input, MaterialPart output, boolean inverse)
 	{
-		return this.shapeless(input, 9, output, 1, inverse);
+		if(this.has(input, output))
+		{
+			this.shaped(
+					output, 1,
+					(r) -> r.add('#', material.get(input).asItem()),
+					"###",
+					"###",
+					"###"
+			);
+			
+			if(inverse)
+			{
+				this.shapeless(output, 1, input, 9, false);
+			}
+		}
+		return this;
 	}
 	
 	public final class ShapedRecipeMap
