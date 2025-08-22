@@ -40,7 +40,7 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 				recipe.with(inputItem);
 			}
 			recipe.output(outputItem, outputCount);
-			recipe.offerTo(recipes, this.id("craft/%s_from_%s".formatted(output.id().getPath(), input.id().getPath())));
+			recipe.offerTo(recipes, this.id("materials/%s/craft/%s_from_%s".formatted(material.id().getPath(), output.id().getPath(), input.id().getPath())));
 			
 			if(inverse)
 			{
@@ -111,7 +111,7 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 			ShapedRecipeBuilder recipe = new ShapedRecipeBuilder()
 					.output(outputItem, outputCount);
 			keyMap.apply(recipe);
-			recipe.offerTo(recipes, this.id("craft/%s".formatted(id)));
+			recipe.offerTo(recipes, this.id("materials/%s/craft/%s".formatted(material.id().getPath(), id)));
 		}
 		return this;
 	}
@@ -125,7 +125,7 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 					.output(material.get(input).asItem(), 1)
 					.cookingTime(blasting ? 100 : 200)
 					.experience(experience)
-					.offerTo(recipes, this.id("smelting/%s_to_%s_%s".formatted(input.id().getPath(), output.id().getPath(), blasting ? "blasting" : "smelting")));
+					.offerTo(recipes, this.id("materials/%s/smelting/%s_to_%s_%s".formatted(material.id().getPath(), input.id().getPath(), output.id().getPath(), blasting ? "blasting" : "smelting")));
 		}
 		return this;
 	}
