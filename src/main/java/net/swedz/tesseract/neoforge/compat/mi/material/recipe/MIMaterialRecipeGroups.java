@@ -22,7 +22,7 @@ public interface MIMaterialRecipeGroups
 			.add("coil", (c) -> c.shaped(COIL, 1, (r) -> r.add('X', CABLE), "XXX", "X X", "XXX"))
 			.add("large_plate", (c) -> c.shaped(LARGE_PLATE, 1, (r) -> r.add('X', PLATE), "XX", "XX"))
 			.add("rotor", (c) -> c.shaped(ROTOR, 1, (r) -> r.add('b', BOLT).add('B', BLADE), "bBb", "BRB", "bBb"))
-			.add("gear", (c) -> c.shaped(GEAR, 1, (r) -> r.add('b', BOLT).add('P', PLATE), "PbP", "bRb", "PbP"))
+			.add("gear", (c) -> c.shaped(GEAR, 1, (r) -> r.add('b', BOLT).add('R', RING).add('P', PLATE), "PbP", "bRb", "PbP"))
 			.add("hammer", (c) -> c.shaped(HAMMER, 1, (r) -> r.add('p', LARGE_PLATE).add('s', Items.STICK), "ppp", "psp", " s "))
 			.add("ring", (c) -> c.shaped(RING, 2, (r) -> r.add('b', BOLT).add('R', ROD), "bRb", "R R", "bRb"))
 			.add("cable", (c) -> c.shaped(CABLE, 3, (r) -> r.add('r', MIItem.RUBBER_SHEET).add('w', WIRE), "rrr", "www", "rrr"))
