@@ -28,6 +28,8 @@ public interface MIMaterialRecipeGroups
 			.add("cable", (c) -> c.shaped(CABLE, 3, (r) -> r.add('r', MIItem.RUBBER_SHEET).add('w', WIRE), "rrr", "www", "rrr"))
 			.add("barrel", (c) -> c.shaped(BARREL, 1, (r) -> r.add('#', PLATE).add('b', Tags.Items.BARRELS_WOODEN), "###", "#b#", "###"))
 			.add("tank", (c) -> c.shaped(TANK, 1, (r) -> r.add('#', PLATE).add('g', Tags.Items.GLASS_BLOCKS), "###", "#g#", "###"))
+			.add("machine_casing", (c) -> c.shaped(MACHINE_CASING, 1, (r) -> r.add('G', GEAR).add('P', PLATE), "PPP", "PGP", "PPP"))
+			.add("machine_casing_pipe", (c) -> c.shaped(MACHINE_CASING_PIPE, 2, (r) -> r.add('M', MACHINE_CASING).add('P', CURVED_PLATE), "P P", "PMP", "P P"))
 			.add("drill_head", (c) -> c.shaped(DRILL_HEAD, 1, (r) -> r.add('G', GEAR).add('b', BOLT).add('c', CURVED_PLATE).add('R', ROD).add('p', PLATE), "bcp", "GRc", "bGb"));
 	
 	MaterialRecipeGroup<MIMachineMaterialRecipeContext> STANDARD_MACHINES = MaterialRecipeGroup.create(MIMachineMaterialRecipeContext::new)
@@ -40,7 +42,9 @@ public interface MIMaterialRecipeGroups
 			.add("cable_rubber", (c) -> c.machine(PACKER, CABLE, 3, (b) -> b.addItemInput(MIItem.RUBBER_SHEET, 6).addPartInput(WIRE, 3)))
 			.add("barrel", (c) -> c.machine(ASSEMBLER, BARREL, 1, (b) -> b.addPartInput(PLATE, 8).addItemInput(Tags.Items.BARRELS_WOODEN, 1)))
 			.add("tank", (c) -> c.machine(ASSEMBLER, TANK, 1, (b) -> b.addPartInput(PLATE, 8).addItemInput(Tags.Items.GLASS_BLOCKS, 1)))
-			
+			.add("machine_casing", (c) -> c.machine(ASSEMBLER, MACHINE_CASING, 1, (b) -> b.addPartInput(PLATE, 8).addPartInput(GEAR, 1)))
+			.add("machine_casing_pipe", (c) -> c.machine(ASSEMBLER, MACHINE_CASING_PIPE, 2, (b) -> b.addPartInput(MACHINE_CASING, 1).addPartInput(CURVED_PLATE, 6)))
+
 			.add("recycle_double_ingot", (c) -> c.maceratorRecycling(DOUBLE_INGOT, 18))
 			.add("recycle_plate", (c) -> c.maceratorRecycling(PLATE, 9))
 			.add("recycle_curved_plate", (c) -> c.maceratorRecycling(CURVED_PLATE, 9))
