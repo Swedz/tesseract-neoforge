@@ -103,8 +103,8 @@ public interface MIMaterialRecipeGroups
 			.add("heat_exchanger_cool_ingot", (c) -> c.machine("hot_ingot", HEAT_EXCHANGER, 8, 10, INGOT, 1, (b) -> b.addPartInput(HOT_INGOT, 1).addFluidInput(MIFluids.CRYOFLUID, 100).addFluidOutput(MIFluids.ARGON, 65).addFluidOutput(MIFluids.HELIUM, 25)));
 
 	MaterialRecipeGroup<VanillaMaterialRecipeContext> STANDARD_MACHINE_CASING = MaterialRecipeGroup.create(MIMachineMaterialRecipeContext::new)
-			.add("machine_casing", (c) -> c.machine(MACHINE_CASING.id().getPath(), ASSEMBLER, 8, 10 * 20, MACHINE_CASING, 1, (b) -> b.addPartInput(PLATE, 8).addPartInput(GEAR, 1)))
-			.add("machine_casing_pipe", (c) -> c.machine(MACHINE_CASING_PIPE.id().getPath(), ASSEMBLER, 8, 10 * 20, MACHINE_CASING_PIPE, 2, (b) -> b.addPartInput(MACHINE_CASING, 1).addPartInput(CURVED_PLATE, 6)))
+			.add("machine_casing", (c) -> c.machine("machine_casing", ASSEMBLER, 8, 10 * 20, MACHINE_CASING, 1, (b) -> b.addPartInput(PLATE, 8).addPartInput(GEAR, 1)))
+			.add("machine_casing_pipe", (c) -> c.machine("machine_casing_pipe", ASSEMBLER, 8, 10 * 20, MACHINE_CASING_PIPE, 2, (b) -> b.addPartInput(MACHINE_CASING, 1).addPartInput(CURVED_PLATE, 6)))
 		.then(VanillaMaterialRecipeContext::new)
 			.add("machine_casing", (c) -> c.shaped(MACHINE_CASING, 1, (r) -> r.add('G', GEAR).add('P', PLATE), "PPP", "PGP", "PPP"))
 			.add("machine_casing_pipe", (c) -> c.shaped(MACHINE_CASING_PIPE, 2, (r) -> r.add('M', MACHINE_CASING).add('P', CURVED_PLATE), "P P", "PMP", "P P"));
