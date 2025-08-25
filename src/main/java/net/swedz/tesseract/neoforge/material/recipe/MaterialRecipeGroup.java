@@ -12,18 +12,20 @@ import java.util.function.Predicate;
 
 public class MaterialRecipeGroup<C extends MaterialRecipeContext>
 {
+	protected final MaterialRecipeGroup<?>                parent;
 	protected final MaterialRecipeContextFactory<C>       contextFactory;
 	protected final Map<String, MaterialRecipeCreator<C>> creators;
 	
-	protected MaterialRecipeGroup(MaterialRecipeContextFactory<C> contextFactory, Map<String, MaterialRecipeCreator<C>> creators)
+	protected MaterialRecipeGroup(MaterialRecipeGroup<?> parent, MaterialRecipeContextFactory<C> contextFactory, Map<String, MaterialRecipeCreator<C>> creators)
 	{
+		this.parent = parent;
 		this.contextFactory = contextFactory;
 		this.creators = Maps.newHashMap(creators);
 	}
 	
 	public static <C extends MaterialRecipeContext> MaterialRecipeGroup<C> create(MaterialRecipeContextFactory<C> contextFactory)
 	{
-		return new MaterialRecipeGroup<>(contextFactory, Maps.newHashMap());
+		return new MaterialRecipeGroup<>(null, contextFactory, Maps.newHashMap());
 	}
 	
 	public static MaterialRecipeGroup<MaterialRecipeContext> create()
@@ -33,7 +35,7 @@ public class MaterialRecipeGroup<C extends MaterialRecipeContext>
 	
 	public MaterialRecipeGroup<C> copy()
 	{
-		return new MaterialRecipeGroup<>(contextFactory, creators);
+		return new MaterialRecipeGroup<>(parent, contextFactory, creators);
 	}
 	
 	public MaterialRecipeGroup<C> add(String reference, MaterialRecipeCreator<C> creator)
@@ -48,7 +50,7 @@ public class MaterialRecipeGroup<C extends MaterialRecipeContext>
 	
 	public MaterialRecipeGroup<C> filtered(Predicate<String> predicate)
 	{
-		MaterialRecipeGroup<C> filtered = create(contextFactory);
+		MaterialRecipeGroup<C> filtered = new MaterialRecipeGroup<>(parent == null ? null : parent.filtered(predicate), contextFactory, Maps.newHashMap());
 		creators.forEach((reference, creator) ->
 		{
 			if(predicate.test(reference))
@@ -81,20 +83,16 @@ public class MaterialRecipeGroup<C extends MaterialRecipeContext>
 	
 	public void create(MaterialRegistry registry, Material material, RecipeOutput recipes)
 	{
+		if(parent != null)
+		{
+			parent.create(registry, material, recipes);
+		}
 		C context = contextFactory.create(registry, material, recipes);
 		creators.forEach((reference, creator) -> creator.create(context));
 	}
 	
 	public <T extends MaterialRecipeContext> MaterialRecipeGroup<T> then(MaterialRecipeContextFactory<T> contextFactory)
 	{
-		return new MaterialRecipeGroup<>(contextFactory, Maps.newHashMap())
-		{
-			@Override
-			public void create(MaterialRegistry registry, Material material, RecipeOutput recipes)
-			{
-				MaterialRecipeGroup.this.create(registry, material, recipes);
-				super.create(registry, material, recipes);
-			}
-		};
+		return new MaterialRecipeGroup<>(this, contextFactory, Maps.newHashMap());
 	}
 }
