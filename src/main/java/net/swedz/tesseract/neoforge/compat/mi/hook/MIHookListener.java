@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.compat.mi.hook;
 
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.BlastFurnaceTiersMIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.ClientGuiComponentsMIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.HatchMIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.MachineCasingsMIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.MachineProcessConditionsMIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.MachineRecipeTypesMIHookContext;
@@ -40,6 +41,10 @@ public interface MIHookListener
 	{
 	}
 	
+	default void hatches(HatchMIHookContext hook)
+	{
+	}
+	
 	default void multiblockMachines(MultiblockMachinesMIHookContext hook)
 	{
 	}
@@ -60,5 +65,7 @@ public interface MIHookListener
 	{
 	}
 	
-	MIHookListener NONE = new MIHookListener() {};
+	MIHookListener NONE = new MIHookListener()
+	{
+	};
 }
