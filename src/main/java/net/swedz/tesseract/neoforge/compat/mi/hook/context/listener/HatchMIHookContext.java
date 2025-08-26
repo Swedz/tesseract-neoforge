@@ -39,10 +39,45 @@ public final class HatchMIHookContext extends MIHookContext
 		HatchBlockEntity create(BEP bep, boolean input, ResourceLocation machineId);
 	}
 	
+	public interface HatchModification<T>
+	{
+		void apply(T value, boolean input);
+	}
+	
+	@SafeVarargs
+	public final void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
+									Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+									Consumer<BlockBehaviour.Properties> overrideProperties,
+									boolean defaultMineableTags,
+									HatchFactory factory,
+									Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		HackedMachineRegistrationHelper.registerMachine(hook, englishName, id, modifyBlock, overrideProperties, defaultMineableTags, (bep) -> factory.create(bep, false, hook.id(id)), extraRegistrators);
+		HackedMachineRegistrationHelper.addMachineModel(hook, id, casing, overlayFolder, true, false, true, false);
+	}
+	
+	@SafeVarargs
+	public final void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
+									Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+									Consumer<BlockBehaviour.Properties> overrideProperties,
+									HatchFactory factory,
+									Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		this.registerHatch(id, englishName, overlayFolder, casing, modifyBlock, overrideProperties, true, factory, extraRegistrators);
+	}
+	
+	@SafeVarargs
+	public final void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
+									HatchFactory factory,
+									Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		this.registerHatch(id, englishName, overlayFolder, casing, null, null, factory, extraRegistrators);
+	}
+	
 	@SafeVarargs
 	public final void registerHatches(String id, String englishName, String overlayFolder, MachineCasing casing,
-									  Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-									  Consumer<BlockBehaviour.Properties> overrideProperties,
+									  HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+									  HatchModification<BlockBehaviour.Properties> overrideProperties,
 									  boolean defaultMineableTags,
 									  HatchFactory factory,
 									  Consumer<BlockEntityType<?>>... extraRegistrators)
@@ -52,15 +87,19 @@ public final class HatchMIHookContext extends MIHookContext
 			boolean input = i == 0;
 			String machineId = "%s_%s_hatch".formatted(id, input ? "input" : "output");
 			String machineEnglishName = "%s %s Hatch".formatted(englishName, input ? "Input" : "Output");
-			HackedMachineRegistrationHelper.registerMachine(hook, machineEnglishName, machineId, modifyBlock, overrideProperties, defaultMineableTags, (bep) -> factory.create(bep, input, hook.id(machineId)), extraRegistrators);
-			HackedMachineRegistrationHelper.addMachineModel(hook, machineId, casing, overlayFolder, true, false, true, false);
+			this.registerHatch(
+					machineId, machineEnglishName, overlayFolder, casing,
+					modifyBlock != null ? (holder) -> modifyBlock.apply(holder, input) : null,
+					overrideProperties != null ? (properties) -> overrideProperties.apply(properties, input) : null,
+					defaultMineableTags, factory, extraRegistrators
+			);
 		}
 	}
 	
 	@SafeVarargs
 	public final void registerHatches(String id, String englishName, String overlayFolder, MachineCasing casing,
-									  Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-									  Consumer<BlockBehaviour.Properties> overrideProperties,
+									  HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+									  HatchModification<BlockBehaviour.Properties> overrideProperties,
 									  HatchFactory factory,
 									  Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
@@ -77,8 +116,8 @@ public final class HatchMIHookContext extends MIHookContext
 	
 	@SafeVarargs
 	public final void registerItemHatches(String id, String englishName, MachineCasing casing, int rows, int columns, int xStart, int yStart,
-										  Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-										  Consumer<BlockBehaviour.Properties> overrideProperties,
+										  HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+										  HatchModification<BlockBehaviour.Properties> overrideProperties,
 										  boolean defaultMineableTags,
 										  Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
@@ -108,8 +147,8 @@ public final class HatchMIHookContext extends MIHookContext
 	
 	@SafeVarargs
 	public final void registerItemHatches(String id, String englishName, MachineCasing casing, int rows, int columns, int xStart, int yStart,
-										  Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-										  Consumer<BlockBehaviour.Properties> overrideProperties,
+										  HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+										  HatchModification<BlockBehaviour.Properties> overrideProperties,
 										  Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
 		this.registerItemHatches(id, englishName, casing, rows, columns, xStart, yStart, modifyBlock, overrideProperties, true, extraRegistrators);
@@ -124,8 +163,8 @@ public final class HatchMIHookContext extends MIHookContext
 	
 	@SafeVarargs
 	public final void registerFluidHatches(String id, String englishName, MachineCasing casing, int bucketCapacity,
-										   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-										   Consumer<BlockBehaviour.Properties> overrideProperties,
+										   HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+										   HatchModification<BlockBehaviour.Properties> overrideProperties,
 										   boolean defaultMineableTags,
 										   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
@@ -146,8 +185,8 @@ public final class HatchMIHookContext extends MIHookContext
 	
 	@SafeVarargs
 	public final void registerFluidHatches(String id, String englishName, MachineCasing casing, int bucketCapacity,
-										   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-										   Consumer<BlockBehaviour.Properties> overrideProperties,
+										   HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+										   HatchModification<BlockBehaviour.Properties> overrideProperties,
 										   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
 		this.registerFluidHatches(id, englishName, casing, bucketCapacity, modifyBlock, overrideProperties, true, extraRegistrators);
@@ -162,8 +201,8 @@ public final class HatchMIHookContext extends MIHookContext
 	
 	@SafeVarargs
 	public final void registerEnergyHatches(CableTier tier,
-											Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-											Consumer<BlockBehaviour.Properties> overrideProperties,
+											HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+											HatchModification<BlockBehaviour.Properties> overrideProperties,
 											boolean defaultMineableTags,
 											Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
@@ -178,8 +217,8 @@ public final class HatchMIHookContext extends MIHookContext
 	
 	@SafeVarargs
 	public final void registerEnergyHatches(CableTier tier,
-											Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-											Consumer<BlockBehaviour.Properties> overrideProperties,
+											HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+											HatchModification<BlockBehaviour.Properties> overrideProperties,
 											Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
 		this.registerEnergyHatches(tier, modifyBlock, overrideProperties, true, extraRegistrators);
