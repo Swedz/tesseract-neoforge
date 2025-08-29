@@ -43,15 +43,15 @@ public final class HatchMIHookContext extends MIHookContext
 	{
 		void apply(T value, boolean input);
 	}
-
+	
 	@SafeVarargs
 	private void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
-                               Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-                               Consumer<BlockBehaviour.Properties> overrideProperties,
-                               boolean defaultMineableTags,
-                               HatchFactory factory,
-                               boolean input,
-                               Consumer<BlockEntityType<?>>... extraRegistrators)
+							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+							   Consumer<BlockBehaviour.Properties> overrideProperties,
+							   boolean defaultMineableTags,
+							   HatchFactory factory,
+							   boolean input,
+							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
 		HackedMachineRegistrationHelper.registerMachine(hook, englishName, id, modifyBlock, overrideProperties, defaultMineableTags, (bep) -> factory.create(bep, input, hook.id(id)), extraRegistrators);
 		HackedMachineRegistrationHelper.addMachineModel(hook, id, casing, overlayFolder, true, false, true, false);
@@ -65,7 +65,7 @@ public final class HatchMIHookContext extends MIHookContext
 									HatchFactory factory,
 									Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		registerHatch(id, englishName, overlayFolder, casing, modifyBlock, overrideProperties, defaultMineableTags, factory, false, extraRegistrators);
+		this.registerHatch(id, englishName, overlayFolder, casing, modifyBlock, overrideProperties, defaultMineableTags, factory, false, extraRegistrators);
 	}
 	
 	@SafeVarargs
