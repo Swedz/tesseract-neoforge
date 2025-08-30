@@ -53,6 +53,12 @@ public final class MachineRecipeCategoryBuilder
 		return this;
 	}
 	
+	MachineRecipeCategoryBuilder withSteamFluidInputSlot()
+	{
+		this.fluidInputPositions = combine(new SlotPositions.Builder().addSlot(12, 35).build(), fluidInputPositions).build();
+		return this;
+	}
+	
 	public MachineRecipeCategoryBuilder progressBar(int renderX, int renderY, String progressBarType, boolean isVertical)
 	{
 		progressBar = new ProgressBar.Parameters(renderX, renderY, progressBarType, isVertical);
@@ -71,7 +77,7 @@ public final class MachineRecipeCategoryBuilder
 		return this;
 	}
 	
-	private static SlotPositions combine(SlotPositions a, SlotPositions b)
+	private static SlotPositions.Builder combine(SlotPositions a, SlotPositions b)
 	{
 		var combined = new SlotPositions.Builder();
 		for(int i = 0; i < a.size(); i++)
@@ -82,17 +88,17 @@ public final class MachineRecipeCategoryBuilder
 		{
 			combined.addSlot(b.getX(i), b.getY(i));
 		}
-		return combined.build();
+		return combined;
 	}
 	
 	private SlotPositions itemPositions()
 	{
-		return combine(itemInputPositions, itemOutputPositions);
+		return combine(itemInputPositions, itemOutputPositions).build();
 	}
 	
 	private SlotPositions fluidPositions()
 	{
-		return combine(fluidInputPositions, fluidOutputPositions);
+		return combine(fluidInputPositions, fluidOutputPositions).build();
 	}
 	
 	boolean hasInputs()
@@ -119,7 +125,7 @@ public final class MachineRecipeCategoryBuilder
 	{
 		return MachineInventoryHelper.buildInventoryComponent(
 				itemInputPositions.size(), itemOutputPositions.size(),
-				fluidInputPositions.size(), fluidOutputPositions.size(),
+				Math.max(0, fluidInputPositions.size() - (steamBuckets > 0 ? 1 : 0)), fluidOutputPositions.size(),
 				this.itemPositions(), this.fluidPositions(),
 				steamBuckets, bucketCapacity
 		);
@@ -162,5 +168,17 @@ public final class MachineRecipeCategoryBuilder
 				(recipe) -> predicate.test(recipe),
 				isMultiblock, steamMode
 		);
+	}
+	
+	MachineRecipeCategoryBuilder copy()
+	{
+		var copy = new MachineRecipeCategoryBuilder(isMultiblock, steamMode, recipeType);
+		copy.itemInputPositions = itemInputPositions;
+		copy.itemOutputPositions = itemOutputPositions;
+		copy.fluidInputPositions = fluidInputPositions;
+		copy.fluidOutputPositions = fluidOutputPositions;
+		copy.progressBar = progressBar;
+		copy.predicate = predicate;
+		return copy;
 	}
 }
