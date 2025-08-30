@@ -98,10 +98,18 @@ public abstract class MachineBuilder<T extends MachineBuilder<T>>
 	public T builtinModel(MachineCasing casing, String overlayFolder, Consumer<MachineBuiltinModelBuilder> builder)
 	{
 		Assert.that(builtinModel == null, "Simple model has already been registered for this machine");
-		Assert.noneNull(overlayFolder, builder);
+		Assert.noneNull(overlayFolder);
 		builtinModel = new MachineBuiltinModelBuilder(casing, overlayFolder);
-		builder.accept(builtinModel);
+		if(builder != null)
+		{
+			builder.accept(builtinModel);
+		}
 		return (T) this;
+	}
+	
+	public T builtinModel(MachineCasing casing, String overlayFolder)
+	{
+		return this.builtinModel(casing, overlayFolder, null);
 	}
 	
 	protected abstract void internalBuild();
