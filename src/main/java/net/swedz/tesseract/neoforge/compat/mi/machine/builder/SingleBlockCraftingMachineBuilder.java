@@ -162,6 +162,7 @@ public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<Sing
 			int steamBuckets = index == 0 ? 2 : 4;
 			String id = prefix + "_" + name;
 			var guiParams = guiParameters.apply(hook.id(id));
+			var recipeCategory = this.recipeCategory.copy().withSteamFluidInputSlot();
 			
 			HackedMachineRegistrationHelper.registerMachine(
 					hook,
