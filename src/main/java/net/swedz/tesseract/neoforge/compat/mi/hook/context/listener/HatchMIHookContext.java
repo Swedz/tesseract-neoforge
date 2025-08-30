@@ -53,7 +53,7 @@ public final class HatchMIHookContext extends MIHookContext
 							   boolean input,
 							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		HackedMachineRegistrationHelper.registerMachine(hook, englishName, id, modifyBlock, overrideProperties, defaultMineableTags, (bep) -> factory.create(bep, input, hook.id(id)), extraRegistrators);
+		HackedMachineRegistrationHelper.registerMachine(hook, englishName, id, null, modifyBlock, overrideProperties, defaultMineableTags, (bep) -> factory.create(bep, input, hook.id(id)), extraRegistrators);
 		HackedMachineRegistrationHelper.addMachineModel(hook, id, casing, overlayFolder, true, false, true, false);
 	}
 	
