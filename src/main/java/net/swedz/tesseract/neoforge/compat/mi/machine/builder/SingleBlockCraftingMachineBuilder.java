@@ -47,6 +47,9 @@ public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<Sing
 		this.recipeType = recipeType;
 	}
 	
+	/**
+	 * Note that the {@link MachineCasing} passed here will be ignored.
+	 */
 	@Override
 	public SingleBlockCraftingMachineBuilder builtinModel(MachineCasing casing, String overlayFolder, Consumer<MachineBuiltinModelBuilder> builder)
 	{
@@ -56,6 +59,11 @@ public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<Sing
 			b.active(true);
 			builder.accept(b);
 		});
+	}
+	
+	public SingleBlockCraftingMachineBuilder builtinModel(String overlayFolder, Consumer<MachineBuiltinModelBuilder> builder)
+	{
+		return this.builtinModel(null, overlayFolder, builder);
 	}
 	
 	public SingleBlockCraftingMachineBuilder bronze()
