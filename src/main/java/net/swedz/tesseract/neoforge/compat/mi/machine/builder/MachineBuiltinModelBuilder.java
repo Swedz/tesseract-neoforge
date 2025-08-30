@@ -14,7 +14,7 @@ public class MachineBuiltinModelBuilder
 	
 	MachineBuiltinModelBuilder(MachineCasing casing, String overlayFolder)
 	{
-		Assert.noneNull(casing, overlayFolder);
+		Assert.noneNull(overlayFolder);
 		this.casing = casing;
 		this.overlayFolder = overlayFolder;
 	}
@@ -45,6 +45,7 @@ public class MachineBuiltinModelBuilder
 	
 	void build(MIHook hook, String id, MachineCasing casing)
 	{
+		Assert.notNull(casing, "Machine casing must be provided");
 		HackedMachineRegistrationHelper.addMachineModel(hook, id, casing, overlayFolder, front, top, side, active);
 	}
 	
