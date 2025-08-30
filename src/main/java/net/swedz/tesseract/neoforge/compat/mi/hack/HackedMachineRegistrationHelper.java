@@ -37,6 +37,7 @@ import net.swedz.tesseract.neoforge.compat.mi.helper.MachineInventoryHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
+import net.swedz.tesseract.neoforge.compat.mi.machine.MachineBlockCreator;
 import net.swedz.tesseract.neoforge.compat.mi.mixin.accessor.MIMachineRecipeTypesAccessor;
 import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
@@ -54,7 +55,12 @@ import java.util.function.Supplier;
 import static aztech.modern_industrialization.machines.init.SingleBlockCraftingMachines.*;
 
 /**
- * The methods in this helper class are copied from various places in MI's source code and modified to respect the registries and namespaces of whatever mod is registering the machine, rei categories, or recipe types.
+ * <p>The methods in this helper class are copied from various places in MI's source code and modified to respect the
+ * registries and namespaces of whatever mod is registering the machine, rei categories, or recipe types.</p>
+ *
+ * <p><b>It is recommended to not use these methods yourself.</b> They are intended for internal use within Tesseract
+ * only. If you need to call one of these methods instead of a method in a hook context, there is something missing in
+ * the hook context and that should be considered a bug / mistake.</p>
  */
 public final class HackedMachineRegistrationHelper
 {
@@ -64,6 +70,7 @@ public final class HackedMachineRegistrationHelper
 	@SafeVarargs
 	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
 															   String englishName, String name,
+															   MachineBlockCreator blockCreator,
 															   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
 															   Consumer<BlockBehaviour.Properties> overrideProperties,
 															   boolean defaultMineableTags,
@@ -78,7 +85,7 @@ public final class HackedMachineRegistrationHelper
 		
 		BlockWithItemHolder<?, ?> blockHolder = new BlockWithItemHolder<>(
 				id, englishName,
-				registry.blockRegistry(), (p) -> new MachineBlock(ctor, p),
+				registry.blockRegistry(), (p) -> blockCreator == null ? new MachineBlock(ctor, p) : blockCreator.create(ctor, p),
 				registry.itemRegistry(), BlockItem::new
 		);
 		blockHolder.item().sorted(registry.sortOrderMachines());
@@ -145,12 +152,13 @@ public final class HackedMachineRegistrationHelper
 	@SafeVarargs
 	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
 															   String englishName, String name,
+															   MachineBlockCreator blockCreator,
 															   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
 															   Consumer<BlockBehaviour.Properties> overrideProperties,
 															   Function<BEP, MachineBlockEntity> factory,
 															   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		return registerMachine(hook, englishName, name, modifyBlock, overrideProperties, true, factory, extraRegistrators);
+		return registerMachine(hook, englishName, name, blockCreator, modifyBlock, overrideProperties, true, factory, extraRegistrators);
 	}
 	
 	@SafeVarargs
@@ -159,7 +167,7 @@ public final class HackedMachineRegistrationHelper
 															   Function<BEP, MachineBlockEntity> factory,
 															   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		return registerMachine(hook, englishName, name, null, null, factory, extraRegistrators);
+		return registerMachine(hook, englishName, name, null, null, null, factory, extraRegistrators);
 	}
 	
 	/**

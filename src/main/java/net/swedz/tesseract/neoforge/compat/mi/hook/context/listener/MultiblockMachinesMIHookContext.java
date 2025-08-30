@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.machine.MachineBlockCreator;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 
 import java.util.function.Consumer;
@@ -29,13 +30,36 @@ public final class MultiblockMachinesMIHookContext extends MIHookContext
 	
 	@SafeVarargs
 	public final void register(String englishName, String name,
+							   MachineBlockCreator blockCreator,
 							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
 							   Consumer<BlockBehaviour.Properties> overrideProperties,
 							   boolean defaultMineableTags,
 							   Function<BEP, MachineBlockEntity> factory,
 							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		HackedMachineRegistrationHelper.registerMachine(hook, englishName, name, modifyBlock, overrideProperties, defaultMineableTags, factory, extraRegistrators);
+		HackedMachineRegistrationHelper.registerMachine(hook, englishName, name, blockCreator, modifyBlock, overrideProperties, defaultMineableTags, factory, extraRegistrators);
+	}
+	
+	@SafeVarargs
+	public final void register(String englishName, String name,
+							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+							   Consumer<BlockBehaviour.Properties> overrideProperties,
+							   boolean defaultMineableTags,
+							   Function<BEP, MachineBlockEntity> factory,
+							   Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		this.register(englishName, name, null, modifyBlock, overrideProperties, defaultMineableTags, factory, extraRegistrators);
+	}
+	
+	@SafeVarargs
+	public final void register(String englishName, String name,
+							   MachineBlockCreator blockCreator,
+							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+							   Consumer<BlockBehaviour.Properties> overrideProperties,
+							   Function<BEP, MachineBlockEntity> factory,
+							   Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		this.register(englishName, name, modifyBlock, overrideProperties, true, factory, extraRegistrators);
 	}
 	
 	@SafeVarargs
@@ -45,7 +69,7 @@ public final class MultiblockMachinesMIHookContext extends MIHookContext
 							   Function<BEP, MachineBlockEntity> factory,
 							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		this.register(englishName, name, modifyBlock, overrideProperties, true, factory, extraRegistrators);
+		this.register(englishName, name, null, modifyBlock, overrideProperties, factory, extraRegistrators);
 	}
 	
 	@SafeVarargs
@@ -59,15 +83,40 @@ public final class MultiblockMachinesMIHookContext extends MIHookContext
 	@SafeVarargs
 	public final void register(String englishName, String name, String overlayFolder,
 							   MachineCasing defaultCasing, boolean frontOverlay, boolean topOverlay, boolean sideOverlay, boolean hasActive,
+							   MachineBlockCreator blockCreator,
 							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
 							   Consumer<BlockBehaviour.Properties> overrideProperties,
 							   boolean defaultMineableTags,
 							   Function<BEP, MachineBlockEntity> factory,
 							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		this.register(englishName, name, modifyBlock, overrideProperties, defaultMineableTags, factory, extraRegistrators);
+		this.register(englishName, name, blockCreator, modifyBlock, overrideProperties, defaultMineableTags, factory, extraRegistrators);
 		
 		HackedMachineRegistrationHelper.addMachineModel(hook, name, defaultCasing, overlayFolder, frontOverlay, topOverlay, sideOverlay, hasActive);
+	}
+	
+	@SafeVarargs
+	public final void register(String englishName, String name, String overlayFolder,
+							   MachineCasing defaultCasing, boolean frontOverlay, boolean topOverlay, boolean sideOverlay, boolean hasActive,
+							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+							   Consumer<BlockBehaviour.Properties> overrideProperties,
+							   boolean defaultMineableTags,
+							   Function<BEP, MachineBlockEntity> factory,
+							   Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, hasActive, null, modifyBlock, overrideProperties, defaultMineableTags, factory, extraRegistrators);
+	}
+	
+	@SafeVarargs
+	public final void register(String englishName, String name, String overlayFolder,
+							   MachineCasing defaultCasing, boolean frontOverlay, boolean topOverlay, boolean sideOverlay, boolean hasActive,
+							   MachineBlockCreator blockCreator,
+							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+							   Consumer<BlockBehaviour.Properties> overrideProperties,
+							   Function<BEP, MachineBlockEntity> factory,
+							   Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, hasActive, blockCreator, modifyBlock, overrideProperties, true, factory, extraRegistrators);
 	}
 	
 	@SafeVarargs
@@ -78,7 +127,7 @@ public final class MultiblockMachinesMIHookContext extends MIHookContext
 							   Function<BEP, MachineBlockEntity> factory,
 							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, hasActive, modifyBlock, overrideProperties, true, factory, extraRegistrators);
+		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, hasActive, null, modifyBlock, overrideProperties, factory, extraRegistrators);
 	}
 	
 	@SafeVarargs
@@ -93,13 +142,38 @@ public final class MultiblockMachinesMIHookContext extends MIHookContext
 	@SafeVarargs
 	public final void register(String englishName, String name, String overlayFolder,
 							   MachineCasing defaultCasing, boolean frontOverlay, boolean topOverlay, boolean sideOverlay,
+							   MachineBlockCreator blockCreator,
 							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
 							   Consumer<BlockBehaviour.Properties> overrideProperties,
 							   boolean defaultMineableTags,
 							   Function<BEP, MachineBlockEntity> factory,
 							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, true, modifyBlock, overrideProperties, defaultMineableTags, factory, extraRegistrators);
+		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, true, blockCreator, modifyBlock, overrideProperties, defaultMineableTags, factory, extraRegistrators);
+	}
+	
+	@SafeVarargs
+	public final void register(String englishName, String name, String overlayFolder,
+							   MachineCasing defaultCasing, boolean frontOverlay, boolean topOverlay, boolean sideOverlay,
+							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+							   Consumer<BlockBehaviour.Properties> overrideProperties,
+							   boolean defaultMineableTags,
+							   Function<BEP, MachineBlockEntity> factory,
+							   Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, null, modifyBlock, overrideProperties, defaultMineableTags, factory, extraRegistrators);
+	}
+	
+	@SafeVarargs
+	public final void register(String englishName, String name, String overlayFolder,
+							   MachineCasing defaultCasing, boolean frontOverlay, boolean topOverlay, boolean sideOverlay,
+							   MachineBlockCreator blockCreator,
+							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
+							   Consumer<BlockBehaviour.Properties> overrideProperties,
+							   Function<BEP, MachineBlockEntity> factory,
+							   Consumer<BlockEntityType<?>>... extraRegistrators)
+	{
+		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, blockCreator, modifyBlock, overrideProperties, true, factory, extraRegistrators);
 	}
 	
 	@SafeVarargs
@@ -110,7 +184,7 @@ public final class MultiblockMachinesMIHookContext extends MIHookContext
 							   Function<BEP, MachineBlockEntity> factory,
 							   Consumer<BlockEntityType<?>>... extraRegistrators)
 	{
-		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, modifyBlock, overrideProperties, true, factory, extraRegistrators);
+		this.register(englishName, name, overlayFolder, defaultCasing, frontOverlay, topOverlay, sideOverlay, null, modifyBlock, overrideProperties, factory, extraRegistrators);
 	}
 	
 	@SafeVarargs
