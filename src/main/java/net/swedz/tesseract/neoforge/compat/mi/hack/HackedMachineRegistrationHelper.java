@@ -30,14 +30,17 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.swedz.tesseract.neoforge.compat.mi.helper.MachineInventoryHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
-import net.swedz.tesseract.neoforge.compat.mi.machine.MachineBlockCreator;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockEntityFactory;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockFactory;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockHolderModifier;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockPropertiesModifier;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockRegistrators;
 import net.swedz.tesseract.neoforge.compat.mi.mixin.accessor.MIMachineRecipeTypesAccessor;
 import net.swedz.tesseract.neoforge.registry.common.CommonLootTableBuilders;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
@@ -60,32 +63,32 @@ import static aztech.modern_industrialization.machines.init.SingleBlockCraftingM
  *
  * <p><b>It is recommended to not use these methods yourself.</b> They are intended for internal use within Tesseract
  * only. If you need to call one of these methods instead of a method in a hook context, there is something missing in
- * the hook context and that should be considered a bug / mistake.</p>
+ * the hook context and that should be considered a bug / mistake. Also, I will change these methods without warning.
+ * :)</p>
  */
 public final class HackedMachineRegistrationHelper
 {
 	/**
 	 * @see MachineRegistrationHelper#registerMachine(String, String, Function, Consumer[])
 	 */
-	@SafeVarargs
 	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
 															   String englishName, String name,
-															   MachineBlockCreator blockCreator,
-															   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-															   Consumer<BlockBehaviour.Properties> overrideProperties,
+															   MachineBlockFactory blockFactory,
+															   MachineBlockHolderModifier holderModifier,
+															   MachineBlockPropertiesModifier overrideProperties,
 															   boolean defaultMineableTags,
-															   Function<BEP, MachineBlockEntity> factory,
-															   Consumer<BlockEntityType<?>>... extraRegistrators)
+															   MachineBlockEntityFactory factory,
+															   MachineBlockRegistrators... extraRegistrators)
 	{
 		MIHookRegistry registry = hook.registry();
 		ResourceLocation id = hook.id(name);
 		
 		AtomicReference<BlockEntityType<?>> bet = new AtomicReference<>();
-		BiFunction<BlockPos, BlockState, MachineBlockEntity> ctor = (pos, state) -> factory.apply(new BEP(bet.get(), pos, state));
+		BiFunction<BlockPos, BlockState, MachineBlockEntity> ctor = (pos, state) -> factory.create(new BEP(bet.get(), pos, state));
 		
 		BlockWithItemHolder<?, ?> blockHolder = new BlockWithItemHolder<>(
 				id, englishName,
-				registry.blockRegistry(), (p) -> blockCreator == null ? new MachineBlock(ctor, p) : blockCreator.create(ctor, p),
+				registry.blockRegistry(), (p) -> blockFactory == null ? new MachineBlock(ctor, p) : blockFactory.create(ctor, p),
 				registry.itemRegistry(), BlockItem::new
 		);
 		blockHolder.item().sorted(registry.sortOrderMachines());
@@ -99,7 +102,7 @@ public final class HackedMachineRegistrationHelper
 				{
 					if(overrideProperties != null)
 					{
-						overrideProperties.accept(properties);
+						overrideProperties.modify(properties);
 					}
 					else
 					{
@@ -123,9 +126,9 @@ public final class HackedMachineRegistrationHelper
 							.customLoader((bmb, exFile) -> new FakedMachineModelBuilder<>(machineModelProperties, bmb, exFile))
 							.end());
 				});
-		if(modifyBlock != null)
+		if(holderModifier != null)
 		{
-			modifyBlock.accept(blockHolder);
+			holderModifier.modify(blockHolder);
 		}
 		blockHolder.register();
 		
@@ -138,9 +141,9 @@ public final class HackedMachineRegistrationHelper
 			
 			bet.set(BlockEntityType.Builder.of(ctor::apply, block).build(null));
 			
-			for(Consumer<BlockEntityType<?>> extraRegistrator : extraRegistrators)
+			for(var extraRegistrator : extraRegistrators)
 			{
-				extraRegistrator.accept(bet.get());
+				extraRegistrator.apply(bet.get());
 			}
 			
 			registry.onBlockEntityRegister(bet.get());
@@ -149,23 +152,21 @@ public final class HackedMachineRegistrationHelper
 		});
 	}
 	
-	@SafeVarargs
 	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
 															   String englishName, String name,
-															   MachineBlockCreator blockCreator,
-															   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-															   Consumer<BlockBehaviour.Properties> overrideProperties,
-															   Function<BEP, MachineBlockEntity> factory,
-															   Consumer<BlockEntityType<?>>... extraRegistrators)
+															   MachineBlockFactory blockCreator,
+															   MachineBlockHolderModifier modifyBlock,
+															   MachineBlockPropertiesModifier overrideProperties,
+															   MachineBlockEntityFactory factory,
+															   MachineBlockRegistrators... extraRegistrators)
 	{
 		return registerMachine(hook, englishName, name, blockCreator, modifyBlock, overrideProperties, true, factory, extraRegistrators);
 	}
 	
-	@SafeVarargs
 	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
 															   String englishName, String name,
-															   Function<BEP, MachineBlockEntity> factory,
-															   Consumer<BlockEntityType<?>>... extraRegistrators)
+															   MachineBlockEntityFactory factory,
+															   MachineBlockRegistrators... extraRegistrators)
 	{
 		return registerMachine(hook, englishName, name, null, null, null, factory, extraRegistrators);
 	}

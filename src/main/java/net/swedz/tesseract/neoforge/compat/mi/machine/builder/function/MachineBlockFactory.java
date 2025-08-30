@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.compat.mi.machine;
+package net.swedz.tesseract.neoforge.compat.mi.machine.builder.function;
 
 import aztech.modern_industrialization.machines.MachineBlock;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.function.BiFunction;
 
 @FunctionalInterface
-public interface MachineBlockCreator
+public interface MachineBlockFactory
 {
 	/**
 	 * Creates a machine block.

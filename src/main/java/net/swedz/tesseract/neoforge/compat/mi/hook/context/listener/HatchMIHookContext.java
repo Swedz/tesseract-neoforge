@@ -15,17 +15,20 @@ import aztech.modern_industrialization.machines.models.MachineCasing;
 import aztech.modern_industrialization.machines.multiblocks.HatchBlockEntity;
 import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.HatchMachineBuilder;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockHolderModifier;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockPropertiesModifier;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockRegistrators;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.MachineBuilder;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 
 public final class HatchMIHookContext extends MIHookContext
 {
@@ -34,65 +37,72 @@ public final class HatchMIHookContext extends MIHookContext
 		super(hook);
 	}
 	
+	public HatchMachineBuilder builder(String name, String englishName)
+	{
+		return MachineBuilder.hatch(hook, name, englishName);
+	}
+	
+	@Deprecated(forRemoval = true)
 	public interface HatchFactory
 	{
 		HatchBlockEntity create(BEP bep, boolean input, ResourceLocation machineId);
 	}
 	
+	@Deprecated(forRemoval = true)
 	public interface HatchModification<T>
 	{
 		void apply(T value, boolean input);
 	}
 	
-	@SafeVarargs
+	@Deprecated(forRemoval = true)
 	private void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
-							   Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-							   Consumer<BlockBehaviour.Properties> overrideProperties,
+							   MachineBlockHolderModifier modifyBlock,
+							   MachineBlockPropertiesModifier overrideProperties,
 							   boolean defaultMineableTags,
 							   HatchFactory factory,
 							   boolean input,
-							   Consumer<BlockEntityType<?>>... extraRegistrators)
+							   MachineBlockRegistrators... extraRegistrators)
 	{
 		HackedMachineRegistrationHelper.registerMachine(hook, englishName, id, null, modifyBlock, overrideProperties, defaultMineableTags, (bep) -> factory.create(bep, input, hook.id(id)), extraRegistrators);
 		HackedMachineRegistrationHelper.addMachineModel(hook, id, casing, overlayFolder, true, false, true, false);
 	}
 	
-	@SafeVarargs
-	public final void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
-									Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-									Consumer<BlockBehaviour.Properties> overrideProperties,
-									boolean defaultMineableTags,
-									HatchFactory factory,
-									Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
+							  MachineBlockHolderModifier modifyBlock,
+							  MachineBlockPropertiesModifier overrideProperties,
+							  boolean defaultMineableTags,
+							  HatchFactory factory,
+							  MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerHatch(id, englishName, overlayFolder, casing, modifyBlock, overrideProperties, defaultMineableTags, factory, false, extraRegistrators);
 	}
 	
-	@SafeVarargs
-	public final void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
-									Consumer<BlockWithItemHolder<?, ?>> modifyBlock,
-									Consumer<BlockBehaviour.Properties> overrideProperties,
-									HatchFactory factory,
-									Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
+							  MachineBlockHolderModifier modifyBlock,
+							  MachineBlockPropertiesModifier overrideProperties,
+							  HatchFactory factory,
+							  MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerHatch(id, englishName, overlayFolder, casing, modifyBlock, overrideProperties, true, factory, extraRegistrators);
 	}
 	
-	@SafeVarargs
-	public final void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
-									HatchFactory factory,
-									Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerHatch(String id, String englishName, String overlayFolder, MachineCasing casing,
+							  HatchFactory factory,
+							  MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerHatch(id, englishName, overlayFolder, casing, null, null, factory, extraRegistrators);
 	}
 	
-	@SafeVarargs
-	public final void registerHatches(String id, String englishName, String overlayFolder, MachineCasing casing,
-									  HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
-									  HatchModification<BlockBehaviour.Properties> overrideProperties,
-									  boolean defaultMineableTags,
-									  HatchFactory factory,
-									  Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerHatches(String id, String englishName, String overlayFolder, MachineCasing casing,
+								HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+								HatchModification<BlockBehaviour.Properties> overrideProperties,
+								boolean defaultMineableTags,
+								HatchFactory factory,
+								MachineBlockRegistrators... extraRegistrators)
 	{
 		for(int i = 0; i < 2; i++)
 		{
@@ -108,30 +118,30 @@ public final class HatchMIHookContext extends MIHookContext
 		}
 	}
 	
-	@SafeVarargs
-	public final void registerHatches(String id, String englishName, String overlayFolder, MachineCasing casing,
-									  HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
-									  HatchModification<BlockBehaviour.Properties> overrideProperties,
-									  HatchFactory factory,
-									  Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerHatches(String id, String englishName, String overlayFolder, MachineCasing casing,
+								HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+								HatchModification<BlockBehaviour.Properties> overrideProperties,
+								HatchFactory factory,
+								MachineBlockRegistrators... extraRegistrators)
 	{
 		registerHatches(id, englishName, overlayFolder, casing, modifyBlock, overrideProperties, true, factory, extraRegistrators);
 	}
 	
-	@SafeVarargs
-	public final void registerHatches(String id, String englishName, String overlayFolder, MachineCasing casing,
-									  HatchFactory factory,
-									  Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerHatches(String id, String englishName, String overlayFolder, MachineCasing casing,
+								HatchFactory factory,
+								MachineBlockRegistrators... extraRegistrators)
 	{
 		registerHatches(id, englishName, overlayFolder, casing, null, null, factory, extraRegistrators);
 	}
 	
-	@SafeVarargs
-	public final void registerItemHatches(String id, String englishName, MachineCasing casing, int rows, int columns, int xStart, int yStart,
-										  HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
-										  HatchModification<BlockBehaviour.Properties> overrideProperties,
-										  boolean defaultMineableTags,
-										  Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerItemHatches(String id, String englishName, MachineCasing casing, int rows, int columns, int xStart, int yStart,
+									HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+									HatchModification<BlockBehaviour.Properties> overrideProperties,
+									boolean defaultMineableTags,
+									MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerHatches(id + "_item", englishName + " Item", "hatch_item", casing, modifyBlock, overrideProperties, defaultMineableTags, (bep, input, machineId) ->
 		{
@@ -157,28 +167,28 @@ public final class HatchMIHookContext extends MIHookContext
 		}, ArrayUtils.add(extraRegistrators, MachineBlockEntity::registerItemApi));
 	}
 	
-	@SafeVarargs
-	public final void registerItemHatches(String id, String englishName, MachineCasing casing, int rows, int columns, int xStart, int yStart,
-										  HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
-										  HatchModification<BlockBehaviour.Properties> overrideProperties,
-										  Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerItemHatches(String id, String englishName, MachineCasing casing, int rows, int columns, int xStart, int yStart,
+									HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+									HatchModification<BlockBehaviour.Properties> overrideProperties,
+									MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerItemHatches(id, englishName, casing, rows, columns, xStart, yStart, modifyBlock, overrideProperties, true, extraRegistrators);
 	}
 	
-	@SafeVarargs
-	public final void registerItemHatches(String id, String englishName, MachineCasing casing, int rows, int columns, int xStart, int yStart,
-										  Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerItemHatches(String id, String englishName, MachineCasing casing, int rows, int columns, int xStart, int yStart,
+									MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerItemHatches(id, englishName, casing, rows, columns, xStart, yStart, null, null, extraRegistrators);
 	}
 	
-	@SafeVarargs
-	public final void registerFluidHatches(String id, String englishName, MachineCasing casing, int bucketCapacity,
-										   HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
-										   HatchModification<BlockBehaviour.Properties> overrideProperties,
-										   boolean defaultMineableTags,
-										   Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerFluidHatches(String id, String englishName, MachineCasing casing, int bucketCapacity,
+									 HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+									 HatchModification<BlockBehaviour.Properties> overrideProperties,
+									 boolean defaultMineableTags,
+									 MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerHatches(id + "_fluid", englishName + " Fluid", "hatch_fluid", casing, modifyBlock, overrideProperties, defaultMineableTags, (bep, input, machineId) ->
 		{
@@ -195,28 +205,28 @@ public final class HatchMIHookContext extends MIHookContext
 		}, ArrayUtils.add(extraRegistrators, MachineBlockEntity::registerFluidApi));
 	}
 	
-	@SafeVarargs
-	public final void registerFluidHatches(String id, String englishName, MachineCasing casing, int bucketCapacity,
-										   HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
-										   HatchModification<BlockBehaviour.Properties> overrideProperties,
-										   Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerFluidHatches(String id, String englishName, MachineCasing casing, int bucketCapacity,
+									 HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+									 HatchModification<BlockBehaviour.Properties> overrideProperties,
+									 MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerFluidHatches(id, englishName, casing, bucketCapacity, modifyBlock, overrideProperties, true, extraRegistrators);
 	}
 	
-	@SafeVarargs
-	public final void registerFluidHatches(String id, String englishName, MachineCasing casing, int bucketCapacity,
-										   Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerFluidHatches(String id, String englishName, MachineCasing casing, int bucketCapacity,
+									 MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerFluidHatches(id, englishName, casing, bucketCapacity, null, null, extraRegistrators);
 	}
 	
-	@SafeVarargs
-	public final void registerEnergyHatches(CableTier tier,
-											HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
-											HatchModification<BlockBehaviour.Properties> overrideProperties,
-											boolean defaultMineableTags,
-											Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerEnergyHatches(CableTier tier,
+									  HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+									  HatchModification<BlockBehaviour.Properties> overrideProperties,
+									  boolean defaultMineableTags,
+									  MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerHatches(
 				tier.name + "_energy", tier.shortEnglishName + " Energy",
@@ -227,18 +237,18 @@ public final class HatchMIHookContext extends MIHookContext
 		);
 	}
 	
-	@SafeVarargs
-	public final void registerEnergyHatches(CableTier tier,
-											HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
-											HatchModification<BlockBehaviour.Properties> overrideProperties,
-											Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerEnergyHatches(CableTier tier,
+									  HatchModification<BlockWithItemHolder<?, ?>> modifyBlock,
+									  HatchModification<BlockBehaviour.Properties> overrideProperties,
+									  MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerEnergyHatches(tier, modifyBlock, overrideProperties, true, extraRegistrators);
 	}
 	
-	@SafeVarargs
-	public final void registerEnergyHatches(CableTier tier,
-											Consumer<BlockEntityType<?>>... extraRegistrators)
+	@Deprecated(forRemoval = true)
+	public void registerEnergyHatches(CableTier tier,
+									  MachineBlockRegistrators... extraRegistrators)
 	{
 		this.registerEnergyHatches(tier, null, null, extraRegistrators);
 	}

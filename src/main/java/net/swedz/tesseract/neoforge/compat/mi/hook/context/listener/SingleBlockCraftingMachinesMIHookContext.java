@@ -10,6 +10,8 @@ import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.MachineBuilder;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.SingleBlockCraftingMachineBuilder;
 
 import java.util.function.Consumer;
 
@@ -20,6 +22,12 @@ public final class SingleBlockCraftingMachinesMIHookContext extends MIHookContex
 		super(hook);
 	}
 	
+	public SingleBlockCraftingMachineBuilder builder(String name, String englishName, MachineRecipeType recipeType)
+	{
+		return MachineBuilder.singleBlockCrafting(hook, name, englishName, recipeType);
+	}
+	
+	@Deprecated(forRemoval = true)
 	public void register(String englishName, String machine, MachineRecipeType type,
 						 int itemInputCount, int itemOutputCount, int fluidInputCount, int fluidOutputCount,
 						 Consumer<MachineGuiParameters.Builder> guiParams,
@@ -43,6 +51,7 @@ public final class SingleBlockCraftingMachinesMIHookContext extends MIHookContex
 		);
 	}
 	
+	@Deprecated(forRemoval = true)
 	public void register(String englishName, String machine, MachineRecipeType type,
 						 int itemInputCount, int itemOutputCount, int fluidInputCount, int fluidOutputCount,
 						 Consumer<MachineGuiParameters.Builder> guiParams,
