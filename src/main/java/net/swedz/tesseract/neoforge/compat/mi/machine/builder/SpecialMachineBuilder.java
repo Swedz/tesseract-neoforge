@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.compat.mi.machine.builder;
 
 import aztech.modern_industrialization.compat.rei.machines.ReiMachineRecipes;
 import aztech.modern_industrialization.compat.rei.machines.SteamMode;
+import aztech.modern_industrialization.machines.models.MachineCasing;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.minecraft.resources.ResourceLocation;
@@ -12,6 +13,8 @@ import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBl
 import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockEntityWithGuiFactory;
 import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockRegistrators;
 import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineGuiConfigurator;
+
+import java.util.function.Consumer;
 
 public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMachineBuilder>
 {
@@ -30,6 +33,17 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 		Assert.notNull(blockEntityFactory);
 		this.isMultiblock = isMultiblock;
 		this.blockEntityFactory = (bep) -> blockEntityFactory.create(bep, gui);
+	}
+	
+	@Override
+	public SpecialMachineBuilder builtinModel(MachineCasing casing, String overlayFolder, Consumer<MachineBuiltinModelBuilder> builder)
+	{
+		return super.builtinModel(casing, overlayFolder, (b) ->
+		{
+			// Machines by default have a front and active overlay
+			b.front().active();
+			builder.accept(b);
+		});
 	}
 	
 	public SpecialMachineBuilder gui(SteamMode steamMode, MachineRecipeType recipeType,

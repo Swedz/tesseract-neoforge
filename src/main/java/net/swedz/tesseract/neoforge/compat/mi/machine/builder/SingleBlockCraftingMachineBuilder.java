@@ -46,8 +46,8 @@ public final class SingleBlockCraftingMachineBuilder extends MachineWithGuiBuild
 	{
 		return super.builtinModel(casing, overlayFolder, (b) ->
 		{
-			// All crafting machines should use active overlays
-			b.active(true);
+			// Single block crafting machines by default have a front and active overlay
+			b.front().active();
 			builder.accept(b);
 		});
 	}

@@ -25,10 +25,20 @@ public class MachineBuiltinModelBuilder
 		return this;
 	}
 	
+	public MachineBuiltinModelBuilder front()
+	{
+		return this.front(true);
+	}
+	
 	public MachineBuiltinModelBuilder top(boolean top)
 	{
 		this.top = top;
 		return this;
+	}
+	
+	public MachineBuiltinModelBuilder top()
+	{
+		return this.top(true);
 	}
 	
 	public MachineBuiltinModelBuilder side(boolean side)
@@ -37,10 +47,20 @@ public class MachineBuiltinModelBuilder
 		return this;
 	}
 	
+	public MachineBuiltinModelBuilder side()
+	{
+		return this.side(true);
+	}
+	
 	public MachineBuiltinModelBuilder active(boolean active)
 	{
 		this.active = active;
 		return this;
+	}
+	
+	public MachineBuiltinModelBuilder active()
+	{
+		return this.active(true);
 	}
 	
 	void build(MIHook hook, String id, MachineCasing casing)

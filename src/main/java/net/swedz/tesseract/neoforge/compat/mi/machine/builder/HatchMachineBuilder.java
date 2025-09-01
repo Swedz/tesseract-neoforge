@@ -114,7 +114,7 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 		return super.builtinModel(casing, overlayFolder, (b) ->
 		{
 			// Hatches by default have a front and side overlay
-			b.front(true).side(true);
+			b.front().side();
 			builder.accept(b);
 		});
 	}
