@@ -16,6 +16,19 @@ import java.util.List;
 
 public final class MachineInventoryHelper
 {
+	public static SlotPositions.Builder combine(SlotPositions... positions)
+	{
+		var combined = new SlotPositions.Builder();
+		for(var group : positions)
+		{
+			for(int i = 0; i < group.size(); i++)
+			{
+				combined.addSlot(group.getX(i), group.getY(i));
+			}
+		}
+		return combined;
+	}
+	
 	public static MachineInventoryComponent buildInventoryComponent(
 			int itemInputCount, int itemOutputCount, int fluidInputCount, int fluidOutputCount,
 			SlotPositions itemPositions, SlotPositions fluidPositions, int steamBuckets, int ioBucketCapacity

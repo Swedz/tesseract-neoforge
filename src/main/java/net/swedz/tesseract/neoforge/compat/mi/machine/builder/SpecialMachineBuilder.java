@@ -6,36 +6,36 @@ import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockEntityFactory;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockEntityWithGuiFactory;
 import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockRegistrators;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineGuiConfigurator;
 
-import java.util.function.Consumer;
-
-public final class SpecialMachineBuilder extends MachineBuilder<SpecialMachineBuilder>
+public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMachineBuilder>
 {
 	private final boolean isMultiblock;
 	
 	private final MachineBlockEntityFactory blockEntityFactory;
 	
-	private MachineRecipeCategoryBuilder recipeCategory;
-	
 	SpecialMachineBuilder(MIHook hook,
 						  String name, String englishName,
 						  boolean isMultiblock,
-						  MachineBlockEntityFactory blockEntityFactory)
+						  MachineBlockEntityWithGuiFactory blockEntityFactory)
 	{
 		super(hook, name, englishName);
 		Assert.notNull(blockEntityFactory);
 		this.isMultiblock = isMultiblock;
-		this.blockEntityFactory = blockEntityFactory;
+		this.blockEntityFactory = (bep) -> blockEntityFactory.create(bep, gui);
 	}
 	
-	public SpecialMachineBuilder recipeCategory(SteamMode steamMode, MachineRecipeType recipeType,
-												Consumer<MachineRecipeCategoryBuilder> builder)
+	public SpecialMachineBuilder gui(SteamMode steamMode, MachineRecipeType recipeType,
+									 MachineGuiConfigurator builder)
 	{
-		Assert.noneNull(steamMode, recipeType, builder);
-		recipeCategory = new MachineRecipeCategoryBuilder(isMultiblock, steamMode, recipeType);
-		builder.accept(recipeCategory);
-		return this;
+		return this.gui(isMultiblock, steamMode, recipeType, builder);
+	}
+	
+	public SpecialMachineBuilder gui(MachineGuiConfigurator builder)
+	{
+		return this.gui(null, null, builder);
 	}
 	
 	@Override
@@ -53,9 +53,9 @@ public final class SpecialMachineBuilder extends MachineBuilder<SpecialMachineBu
 		{
 			builtinModel.build(hook, name);
 		}
-		if(recipeCategory != null)
+		if(gui != null && gui.hasRecipeCategory())
 		{
-			recipeCategory.build(hook, name, englishName);
+			gui.registerRecipeCategory(hook, name, englishName);
 		}
 	}
 }

@@ -6,7 +6,7 @@ import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import com.google.common.collect.Lists;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
-import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockEntityFactory;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockEntityWithGuiFactory;
 import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockFactory;
 import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockHolderModifier;
 import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockPropertiesModifier;
@@ -27,7 +27,7 @@ public abstract class MachineBuilder<T extends MachineBuilder<T>>
 	public static SpecialMachineBuilder special(MIHook hook,
 												String name, String englishName,
 												boolean isMultiblock,
-												MachineBlockEntityFactory factory)
+												MachineBlockEntityWithGuiFactory factory)
 	{
 		return new SpecialMachineBuilder(hook, name, englishName, isMultiblock, factory);
 	}
