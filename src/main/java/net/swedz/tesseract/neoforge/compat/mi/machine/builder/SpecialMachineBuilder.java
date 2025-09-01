@@ -4,6 +4,7 @@ import aztech.modern_industrialization.compat.rei.machines.ReiMachineRecipes;
 import aztech.modern_industrialization.compat.rei.machines.SteamMode;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
+import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
@@ -75,6 +76,27 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 		{
 			gui.registerRecipeCategory(hook, name, englishName);
 		}
+		return this;
+	}
+	
+	public SpecialMachineBuilder registerExtraWorkstations(ResourceLocation... workstations)
+	{
+		Assert.notNull(workstations);
+		if(gui != null && gui.hasRecipeCategory())
+		{
+			for(var workstation : workstations)
+			{
+				Assert.notNull(workstation);
+				ReiMachineRecipes.registerWorkstation(hook.id(name), workstation);
+			}
+		}
+		return this;
+	}
+	
+	public SpecialMachineBuilder registerAsWorkstationFor(ResourceLocation otherMachineId)
+	{
+		Assert.notNull(otherMachineId);
+		ReiMachineRecipes.registerWorkstation(otherMachineId, hook.id(name));
 		return this;
 	}
 }
