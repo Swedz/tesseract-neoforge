@@ -1,40 +1,31 @@
 package net.swedz.tesseract.neoforge.compat.mi.machine.builder;
 
+import aztech.modern_industrialization.MIFluids;
 import aztech.modern_industrialization.api.energy.CableTier;
 import aztech.modern_industrialization.compat.rei.machines.SteamMode;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
 import aztech.modern_industrialization.machines.blockentities.ElectricCraftingMachineBlockEntity;
 import aztech.modern_industrialization.machines.blockentities.SteamCraftingMachineBlockEntity;
-import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
-import aztech.modern_industrialization.machines.guicomponents.EnergyBar;
-import aztech.modern_industrialization.machines.guicomponents.RecipeEfficiencyBar;
 import aztech.modern_industrialization.machines.init.MachineTier;
 import aztech.modern_industrialization.machines.models.MachineCasing;
 import aztech.modern_industrialization.machines.models.MachineCasings;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
-import net.minecraft.resources.ResourceLocation;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
+import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineGuiConfigurator;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static aztech.modern_industrialization.machines.init.SingleBlockCraftingMachines.*;
 
-public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<SingleBlockCraftingMachineBuilder>
+public final class SingleBlockCraftingMachineBuilder extends MachineWithGuiBuilder<SingleBlockCraftingMachineBuilder>
 {
 	private final MachineRecipeType recipeType;
 	
 	private int tiers;
 	
-	private Function<ResourceLocation, MachineGuiParameters> guiParameters = (id) -> new MachineGuiParameters.Builder(id, true).build();
-	
-	private MachineRecipeCategoryBuilder recipeCategory;
-	private int                          bucketCapacity;
-	
-	private RecipeEfficiencyBar.Parameters efficiencyBar;
-	private EnergyBar.Parameters           energyBar;
+	private int steamX = 12, steamY = 35;
 	
 	private Config extraConfig = new Config();
 	
@@ -84,41 +75,16 @@ public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<Sing
 		return this;
 	}
 	
-	public SingleBlockCraftingMachineBuilder gui(boolean lockButton, int backgroundHeight)
+	public SingleBlockCraftingMachineBuilder steamSlotPosition(int x, int y)
 	{
-		guiParameters = (id) -> new MachineGuiParameters.Builder(id, lockButton).backgroundHeight(backgroundHeight).build();
+		this.steamX = x;
+		this.steamY = y;
 		return this;
 	}
 	
-	public SingleBlockCraftingMachineBuilder gui(int backgroundHeight)
+	public SingleBlockCraftingMachineBuilder gui(SteamMode steamMode, MachineGuiConfigurator builder)
 	{
-		return this.gui(true, backgroundHeight);
-	}
-	
-	public SingleBlockCraftingMachineBuilder recipeCategory(SteamMode steamMode, Consumer<MachineRecipeCategoryBuilder> builder)
-	{
-		Assert.noneNull(steamMode, builder);
-		recipeCategory = new MachineRecipeCategoryBuilder(false, steamMode, recipeType);
-		builder.accept(recipeCategory);
-		return this;
-	}
-	
-	public SingleBlockCraftingMachineBuilder fluids(int bucketCapacity)
-	{
-		this.bucketCapacity = bucketCapacity;
-		return this;
-	}
-	
-	public SingleBlockCraftingMachineBuilder efficiencyBar(int renderX, int renderY)
-	{
-		efficiencyBar = new RecipeEfficiencyBar.Parameters(renderX, renderY);
-		return this;
-	}
-	
-	public SingleBlockCraftingMachineBuilder energyBar(int renderX, int renderY)
-	{
-		energyBar = new EnergyBar.Parameters(renderX, renderY);
-		return this;
+		return this.gui(false, steamMode, recipeType, builder);
 	}
 	
 	public SingleBlockCraftingMachineBuilder extra(Consumer<Config> builder)
@@ -142,7 +108,10 @@ public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<Sing
 	protected void internalBuild()
 	{
 		Assert.that(tiers != 0, "At least one tier must be selected");
-		Assert.notNull(recipeCategory, "Recipe category must be configured");
+		Assert.notNull(gui, "GUI must be configured");
+		Assert.notNull(gui.getProgressBar(), "Progress bar must be configured");
+		
+		var slotPositions = gui.getSlots().toSlotPositions();
 		
 		// Register the bronze and steel machines
 		for(int index = 0; index < 2; ++index)
@@ -161,8 +130,8 @@ public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<Sing
 			String englishPrefix = index == 0 ? "Bronze " : "Steel ";
 			int steamBuckets = index == 0 ? 2 : 4;
 			String id = prefix + "_" + name;
-			var guiParams = guiParameters.apply(hook.id(id));
-			var recipeCategory = this.recipeCategory.copy().withSteamFluidInputSlot();
+			var guiParams = gui.createGuiParams(hook.id(id));
+			var steamGui = gui.inventoryOnlySlots((s) -> s.fluidInput(steamX, steamY, MIFluids.STEAM::asFluid, steamBuckets));
 			
 			HackedMachineRegistrationHelper.registerMachine(
 					hook,
@@ -171,12 +140,12 @@ public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<Sing
 					defaultMineableTags,
 					(bet) -> new SteamCraftingMachineBlockEntity(
 							bet, recipeType,
-							recipeCategory.buildInventory(steamBuckets, bucketCapacity),
-							guiParams, recipeCategory.progressBar, tier, extraConfig.steamOverclockCatalysts
+							steamGui.buildInventory(),
+							guiParams, steamGui.getProgressBar(), tier, extraConfig.steamOverclockCatalysts
 					),
 					(bet) ->
 					{
-						if(recipeCategory.hasItems())
+						if(slotPositions.hasItems())
 						{
 							MachineBlockEntity.registerItemApi(bet);
 						}
@@ -192,12 +161,12 @@ public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<Sing
 		// Register the electric machine
 		if((tiers & TIER_ELECTRIC) > 0)
 		{
-			Assert.notNull(efficiencyBar, "Progress bar must be configured");
-			Assert.notNull(energyBar, "Energy bar must be configured");
+			Assert.notNull(gui.getEnergyBar(), "Energy bar must be configured");
+			Assert.notNull(gui.getEfficiencyBar(), "Efficiency bar must be configured");
 			
 			String id = tiers == TIER_ELECTRIC ? name : "electric_" + name;
 			
-			var guiParams = guiParameters.apply(hook.id(id));
+			var guiParams = gui.createGuiParams(hook.id(id));
 			
 			String electricEnglishName = englishName;
 			
@@ -213,17 +182,17 @@ public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<Sing
 					defaultMineableTags,
 					(bet) -> new ElectricCraftingMachineBlockEntity(
 							bet, recipeType,
-							recipeCategory.buildInventory(0, bucketCapacity),
-							guiParams, energyBar, recipeCategory.progressBar, efficiencyBar, MachineTier.LV, 3200
+							gui.buildInventory(),
+							guiParams, gui.getEnergyBar(), gui.getProgressBar(), gui.getEfficiencyBar(), MachineTier.LV, 3200
 					),
 					(bet) ->
 					{
 						ElectricCraftingMachineBlockEntity.registerEnergyApi(bet);
-						if(recipeCategory.hasItems())
+						if(slotPositions.hasItems())
 						{
 							MachineBlockEntity.registerItemApi(bet);
 						}
-						if(recipeCategory.hasFluids())
+						if(slotPositions.hasFluids())
 						{
 							MachineBlockEntity.registerFluidApi(bet);
 						}
@@ -235,6 +204,6 @@ public final class SingleBlockCraftingMachineBuilder extends MachineBuilder<Sing
 			}
 		}
 		
-		recipeCategory.build(hook, name, englishName, tiers);
+		gui.registerRecipeCategory(hook, name, englishName, tiers);
 	}
 }
