@@ -60,12 +60,17 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 		}
 	}
 	
-	public SpecialMachineBuilder registerMultiblockShape(ShapeTemplate shape)
+	public SpecialMachineBuilder registerMultiblockShape(ShapeTemplate shape, String alternative)
 	{
 		Assert.that(isMultiblock, "Multiblock shapes can only be registered on multiblock machines");
 		Assert.notNull(shape);
-		ReiMachineRecipes.registerMultiblockShape(hook.id(name), shape);
+		ReiMachineRecipes.registerMultiblockShape(hook.id(name), shape, alternative);
 		return this;
+	}
+	
+	public SpecialMachineBuilder registerMultiblockShape(ShapeTemplate shape)
+	{
+		return this.registerMultiblockShape(shape, null);
 	}
 	
 	public SpecialMachineBuilder registerRecipeCategory()
