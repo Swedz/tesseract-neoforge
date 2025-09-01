@@ -131,7 +131,7 @@ public final class SingleBlockCraftingMachineBuilder extends MachineWithGuiBuild
 			int steamBuckets = index == 0 ? 2 : 4;
 			String id = prefix + "_" + name;
 			var guiParams = gui.createGuiParams(hook.id(id));
-			var steamGui = gui.inventoryOnlySlots((s) -> s.fluidInput(steamX, steamY, MIFluids.STEAM::asFluid, steamBuckets));
+			var steamGui = gui.copy().inventoryOnlySlots((s) -> s.fluidInput(steamX, steamY, MIFluids.STEAM::asFluid, steamBuckets));
 			
 			HackedMachineRegistrationHelper.registerMachine(
 					hook,

@@ -19,7 +19,8 @@ public abstract class MachineWithGuiBuilder<T extends MachineWithGuiBuilder<T>> 
 					MachineGuiConfigurator builder)
 	{
 		Assert.noneNull(steamMode, builder);
-		gui = builder.configure(new MachineGuiConfiguration(isMultiblock, steamMode, recipeType));
+		gui = new MachineGuiConfiguration(isMultiblock, steamMode, recipeType);
+		builder.configure(gui);
 		return (T) this;
 	}
 }
