@@ -20,14 +20,6 @@ import net.swedz.tesseract.neoforge.compat.mi.machine.builder.slots.MachineSlotC
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-/**
- * <p>Represents a GUI configuration for a machine.</p>
- *
- * <p>This is effectively immutable and should be treated as such. Whenever a modification is made, a copy is created
- * and the modification is applied to the copy, rather than the original. This allows for branching of GUI
- * configurations without modifying the original instance. That capability is important for being able to add a steam
- * input slot, for example, without the steam slot also being included in the electric machines.</p>
- */
 public final class MachineGuiConfiguration
 {
 	private final boolean           isMultiblock;
@@ -53,7 +45,7 @@ public final class MachineGuiConfiguration
 		this.recipeType = recipeType;
 	}
 	
-	private MachineGuiConfiguration copy()
+	public MachineGuiConfiguration copy()
 	{
 		var copy = new MachineGuiConfiguration(isMultiblock, steamMode, recipeType);
 		copy.guiHeight = guiHeight;
@@ -124,37 +116,32 @@ public final class MachineGuiConfiguration
 	
 	public MachineGuiConfiguration guiHeight(int guiHeight)
 	{
-		var copy = this.copy();
-		copy.guiHeight = guiHeight;
-		return copy;
+		this.guiHeight = guiHeight;
+		return this;
 	}
 	
 	public MachineGuiConfiguration lockButton(boolean lockButton)
 	{
-		var copy = this.copy();
-		copy.lockButton = lockButton;
-		return copy;
+		this.lockButton = lockButton;
+		return this;
 	}
 	
 	public MachineGuiConfiguration inventoryOnlySlots(Consumer<MachineSlotConfiguration.Builder> builder)
 	{
-		var copy = this.copy();
-		builder.accept(copy.inventoryOnlySlots);
-		return copy;
+		builder.accept(inventoryOnlySlots);
+		return this;
 	}
 	
 	public MachineGuiConfiguration slots(Consumer<MachineSlotConfiguration.Builder> builder)
 	{
-		var copy = this.copy();
-		builder.accept(copy.slots);
-		return copy;
+		builder.accept(slots);
+		return this;
 	}
 	
 	public MachineGuiConfiguration progressBar(int renderX, int renderY, String progressBarType, boolean isVertical)
 	{
-		var copy = this.copy();
-		copy.progressBar = new ProgressBar.Parameters(renderX, renderY, progressBarType, isVertical);
-		return copy;
+		this.progressBar = new ProgressBar.Parameters(renderX, renderY, progressBarType, isVertical);
+		return this;
 	}
 	
 	public MachineGuiConfiguration progressBar(int renderX, int renderY, String progressBarType)
@@ -164,24 +151,21 @@ public final class MachineGuiConfiguration
 	
 	public MachineGuiConfiguration energyBar(int renderX, int renderY)
 	{
-		var copy = this.copy();
-		copy.energyBar = new EnergyBar.Parameters(renderX, renderY);
-		return copy;
+		this.energyBar = new EnergyBar.Parameters(renderX, renderY);
+		return this;
 	}
 	
 	public MachineGuiConfiguration efficiencyBar(int renderX, int renderY)
 	{
-		var copy = this.copy();
-		copy.efficiencyBar = new RecipeEfficiencyBar.Parameters(renderX, renderY);
-		return copy;
+		this.efficiencyBar = new RecipeEfficiencyBar.Parameters(renderX, renderY);
+		return this;
 	}
 	
 	public MachineGuiConfiguration predicate(MachineRecipePredicate predicate)
 	{
 		Assert.notNull(predicate);
-		var copy = this.copy();
-		copy.predicate = predicate;
-		return copy;
+		this.predicate = predicate;
+		return this;
 	}
 	
 	public MachineGuiParameters createGuiParams(ResourceLocation blockId)
