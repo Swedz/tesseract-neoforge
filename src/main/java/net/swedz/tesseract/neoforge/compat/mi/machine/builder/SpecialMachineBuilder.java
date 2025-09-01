@@ -16,6 +16,8 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 	
 	private final MachineBlockEntityFactory blockEntityFactory;
 	
+	private boolean isRecipeCategoryRegistered;
+	
 	SpecialMachineBuilder(MIHook hook,
 						  String name, String englishName,
 						  boolean isMultiblock,
@@ -39,7 +41,7 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 	}
 	
 	@Override
-	protected void internalBuild()
+	protected void internalRegister()
 	{
 		HackedMachineRegistrationHelper.registerMachine(
 				hook,
@@ -53,9 +55,16 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 		{
 			builtinModel.build(hook, name);
 		}
+	}
+	
+	public SpecialMachineBuilder registerRecipeCategory()
+	{
+		Assert.that(!isRecipeCategoryRegistered, "This recipe category is already registered");
+		isRecipeCategoryRegistered = true;
 		if(gui != null && gui.hasRecipeCategory())
 		{
 			gui.registerRecipeCategory(hook, name, englishName);
 		}
+		return this;
 	}
 }
