@@ -1,6 +1,8 @@
 package net.swedz.tesseract.neoforge.compat.mi.machine.builder;
 
+import aztech.modern_industrialization.compat.rei.machines.ReiMachineRecipes;
 import aztech.modern_industrialization.compat.rei.machines.SteamMode;
+import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
@@ -55,6 +57,14 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 		{
 			builtinModel.build(hook, name);
 		}
+	}
+	
+	public SpecialMachineBuilder registerMultiblockShape(ShapeTemplate shape)
+	{
+		Assert.that(isMultiblock, "Multiblock shapes can only be registered on multiblock machines");
+		Assert.notNull(shape);
+		ReiMachineRecipes.registerMultiblockShape(hook.id(name), shape);
+		return this;
 	}
 	
 	public SpecialMachineBuilder registerRecipeCategory()
