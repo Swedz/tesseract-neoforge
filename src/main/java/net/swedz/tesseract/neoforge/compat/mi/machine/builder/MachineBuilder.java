@@ -112,12 +112,13 @@ public abstract class MachineBuilder<T extends MachineBuilder<T>>
 		return this.builtinModel(casing, overlayFolder, null);
 	}
 	
-	protected abstract void internalBuild();
+	protected abstract void internalRegister();
 	
-	public final void build()
+	public final T registerMachine()
 	{
 		Assert.that(!isRegistered, "This machine is already registered");
 		isRegistered = true;
-		this.internalBuild();
+		this.internalRegister();
+		return (T) this;
 	}
 }

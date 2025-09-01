@@ -166,7 +166,7 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 	}
 	
 	@Override
-	protected void internalBuild()
+	protected void internalRegister()
 	{
 		Assert.notNull(type, "Hatch type must be configured");
 		

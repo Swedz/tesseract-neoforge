@@ -105,7 +105,7 @@ public final class SingleBlockCraftingMachineBuilder extends MachineWithGuiBuild
 	}
 	
 	@Override
-	protected void internalBuild()
+	protected void internalRegister()
 	{
 		Assert.that(tiers != 0, "At least one tier must be selected");
 		Assert.notNull(gui, "GUI must be configured");
