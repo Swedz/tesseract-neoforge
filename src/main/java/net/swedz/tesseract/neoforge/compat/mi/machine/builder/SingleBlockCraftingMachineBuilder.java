@@ -57,6 +57,11 @@ public final class SingleBlockCraftingMachineBuilder extends MachineWithGuiBuild
 		return this.builtinModel(null, overlayFolder, builder);
 	}
 	
+	public SingleBlockCraftingMachineBuilder builtinModel(String overlayFolder)
+	{
+		return this.builtinModel(overlayFolder, null);
+	}
+	
 	public SingleBlockCraftingMachineBuilder bronze()
 	{
 		tiers |= TIER_BRONZE;

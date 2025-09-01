@@ -46,6 +46,16 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 		});
 	}
 	
+	public SpecialMachineBuilder builtinModel(String overlayFolder, Consumer<MachineBuiltinModelBuilder> builder)
+	{
+		return this.builtinModel(null, overlayFolder, builder);
+	}
+	
+	public SpecialMachineBuilder builtinModel(String overlayFolder)
+	{
+		return this.builtinModel(overlayFolder, null);
+	}
+	
 	public SpecialMachineBuilder gui(SteamMode steamMode, MachineRecipeType recipeType,
 									 MachineGuiConfigurator builder)
 	{
