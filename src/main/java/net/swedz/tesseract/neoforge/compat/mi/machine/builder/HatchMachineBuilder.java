@@ -119,6 +119,11 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 		});
 	}
 	
+	public HatchMachineBuilder builtinModel(MachineCasing casing, String overlayFolder)
+	{
+		return this.builtinModel(casing, overlayFolder, null);
+	}
+	
 	public HatchMachineBuilder builtinModel(MachineCasing casing, Consumer<MachineBuiltinModelBuilder> builder)
 	{
 		Assert.notNull(type, "The type must be selected before including a builtin model");
@@ -126,10 +131,25 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 		return this.builtinModel(casing, this.getDefaultOverlayFolder(), builder);
 	}
 	
-	public HatchMachineBuilder builtinModel(Consumer<MachineBuiltinModelBuilder> builder)
+	public HatchMachineBuilder builtinModel(MachineCasing casing)
+	{
+		return this.builtinModel(casing, (Consumer<MachineBuiltinModelBuilder>) null);
+	}
+	
+	public HatchMachineBuilder builtinModel(String overlayFolder, Consumer<MachineBuiltinModelBuilder> builder)
 	{
 		Assert.that(type == RegistrationType.ENERGY, "Machine casing must be specified for non-energy hatches");
-		return this.builtinModel(energyCableTier.casing, builder);
+		return this.builtinModel(energyCableTier.casing, overlayFolder, builder);
+	}
+	
+	public HatchMachineBuilder builtinModel(Consumer<MachineBuiltinModelBuilder> builder)
+	{
+		return this.builtinModel(this.getDefaultOverlayFolder(), builder);
+	}
+	
+	public HatchMachineBuilder builtinModel()
+	{
+		return this.builtinModel((Consumer<MachineBuiltinModelBuilder>) null);
 	}
 	
 	private String getName()
