@@ -188,6 +188,14 @@ public final class MachineSlotConfiguration
 	{
 		private final List<MachineSlotDefinition> slots = Lists.newArrayList();
 		
+		private int fallbackFluidCapacity = 16;
+		
+		public Builder fluidCapacity(int fallbackFluidCapacity)
+		{
+			this.fallbackFluidCapacity = fallbackFluidCapacity;
+			return this;
+		}
+		
 		public Builder append(Builder other)
 		{
 			slots.addAll(other.slots);
@@ -296,9 +304,19 @@ public final class MachineSlotConfiguration
 			return this.fluid(x, y, true, true, true, false, lock, capacityBuckets);
 		}
 		
+		public Builder fluidInput(int x, int y, Supplier<Fluid> lock)
+		{
+			return this.fluidInput(x, y, lock, fallbackFluidCapacity);
+		}
+		
 		public Builder fluidInput(int x, int y, int capacityBuckets)
 		{
 			return this.fluidInput(x, y, null, capacityBuckets);
+		}
+		
+		public Builder fluidInput(int x, int y)
+		{
+			return this.fluidInput(x, y, fallbackFluidCapacity);
 		}
 		
 		public Builder fluidOutput(int x, int y, Supplier<Fluid> lock, int capacityBuckets)
@@ -306,9 +324,19 @@ public final class MachineSlotConfiguration
 			return this.fluid(x, y, false, false, true, true, lock, capacityBuckets);
 		}
 		
+		public Builder fluidOutput(int x, int y, Supplier<Fluid> lock)
+		{
+			return this.fluidOutput(x, y, lock, fallbackFluidCapacity);
+		}
+		
 		public Builder fluidOutput(int x, int y, int capacityBuckets)
 		{
 			return this.fluidOutput(x, y, null, capacityBuckets);
+		}
+		
+		public Builder fluidOutput(int x, int y)
+		{
+			return this.fluidOutput(x, y, fallbackFluidCapacity);
 		}
 		
 		public Builder fluidIO(int x, int y, Supplier<Fluid> lock, int capacityBuckets)
@@ -316,9 +344,19 @@ public final class MachineSlotConfiguration
 			return this.fluid(x, y, true, true, true, true, lock, capacityBuckets);
 		}
 		
+		public Builder fluidIO(int x, int y, Supplier<Fluid> lock)
+		{
+			return this.fluidIO(x, y, lock, fallbackFluidCapacity);
+		}
+		
 		public Builder fluidIO(int x, int y, int capacityBuckets)
 		{
 			return this.fluidIO(x, y, null, capacityBuckets);
+		}
+		
+		public Builder fluidIO(int x, int y)
+		{
+			return this.fluidIO(x, y, fallbackFluidCapacity);
 		}
 		
 		private Builder fluids(int x, int y, int columns, int rows,
@@ -341,9 +379,19 @@ public final class MachineSlotConfiguration
 			return this.fluids(x, y, columns, rows, true, true, true, false, lock, capacityBuckets);
 		}
 		
+		public Builder fluidInputs(int x, int y, int columns, int rows, Supplier<Fluid> lock)
+		{
+			return this.fluidInputs(x, y, columns, rows, lock, fallbackFluidCapacity);
+		}
+		
 		public Builder fluidInputs(int x, int y, int columns, int rows, int capacityBuckets)
 		{
 			return this.fluidInputs(x, y, columns, rows, null, capacityBuckets);
+		}
+		
+		public Builder fluidInputs(int x, int y, int columns, int rows)
+		{
+			return this.fluidInputs(x, y, columns, rows, fallbackFluidCapacity);
 		}
 		
 		public Builder fluidOutputs(int x, int y, int columns, int rows, Supplier<Fluid> lock, int capacityBuckets)
@@ -351,9 +399,19 @@ public final class MachineSlotConfiguration
 			return this.fluids(x, y, columns, rows, false, false, true, true, lock, capacityBuckets);
 		}
 		
+		public Builder fluidOutputs(int x, int y, int columns, int rows, Supplier<Fluid> lock)
+		{
+			return this.fluidOutputs(x, y, columns, rows, lock, fallbackFluidCapacity);
+		}
+		
 		public Builder fluidOutputs(int x, int y, int columns, int rows, int capacityBuckets)
 		{
 			return this.fluidOutputs(x, y, columns, rows, null, capacityBuckets);
+		}
+		
+		public Builder fluidOutputs(int x, int y, int columns, int rows)
+		{
+			return this.fluidOutputs(x, y, columns, rows, fallbackFluidCapacity);
 		}
 		
 		public Builder fluidIOs(int x, int y, int columns, int rows, Supplier<Fluid> lock, int capacityBuckets)
@@ -361,9 +419,19 @@ public final class MachineSlotConfiguration
 			return this.fluids(x, y, columns, rows, true, true, true, true, lock, capacityBuckets);
 		}
 		
+		public Builder fluidIOs(int x, int y, int columns, int rows, Supplier<Fluid> lock)
+		{
+			return this.fluidIOs(x, y, columns, rows, lock, fallbackFluidCapacity);
+		}
+		
 		public Builder fluidIOs(int x, int y, int columns, int rows, int capacityBuckets)
 		{
 			return this.fluidIOs(x, y, columns, rows, null, capacityBuckets);
+		}
+		
+		public Builder fluidIOs(int x, int y, int columns, int rows)
+		{
+			return this.fluidIOs(x, y, columns, rows, fallbackFluidCapacity);
 		}
 		
 		public MachineSlotConfiguration build()
