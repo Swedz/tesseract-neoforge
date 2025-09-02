@@ -166,13 +166,16 @@ public interface MIMaterialParts
 			.itemModelBuilder(CommonModelBuilders::generated);
 	
 	MaterialPart MACHINE_CASING = create("machine_casing", "Machine Casing")
-			.blockModel(CommonModelBuilders::blockCubeAll);
+			.blockModel(CommonModelBuilders::blockCubeAll)
+			.blockLoot(CommonLootTableBuilders::self);
 	
 	MaterialPart MACHINE_CASING_PIPE = create("machine_casing_pipe", "Pipe Machine Casing")
-			.blockModel(CommonModelBuilders::blockCubeAll);
+			.blockModel(CommonModelBuilders::blockCubeAll)
+			.blockLoot(CommonLootTableBuilders::self);
 	
 	MaterialPart MACHINE_CASING_SPECIAL = create("machine_casing_special", "Special Casing")
-			.blockModel(CommonModelBuilders::blockCubeAll);
+			.blockModel(CommonModelBuilders::blockCubeAll)
+			.blockLoot(CommonLootTableBuilders::self);
 	
 	MaterialPart PLATED_BRICKS = MACHINE_CASING_SPECIAL
 			.formattingMaterialOnly("%s_plated_bricks"::formatted, "%s Plated Bricks"::formatted);
