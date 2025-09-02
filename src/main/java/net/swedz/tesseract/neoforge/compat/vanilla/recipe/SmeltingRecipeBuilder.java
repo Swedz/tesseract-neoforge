@@ -1,5 +1,9 @@
 package net.swedz.tesseract.neoforge.compat.vanilla.recipe;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.BlastingRecipe;
 import net.minecraft.world.item.crafting.CookingBookCategory;
@@ -7,6 +11,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.ItemLike;
+import net.swedz.tesseract.neoforge.helper.RecipeHelper;
 import net.swedz.tesseract.neoforge.recipe.RecipeBuilder;
 
 public class SmeltingRecipeBuilder extends RecipeBuilder
@@ -29,6 +34,31 @@ public class SmeltingRecipeBuilder extends RecipeBuilder
 		}
 		this.input = input;
 		return this;
+	}
+	
+	public SmeltingRecipeBuilder input(ItemLike... items)
+	{
+		return this.input(Ingredient.of(items));
+	}
+	
+	public SmeltingRecipeBuilder input(ItemStack... stacks)
+	{
+		return this.input(Ingredient.of(stacks));
+	}
+	
+	public SmeltingRecipeBuilder input(TagKey<Item> tag)
+	{
+		return this.input(Ingredient.of(tag));
+	}
+	
+	public SmeltingRecipeBuilder input(ResourceLocation... itemIds)
+	{
+		return this.input(RecipeHelper.ingredient(itemIds));
+	}
+	
+	public SmeltingRecipeBuilder input(String maybeTag)
+	{
+		return this.input(RecipeHelper.ingredient(maybeTag));
 	}
 	
 	public int cookingTime()

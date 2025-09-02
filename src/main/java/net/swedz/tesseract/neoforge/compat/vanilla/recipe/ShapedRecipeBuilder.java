@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.compat.vanilla.recipe;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -59,6 +60,11 @@ public class ShapedRecipeBuilder extends RecipeBuilder
 	public ShapedRecipeBuilder define(char key, TagKey<Item> tag)
 	{
 		return this.define(key, Ingredient.of(tag));
+	}
+	
+	public ShapedRecipeBuilder define(char key, ResourceLocation... itemIds)
+	{
+		return this.define(key, RecipeHelper.ingredient(itemIds));
 	}
 	
 	public ShapedRecipeBuilder define(char key, String maybeTag)
