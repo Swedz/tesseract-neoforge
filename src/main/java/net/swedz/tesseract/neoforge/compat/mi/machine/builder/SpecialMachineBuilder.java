@@ -42,7 +42,10 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 		{
 			// Machines by default have a front and active overlay
 			b.front().active();
-			builder.accept(b);
+			if(builder != null)
+			{
+				builder.accept(b);
+			}
 		});
 	}
 	

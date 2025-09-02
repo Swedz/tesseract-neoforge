@@ -48,7 +48,10 @@ public final class SingleBlockCraftingMachineBuilder extends MachineWithGuiBuild
 		{
 			// Single block crafting machines by default have a front and active overlay
 			b.front().active();
-			builder.accept(b);
+			if(builder != null)
+			{
+				builder.accept(b);
+			}
 		});
 	}
 	

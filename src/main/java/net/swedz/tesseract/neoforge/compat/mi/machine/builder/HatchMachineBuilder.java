@@ -115,7 +115,10 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 		{
 			// Hatches by default have a front and side overlay
 			b.front().side();
-			builder.accept(b);
+			if(builder != null)
+			{
+				builder.accept(b);
+			}
 		});
 	}
 	
