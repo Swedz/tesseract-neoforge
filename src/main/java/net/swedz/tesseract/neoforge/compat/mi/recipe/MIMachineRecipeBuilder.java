@@ -6,11 +6,14 @@ import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.machines.recipe.condition.MachineProcessCondition;
 import com.google.common.collect.Sets;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.swedz.tesseract.neoforge.compat.vanilla.recipe.ShapedRecipeBuilder;
 import net.swedz.tesseract.neoforge.compat.vanilla.recipe.ShapelessRecipeBuilder;
+import net.swedz.tesseract.neoforge.helper.RecipeHelper;
 import net.swedz.tesseract.neoforge.material.Material;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
 import net.swedz.tesseract.neoforge.recipe.RecipeOfferable;
@@ -178,6 +181,26 @@ public class MIMachineRecipeBuilder extends MIRecipeJson<MIMachineRecipeBuilder>
 	{
 		recipe.conditions.add(condition);
 		return this;
+	}
+	
+	public MIMachineRecipeBuilder addItemInput(ResourceLocation itemId, int amount, float probability)
+	{
+		return this.addItemInput(RecipeHelper.ingredient(itemId), amount, probability);
+	}
+	
+	public MIMachineRecipeBuilder addItemInput(ResourceLocation itemId, int amount)
+	{
+		return this.addItemInput(itemId, amount, 1);
+	}
+	
+	public MIMachineRecipeBuilder addItemOutput(ResourceLocation itemId, int amount, float probability)
+	{
+		return this.addItemOutput(BuiltInRegistries.ITEM.get(itemId), amount, probability);
+	}
+	
+	public MIMachineRecipeBuilder addItemOutput(ResourceLocation itemId, int amount)
+	{
+		return this.addItemOutput(itemId, amount, 1);
 	}
 	
 	public MIMachineRecipeBuilder addPartInput(Material material, MaterialPart part, int count, float probability)

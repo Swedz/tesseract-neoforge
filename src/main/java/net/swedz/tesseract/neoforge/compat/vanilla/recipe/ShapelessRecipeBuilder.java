@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.compat.vanilla.recipe;
 
 import com.google.common.collect.Lists;
 import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -48,6 +49,11 @@ public class ShapelessRecipeBuilder extends RecipeBuilder
 	public ShapelessRecipeBuilder with(TagKey<Item> tag)
 	{
 		return this.with(Ingredient.of(tag));
+	}
+	
+	public ShapelessRecipeBuilder with(ResourceLocation... itemIds)
+	{
+		return this.with(RecipeHelper.ingredient(itemIds));
 	}
 	
 	public ShapelessRecipeBuilder with(String maybeTag)

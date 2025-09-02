@@ -22,9 +22,14 @@ public abstract class RecipeBuilder implements RecipeOfferable
 		return this;
 	}
 	
+	public RecipeBuilder output(ResourceLocation result, int count)
+	{
+		return this.output(BuiltInRegistries.ITEM.get(result), count);
+	}
+	
 	public RecipeBuilder output(String result, int count)
 	{
-		return this.output(BuiltInRegistries.ITEM.get(ResourceLocation.parse(result)), count);
+		return this.output(ResourceLocation.parse(result), count);
 	}
 	
 	@Override
