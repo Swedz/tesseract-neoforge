@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilder>
 {
 	private RegistrationType type;
+	private boolean registerIO;
 	
 	private MachineBlockHatchBlockEntityFactory blockEntityFactory;
 	private MachineBlockHolderHatchModifier     holderHatchModifier;
@@ -48,6 +49,7 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 		Assert.that(rows > 0);
 		Assert.that(columns > 0);
 		type = RegistrationType.ITEM;
+		registerIO = true;
 		blockEntityFactory = (bep, input, machineId) ->
 		{
 			List<ConfigurableItemStack> itemStacks = Lists.newArrayList();
@@ -77,6 +79,7 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 	{
 		Assert.that(bucketCapacity > 0);
 		type = RegistrationType.FLUID;
+		registerIO = true;
 		blockEntityFactory = (bep, input, machineId) ->
 		{
 			List<ConfigurableFluidStack> fluidStacks = Collections.singletonList(input ?
@@ -95,17 +98,35 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 	{
 		Assert.notNull(tier);
 		type = RegistrationType.ENERGY;
+		registerIO = true;
 		energyCableTier = tier;
 		blockEntityFactory = (bep, input, machineId) -> new EnergyHatch(bep, new MachineGuiParameters.Builder(machineId, false).build(), input, tier);
 		return this.registrator(EnergyHatch::registerEnergyApi);
 	}
 	
-	public HatchMachineBuilder special(MachineBlockHatchBlockEntityFactory factory)
+	public HatchMachineBuilder special(MachineBlockHatchBlockEntityFactory factory, boolean registerIO)
 	{
 		Assert.notNull(factory);
 		type = RegistrationType.SPECIAL;
+		this.registerIO = registerIO;
 		blockEntityFactory = factory;
 		return this;
+	}
+
+	public HatchMachineBuilder special(MachineBlockHatchBlockEntityFactory factory)
+	{
+		return this.special(factory, false);
+	}
+
+	public HatchMachineBuilder registerIO(boolean register)
+	{
+		registerIO = register;
+		return this;
+	}
+
+	public HatchMachineBuilder registerIO()
+	{
+		return registerIO(true);
 	}
 	
 	@Override
@@ -196,7 +217,7 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 		var name = this.getName();
 		var englishName = this.getEnglishName();
 		
-		if(type.registersBothIO())
+		if(registerIO)
 		{
 			for(int i = 0; i < 2; i++)
 			{
@@ -241,21 +262,9 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 	
 	public enum RegistrationType
 	{
-		ITEM(true),
-		FLUID(true),
-		ENERGY(true),
-		SPECIAL(false);
-		
-		private final boolean registersBothIO;
-		
-		RegistrationType(boolean registersBothIO)
-		{
-			this.registersBothIO = registersBothIO;
-		}
-		
-		public boolean registersBothIO()
-		{
-			return registersBothIO;
-		}
+		ITEM,
+		FLUID,
+		ENERGY,
+		SPECIAL
 	}
 }
