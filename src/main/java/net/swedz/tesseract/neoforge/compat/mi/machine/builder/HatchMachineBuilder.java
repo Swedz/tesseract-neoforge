@@ -126,8 +126,7 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 
 	public HatchMachineBuilder registerIO()
 	{
-		registerIO = true;
-		return this;
+		return registerIO(true);
 	}
 	
 	@Override
