@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilder>
 {
 	private RegistrationType type;
-	private boolean registerIO;
+	private boolean          registerIO;
 	
 	private MachineBlockHatchBlockEntityFactory blockEntityFactory;
 	private MachineBlockHolderHatchModifier     holderHatchModifier;
@@ -112,21 +112,21 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 		blockEntityFactory = factory;
 		return this;
 	}
-
+	
 	public HatchMachineBuilder special(MachineBlockHatchBlockEntityFactory factory)
 	{
 		return this.special(factory, false);
 	}
-
+	
 	public HatchMachineBuilder registerIO(boolean register)
 	{
 		registerIO = register;
 		return this;
 	}
-
+	
 	public HatchMachineBuilder registerIO()
 	{
-		return registerIO(true);
+		return this.registerIO(true);
 	}
 	
 	@Override
