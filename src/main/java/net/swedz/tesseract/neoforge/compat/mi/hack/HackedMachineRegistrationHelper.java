@@ -29,6 +29,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
@@ -110,7 +111,8 @@ public final class HackedMachineRegistrationHelper
 								.mapColor(MapColor.METAL)
 								.destroyTime(4)
 								.requiresCorrectToolForDrops()
-								.isValidSpawn(MobSpawning.NO_SPAWN);
+								.isValidSpawn(MobSpawning.NO_SPAWN)
+								.isRedstoneConductor(Blocks::never);
 					}
 				})
 				.withModel((holder) -> (provider) ->
