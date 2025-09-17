@@ -21,8 +21,8 @@ import java.util.Map;
 
 public class ShapedRecipeBuilder extends RecipeBuilder
 {
-	private final Map<Character, Ingredient> key     = Maps.newHashMap();
-	private final List<String>               pattern = Lists.newArrayList();
+	protected final Map<Character, Ingredient> key     = Maps.newHashMap();
+	protected final List<String>               pattern = Lists.newArrayList();
 	
 	public Map<Character, Ingredient> key()
 	{

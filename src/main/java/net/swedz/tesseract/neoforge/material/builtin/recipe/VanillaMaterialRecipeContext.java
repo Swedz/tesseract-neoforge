@@ -1,30 +1,57 @@
 package net.swedz.tesseract.neoforge.material.builtin.recipe;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.ItemLike;
 import net.swedz.tesseract.neoforge.compat.vanilla.recipe.ShapedRecipeBuilder;
 import net.swedz.tesseract.neoforge.compat.vanilla.recipe.ShapelessRecipeBuilder;
 import net.swedz.tesseract.neoforge.compat.vanilla.recipe.SmeltingRecipeBuilder;
+import net.swedz.tesseract.neoforge.helper.RecipeHelper;
 import net.swedz.tesseract.neoforge.material.Material;
 import net.swedz.tesseract.neoforge.material.MaterialRegistry;
 import net.swedz.tesseract.neoforge.material.part.MaterialPart;
-import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
 import net.swedz.tesseract.neoforge.material.recipe.MaterialRecipeContext;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 {
 	public VanillaMaterialRecipeContext(MaterialRegistry registry, Material material, RecipeOutput recipes)
 	{
 		super(registry, material, recipes);
+	}
+	
+	public <B extends ShapelessRecipeBuilder> VanillaMaterialRecipeContext shapeless(Supplier<B> start, MaterialPart input, int inputCount, MaterialPart output, int outputCount, Consumer<B> builder)
+	{
+		if(this.has(input, output))
+		{
+			var inputItem = material.get(input).itemReference();
+			var recipe = start.get();
+			for(int __ = 0; __ < inputCount; __++)
+			{
+				recipe.with(RecipeHelper.ingredient(inputItem));
+			}
+			if(builder != null)
+			{
+				builder.accept(recipe);
+			}
+			recipe.output(material.get(output).asItem(), outputCount);
+			recipe.offerTo(recipes, this.id("materials/%s/craft/%s".formatted(material.id().getPath(), output.id().getPath())));
+		}
+		return this;
+	}
+	
+	public VanillaMaterialRecipeContext shapeless(MaterialPart input, int inputCount, MaterialPart output, int outputCount, Consumer<ShapelessRecipeBuilder> builder)
+	{
+		return this.shapeless(ShapelessRecipeBuilder::new, input, inputCount, output, outputCount, builder);
+	}
+	
+	public VanillaMaterialRecipeContext shapeless(MaterialPart input, int inputCount, MaterialPart output, int outputCount)
+	{
+		return this.shapeless(input, inputCount, output, outputCount, null);
 	}
 	
 	public VanillaMaterialRecipeContext shapeless(MaterialPart input, int inputCount, MaterialPart output, int outputCount, boolean inverse)
@@ -34,7 +61,7 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 			Item inputItem = material.get(input).asItem();
 			Item outputItem = material.get(output).asItem();
 			
-			ShapelessRecipeBuilder recipe = new ShapelessRecipeBuilder();
+			var recipe = new ShapelessRecipeBuilder();
 			for(int i = 0; i < inputCount; i++)
 			{
 				recipe.with(inputItem);
@@ -70,52 +97,11 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 		return this;
 	}
 	
-	public final class ShapedRecipeMap
+	public <B extends ShapedRecipeBuilder> VanillaMaterialRecipeContext shaped(Supplier<B> start, MaterialPart output, int outputCount, Consumer<ShapedRecipeMap> keyMapAction, Consumer<B> builder, String... pattern)
 	{
-		private final String[]                            pattern;
-		private final List<Consumer<ShapedRecipeBuilder>> actions       = Lists.newArrayList();
-		private final Set<MaterialPart>                   involvedParts = Sets.newHashSet();
-		
-		public ShapedRecipeMap(String... pattern)
-		{
-			this.pattern = pattern;
-		}
-		
-		public ShapedRecipeMap add(char key, ItemLike item)
-		{
-			actions.add((r) -> r.define(key, item));
-			return this;
-		}
-		
-		public ShapedRecipeMap add(char key, TagKey<Item> tag)
-		{
-			actions.add((r) -> r.define(key, tag));
-			return this;
-		}
-		
-		public ShapedRecipeMap add(char key, MaterialPart part)
-		{
-			involvedParts.add(part);
-			MaterialPropertyMap properties = material.properties(part);
-			actions.add((r) -> r.define(key, material.get(part).itemReference()));
-			return this;
-		}
-		
-		private void apply(ShapedRecipeBuilder recipe)
-		{
-			for(String line : pattern)
-			{
-				recipe.pattern(line);
-			}
-			actions.forEach((action) -> action.accept(recipe));
-		}
-	}
-	
-	public VanillaMaterialRecipeContext shaped(MaterialPart output, int outputCount, Consumer<ShapedRecipeMap> keyMapAction, String... pattern)
-	{
-		ShapedRecipeMap keyMap = new ShapedRecipeMap(pattern);
+		ShapedRecipeMap keyMap = new ShapedRecipeMap(material, pattern);
 		keyMapAction.accept(keyMap);
-		Set<MaterialPart> parts = Sets.newHashSet(keyMap.involvedParts);
+		Set<MaterialPart> parts = Sets.newHashSet(keyMap.getInvolvedParts());
 		parts.add(output);
 		if(this.has(parts.toArray(new MaterialPart[0])))
 		{
@@ -123,12 +109,31 @@ public class VanillaMaterialRecipeContext extends MaterialRecipeContext
 			
 			String id = output.id().getPath();
 			
-			ShapedRecipeBuilder recipe = new ShapedRecipeBuilder()
-					.output(outputItem, outputCount);
+			var recipe = start.get();
+			recipe.output(outputItem, outputCount);
+			if(builder != null)
+			{
+				builder.accept(recipe);
+			}
 			keyMap.apply(recipe);
 			recipe.offerTo(recipes, this.id("materials/%s/craft/%s".formatted(material.id().getPath(), id)));
 		}
 		return this;
+	}
+	
+	public VanillaMaterialRecipeContext shaped(MaterialPart output, int outputCount, Consumer<ShapedRecipeMap> keyMapAction, Consumer<ShapedRecipeBuilder> builder, String... pattern)
+	{
+		return this.shaped(ShapedRecipeBuilder::new, output, outputCount, keyMapAction, builder, pattern);
+	}
+	
+	public VanillaMaterialRecipeContext shaped(MaterialPart output, int outputCount, Consumer<ShapedRecipeMap> keyMapAction, String... pattern)
+	{
+		return this.shaped(output, outputCount, keyMapAction, null, pattern);
+	}
+	
+	public <B extends ShapedRecipeBuilder> VanillaMaterialRecipeContext shaped(Supplier<B> start, MaterialPart output, int outputCount, Consumer<ShapedRecipeMap> keyMapAction, String... pattern)
+	{
+		return this.shaped(start, output, outputCount, keyMapAction, null, pattern);
 	}
 	
 	public VanillaMaterialRecipeContext smelting(MaterialPart input, MaterialPart output, boolean blasting, float experience)
