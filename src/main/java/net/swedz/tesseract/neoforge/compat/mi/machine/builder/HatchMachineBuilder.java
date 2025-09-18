@@ -237,7 +237,7 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 				);
 				if(builtinModel != null)
 				{
-					builtinModel.build(hook, name);
+					builtinModel.build(hook, machineId);
 				}
 			}
 		}
