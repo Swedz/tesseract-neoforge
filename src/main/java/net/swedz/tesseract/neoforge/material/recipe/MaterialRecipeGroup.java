@@ -51,13 +51,15 @@ public class MaterialRecipeGroup<C extends MaterialRecipeContext>
 	public MaterialRecipeGroup<C> filtered(Predicate<String> predicate)
 	{
 		MaterialRecipeGroup<C> filtered = new MaterialRecipeGroup<>(parent == null ? null : parent.filtered(predicate), contextFactory, Maps.newHashMap());
-		creators.forEach((reference, creator) ->
+		for(var entry : creators.entrySet())
 		{
+			var reference = entry.getKey();
+			var creator = entry.getValue();
 			if(predicate.test(reference))
 			{
-				filtered.add(reference, creator);
+				filtered = filtered.add(reference, creator);
 			}
-		});
+		}
 		return filtered;
 	}
 	
