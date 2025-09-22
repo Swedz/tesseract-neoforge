@@ -34,7 +34,7 @@ public final class Assert
 	
 	public static void notNull(Object object, String message)
 	{
-		notNull(object != null, message, NullPointerException::new);
+		notNull(object, message, NullPointerException::new);
 	}
 	
 	public static void notNull(Object object, ThrowableSupplier throwable)
@@ -51,7 +51,7 @@ public final class Assert
 	{
 		for(Object object : objects)
 		{
-			that(object != null, null, NullPointerException::new);
+			notNull(object, NullPointerException::new);
 		}
 	}
 	
