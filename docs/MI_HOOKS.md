@@ -8,8 +8,9 @@ who may want to make them.
 First you need to register your mod with the hook system. To do so, you must provide a hook registry and a hook
 listener.
 
-To register your mod's hook registry and listener, simply include the `@MIHookEntrypoint` annotation on your classes. Be
-sure to include it on both the registry and the listener.
+To register your mod's hook registry and listener, include the `@MIHookEntrypoint` annotation on your classes. Be sure
+to include it on both the registry and the listener. Also, be sure to call `TesseractMI.init("your_mod_id")` in your
+mod constructor! Otherwise, your machines will not be registered.
 
 ### Hook Registries
 

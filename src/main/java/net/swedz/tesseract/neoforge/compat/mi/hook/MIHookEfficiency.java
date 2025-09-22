@@ -2,7 +2,7 @@ package net.swedz.tesseract.neoforge.compat.mi.hook;
 
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.machine.EfficiencyMIHookContext;
 
-public interface MIHookEfficiency
+public interface MIHookEfficiency extends MIHookInstance
 {
 	/**
 	 * Gets the priority for the efficiency hook. Higher priorities are run first, and lower priorities are run last.
