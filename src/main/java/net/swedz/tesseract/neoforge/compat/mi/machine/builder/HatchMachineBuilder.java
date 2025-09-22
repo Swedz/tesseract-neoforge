@@ -28,7 +28,8 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 	private boolean          registerIO;
 	
 	private MachineBlockHatchBlockEntityFactory blockEntityFactory;
-	private MachineBlockHolderHatchModifier     holderHatchModifier;
+	
+	private final List<MachineBlockHolderHatchModifier> holderHatchModifiers = Lists.newArrayList();
 	
 	private CableTier energyCableTier;
 	
@@ -40,8 +41,9 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 	
 	public HatchMachineBuilder modify(MachineBlockHolderHatchModifier modifier)
 	{
-		this.holderHatchModifier = modifier;
-		return super.modify(null);
+		Assert.notNull(modifier);
+		this.holderHatchModifiers.add(modifier);
+		return this;
 	}
 	
 	public HatchMachineBuilder item(int rows, int columns, int startX, int startY)
@@ -229,8 +231,12 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 						hook,
 						machineEnglishName, machineId,
 						blockFactory,
-						holderModifier != null ? holderModifier : (holderHatchModifier != null ? (holder) -> holderHatchModifier.modify(holder, input) : null),
-						propertiesModifier,
+						(holder) ->
+						{
+							holderModifiers.forEach((modifier) -> modifier.modify(holder));
+							holderHatchModifiers.forEach((modifier) -> modifier.modify(holder, input));
+						},
+						(properties) -> propertiesModifiers.forEach((modifier) -> modifier.modify(properties)),
 						defaultMineableTags,
 						(bep) -> blockEntityFactory.create(bep, input, hook.id(machineId)),
 						registrators.toArray(MachineBlockRegistrators[]::new)
@@ -247,8 +253,12 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 					hook,
 					englishName, name,
 					blockFactory,
-					holderModifier != null ? holderModifier : (holderHatchModifier != null ? (holder) -> holderHatchModifier.modify(holder, false) : null),
-					propertiesModifier,
+					(holder) ->
+					{
+						holderModifiers.forEach((modifier) -> modifier.modify(holder));
+						holderHatchModifiers.forEach((modifier) -> modifier.modify(holder, false));
+					},
+					(properties) -> propertiesModifiers.forEach((modifier) -> modifier.modify(properties)),
 					defaultMineableTags,
 					(bep) -> blockEntityFactory.create(bep, false, hook.id(name)),
 					registrators.toArray(MachineBlockRegistrators[]::new)

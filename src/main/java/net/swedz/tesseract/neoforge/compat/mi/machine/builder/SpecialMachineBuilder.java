@@ -76,7 +76,9 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 		HackedMachineRegistrationHelper.registerMachine(
 				hook,
 				englishName, name,
-				blockFactory, holderModifier, propertiesModifier,
+				blockFactory,
+				(holder) -> holderModifiers.forEach((modifier) -> modifier.modify(holder)),
+				(properties) -> propertiesModifiers.forEach((modifier) -> modifier.modify(properties)),
 				defaultMineableTags,
 				blockEntityFactory,
 				registrators.toArray(MachineBlockRegistrators[]::new)
