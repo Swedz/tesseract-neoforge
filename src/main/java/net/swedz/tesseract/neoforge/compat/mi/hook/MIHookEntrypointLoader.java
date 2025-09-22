@@ -31,17 +31,28 @@ public final class MIHookEntrypointLoader
 		}
 	}
 	
-	private static <H> boolean registerEntrypoint(
-			ModFileScanData data, Class<?> entrypointClass, Class<H> hookClass, BiConsumer<String, H> register
+	private static <H extends MIHookInstance> boolean registerEntrypoint(
+			ModFileScanData data,
+			ModFileScanData.AnnotationData annotation, Class<?> entrypointClass,
+			Class<H> hookClass,
+			BiConsumer<String, H> register
 	) throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException
 	{
 		if(hookClass.isAssignableFrom(entrypointClass))
 		{
 			Class<? extends H> hookClassReference = entrypointClass.asSubclass(hookClass);
 			H hook = hookClassReference.getConstructor().newInstance();
-			String id = data.getIModInfoData().getFirst().getMods().getFirst().getModId();
-			LOGGER.info("Registered entrypoint for mod {}: {}", id, hookClassReference.getName());
-			register.accept(id, hook);
+			if(!hook.shouldInitialize())
+			{
+				return true;
+			}
+			var modId = hook.modId();
+			if(modId == null)
+			{
+				modId = data.getIModInfoData().getFirst().getMods().getFirst().getModId();
+			}
+			LOGGER.info("Registered entrypoint for mod {}: {}", modId, hookClassReference.getName());
+			register.accept(modId, hook);
 			return true;
 		}
 		return false;
@@ -67,15 +78,15 @@ public final class MIHookEntrypointLoader
 						
 						boolean registered = false;
 						
-						if(registerEntrypoint(data, entrypointClass, MIHookListener.class, MIHooks::registerListener))
+						if(registerEntrypoint(data, annotation, entrypointClass, MIHookListener.class, MIHooks::registerListener))
 						{
 							registered = true;
 						}
-						else if(registerEntrypoint(data, entrypointClass, MIHookRegistry.class, MIHooks::registerRegistry))
+						else if(registerEntrypoint(data, annotation, entrypointClass, MIHookRegistry.class, MIHooks::registerRegistry))
 						{
 							registered = true;
 						}
-						else if(registerEntrypoint(data, entrypointClass, MIHookEfficiency.class, MIHooks::registerEfficiencyListener))
+						else if(registerEntrypoint(data, annotation, entrypointClass, MIHookEfficiency.class, MIHooks::registerEfficiencyListener))
 						{
 							registered = true;
 						}
@@ -87,7 +98,8 @@ public final class MIHookEntrypointLoader
 					}
 					catch (Throwable ex)
 					{
-						LOGGER.error("Exception constructing entrypoint:", ex);
+						LOGGER.error("Exception constructing entrypoint");
+						throw new RuntimeException(ex);
 					}
 				});
 		

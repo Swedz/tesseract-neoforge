@@ -20,10 +20,6 @@
         "hook.efficiency.RecipeEfficiencyBarEfficiencyHookMixin",
         "hook.listener.BeforeAfterInitHookMixin",
         "hook.listener.BlastFurnaceTierHookMixin",
-        "hook.listener.MachineCasingsHookMixin",
-        "hook.listener.MachineProcessConditionsHookMixin",
-        "hook.listener.MachineRecipeTypesHookMixin",
-        "hook.listener.RegisterMachinesHookMixin",
         "hook.listener.TooltipsHookMixin",
         "hook.listener.ViewerSetupHookMixin"
     ],

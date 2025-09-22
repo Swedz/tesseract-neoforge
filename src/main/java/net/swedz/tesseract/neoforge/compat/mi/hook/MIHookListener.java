@@ -11,7 +11,7 @@ import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.SingleBlockC
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.SingleBlockSpecialMachinesMIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.ViewerSetupMIHookContext;
 
-public interface MIHookListener
+public interface MIHookListener extends MIHookInstance
 {
 	default void beforeInit()
 	{

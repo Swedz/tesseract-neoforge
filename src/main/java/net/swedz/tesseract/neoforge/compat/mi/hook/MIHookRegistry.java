@@ -9,7 +9,7 @@ import net.swedz.tesseract.neoforge.registry.SortOrder;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
-public interface MIHookRegistry
+public interface MIHookRegistry extends MIHookInstance
 {
 	DeferredRegister.Blocks blockRegistry();
 	

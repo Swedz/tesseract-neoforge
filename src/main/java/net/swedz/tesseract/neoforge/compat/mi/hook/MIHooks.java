@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.BiConsumer;
 
+@ApiStatus.Internal
 public final class MIHooks
 {
 	private static final Map<String, MIHook>   HOOKS                = Maps.newHashMap();
@@ -62,20 +63,17 @@ public final class MIHooks
 		EFFICIENCY_LISTENERS.add(efficiencyListener);
 	}
 	
-	@ApiStatus.Internal
 	public static Set<String> getModIds()
 	{
 		return HOOKS.keySet();
 	}
 	
-	@ApiStatus.Internal
 	private static MIHook getHook(String modId)
 	{
 		MIHookEntrypointLoader.ensureLoaded();
 		return HOOKS.computeIfAbsent(modId, MIHook::new);
 	}
 	
-	@ApiStatus.Internal
 	public static MIHookRegistry getRegistry(String modId)
 	{
 		MIHookEntrypointLoader.ensureLoaded();
@@ -86,7 +84,13 @@ public final class MIHooks
 		return getHook(modId).registry();
 	}
 	
-	@ApiStatus.Internal
+	public static void triggerHookListeners(String modId, BiConsumer<MIHook, MIHookListener> action)
+	{
+		MIHookEntrypointLoader.ensureLoaded();
+		var hook = getHook(modId);
+		action.accept(hook, hook.listener());
+	}
+	
 	public static void triggerHookListeners(BiConsumer<MIHook, MIHookListener> action)
 	{
 		MIHookEntrypointLoader.ensureLoaded();
@@ -96,7 +100,6 @@ public final class MIHooks
 		}
 	}
 	
-	@ApiStatus.Internal
 	public static void triggerHookEfficiencyListeners(EfficiencyMIHookContext context,
 													  BiConsumer<MIHookEfficiency, EfficiencyMIHookContext> action)
 	{
