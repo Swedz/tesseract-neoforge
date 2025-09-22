@@ -144,7 +144,9 @@ public final class SingleBlockCraftingMachineBuilder extends MachineWithGuiBuild
 			HackedMachineRegistrationHelper.registerMachine(
 					hook,
 					englishPrefix + englishName, id,
-					blockFactory, holderModifier, propertiesModifier,
+					blockFactory,
+					(holder) -> holderModifiers.forEach((modifier) -> modifier.modify(holder)),
+					(properties) -> propertiesModifiers.forEach((modifier) -> modifier.modify(properties)),
 					defaultMineableTags,
 					(bet) -> new SteamCraftingMachineBlockEntity(
 							bet, recipeType,
@@ -186,7 +188,9 @@ public final class SingleBlockCraftingMachineBuilder extends MachineWithGuiBuild
 			HackedMachineRegistrationHelper.registerMachine(
 					hook,
 					electricEnglishName, id,
-					blockFactory, holderModifier, propertiesModifier,
+					blockFactory,
+					(holder) -> holderModifiers.forEach((modifier) -> modifier.modify(holder)),
+					(properties) -> propertiesModifiers.forEach((modifier) -> modifier.modify(properties)),
 					defaultMineableTags,
 					(bet) -> new ElectricCraftingMachineBlockEntity(
 							bet, recipeType,

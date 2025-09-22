@@ -43,11 +43,11 @@ public abstract class MachineBuilder<T extends MachineBuilder<T>>
 	protected final String name;
 	protected final String englishName;
 	
-	protected MachineBlockFactory            blockFactory = MachineBlock::new;
-	protected MachineBlockHolderModifier     holderModifier;
-	protected MachineBlockPropertiesModifier propertiesModifier;
+	protected MachineBlockFactory blockFactory = MachineBlock::new;
 	
-	protected final List<MachineBlockRegistrators> registrators = Lists.newArrayList();
+	protected final List<MachineBlockHolderModifier>     holderModifiers     = Lists.newArrayList();
+	protected final List<MachineBlockPropertiesModifier> propertiesModifiers = Lists.newArrayList();
+	protected final List<MachineBlockRegistrators>       registrators        = Lists.newArrayList();
 	
 	protected boolean                    defaultMineableTags = true;
 	protected MachineBuiltinModelBuilder builtinModel;
@@ -72,13 +72,15 @@ public abstract class MachineBuilder<T extends MachineBuilder<T>>
 	
 	public T modify(MachineBlockHolderModifier modifier)
 	{
-		this.holderModifier = modifier;
+		Assert.notNull(modifier);
+		this.holderModifiers.add(modifier);
 		return (T) this;
 	}
 	
 	public T properties(MachineBlockPropertiesModifier properties)
 	{
-		this.propertiesModifier = properties;
+		Assert.notNull(properties);
+		this.propertiesModifiers.add(properties);
 		return (T) this;
 	}
 	
