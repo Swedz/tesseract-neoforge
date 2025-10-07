@@ -406,7 +406,7 @@ public interface MIMaterials
 			.addNative(CURVED_PLATE)
 			.addNative(BLOCK)
 			.addNative(RAW_METAL, RAW_METAL_BLOCK)
-			.addNative(ORE, ORE_DEEPSLATE)
+			.addNative(ORE)
 			.addNative(MACHINE_CASING.formattingRaw("quantum_machine_casing", "Quantum Machine Casing").set(BLAST_RESISTANCE, 6000f))
 			.addNative(MACHINE_CASING_PIPE.set(BLAST_RESISTANCE, 6000f))
 			.addNative(PLASMA_HANDLING_MACHINE_CASING.set(BLAST_RESISTANCE, 6000f))
