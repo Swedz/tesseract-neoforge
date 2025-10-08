@@ -49,6 +49,7 @@ public abstract class MachineBuilder<T extends MachineBuilder<T>>
 	protected final List<MachineBlockPropertiesModifier> propertiesModifiers = Lists.newArrayList();
 	protected final List<MachineBlockRegistrators>       registrators        = Lists.newArrayList();
 	
+	protected boolean                    defaultBlockProperties = true;
 	protected boolean                    defaultMineableTags = true;
 	protected MachineBuiltinModelBuilder builtinModel;
 	
@@ -88,6 +89,12 @@ public abstract class MachineBuilder<T extends MachineBuilder<T>>
 	{
 		Assert.notNull(registrator);
 		registrators.add(registrator);
+		return (T) this;
+	}
+	
+	public T excludeDefaultBlockProperties()
+	{
+		defaultBlockProperties = false;
 		return (T) this;
 	}
 	
