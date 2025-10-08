@@ -31,6 +31,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.swedz.tesseract.neoforge.compat.mi.helper.MachineInventoryHelper;
@@ -107,12 +108,7 @@ public final class HackedMachineRegistrationHelper
 					}
 					else
 					{
-						properties
-								.mapColor(MapColor.METAL)
-								.destroyTime(4)
-								.requiresCorrectToolForDrops()
-								.isValidSpawn(MobSpawning.NO_SPAWN)
-								.isRedstoneConductor(Blocks::never);
+						applyDefaultMachineProperties(properties);
 					}
 				})
 				.withModel((holder) -> (provider) ->
@@ -171,6 +167,16 @@ public final class HackedMachineRegistrationHelper
 															   MachineBlockRegistrators... extraRegistrators)
 	{
 		return registerMachine(hook, englishName, name, null, null, null, factory, extraRegistrators);
+	}
+	
+	public static void applyDefaultMachineProperties(BlockBehaviour.Properties properties)
+	{
+		properties
+				.mapColor(MapColor.METAL)
+				.destroyTime(4)
+				.requiresCorrectToolForDrops()
+				.isValidSpawn(MobSpawning.NO_SPAWN)
+				.isRedstoneConductor(Blocks::never);
 	}
 	
 	/**

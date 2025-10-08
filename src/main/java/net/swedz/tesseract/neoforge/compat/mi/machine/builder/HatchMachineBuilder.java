@@ -236,7 +236,14 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 							holderModifiers.forEach((modifier) -> modifier.modify(holder));
 							holderHatchModifiers.forEach((modifier) -> modifier.modify(holder, input));
 						},
-						(properties) -> propertiesModifiers.forEach((modifier) -> modifier.modify(properties)),
+						(properties) ->
+						{
+							if(defaultBlockProperties)
+							{
+								HackedMachineRegistrationHelper.applyDefaultMachineProperties(properties);
+							}
+							propertiesModifiers.forEach((modifier) -> modifier.modify(properties));
+						},
 						defaultMineableTags,
 						(bep) -> blockEntityFactory.create(bep, input, hook.id(machineId)),
 						registrators.toArray(MachineBlockRegistrators[]::new)
@@ -258,7 +265,14 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 						holderModifiers.forEach((modifier) -> modifier.modify(holder));
 						holderHatchModifiers.forEach((modifier) -> modifier.modify(holder, false));
 					},
-					(properties) -> propertiesModifiers.forEach((modifier) -> modifier.modify(properties)),
+					(properties) ->
+					{
+						if(defaultBlockProperties)
+						{
+							HackedMachineRegistrationHelper.applyDefaultMachineProperties(properties);
+						}
+						propertiesModifiers.forEach((modifier) -> modifier.modify(properties));
+					},
 					defaultMineableTags,
 					(bep) -> blockEntityFactory.create(bep, false, hook.id(name)),
 					registrators.toArray(MachineBlockRegistrators[]::new)
