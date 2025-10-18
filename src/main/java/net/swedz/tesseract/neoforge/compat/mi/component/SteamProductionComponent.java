@@ -69,10 +69,10 @@ public final class SteamProductionComponent implements IComponent.ServerOnly
 		}
 		
 		long steamToProduce = maxEuProduction.get();
-		try (Transaction transaction = Transaction.openOuter())
+		try (Transaction transaction = Transaction.openRoot())
 		{
 			long steamProducedSimulation;
-			try (Transaction simulation = Transaction.openNested(transaction))
+			try (Transaction simulation = Transaction.open(transaction))
 			{
 				steamProducedSimulation = fluidStorage.insertAllSlot(steamKey, steamToProduce, simulation);
 			}

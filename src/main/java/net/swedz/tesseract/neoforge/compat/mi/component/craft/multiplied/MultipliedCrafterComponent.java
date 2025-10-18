@@ -214,7 +214,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	
 	private boolean canItemOutputsAllFit(MachineRecipe recipe, int multiplier)
 	{
-		try (Transaction transaction = Transaction.openOuter())
+		try (Transaction transaction = Transaction.openRoot())
 		{
 			MIItemStorage outputStorage = new MIItemStorage(inventory.getItemOutputs());
 			
