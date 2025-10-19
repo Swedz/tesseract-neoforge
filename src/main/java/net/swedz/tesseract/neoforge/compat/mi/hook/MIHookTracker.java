@@ -16,9 +16,9 @@ import java.util.function.Consumer;
 @ApiStatus.Internal
 public final class MIHookTracker
 {
-	private static final Map<ResourceLocation, String>                                         REI_CATEGORY_NAMES    = Maps.newHashMap();
-	private static final Map<ResourceLocation, MachineModelProperties>                         MACHINE_MODELS        = Maps.newHashMap();
-	private static final Map<String, List<Consumer<MachineCasingModelsMIHookDatagenProvider>>> MACHINE_CASING_MODELS = Maps.newHashMap();
+	private static final Map<ResourceLocation, String>                                         REI_CATEGORY_NAMES    = Maps.newConcurrentMap();
+	private static final Map<ResourceLocation, MachineModelProperties>                         MACHINE_MODELS        = Maps.newConcurrentMap();
+	private static final Map<String, List<Consumer<MachineCasingModelsMIHookDatagenProvider>>> MACHINE_CASING_MODELS = Maps.newConcurrentMap();
 	
 	public static List<Map.Entry<ResourceLocation, String>> getReiCategoryNames(String modId)
 	{
