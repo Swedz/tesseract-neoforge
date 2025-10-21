@@ -99,7 +99,10 @@ public final class CrafterComponentHelper
 		{
 			for(var stack : ingredient.getStacks())
 			{
-				return resource.equals(FluidVariant.of(stack.getFluid()));
+				if(resource.equals(FluidVariant.of(stack.getFluid())))
+				{
+					return true;
+				}
 			}
 			return false;
 		}
