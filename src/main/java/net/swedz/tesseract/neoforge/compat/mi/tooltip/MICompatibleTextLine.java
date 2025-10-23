@@ -33,6 +33,11 @@ public final class MICompatibleTextLine extends TextLine implements MIParsable
 		return new MICompatibleTextLine(text);
 	}
 	
+	public MICompatibleTextLine(String translationKey, Style style)
+	{
+		super(translationKey, style);
+	}
+	
 	public MICompatibleTextLine(TranslatableTextEnum text, Style style)
 	{
 		super(text, style);
@@ -41,6 +46,11 @@ public final class MICompatibleTextLine extends TextLine implements MIParsable
 	public MICompatibleTextLine(MIText text, Style style)
 	{
 		this(MITooltipCompat.wrap(text), style);
+	}
+	
+	public MICompatibleTextLine(String translationKey)
+	{
+		super(translationKey);
 	}
 	
 	public MICompatibleTextLine(TranslatableTextEnum text)
@@ -77,7 +87,7 @@ public final class MICompatibleTextLine extends TextLine implements MIParsable
 	@Override
 	public MICompatibleTextLine arg(Object arg)
 	{
-		return arg instanceof Component c && !c.getStyle().isEmpty() ?
+		return arg instanceof Component c ?
 				this.arg(c, Parser.COMPONENT) :
 				this.arg(arg, MITooltips.DEFAULT_PARSER);
 	}
@@ -85,7 +95,7 @@ public final class MICompatibleTextLine extends TextLine implements MIParsable
 	@Override
 	public MICompatibleTextLine withStyle(Style style)
 	{
-		MICompatibleTextLine line = new MICompatibleTextLine(text, style);
+		MICompatibleTextLine line = new MICompatibleTextLine(translationKey, style);
 		line.arguments.addAll(arguments);
 		return line;
 	}

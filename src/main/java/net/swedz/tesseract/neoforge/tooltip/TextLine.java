@@ -21,22 +21,32 @@ public class TextLine implements Component, Parsable
 		return new TextLine(text);
 	}
 	
-	protected final TranslatableTextEnum text;
-	protected final Style                style;
+	protected final String translationKey;
+	protected final Style  style;
 	
 	protected final List<Component> arguments = Lists.newArrayList();
 	
 	private MutableComponent component;
 	
+	public TextLine(String translationKey, Style style)
+	{
+		this.translationKey = translationKey;
+		this.style = style;
+	}
+	
+	public TextLine(String translationKey)
+	{
+		this(translationKey, null);
+	}
+	
 	public TextLine(TranslatableTextEnum text, Style style)
 	{
-		this.text = text;
-		this.style = style;
+		this(text.getTranslationKey(), style);
 	}
 	
 	public TextLine(TranslatableTextEnum text)
 	{
-		this(text, null);
+		this(text.getTranslationKey());
 	}
 	
 	@Override
@@ -58,7 +68,7 @@ public class TextLine implements Component, Parsable
 	@Override
 	public TextLine arg(Object arg)
 	{
-		return arg instanceof Component c && !c.getStyle().isEmpty() ?
+		return arg instanceof Component c ?
 				this.arg(c, Parser.COMPONENT) :
 				this.arg(arg, Parser.OBJECT);
 	}
@@ -70,7 +80,7 @@ public class TextLine implements Component, Parsable
 	
 	protected MutableComponent createComponent()
 	{
-		MutableComponent component = text.text(arguments.toArray());
+		MutableComponent component = Component.translatable(translationKey, arguments.toArray());
 		if(style != null)
 		{
 			component = component.withStyle(style);
@@ -89,7 +99,7 @@ public class TextLine implements Component, Parsable
 	
 	public TextLine withStyle(Style style)
 	{
-		TextLine line = new TextLine(text, style);
+		TextLine line = new TextLine(translationKey, style);
 		line.arguments.addAll(arguments);
 		return line;
 	}
