@@ -341,7 +341,7 @@ public final class HackedMachineRegistrationHelper
 		ReiMachineRecipes.registerCategory(machineId, params);
 		ReiMachineRecipes.registerMachineClickArea(machineId, params.progressBarParams.toRectangle());
 		params.workstations.add(machineId);
-		ReiMachineRecipes.registerRecipeCategoryForMachine(machineId, params.category);
+		MIHookTracker.addReiCategoryId(machineId, params.category);
 	}
 	
 	public static void registerRecipeCategory(MIHook hook, String id, String englishName, MachineRecipeType recipeType,
