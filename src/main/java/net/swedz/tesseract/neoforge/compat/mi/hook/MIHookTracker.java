@@ -23,20 +23,18 @@ public final class MIHookTracker
 	private static final Map<ResourceLocation, String>                                         REI_CATEGORY_NAMES    = Maps.newConcurrentMap();
 	private static final Map<ResourceLocation, MachineModelProperties>                         MACHINE_MODELS        = Maps.newConcurrentMap();
 	private static final Map<String, List<Consumer<MachineCasingModelsMIHookDatagenProvider>>> MACHINE_CASING_MODELS = Maps.newConcurrentMap();
-
+	
 	public static void registerRecipeCategoryForMachines(IEventBus bus)
 	{
 		bus.addListener(FMLCommonSetupEvent.class, (event) ->
-		{
-			REI_CATEGORY_IDS.forEach(ReiMachineRecipes::registerRecipeCategoryForMachine);
-		});
+				REI_CATEGORY_IDS.forEach(ReiMachineRecipes::registerRecipeCategoryForMachine));
 	}
-
+	
 	public static void addReiCategoryId(ResourceLocation machineId, ResourceLocation categoryId)
 	{
 		REI_CATEGORY_IDS.put(machineId, categoryId);
 	}
-
+	
 	public static List<Map.Entry<ResourceLocation, String>> getReiCategoryNames(String modId)
 	{
 		return REI_CATEGORY_NAMES.entrySet().stream()
