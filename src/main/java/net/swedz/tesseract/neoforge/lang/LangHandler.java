@@ -1,8 +1,14 @@
 package net.swedz.tesseract.neoforge.lang;
 
 import com.google.common.collect.Maps;
-import net.swedz.tesseract.neoforge.Tesseract;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKey;
+import net.swedz.tesseract.neoforge.lang.annotation.Parsed;
+import net.swedz.tesseract.neoforge.lang.annotation.WithStyle;
+import net.swedz.tesseract.neoforge.lang.exception.UndefinedParserException;
+import net.swedz.tesseract.neoforge.lang.exception.UndefinedStyleException;
+import net.swedz.tesseract.neoforge.tooltip.Parser;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -16,73 +22,122 @@ public final class LangHandler implements InvocationHandler
 	
 	private final LangManager manager;
 	
-	private Map<String, String> values = Map.of();
+	private Map<String, LangEntry> values = Map.of();
 	
 	public LangHandler(LangManager manager)
 	{
 		this.manager = manager;
 	}
 	
-	private static String createLangKey(String modId, Method method, LangKey annotation)
+	private static String generateLangKey(String methodName)
 	{
+		var generated = new StringBuilder();
+		var matcher = METHOD_PATTERN.matcher(methodName);
+		int lastEnd = 0;
+		while(matcher.find())
+		{
+			int start = matcher.start();
+			int end = matcher.end();
+			// Append any non-matched characters
+			if(lastEnd < start)
+			{
+				generated.append(methodName, lastEnd, start);
+			}
+			if(!generated.isEmpty())
+			{
+				generated.append('_');
+			}
+			generated.append(methodName, start, end);
+			lastEnd = end;
+		}
+		return generated.toString().toLowerCase();
+	}
+	
+	private String createLangKey(Method method)
+	{
+		var annotation = method.getAnnotation(LangKey.class);
 		if(!annotation.value().isEmpty())
 		{
-			return annotation.value();
+			return annotation.value().replace("{}", manager.modId());
 		}
-		String key;
-		if(!annotation.key().isEmpty())
+		var key = !annotation.key().isEmpty() ?
+				annotation.key() :
+				generateLangKey(method.getName());
+		return "text.%s.%s".formatted(manager.modId(), key);
+	}
+	
+	private Style getStyle(Method method)
+	{
+		if(method.isAnnotationPresent(WithStyle.class))
 		{
-			key = annotation.key();
-		}
-		else
-		{
-			String methodName = method.getName();
-			
-			StringBuilder generated = new StringBuilder();
-			var matcher = METHOD_PATTERN.matcher(methodName);
-			int lastEnd = 0;
-			while(matcher.find())
+			var annotationStyle = method.getAnnotation(WithStyle.class);
+			var style = manager.getStyle(annotationStyle.value());
+			if(style == null)
 			{
-				int start = matcher.start();
-				int end = matcher.end();
-				// Append any non-matched characters
-				if(lastEnd < start)
-				{
-					generated.append(methodName, lastEnd, start);
-				}
-				if(!generated.isEmpty())
-				{
-					generated.append('_');
-				}
-				generated.append(methodName, start, end);
-				lastEnd = end;
+				throw new UndefinedStyleException(annotationStyle.value());
 			}
-			key = generated.toString().toLowerCase();
+			return style;
 		}
-		return "text.%s.%s".formatted(modId, key);
+		return manager.getStyle("default");
+	}
+	
+	private Parser<?>[] getParsers(Method method)
+	{
+		Parser<?>[] parsers = new Parser<?>[method.getParameterCount()];
+		for(int index = 0; index < method.getParameterCount(); index++)
+		{
+			var param = method.getParameters()[index];
+			var paramType = param.getType();
+			String parserKey;
+			if(param.isAnnotationPresent(Parsed.class))
+			{
+				var annotationParsed = param.getAnnotation(Parsed.class);
+				parserKey = annotationParsed.value();
+			}
+			else
+			{
+				parserKey = "default";
+			}
+			var parser = manager.getParser(parserKey, paramType);
+			if(parser == null)
+			{
+				if(parserKey.equals("default"))
+				{
+					parser = Parser.OBJECT;
+				}
+				else
+				{
+					throw new UndefinedParserException(parserKey);
+				}
+			}
+			parsers[index] = parser;
+		}
+		return parsers;
 	}
 	
 	void loadValues(Class<?> langClass, Object proxy)
 	{
-		Map<String, String> values = Maps.newHashMap();
+		Map<String, LangEntry> values = Maps.newHashMap();
 		
 		for(var method : langClass.getMethods())
 		{
 			if(method.isAnnotationPresent(LangKey.class))
 			{
-				if(manager.isValidTextLine(method.getReturnType()))
+				String methodSignature = method.toGenericString();
+				if(method.getReturnType().equals(MutableComponent.class))
 				{
-					var annotation = method.getAnnotation(LangKey.class);
-					String key = createLangKey(manager.modId(), method, annotation);
-					Tesseract.LOGGER.info("loaded method {}: {}", method.getName(), key);
-					if(values.put(method.getName(), key) != null)
+					var key = this.createLangKey(method);
+					var style = this.getStyle(method);
+					var parsers = this.getParsers(method);
+					var entry = new LangEntry(key, style, parsers);
+					if(values.put(methodSignature, entry) != null)
 					{
-						throw new IllegalStateException("Method with name %s already exists.".formatted(method.getName()));
+						throw new IllegalStateException("Method with signature %s already exists.".formatted(methodSignature));
 					}
 				}
 				else
 				{
-					throw new IllegalStateException("Method with name %s does not have a supported return type %s".formatted(method.getName(), method.getReturnType()));
+					throw new IllegalStateException("Method %s does not return MutableComponent".formatted(methodSignature));
 				}
 			}
 		}
@@ -90,18 +145,43 @@ public final class LangHandler implements InvocationHandler
 		this.values = Collections.unmodifiableMap(values);
 	}
 	
+	private static final Method METHOD_EQUALS, METHOD_HASHCODE, METHOD_TOSTRING;
+	
+	static
+	{
+		try
+		{
+			METHOD_EQUALS = Object.class.getDeclaredMethod("equals", Object.class);
+			METHOD_HASHCODE = Object.class.getDeclaredMethod("hashCode");
+			METHOD_TOSTRING = Object.class.getDeclaredMethod("toString");
+		}
+		catch (NoSuchMethodException ex)
+		{
+			throw new RuntimeException(ex);
+		}
+	}
+	
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
 	{
-		var key = values.get(method.getName());
-		var line = manager.createTextLine(method.getReturnType(), key);
-		if(args != null)
+		if(method.equals(METHOD_EQUALS))
 		{
-			for(var arg : args)
-			{
-				line.arg(arg);
-			}
+			return proxy == args[0];
 		}
-		return line;
+		else if(method.equals(METHOD_HASHCODE))
+		{
+			return System.identityHashCode(proxy);
+		}
+		else if(method.equals(METHOD_TOSTRING))
+		{
+			return proxy.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(proxy));
+		}
+		
+		var value = values.get(method.toGenericString());
+		if(value == null)
+		{
+			throw new UnsupportedOperationException("Cannot invoke method without a @LangKey annotation");
+		}
+		return value.toComponent(args);
 	}
 }

@@ -1,24 +1,32 @@
 package net.swedz.tesseract.neoforge.lang;
 
 import com.google.common.collect.Maps;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.Style;
 import net.swedz.tesseract.neoforge.api.Assert;
-import net.swedz.tesseract.neoforge.tooltip.TextLine;
+import net.swedz.tesseract.neoforge.tooltip.Parser;
 
 import java.lang.reflect.Proxy;
 import java.util.Map;
-import java.util.function.Function;
 
 public final class LangManager
 {
 	private final String modId;
 	
-	private final Map<Class<?>, TextLineReference<?>> supportedTextLines = Maps.newHashMap();
+	private final Map<String, Style>        styles  = Maps.newHashMap();
+	private final Map<ParserKey, Parser<?>> parsers = Maps.newHashMap();
+	
+	private record ParserKey(String key, Class<?> paramClass)
+	{
+	}
 	
 	public LangManager(String modId)
 	{
 		this.modId = modId;
 		
-		supportedTextLines.put(TextLineReference.DEFAULT.textLineClass(), TextLineReference.DEFAULT);
+		this.defaultStyle(Style.EMPTY);
+		
+		this.defaultParser(Component.class, Parser.COMPONENT);
 	}
 	
 	String modId()
@@ -26,28 +34,40 @@ public final class LangManager
 		return modId;
 	}
 	
-	public <T extends TextLine> LangManager withTextLines(Class<T> textLineClass,
-														  Function<String, T> textLineFactory)
+	public LangManager style(String key, Style style)
 	{
-		supportedTextLines.put(textLineClass, new TextLineReference<>(textLineClass, textLineFactory));
+		Assert.noneNull(key, style);
+		styles.put(key, style);
 		return this;
 	}
 	
-	private TextLineReference<?> getTextLine(Class<?> textLineClass)
+	public LangManager defaultStyle(Style style)
 	{
-		return supportedTextLines.get(textLineClass);
+		return this.style("default", style);
 	}
 	
-	boolean isValidTextLine(Class<?> textLineClass)
+	Style getStyle(String key)
 	{
-		return this.getTextLine(textLineClass) != null;
+		Assert.notNull(key);
+		return styles.get(key);
 	}
 	
-	TextLine createTextLine(Class<?> type, String key)
+	public <T> LangManager parser(String key, Class<T> paramClass, Parser<T> parser)
 	{
-		var reference = this.getTextLine(type);
-		Assert.notNull(reference, "Unsupported LangKey method return type %s".formatted(type), IllegalStateException::new);
-		return reference.textLineFactory().apply(key);
+		Assert.noneNull(key, paramClass, parser);
+		parsers.put(new ParserKey(key, paramClass), parser);
+		return this;
+	}
+	
+	public <T> LangManager defaultParser(Class<T> paramClass, Parser<T> parser)
+	{
+		return this.parser("default", paramClass, parser);
+	}
+	
+	Parser<?> getParser(String key, Class<?> paramClass)
+	{
+		Assert.noneNull(key, paramClass);
+		return parsers.get(new ParserKey(key, paramClass));
 	}
 	
 	public <L> LangInstance<L> build(Class<L> langClass)
