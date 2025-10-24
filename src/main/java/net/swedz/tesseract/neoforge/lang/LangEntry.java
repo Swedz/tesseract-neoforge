@@ -5,7 +5,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 
-public record LangEntry(String key, Style style, Parser[] parsers)
+public record LangEntry(String key, String defaultText, Style style, Parser[] parsers)
 {
 	public MutableComponent toComponent(Object[] args)
 	{

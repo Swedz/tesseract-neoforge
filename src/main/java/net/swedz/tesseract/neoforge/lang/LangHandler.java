@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.lang;
 import com.google.common.collect.Maps;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKey;
 import net.swedz.tesseract.neoforge.lang.annotation.Parsed;
 import net.swedz.tesseract.neoforge.lang.annotation.WithStyle;
@@ -12,7 +13,9 @@ import net.swedz.tesseract.neoforge.tooltip.Parser;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -27,6 +30,13 @@ public final class LangHandler implements InvocationHandler
 	public LangHandler(LangManager manager)
 	{
 		this.manager = manager;
+	}
+	
+	public Collection<LangEntry> entries()
+	{
+		return values.values().stream()
+				.sorted(Comparator.comparing(LangEntry::key))
+				.toList();
 	}
 	
 	private static String generateLangKey(String methodName)
@@ -56,6 +66,7 @@ public final class LangHandler implements InvocationHandler
 	private String createLangKey(Method method)
 	{
 		var annotation = method.getAnnotation(LangKey.class);
+		Assert.notNull(annotation);
 		if(!annotation.value().isEmpty())
 		{
 			return annotation.value().replace("{}", manager.modId());
@@ -123,13 +134,14 @@ public final class LangHandler implements InvocationHandler
 		{
 			if(method.isAnnotationPresent(LangKey.class))
 			{
-				String methodSignature = method.toGenericString();
+				var annotation = method.getAnnotation(LangKey.class);
+				var methodSignature = method.toGenericString();
 				if(method.getReturnType().equals(MutableComponent.class))
 				{
 					var key = this.createLangKey(method);
 					var style = this.getStyle(method);
 					var parsers = this.getParsers(method);
-					var entry = new LangEntry(key, style, parsers);
+					var entry = new LangEntry(key, annotation.text(), style, parsers);
 					if(values.put(methodSignature, entry) != null)
 					{
 						throw new IllegalStateException("Method with signature %s already exists.".formatted(methodSignature));

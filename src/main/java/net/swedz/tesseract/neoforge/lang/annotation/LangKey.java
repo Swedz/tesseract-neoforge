@@ -36,4 +36,11 @@ public @interface LangKey
 	 * @return the short language key
 	 */
 	String key() default "";
+	
+	/**
+	 * <p>Defines the default text for the method. This is purely used for datagen.</p>
+	 *
+	 * @return the default text for the method
+	 */
+	String text() default "";
 }
