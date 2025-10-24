@@ -12,6 +12,7 @@ import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
 import net.swedz.tesseract.neoforge.compat.mi.TesseractMILootConditions;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
 import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
 import net.swedz.tesseract.neoforge.event.ItemHurtEvent;
 import net.swedz.tesseract.neoforge.item.ArmorTickHandler;
@@ -41,6 +42,7 @@ public final class Tesseract
 		if(ModLoadedHelper.isLoaded("modern_industrialization"))
 		{
 			TesseractMILootConditions.init(bus);
+			MIHookTracker.registerRecipeCategoryForMachines(bus);
 		}
 		
 		bus.addListener(GatherDataEvent.class, (event) ->
