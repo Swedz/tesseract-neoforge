@@ -192,7 +192,14 @@ public final class LangHandler implements InvocationHandler
 		var value = values.get(method.toGenericString());
 		if(value == null)
 		{
-			throw new UnsupportedOperationException("Cannot invoke method without a @LangKey annotation");
+			try
+			{
+				return InvocationHandler.invokeDefault(proxy, method);
+			}
+			catch (Throwable ex)
+			{
+				throw new RuntimeException(ex);
+			}
 		}
 		return value.toComponent(args);
 	}
