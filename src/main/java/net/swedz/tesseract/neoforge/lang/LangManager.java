@@ -25,9 +25,9 @@ public final class LangManager
 	{
 		this.modId = modId;
 		
-		this.defaultStyle(() -> Style.EMPTY);
+		this.style(() -> Style.EMPTY);
 		
-		this.defaultParser(Component.class, () -> Parser.COMPONENT);
+		this.parser(Component.class, () -> Parser.COMPONENT);
 	}
 	
 	String modId()
@@ -42,7 +42,7 @@ public final class LangManager
 		return this;
 	}
 	
-	public LangManager defaultStyle(Supplier<Style> style)
+	public LangManager style(Supplier<Style> style)
 	{
 		return this.style("default", style);
 	}
@@ -60,7 +60,7 @@ public final class LangManager
 		return this;
 	}
 	
-	public <T> LangManager defaultParser(Class<T> paramClass, Supplier<Parser<T>> parser)
+	public <T> LangManager parser(Class<T> paramClass, Supplier<Parser<T>> parser)
 	{
 		return this.parser("default", paramClass, parser);
 	}
