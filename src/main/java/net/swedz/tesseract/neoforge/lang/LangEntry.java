@@ -5,7 +5,9 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 
-public record LangEntry(String key, String defaultText, Style style, Parser[] parsers)
+import java.util.function.Supplier;
+
+public record LangEntry(String key, String defaultText, Supplier<Style> style, Supplier<Parser<?>>[] parsers)
 {
 	public MutableComponent toComponent(Object[] args)
 	{
@@ -16,10 +18,10 @@ public record LangEntry(String key, String defaultText, Style style, Parser[] pa
 			for(int index = 0; index < args.length; index++)
 			{
 				var arg = args[index];
-				var parsedArg = parsers[index].parse(arg);
+				var parsedArg = ((Parser) parsers[index].get()).parse(arg);
 				parsedArgs[index] = parsedArg;
 			}
 		}
-		return Component.translatable(key, parsedArgs).withStyle(style);
+		return Component.translatable(key, parsedArgs).withStyle(style.get());
 	}
 }

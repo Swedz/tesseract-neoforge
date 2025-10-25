@@ -51,9 +51,9 @@ public final class TesseractMI
 	private static void setupText()
 	{
 		var instance = new LangManager(Tesseract.ID)
-				.style("tooltip", Style.EMPTY.withColor(0xA9A9A9).withItalic(false))
-				.defaultParser(TesseractMIText.TieredMachineRecipeType.class, MIParser.MACHINE_RECIPE_TYPE_PARSER)
-				.defaultParser(EuCostTransformer.class, MIParser.EU_COST_TRANSFORMER_PARSER)
+				.style("tooltip", () -> Style.EMPTY.withColor(0xA9A9A9).withItalic(false))
+				.defaultParser(TesseractMIText.TieredMachineRecipeType.class, () -> MIParser.MACHINE_RECIPE_TYPE_PARSER)
+				.defaultParser(EuCostTransformer.class, () -> MIParser.EU_COST_TRANSFORMER_PARSER)
 				.build(TesseractMIText.class)
 				.load();
 		LanguageDatagenProvider.include(instance);

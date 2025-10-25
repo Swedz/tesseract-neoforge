@@ -106,7 +106,7 @@ public final class Tesseract
 	private static void setupText()
 	{
 		var instance = new LangManager(ID)
-				.style("tooltip", Style.EMPTY.withColor(0xA9A9A9).withItalic(false))
+				.style("tooltip", () -> Style.EMPTY.withColor(0xA9A9A9).withItalic(false))
 				.build(TesseractText.class)
 				.load();
 		LanguageDatagenProvider.include(instance);

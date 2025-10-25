@@ -8,13 +8,14 @@ import net.swedz.tesseract.neoforge.tooltip.Parser;
 
 import java.lang.reflect.Proxy;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public final class LangManager
 {
 	private final String modId;
 	
-	private final Map<String, Style>        styles  = Maps.newHashMap();
-	private final Map<ParserKey, Parser<?>> parsers = Maps.newHashMap();
+	private final Map<String, Supplier<Style>>        styles  = Maps.newHashMap();
+	private final Map<ParserKey, Supplier<Parser<?>>> parsers = Maps.newHashMap();
 	
 	private record ParserKey(String key, Class<?> paramClass)
 	{
@@ -24,9 +25,9 @@ public final class LangManager
 	{
 		this.modId = modId;
 		
-		this.defaultStyle(Style.EMPTY);
+		this.defaultStyle(() -> Style.EMPTY);
 		
-		this.defaultParser(Component.class, Parser.COMPONENT);
+		this.defaultParser(Component.class, () -> Parser.COMPONENT);
 	}
 	
 	String modId()
@@ -34,37 +35,37 @@ public final class LangManager
 		return modId;
 	}
 	
-	public LangManager style(String key, Style style)
+	public LangManager style(String key, Supplier<Style> style)
 	{
 		Assert.noneNull(key, style);
 		styles.put(key, style);
 		return this;
 	}
 	
-	public LangManager defaultStyle(Style style)
+	public LangManager defaultStyle(Supplier<Style> style)
 	{
 		return this.style("default", style);
 	}
 	
-	Style getStyle(String key)
+	Supplier<Style> getStyle(String key)
 	{
 		Assert.notNull(key);
 		return styles.get(key);
 	}
 	
-	public <T> LangManager parser(String key, Class<T> paramClass, Parser<T> parser)
+	public <T> LangManager parser(String key, Class<T> paramClass, Supplier<Parser<T>> parser)
 	{
 		Assert.noneNull(key, paramClass, parser);
-		parsers.put(new ParserKey(key, paramClass), parser);
+		parsers.put(new ParserKey(key, paramClass), parser::get);
 		return this;
 	}
 	
-	public <T> LangManager defaultParser(Class<T> paramClass, Parser<T> parser)
+	public <T> LangManager defaultParser(Class<T> paramClass, Supplier<Parser<T>> parser)
 	{
 		return this.parser("default", paramClass, parser);
 	}
 	
-	Parser<?> getParser(String key, Class<?> paramClass)
+	Supplier<Parser<?>> getParser(String key, Class<?> paramClass)
 	{
 		Assert.noneNull(key, paramClass);
 		return parsers.get(new ParserKey(key, paramClass));

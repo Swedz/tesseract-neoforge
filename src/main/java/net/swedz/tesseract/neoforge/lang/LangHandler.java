@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
 public final class LangHandler implements InvocationHandler
@@ -85,7 +86,7 @@ public final class LangHandler implements InvocationHandler
 		return prefix + key;
 	}
 	
-	private Style getStyle(WithStyle annotationStyle)
+	private Supplier<Style> getStyle(WithStyle annotationStyle)
 	{
 		if(annotationStyle != null)
 		{
@@ -99,9 +100,9 @@ public final class LangHandler implements InvocationHandler
 		return manager.getStyle("default");
 	}
 	
-	private Parser<?>[] getParsers(Method method)
+	private Supplier<Parser<?>>[] getParsers(Method method)
 	{
-		Parser<?>[] parsers = new Parser<?>[method.getParameterCount()];
+		Supplier<Parser<?>>[] parsers = new Supplier[method.getParameterCount()];
 		for(int index = 0; index < method.getParameterCount(); index++)
 		{
 			var param = method.getParameters()[index];
@@ -123,7 +124,7 @@ public final class LangHandler implements InvocationHandler
 			{
 				if(parserKey.equals("default"))
 				{
-					parser = Parser.OBJECT;
+					parser = () -> Parser.OBJECT;
 				}
 				else
 				{
@@ -134,8 +135,12 @@ public final class LangHandler implements InvocationHandler
 			if(param.isAnnotationPresent(WithStyle.class))
 			{
 				var annotationStyle = param.getAnnotation(WithStyle.class);
-				final Parser finalParser = parser;
-				parser = (value) -> finalParser.parse(value).copy().withStyle(this.getStyle(annotationStyle));
+				final Supplier<Parser> finalParser = parser::get;
+				parser = () -> (value) ->
+				{
+					var style = this.getStyle(annotationStyle);
+					return finalParser.get().parse(value).copy().withStyle(style == null ? null : style.get());
+				};
 			}
 			
 			parsers[index] = parser;
