@@ -12,6 +12,7 @@ import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.MachineRecip
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.MultiblockMachinesMIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.SingleBlockCraftingMachinesMIHookContext;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.SingleBlockSpecialMachinesMIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.tooltip.MIParser;
 import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
 import net.swedz.tesseract.neoforge.lang.LangManager;
 
