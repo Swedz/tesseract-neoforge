@@ -216,7 +216,7 @@ public final class LangHandler implements InvocationHandler
 		{
 			try
 			{
-				return InvocationHandler.invokeDefault(proxy, method);
+				return InvocationHandler.invokeDefault(proxy, method, args);
 			}
 			catch (Throwable ex)
 			{
