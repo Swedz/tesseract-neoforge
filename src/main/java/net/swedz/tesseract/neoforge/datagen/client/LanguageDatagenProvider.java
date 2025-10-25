@@ -12,7 +12,7 @@ public final class LanguageDatagenProvider extends LanguageProvider
 {
 	private static final Set<LangInstance<?>> INSTANCES = Sets.newHashSet();
 	
-	public static void track(LangInstance<?> instance)
+	public static void include(LangInstance<?> instance)
 	{
 		INSTANCES.add(instance);
 	}

@@ -4,8 +4,10 @@ import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.minecraft.network.chat.MutableComponent;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKey;
+import net.swedz.tesseract.neoforge.lang.annotation.LangKeyPattern;
 import net.swedz.tesseract.neoforge.lang.annotation.WithStyle;
 
+@LangKeyPattern("text.{}.mi.")
 public interface TesseractMIText
 {
 	record TieredMachineRecipeType(boolean electric, MachineRecipeType recipeType)
@@ -13,7 +15,7 @@ public interface TesseractMIText
 	}
 	
 	@LangKey(
-			key = "mi.machine_batcher.recipe_type",
+			key = "machine_batcher.recipe_type",
 			text = "Can run %s recipes in batches."
 	)
 	@WithStyle("tooltip")
@@ -26,7 +28,7 @@ public interface TesseractMIText
 	}
 	
 	@LangKey(
-			key = "mi.machine_batcher.size_and_cost",
+			key = "machine_batcher.size_and_cost",
 			text = "Runs in batches of up to %d at %s the EU cost."
 	)
 	@WithStyle("tooltip")

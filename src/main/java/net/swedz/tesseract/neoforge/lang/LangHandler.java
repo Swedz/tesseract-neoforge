@@ -5,6 +5,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKey;
+import net.swedz.tesseract.neoforge.lang.annotation.LangKeyPattern;
 import net.swedz.tesseract.neoforge.lang.annotation.Parsed;
 import net.swedz.tesseract.neoforge.lang.annotation.WithStyle;
 import net.swedz.tesseract.neoforge.lang.exception.UndefinedParserException;
@@ -63,18 +64,25 @@ public final class LangHandler implements InvocationHandler
 		return generated.toString().toLowerCase();
 	}
 	
-	private String createLangKey(Method method)
+	private String createLangKey(Class<?> langClass, Method method)
 	{
 		var annotation = method.getAnnotation(LangKey.class);
 		Assert.notNull(annotation);
+		
 		if(!annotation.value().isEmpty())
 		{
 			return annotation.value().replace("{}", manager.modId());
 		}
+		
+		var prefix = langClass.isAnnotationPresent(LangKeyPattern.class) ?
+				langClass.getAnnotation(LangKeyPattern.class).value() :
+				"text.{}.";
+		prefix = prefix.replace("{}", manager.modId());
+		
 		var key = !annotation.key().isEmpty() ?
 				annotation.key() :
 				generateLangKey(method.getName());
-		return "text.%s.%s".formatted(manager.modId(), key);
+		return prefix + key;
 	}
 	
 	private Style getStyle(Method method)
@@ -138,7 +146,7 @@ public final class LangHandler implements InvocationHandler
 				var methodSignature = method.toGenericString();
 				if(method.getReturnType().equals(MutableComponent.class))
 				{
-					var key = this.createLangKey(method);
+					var key = this.createLangKey(langClass, method);
 					var style = this.getStyle(method);
 					var parsers = this.getParsers(method);
 					var entry = new LangEntry(key, annotation.text(), style, parsers);

@@ -30,8 +30,9 @@ public @interface LangKey
 	String value() default "";
 	
 	/**
-	 * <p>Specifies the short language key to use for this method. This will be prefixed with <code>text.{}.</code>
-	 * where <code>{}</code> is replaced with the mod identifier.</p>
+	 * <p>Specifies the short language key to use for this method. This will be prefixed with the pattern defined by
+	 * the {@link LangKeyPattern} annotation on the class, or <code>text.{}.</code> if not present, where
+	 * <code>{}</code> is replaced with the mod identifier.</p>
 	 *
 	 * @return the short language key
 	 */

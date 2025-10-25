@@ -55,7 +55,7 @@ public final class TesseractMI
 				.defaultParser(EuCostTransformer.class, MIParser.EU_COST_TRANSFORMER_PARSER)
 				.build(TesseractMIText.class)
 				.load();
-		LanguageDatagenProvider.track(instance);
+		LanguageDatagenProvider.include(instance);
 		TEXT = instance.lang();
 	}
 }

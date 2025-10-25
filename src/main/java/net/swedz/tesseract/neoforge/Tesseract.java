@@ -109,7 +109,7 @@ public final class Tesseract
 				.style("tooltip", Style.EMPTY.withColor(0xA9A9A9).withItalic(false))
 				.build(TesseractText.class)
 				.load();
-		LanguageDatagenProvider.track(instance);
+		LanguageDatagenProvider.include(instance);
 		TEXT = instance.lang();
 	}
 }
