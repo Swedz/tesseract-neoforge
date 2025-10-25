@@ -14,13 +14,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.swedz.tesseract.neoforge.TesseractText;
+import net.swedz.tesseract.neoforge.compat.mi.TesseractMI;
 import net.swedz.tesseract.neoforge.compat.mi.api.SteamMachineTierHolder;
 
 import java.util.List;
-
-import static net.swedz.tesseract.neoforge.compat.mi.TesseractMITooltips.*;
-import static net.swedz.tesseract.neoforge.compat.mi.tooltip.MICompatibleTextLine.*;
 
 public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity extends AbstractMultipliedCraftingMultiblockBlockEntity implements SteamMachineTierHolder
 {
@@ -97,8 +94,8 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 	{
 		List<Component> tooltips = Lists.newArrayList();
 		tooltips.addAll(overclock.getTooltips());
-		tooltips.add(line(TesseractText.MI_MACHINE_BATCHER_RECIPE).arg(false, this.getRecipeType(), MACHINE_RECIPE_TYPE_PARSER));
-		tooltips.add(line(TesseractText.MI_MACHINE_BATCHER_SIZE_AND_COST).arg(this.getMaxMultiplier()).arg(this.getEuCostTransformer(), EU_COST_TRANSFORMER_PARSER));
+		tooltips.add(TesseractMI.text().machineBatcherRecipe(false, this.getRecipeType()));
+		tooltips.add(TesseractMI.text().machineBatcherSizeAndCost(this.getMaxMultiplier(), this.getEuCostTransformer()));
 		return tooltips;
 	}
 }

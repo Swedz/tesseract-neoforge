@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge;
 
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -10,6 +11,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
 import net.swedz.tesseract.neoforge.compat.mi.TesseractMILootConditions;
 import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
@@ -17,6 +19,7 @@ import net.swedz.tesseract.neoforge.event.ItemHurtEvent;
 import net.swedz.tesseract.neoforge.item.ArmorTickHandler;
 import net.swedz.tesseract.neoforge.item.ArmorUnequippedHandler;
 import net.swedz.tesseract.neoforge.item.ItemHurtHandler;
+import net.swedz.tesseract.neoforge.lang.LangManager;
 import net.swedz.tesseract.neoforge.proxy.Proxies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +41,17 @@ public final class Tesseract
 	{
 		Proxies.initialize();
 		
+		setupText();
+		
 		if(ModLoadedHelper.isLoaded("modern_industrialization"))
 		{
+			try
+			{
+				Class.forName("net.swedz.tesseract.neoforge.compat.mi.TesseractMI");
+			}
+			catch (ClassNotFoundException ignored)
+			{
+			}
 			TesseractMILootConditions.init(bus);
 		}
 		
@@ -81,5 +93,23 @@ public final class Tesseract
 				handler.onHurt(event.getEntity(), event.getItemStack(), event.getDamageAmount());
 			}
 		});
+	}
+	
+	private static TesseractText TEXT;
+	
+	public static TesseractText text()
+	{
+		Assert.notNull(TEXT, "Text not loaded yet");
+		return TEXT;
+	}
+	
+	private static void setupText()
+	{
+		var instance = new LangManager(ID)
+				.style("tooltip", Style.EMPTY.withColor(0xA9A9A9).withItalic(false))
+				.build(TesseractText.class)
+				.load();
+		LanguageDatagenProvider.track(instance);
+		TEXT = instance.lang();
 	}
 }
