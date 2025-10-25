@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.mi.guicomponent.slotpanel;
 
 import aztech.modern_industrialization.MI;
+import aztech.modern_industrialization.MITooltips;
 import aztech.modern_industrialization.inventory.HackySlot;
 import aztech.modern_industrialization.inventory.SlotGroup;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
@@ -24,8 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-
-import static net.swedz.tesseract.neoforge.compat.mi.tooltip.MICompatibleTextLine.*;
 
 public final class ModularSlotPanel
 {
@@ -53,7 +52,7 @@ public final class ModularSlotPanel
 	
 	private static ResourceLocation registerMISlot(String name, SlotPanel.SlotType slotType)
 	{
-		return registerSlot(MI.id(name), slotType.group, slotType.slotLimit, slotType.insertionChecker, null, slotType.u, slotType.v, () -> line(slotType.tooltip));
+		return registerSlot(MI.id(name), slotType.group, slotType.slotLimit, slotType.insertionChecker, null, slotType.u, slotType.v, () -> slotType.tooltip.text().withStyle(MITooltips.DEFAULT_STYLE));
 	}
 	
 	static Slot getSlot(ResourceLocation id)

@@ -5,6 +5,7 @@ import net.swedz.tesseract.neoforge.tooltip.BiParser;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
+@Deprecated(forRemoval = true)
 public interface MICompatibleTranslatableTextEnum extends TranslatableTextEnum, MIParsable
 {
 	@Override

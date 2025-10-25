@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
+@Deprecated(forRemoval = true)
 public interface TranslatableTextEnum extends Parsable
 {
 	String englishText();
