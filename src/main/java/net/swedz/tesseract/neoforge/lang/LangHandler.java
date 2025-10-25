@@ -85,11 +85,10 @@ public final class LangHandler implements InvocationHandler
 		return prefix + key;
 	}
 	
-	private Style getStyle(Method method)
+	private Style getStyle(WithStyle annotationStyle)
 	{
-		if(method.isAnnotationPresent(WithStyle.class))
+		if(annotationStyle != null)
 		{
-			var annotationStyle = method.getAnnotation(WithStyle.class);
 			var style = manager.getStyle(annotationStyle.value());
 			if(style == null)
 			{
@@ -107,6 +106,7 @@ public final class LangHandler implements InvocationHandler
 		{
 			var param = method.getParameters()[index];
 			var paramType = param.getType();
+			
 			String parserKey;
 			if(param.isAnnotationPresent(Parsed.class))
 			{
@@ -117,6 +117,7 @@ public final class LangHandler implements InvocationHandler
 			{
 				parserKey = "default";
 			}
+			
 			var parser = manager.getParser(parserKey, paramType);
 			if(parser == null)
 			{
@@ -129,6 +130,14 @@ public final class LangHandler implements InvocationHandler
 					throw new UndefinedParserException(parserKey);
 				}
 			}
+			
+			if(param.isAnnotationPresent(WithStyle.class))
+			{
+				var annotationStyle = param.getAnnotation(WithStyle.class);
+				final Parser finalParser = parser;
+				parser = (value) -> finalParser.parse(value).copy().withStyle(this.getStyle(annotationStyle));
+			}
+			
 			parsers[index] = parser;
 		}
 		return parsers;
@@ -147,7 +156,7 @@ public final class LangHandler implements InvocationHandler
 				if(method.getReturnType().equals(MutableComponent.class))
 				{
 					var key = this.createLangKey(langClass, method);
-					var style = this.getStyle(method);
+					var style = this.getStyle(method.getAnnotation(WithStyle.class));
 					var parsers = this.getParsers(method);
 					var entry = new LangEntry(key, annotation.text(), style, parsers);
 					if(values.put(methodSignature, entry) != null)
