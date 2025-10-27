@@ -1,9 +1,20 @@
 package net.swedz.tesseract.neoforge.lang;
 
 import com.google.common.collect.Maps;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
 import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.neoforge.api.WorldPos;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 
 import java.lang.reflect.Proxy;
@@ -63,6 +74,24 @@ public final class LangManager
 	public <T> LangManager parser(Class<T> paramClass, Supplier<Parser<T>> parser)
 	{
 		return this.parser("default", paramClass, parser);
+	}
+	
+	public LangManager builtinParsers()
+	{
+		return this
+				.parser(ResourceKey.class, () -> Parser.RESOURCE_KEY::parse)
+				.parser(ItemStack.class, () -> Parser.ITEM_STACK)
+				.parser(Item.class, () -> Parser.ITEM)
+				.parser("item", ResourceLocation.class, () -> Parser.ITEM_ID)
+				.parser(Block.class, () -> Parser.BLOCK)
+				.parser(BlockState.class, () -> Parser.BLOCK_STATE)
+				.parser("block", ResourceLocation.class, () -> Parser.BLOCK_ID)
+				.parser(Fluid.class, () -> Parser.FLUID)
+				.parser(EntityType.class, () -> Parser.ENTITY_TYPE)
+				.parser("keybind", String.class, () -> Parser.KEYBIND)
+				.parser(BlockPos.class, () -> Parser.BLOCK_POS)
+				.parser(GlobalPos.class, () -> Parser.GLOBAL_POS)
+				.parser(WorldPos.class, () -> Parser.WORLD_POS);
 	}
 	
 	Supplier<Parser<?>> getParser(String key, Class<?> paramClass)
