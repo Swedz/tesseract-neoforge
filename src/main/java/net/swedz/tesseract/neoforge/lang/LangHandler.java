@@ -163,7 +163,7 @@ public final class LangHandler implements InvocationHandler
 					var key = this.createLangKey(langClass, method);
 					var style = this.getStyle(method.getAnnotation(WithStyle.class));
 					var parsers = this.getParsers(method);
-					var entry = new LangEntry(key, annotation.text(), style, parsers);
+					var entry = new LangEntry(key, annotation.text().length == 0 ? null : annotation.text()[0], style, parsers);
 					if(values.put(methodSignature, entry) != null)
 					{
 						throw new IllegalStateException("Method with signature %s already exists.".formatted(methodSignature));

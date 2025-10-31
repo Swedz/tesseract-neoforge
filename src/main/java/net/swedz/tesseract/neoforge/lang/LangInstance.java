@@ -14,11 +14,10 @@ public record LangInstance<L>(Class<L> langClass, L lang, LangHandler handler)
 	{
 		for(var entry : handler.entries())
 		{
-			if(entry.defaultText().isEmpty())
+			if(entry.defaultText() != null)
 			{
-				continue;
+				provider.add(entry.key(), entry.defaultText());
 			}
-			provider.add(entry.key(), entry.defaultText());
 		}
 	}
 }

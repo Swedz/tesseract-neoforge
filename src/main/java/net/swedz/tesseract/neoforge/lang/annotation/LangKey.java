@@ -41,7 +41,10 @@ public @interface LangKey
 	/**
 	 * <p>Defines the default text for the method. This is purely used for datagen.</p>
 	 *
+	 * <p>Note that this is an array type simply so an empty string can be provided for a text value. Any strings
+	 * beyond index 0 will be ignored.</p>
+	 *
 	 * @return the default text for the method
 	 */
-	String text() default "";
+	String[] text() default {};
 }
