@@ -54,7 +54,7 @@ public final class PlayerInventoryChangeEventMixin
 	
 	@Inject(
 			method = "initMenu",
-			at = @At("HEAD")
+			at = @At("TAIL")
 	)
 	private void initMenu(AbstractContainerMenu openedMenu, CallbackInfo callback)
 	{
