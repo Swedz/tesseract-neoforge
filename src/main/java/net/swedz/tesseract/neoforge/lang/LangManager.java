@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.lang;
 
 import com.google.common.collect.Maps;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
@@ -56,6 +57,18 @@ public final class LangManager
 	public LangManager style(Supplier<Style> style)
 	{
 		return this.style("default", style);
+	}
+	
+	public LangManager builtinColorStyles()
+	{
+		for(var formatting : ChatFormatting.values())
+		{
+			if(formatting.isColor())
+			{
+				this.style(formatting.getName().toLowerCase(), () -> Style.EMPTY.withColor(formatting).withItalic(false));
+			}
+		}
+		return this;
 	}
 	
 	Supplier<Style> getStyle(String key)
