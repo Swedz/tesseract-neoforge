@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.event;
+package net.swedz.tesseract.neoforge.event.treegrowth;
 
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
@@ -9,7 +9,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TreeGrowthEvent extends BlockEvent
+public final class TreeGrowthEvent extends BlockEvent
 {
 	private final List<BlockPos> positions;
 	

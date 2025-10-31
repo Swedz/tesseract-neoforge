@@ -8,7 +8,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.neoforged.neoforge.common.NeoForge;
-import net.swedz.tesseract.neoforge.event.TreeGrowthEvent;
+import net.swedz.tesseract.neoforge.event.treegrowth.TreeGrowthEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
