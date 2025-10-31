@@ -8,15 +8,12 @@ import net.swedz.tesseract.neoforge.compat.mi.TesseractMIText;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 
-import static aztech.modern_industrialization.MITooltips.*;
-
 public interface MIParser
 {
 	Parser<CableTier> CABLE_TIER_SHORT = CableTier::shortEnglishName;
 	Parser<CableTier> CABLE_TIER_LONG  = CableTier::longEnglishName;
 	
-	Parser<EuCostTransformer> EU_COST_TRANSFORMER_PARSER = (euCostTransformer) ->
-			euCostTransformer.text().withStyle(NUMBER_TEXT);
+	Parser<EuCostTransformer> EU_COST_TRANSFORMER_PARSER = EuCostTransformer::text;
 	
 	Parser<TesseractMIText.TieredMachineRecipeType> MACHINE_RECIPE_TYPE_PARSER = (value) ->
 	{
@@ -28,6 +25,6 @@ public interface MIParser
 		{
 			key = "rei_categories.%s.%s".formatted(MI.ID, recipeType.getPath());
 		}
-		return Component.translatable(key).withStyle(NUMBER_TEXT);
+		return Component.translatable(key);
 	};
 }
