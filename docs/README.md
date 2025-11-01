@@ -36,3 +36,11 @@ Creating configs using the `ModConfigSpec.Builder` can be messy - but Tesseract 
 based config API that uses a `ModConfigSpec.Builder` under the hood to keep consistent behavior!
 
 Refer to [CONFIGS.md](CONFIGS.md) for further information.
+
+## Translatable Text
+
+Managing translatable text entries can be cumbersome and clunky, luckily Tesseract has you covered. Tesseract provides
+a clean annotation based language management API to avoid messy enumerations of your language keys. This system also
+comes built-in with support for datagen.
+
+Refer to [TRANSLATABLE_TEXTS.md](TRANSLATABLE_TEXTS.md) for further information.

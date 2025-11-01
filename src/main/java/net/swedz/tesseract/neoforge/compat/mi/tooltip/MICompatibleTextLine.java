@@ -11,6 +11,7 @@ import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
 import static aztech.modern_industrialization.MITooltips.*;
 
+@Deprecated(forRemoval = true)
 public final class MICompatibleTextLine extends TextLine implements MIParsable
 {
 	public static MICompatibleTextLine line(TranslatableTextEnum text, Style style)

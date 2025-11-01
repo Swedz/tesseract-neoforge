@@ -1,12 +1,10 @@
 package net.swedz.tesseract.neoforge.tooltip;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.swedz.tesseract.neoforge.TesseractText;
+import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.compat.mi.proxy.TesseractMIProxy;
 import net.swedz.tesseract.neoforge.proxy.Proxies;
 import net.swedz.tesseract.neoforge.proxy.builtin.TesseractProxy;
@@ -44,7 +42,7 @@ public final class TooltipHandler
 					{
 						continue;
 					}
-					lines.add(TesseractText.TOOLTIPS_SHIFT_REQUIRED.text().setStyle(Style.EMPTY.withColor(TextColor.fromRgb(0xa9a9a9)).withItalic(false)));
+					lines.add(Tesseract.text().tooltipsShiftRequired());
 				}
 			}
 		}

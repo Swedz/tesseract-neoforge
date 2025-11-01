@@ -9,6 +9,7 @@ import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
 
+@Deprecated(forRemoval = true)
 public class TextLine implements Component, Parsable
 {
 	public static TextLine line(TranslatableTextEnum text, Style style)

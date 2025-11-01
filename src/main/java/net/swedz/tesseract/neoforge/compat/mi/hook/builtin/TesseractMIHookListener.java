@@ -1,6 +1,5 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook.builtin;
 
-import net.swedz.tesseract.neoforge.compat.mi.TesseractMITooltips;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.configurationpanel.ConfigurationPanel;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.configurationpanel.ConfigurationPanelClient;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGui;
@@ -23,11 +22,5 @@ public final class TesseractMIHookListener implements MIHookListener
 		hook.register(ModularMultiblockGui.ID, ModularMultiblockGuiClient::new);
 		hook.register(ModularRecipeEfficiencyBar.ID, ModularRecipeEfficiencyBarClient::new);
 		hook.register(ModularSlotPanel.ID, ModularSlotPanelClient::new);
-	}
-	
-	@Override
-	public void tooltips()
-	{
-		TesseractMITooltips.init();
 	}
 }

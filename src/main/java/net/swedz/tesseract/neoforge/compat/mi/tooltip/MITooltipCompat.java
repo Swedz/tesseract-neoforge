@@ -5,6 +5,7 @@ import aztech.modern_industrialization.MITooltips;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
+@Deprecated(forRemoval = true)
 public final class MITooltipCompat
 {
 	public static TranslatableTextEnum wrap(MIText text)
