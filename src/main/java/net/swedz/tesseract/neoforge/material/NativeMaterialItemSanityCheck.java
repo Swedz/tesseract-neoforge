@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-@EventBusSubscriber(modid = Tesseract.ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = Tesseract.ID)
 public final class NativeMaterialItemSanityCheck
 {
 	private static final Logger LOGGER = LoggerFactory.getLogger("Tesseract API/NativeMaterialItemSanityCheck");
