@@ -1,9 +1,9 @@
 package net.swedz.tesseract.neoforge.mixin.event.treegrowth;
 
+import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.swedz.tesseract.neoforge.event.treegrowth.FeaturePlacedBlockTracker;
-import org.apache.commons.compress.utils.Lists;
 import org.spongepowered.asm.mixin.Implements;
 import org.spongepowered.asm.mixin.Interface;
 import org.spongepowered.asm.mixin.Mixin;
