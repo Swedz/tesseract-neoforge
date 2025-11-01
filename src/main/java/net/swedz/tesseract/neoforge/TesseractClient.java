@@ -16,7 +16,7 @@ import net.swedz.tesseract.neoforge.tooltip.component.ItemStackClientTooltipComp
 import net.swedz.tesseract.neoforge.tooltip.component.ItemStackTooltipComponent;
 
 @Mod(value = Tesseract.ID, dist = Dist.CLIENT)
-@EventBusSubscriber(value = Dist.CLIENT, modid = Tesseract.ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Tesseract.ID)
 public final class TesseractClient
 {
 	public TesseractClient(IEventBus bus)

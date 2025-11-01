@@ -24,7 +24,7 @@ import java.util.function.Supplier;
 import static net.minecraft.client.renderer.LightTexture.*;
 import static net.minecraft.client.renderer.RenderStateShard.*;
 
-@EventBusSubscriber(modid = Tesseract.ID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Tesseract.ID, value = Dist.CLIENT)
 public final class CubeOverlayRenderHelper
 {
 	private static final RenderType CUBE_OVERLAY = createRenderType("cube_overlay", Tesseract.id("textures/block/cube_overlay.png"));
