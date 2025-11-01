@@ -202,6 +202,58 @@ public final class MachineSlotConfiguration
 			return this;
 		}
 		
+		public Builder append(SlotPositions itemInputs, SlotPositions itemOutputs,
+							  SlotPositions fluidInputs, SlotPositions fluidOutputs)
+		{
+			for(int index = 0; index < itemInputs.size(); index++)
+			{
+				this.itemInput(itemInputs.getX(index), itemInputs.getY(index));
+			}
+			for(int index = 0; index < itemOutputs.size(); index++)
+			{
+				this.itemOutput(itemOutputs.getX(index), itemOutputs.getY(index));
+			}
+			for(int index = 0; index < fluidInputs.size(); index++)
+			{
+				this.fluidInput(fluidInputs.getX(index), fluidInputs.getY(index));
+			}
+			for(int index = 0; index < fluidOutputs.size(); index++)
+			{
+				this.fluidOutput(fluidOutputs.getX(index), fluidOutputs.getY(index));
+			}
+			return this;
+		}
+		
+		public Builder append(SlotPositions.Builder itemInputs, SlotPositions.Builder itemOutputs,
+							  SlotPositions.Builder fluidInputs, SlotPositions.Builder fluidOutputs)
+		{
+			return this.append(
+					itemInputs.build(), itemOutputs.build(),
+					fluidInputs.build(), fluidOutputs.build()
+			);
+		}
+		
+		public Builder append(Consumer<SlotPositions.Builder> itemInputs, Consumer<SlotPositions.Builder> itemOutputs,
+							  Consumer<SlotPositions.Builder> fluidInputs, Consumer<SlotPositions.Builder> fluidOutputs)
+		{
+			var itemInputsBuilder = new SlotPositions.Builder();
+			itemInputs.accept(itemInputsBuilder);
+			
+			var itemOutputsBuilder = new SlotPositions.Builder();
+			itemOutputs.accept(itemOutputsBuilder);
+			
+			var fluidInputsBuilder = new SlotPositions.Builder();
+			fluidInputs.accept(fluidInputsBuilder);
+			
+			var fluidOutputsBuilder = new SlotPositions.Builder();
+			fluidOutputs.accept(fluidOutputsBuilder);
+			
+			return this.append(
+					itemInputsBuilder, itemOutputsBuilder,
+					fluidInputsBuilder, fluidOutputsBuilder
+			);
+		}
+		
 		private Builder add(MachineSlotDefinition slot)
 		{
 			slots.add(slot);
