@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.mojang.logging.LogUtils;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -11,10 +13,18 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
+import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.neoforge.api.tuple.Pair;
 import org.slf4j.Logger;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public final class TransferHelper
 {
@@ -472,5 +482,264 @@ public final class TransferHelper
 		}
 		
 		return insertedAmount;
+	}
+	
+	/**
+	 * <p>Takes a list of elements and groups them together into buckets based on the key extractor. Keys that are
+	 * equal as per the {@link Object#equals(Object)} method will cause the objects to be placed in the same bucket.</p>
+	 *
+	 * @param elements     the list of elements to organize
+	 * @param keyExtractor the function to get the key for a given element
+	 * @param <T>          the element type
+	 * @return the list of buckets
+	 */
+	public static <T> List<List<T>> organizeBuckets(List<T> elements, Function<T, Object> keyExtractor)
+	{
+		List<List<T>> buckets = Lists.newArrayList();
+		
+		int bucketStartIndex = 0;
+		for(int index = 0; index < elements.size(); index++)
+		{
+			if(index == elements.size() - 1 ||
+			   !Objects.equals(keyExtractor.apply(elements.get(index)), keyExtractor.apply(elements.get(index + 1))))
+			{
+				buckets.add(elements.subList(bucketStartIndex, index + 1));
+				bucketStartIndex = index + 1;
+			}
+		}
+		
+		return buckets;
+	}
+	
+	public interface TransferOperationInt<T>
+	{
+		int transfer(T storage, int amount, boolean simulated);
+	}
+	
+	public interface TransferOperationLong<T>
+	{
+		long transfer(T storage, long amount, boolean simulated);
+	}
+	
+	/**
+	 * <p>Evenly distributes units across multiple storages.</p>
+	 *
+	 * @param simulationOperation the operation to perform on the storages in the initial simulation phase
+	 * @param postSimulationTest  the test to check before proceeding to the final phase
+	 * @param actualOperation     the operation to perform on the storages in the final phase
+	 * @param storages            the list of storages to distribute the units to
+	 * @param maxAmount           the maximum amount of units to insert
+	 * @param simulated           whether the transfer should be simulated
+	 * @param <T>                 the type of storage object, typically extends {@link IEnergyStorage}
+	 * @return the amount of units inserted in total
+	 */
+	public static <T> int distribute(TransferOperationInt<T> simulationOperation,
+									 Supplier<Boolean> postSimulationTest,
+									 TransferOperationInt<T> actualOperation,
+									 List<T> storages, int maxAmount, boolean simulated)
+	{
+		storages = Lists.newArrayList(storages);
+		Collections.shuffle(storages);
+		
+		List<Pair<T, Integer>> targets = Lists.newArrayList();
+		for(var storage : storages)
+		{
+			int simulationResult = simulationOperation.transfer(storage, maxAmount, true);
+			targets.add(new Pair<>(storage, simulationResult));
+		}
+		targets.sort(Comparator.comparingInt(Pair::b));
+		
+		if(!postSimulationTest.get())
+		{
+			return 0;
+		}
+		
+		int amountReceived = 0;
+		int remainingReceive = maxAmount;
+		for(int index = 0; index < targets.size(); index++)
+		{
+			var target = targets.get(index);
+			int remainingTargets = targets.size() - index;
+			int targetMaxReceive = remainingReceive / remainingTargets;
+			
+			int received = actualOperation.transfer(target.a(), targetMaxReceive, simulated);
+			amountReceived += received;
+			remainingReceive -= received;
+		}
+		return amountReceived;
+	}
+	
+	/**
+	 * <p>Evenly distributes units across multiple storages.</p>
+	 *
+	 * @param simulationOperation the operation to perform on the storages in the initial simulation phase
+	 * @param postSimulationTest  the test to check before proceeding to the final phase
+	 * @param actualOperation     the operation to perform on the storages in the final phase
+	 * @param storages            the list of storages to distribute the units to
+	 * @param maxAmount           the maximum amount of units to insert
+	 * @param simulated           whether the transfer should be simulated
+	 * @param <T>                 the type of storage object, typically extends {@link IEnergyStorage}
+	 * @return the amount of units inserted in total
+	 */
+	public static <T> long distributeLong(TransferOperationLong<T> simulationOperation,
+										  Supplier<Boolean> postSimulationTest,
+										  TransferOperationLong<T> actualOperation,
+										  List<T> storages, long maxAmount, boolean simulated)
+	{
+		storages = Lists.newArrayList(storages);
+		Collections.shuffle(storages);
+		
+		List<Pair<T, Long>> targets = Lists.newArrayList();
+		for(var storage : storages)
+		{
+			long simulationResult = simulationOperation.transfer(storage, maxAmount, true);
+			targets.add(new Pair<>(storage, simulationResult));
+		}
+		targets.sort(Comparator.comparingLong(Pair::b));
+		
+		if(!postSimulationTest.get())
+		{
+			return 0;
+		}
+		
+		long amountReceived = 0;
+		long remainingReceive = maxAmount;
+		for(int index = 0; index < targets.size(); index++)
+		{
+			var target = targets.get(index);
+			long remainingTargets = targets.size() - index;
+			long targetMaxReceive = remainingReceive / remainingTargets;
+			
+			long received = actualOperation.transfer(target.a(), targetMaxReceive, simulated);
+			amountReceived += received;
+			remainingReceive -= received;
+		}
+		return amountReceived;
+	}
+	
+	/**
+	 * <p>Evenly distributes units across multiple storages.</p>
+	 *
+	 * @param operation the operation to perform on the storages
+	 * @param storages  the list of storages to distribute the units to
+	 * @param maxAmount the maximum amount of units to insert
+	 * @param simulated whether the transfer should be simulated
+	 * @param <T>       the type of storage object, typically extends {@link IEnergyStorage}
+	 * @return the amount of units inserted in total
+	 */
+	public static <T> int distribute(TransferOperationInt<T> operation, List<T> storages, int maxAmount, boolean simulated)
+	{
+		return distribute(operation, () -> true, operation, storages, maxAmount, simulated);
+	}
+	
+	/**
+	 * <p>Evenly distributes units across multiple storages.</p>
+	 *
+	 * @param operation the operation to perform on the storages
+	 * @param storages  the list of storages to distribute the units to
+	 * @param maxAmount the maximum amount of units to insert
+	 * @param simulated whether the transfer should be simulated
+	 * @param <T>       the type of storage object, typically extends {@link IEnergyStorage}
+	 * @return the amount of units inserted in total
+	 */
+	public static <T> long distributeLong(TransferOperationLong<T> operation, List<T> storages, long maxAmount, boolean simulated)
+	{
+		return distributeLong(operation, () -> true, operation, storages, maxAmount, simulated);
+	}
+	
+	/**
+	 * <p>Evenly distributes fluid across multiple {@link IFluidHandler}s.</p>
+	 *
+	 * @param storages  the list of {@link IFluidHandler}s to distribute the fluid to
+	 * @param resource  the {@link FluidStack} to distribute
+	 * @param simulated whether the transfer should be simulated
+	 * @return the amount of fluid inserted in total
+	 */
+	public static int distributeFluid(List<IFluidHandler> storages, FluidStack resource, boolean simulated)
+	{
+		return distribute(
+				(storage, amount, simulate) -> storage.fill(
+						resource.copyWithAmount(amount),
+						simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE
+				),
+				storages,
+				resource.getAmount(),
+				simulated
+		);
+	}
+	
+	/**
+	 * <p>Evenly distributes fluid across multiple {@link IFluidHandler}s.</p>
+	 *
+	 * @param storages  the list of {@link IFluidHandler}s to distribute the fluid to
+	 * @param fluid     the {@link Fluid} to distribute
+	 * @param maxAmount the amount of fluid to distribute
+	 * @param simulated whether the transfer should be simulated
+	 * @return the amount of fluid inserted in total
+	 */
+	public static int distributeFluid(List<IFluidHandler> storages, Fluid fluid, int maxAmount, boolean simulated)
+	{
+		return distributeFluid(storages, new FluidStack(fluid, maxAmount), simulated);
+	}
+	
+	/**
+	 * <p>Evenly extracts fluid across multiple {@link IFluidHandler}s.</p>
+	 *
+	 * @param storages  the list of {@link IFluidHandler}s to collect the fluid from
+	 * @param toExtract the {@link Fluid} to collect
+	 * @param maxAmount the amount of fluid to collect
+	 * @param simulated whether the transfer should be simulated
+	 * @return the {@link FluidStack} that was extracted
+	 */
+	public static FluidStack collectFluid(List<IFluidHandler> storages, Fluid toExtract, int maxAmount, boolean simulated)
+	{
+		var fluid = new AtomicReference<>(toExtract);
+		int extractedAmount = distribute(
+				(storage, amount, simulate) ->
+				{
+					var simulationResult = fluid.get() == null ?
+							storage.drain(maxAmount, IFluidHandler.FluidAction.SIMULATE) :
+							storage.drain(new FluidStack(fluid.get(), maxAmount), IFluidHandler.FluidAction.SIMULATE);
+					if(!simulationResult.isEmpty())
+					{
+						fluid.set(simulationResult.getFluid());
+					}
+					return simulationResult.getAmount();
+				},
+				() -> fluid.get() != null && fluid.get() != Fluids.EMPTY,
+				(storage, amount, simulate) ->
+						storage.drain(new FluidStack(fluid.get(), amount), simulate ? IFluidHandler.FluidAction.SIMULATE : IFluidHandler.FluidAction.EXECUTE).getAmount(),
+				storages,
+				maxAmount,
+				simulated
+		);
+		return extractedAmount == 0 ? FluidStack.EMPTY : new FluidStack(fluid.get(), extractedAmount);
+	}
+	
+	/**
+	 * <p>Evenly extracts fluid across multiple {@link IFluidHandler}s.</p>
+	 *
+	 * @param storages  the list of {@link IFluidHandler}s to collect the fluid from
+	 * @param fluid     the {@link FluidStack} to collect
+	 * @param simulated whether the transfer should be simulated
+	 * @return the {@link FluidStack} that was extracted
+	 */
+	public static FluidStack collectFluid(List<IFluidHandler> storages, FluidStack fluid, boolean simulated)
+	{
+		Assert.notNull(fluid);
+		return collectFluid(storages, fluid.getFluid(), fluid.getAmount(), simulated);
+	}
+	
+	/**
+	 * <p>Evenly extracts fluid across multiple {@link IFluidHandler}s.</p>
+	 *
+	 * @param storages  the list of {@link IFluidHandler}s to collect the fluid from
+	 * @param maxAmount the amount of fluid to collect
+	 * @param simulated whether the transfer should be simulated
+	 * @return the {@link FluidStack} that was extracted
+	 */
+	public static FluidStack collectFluid(List<IFluidHandler> storages, int maxAmount, boolean simulated)
+	{
+		return collectFluid(storages, null, maxAmount, simulated);
 	}
 }
