@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKey;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKeyPattern;
 import net.swedz.tesseract.neoforge.lang.annotation.Parsed;
@@ -19,12 +20,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.regex.Pattern;
 
 public final class LangHandler implements InvocationHandler
 {
-	private static final Pattern METHOD_PATTERN = Pattern.compile("([A-Z][a-z]+)|([a-z]+)|([0-9]+)|([A-Z]+(?![a-z]))");
-	
 	private final LangManager manager;
 	
 	private Map<String, LangEntry> values = Map.of();
@@ -39,30 +37,6 @@ public final class LangHandler implements InvocationHandler
 		return values.values().stream()
 				.sorted(Comparator.comparing(LangEntry::key))
 				.toList();
-	}
-	
-	private static String generateLangKey(String methodName)
-	{
-		var generated = new StringBuilder();
-		var matcher = METHOD_PATTERN.matcher(methodName);
-		int lastEnd = 0;
-		while(matcher.find())
-		{
-			int start = matcher.start();
-			int end = matcher.end();
-			// Append any non-matched characters
-			if(lastEnd < start)
-			{
-				generated.append(methodName, lastEnd, start);
-			}
-			if(!generated.isEmpty())
-			{
-				generated.append('_');
-			}
-			generated.append(methodName, start, end);
-			lastEnd = end;
-		}
-		return generated.toString().toLowerCase();
 	}
 	
 	private String createLangKey(Class<?> langClass, Method method)
@@ -82,7 +56,7 @@ public final class LangHandler implements InvocationHandler
 		
 		var key = !annotation.key().isEmpty() ?
 				annotation.key() :
-				generateLangKey(method.getName());
+				NamingConventionHelper.fromCamelCaseToSnakeCase(method);
 		return prefix + key;
 	}
 	

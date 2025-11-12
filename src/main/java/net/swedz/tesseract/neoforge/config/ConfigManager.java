@@ -9,6 +9,7 @@ import net.swedz.tesseract.neoforge.config.annotation.ConfigKey;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigOrder;
 import net.swedz.tesseract.neoforge.config.annotation.Range;
 import net.swedz.tesseract.neoforge.config.annotation.SubSection;
+import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
 import net.swedz.tesseract.neoforge.serialization.TomlOps;
 
 import java.lang.reflect.InvocationHandler;
@@ -100,6 +101,10 @@ public final class ConfigManager
 				}
 				
 				String key = method.getAnnotation(ConfigKey.class).value();
+				if(key.isEmpty())
+				{
+					key = NamingConventionHelper.fromCamelCaseToSnakeCase(method);
+				}
 				Class type = method.getReturnType();
 				
 				if(!keys.add(key))

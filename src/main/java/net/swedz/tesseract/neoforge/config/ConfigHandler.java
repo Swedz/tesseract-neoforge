@@ -5,6 +5,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigKey;
 import net.swedz.tesseract.neoforge.config.annotation.SubSection;
+import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
 import net.swedz.tesseract.neoforge.serialization.TomlOps;
 
 import java.lang.reflect.InvocationHandler;
@@ -72,6 +73,10 @@ public final class ConfigHandler implements InvocationHandler
 			if(method.isAnnotationPresent(ConfigKey.class))
 			{
 				String key = method.getAnnotation(ConfigKey.class).value();
+				if(key.isEmpty())
+				{
+					key = NamingConventionHelper.fromCamelCaseToSnakeCase(method);
+				}
 				String path = this.path(key);
 				var type = method.getReturnType();
 				
