@@ -38,6 +38,11 @@ public interface ModularCrafterAccessBehavior
 	
 	long getBaseMaxRecipeEu();
 	
+	default long getMaxRecipeEuBonus()
+	{
+		return 0;
+	}
+	
 	@ApiStatus.NonExtendable
 	default long getMaxRecipeEu()
 	{

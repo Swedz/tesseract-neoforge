@@ -57,9 +57,9 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 		this.conditionContext = () -> blockEntity;
 	}
 	
-	protected long transformEuCost(long eu)
+	protected long transformEuCost(long eu, long bonusEu)
 	{
-		return eu;
+		return eu + bonusEu;
 	}
 	
 	protected abstract boolean canContinueRecipe();
@@ -235,7 +235,7 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 				}
 				activeRecipe = recipe;
 				usedEnergy = 0;
-				recipeEnergy = this.transformEuCost(this.getRecipeTotalEuCost(recipe));
+				recipeEnergy = this.transformEuCost(this.getRecipeTotalEuCost(recipe), 0);
 				recipeMaxEu = this.getRecipeMaxEu(this.getRecipeEuCost(recipe), recipeEnergy, efficiencyTicks);
 				return true;
 			}
@@ -316,10 +316,10 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 			}
 		}
 		
-		if(activeRecipe != null && (previousBaseEu != behavior.getBaseRecipeEu() || previousMaxEu != behavior.getMaxRecipeEu()))
+		if(activeRecipe != null && (previousBaseEu != behavior.getBaseRecipeEu() || previousMaxEu != behavior.getMaxRecipeEu() + behavior.getMaxRecipeEuBonus()))
 		{
 			previousBaseEu = behavior.getBaseRecipeEu();
-			previousMaxEu = behavior.getMaxRecipeEu();
+			previousMaxEu = behavior.getMaxRecipeEu() + behavior.getMaxRecipeEuBonus();
 			maxEfficiencyTicks = this.getRecipeMaxEfficiencyTicks(activeRecipe);
 			efficiencyTicks = Math.min(efficiencyTicks, maxEfficiencyTicks);
 		}
@@ -416,18 +416,18 @@ public abstract class AbstractModularCrafterComponent<R> implements IComponent.S
 	
 	protected long getRecipeMaxEu(long recipeEu, long totalEu, int efficiencyTicks)
 	{
-		long baseEu = Math.max(this.transformEuCost(behavior.getBaseRecipeEu()), this.transformEuCost(recipeEu));
+		long baseEu = Math.max(this.transformEuCost(behavior.getBaseRecipeEu(), 0), this.transformEuCost(recipeEu, 0));
 		long overclockedEu = baseEu + efficiencyTicks * totalEu / (20 * 30);
-		return Math.min(totalEu, Math.min(overclockedEu, this.transformEuCost(behavior.getMaxRecipeEu())));
+		return Math.min(totalEu, Math.min(overclockedEu, this.transformEuCost(behavior.getMaxRecipeEu(), behavior.getMaxRecipeEuBonus())));
 	}
 	
 	protected int getRecipeMaxEfficiencyTicks(R recipe)
 	{
 		long eu = this.getRecipeEuCost(recipe);
-		long totalEu = this.transformEuCost(this.getRecipeTotalEuCost(recipe));
+		long totalEu = this.transformEuCost(this.getRecipeTotalEuCost(recipe), 0);
 		for(int ticks = 0; true; ++ticks)
 		{
-			if(this.getRecipeMaxEu(eu, totalEu, ticks) == Math.min(this.transformEuCost(behavior.getMaxRecipeEu()), totalEu))
+			if(this.getRecipeMaxEu(eu, totalEu, ticks) == Math.min(this.transformEuCost(behavior.getMaxRecipeEu(), behavior.getMaxRecipeEuBonus()), totalEu))
 			{
 				return ticks;
 			}

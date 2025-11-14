@@ -46,11 +46,6 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 	
 	public abstract EuCostTransformer getEuCostTransformer();
 	
-	protected long transformEuCost(long eu)
-	{
-		return this.getEuCostTransformer().transform(crafter, eu);
-	}
-	
 	@Override
 	public CrafterAccess getCrafterComponent()
 	{
