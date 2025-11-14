@@ -59,6 +59,12 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 		return this.builtinModel(overlayFolder, null);
 	}
 	
+	public SpecialMachineBuilder gui(boolean isMultiblock, SteamMode steamMode, MachineRecipeType recipeType,
+									 MachineGuiConfigurator builder)
+	{
+		return super.gui(isMultiblock, steamMode, recipeType, builder);
+	}
+	
 	public SpecialMachineBuilder gui(SteamMode steamMode, MachineRecipeType recipeType,
 									 MachineGuiConfigurator builder)
 	{
