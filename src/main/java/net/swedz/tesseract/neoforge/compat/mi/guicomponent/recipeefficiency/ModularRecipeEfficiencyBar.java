@@ -32,7 +32,7 @@ public final class ModularRecipeEfficiencyBar
 						crafter.getMaxEfficiencyTicks(),
 						crafter.getCurrentRecipeEu(),
 						crafter.getBaseRecipeEu(),
-						crafter.getBehavior().getMaxRecipeEu()
+						crafter.getBehavior().getMaxRecipeEu() + crafter.getBehavior().getMaxRecipeEuBonus()
 				);
 			}
 			else
@@ -51,8 +51,8 @@ public final class ModularRecipeEfficiencyBar
 			else
 			{
 				return crafter.getEfficiencyTicks() != cachedData.efficiencyTicks || crafter.getMaxEfficiencyTicks() != cachedData.maxEfficiencyTicks
-						|| crafter.getCurrentRecipeEu() != cachedData.currentRecipeEu || crafter.getBaseRecipeEu() != cachedData.baseRecipeEu
-						|| crafter.getBehavior().getMaxRecipeEu() != cachedData.maxRecipeEu;
+					   || crafter.getCurrentRecipeEu() != cachedData.currentRecipeEu || crafter.getBaseRecipeEu() != cachedData.baseRecipeEu
+					   || crafter.getBehavior().getMaxRecipeEu() + crafter.getBehavior().getMaxRecipeEuBonus() != cachedData.maxRecipeEu;
 			}
 		}
 		
@@ -79,7 +79,7 @@ public final class ModularRecipeEfficiencyBar
 			{
 				buf.writeBoolean(false);
 			}
-			buf.writeLong(crafter.getBehavior().getMaxRecipeEu());
+			buf.writeLong(crafter.getBehavior().getMaxRecipeEu() + crafter.getBehavior().getMaxRecipeEuBonus());
 		}
 		
 		@Override

@@ -59,9 +59,9 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	}
 	
 	@Override
-	public long transformEuCost(long eu)
+	public long transformEuCost(long eu, long bonusEu)
 	{
-		return euCostTransformer.get().transform(this, eu);
+		return euCostTransformer.get().transform(this, eu, bonusEu);
 	}
 	
 	@Override

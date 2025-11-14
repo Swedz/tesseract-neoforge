@@ -26,7 +26,12 @@ public abstract class EuCostTransformer
 		return Component.translatable(this.getTranslationKey());
 	}
 	
-	public abstract long transform(MultipliedCrafterComponent crafter, long eu);
+	public abstract long transform(MultipliedCrafterComponent crafter, long eu, long bonusEu);
+	
+	public long transform(MultipliedCrafterComponent crafter, long eu)
+	{
+		return this.transform(crafter, eu, 0);
+	}
 	
 	public static final class PercentageEuCostTransformer extends EuCostTransformer
 	{
@@ -39,9 +44,9 @@ public abstract class EuCostTransformer
 		}
 		
 		@Override
-		public long transform(MultipliedCrafterComponent crafter, long eu)
+		public long transform(MultipliedCrafterComponent crafter, long eu, long bonusEu)
 		{
-			return (long) (eu * crafter.getRecipeMultiplier() * percentage.get());
+			return (long) (((eu * crafter.getRecipeMultiplier()) + bonusEu) * percentage.get());
 		}
 		
 		@Override
