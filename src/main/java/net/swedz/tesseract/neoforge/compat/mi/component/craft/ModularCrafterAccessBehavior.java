@@ -31,7 +31,7 @@ public interface ModularCrafterAccessBehavior
 	
 	default boolean isRecipeBanned(long recipeEuCost)
 	{
-		return recipeEuCost > this.getMaxRecipeEu();
+		return recipeEuCost > this.getMaxRecipeEu() + this.getMaxRecipeEuBonus();
 	}
 	
 	long getBaseRecipeEu();
