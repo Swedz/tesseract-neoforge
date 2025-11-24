@@ -140,6 +140,13 @@ public class ShapedRecipeBuilder extends RecipeBuilder
 	
 	//<editor-fold desc="Inherited...">
 	@Override
+	public ShapedRecipeBuilder output(ItemStack result)
+	{
+		super.output(result);
+		return this;
+	}
+	
+	@Override
 	public ShapedRecipeBuilder output(ItemLike result, int count)
 	{
 		super.output(result, count);

@@ -16,10 +16,15 @@ public abstract class RecipeBuilder implements RecipeOfferable
 		return result;
 	}
 	
+	public RecipeBuilder output(ItemStack result)
+	{
+		this.result = result;
+		return this;
+	}
+	
 	public RecipeBuilder output(ItemLike result, int count)
 	{
-		this.result = new ItemStack(result, count);
-		return this;
+		return this.output(new ItemStack(result, count));
 	}
 	
 	public RecipeBuilder output(ResourceLocation result, int count)

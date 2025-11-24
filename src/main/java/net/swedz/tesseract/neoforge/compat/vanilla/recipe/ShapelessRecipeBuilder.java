@@ -83,6 +83,13 @@ public class ShapelessRecipeBuilder extends RecipeBuilder
 	
 	//<editor-fold desc="Inherited...">
 	@Override
+	public ShapelessRecipeBuilder output(ItemStack result)
+	{
+		super.output(result);
+		return this;
+	}
+	
+	@Override
 	public ShapelessRecipeBuilder output(ItemLike result, int count)
 	{
 		super.output(result, count);

@@ -131,6 +131,13 @@ public class SmeltingRecipeBuilder extends RecipeBuilder
 	
 	//<editor-fold desc="Inherited...">
 	@Override
+	public SmeltingRecipeBuilder output(ItemStack result)
+	{
+		super.output(result);
+		return this;
+	}
+	
+	@Override
 	public SmeltingRecipeBuilder output(ItemLike result, int count)
 	{
 		super.output(result, count);
