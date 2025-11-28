@@ -1,10 +1,12 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook.context.listener;
 
-import aztech.modern_industrialization.machines.GuiComponentsClient;
-import aztech.modern_industrialization.machines.gui.GuiComponentClient;
-import net.minecraft.resources.ResourceLocation;
+import aztech.modern_industrialization.client.machines.GuiComponentsClient;
+import aztech.modern_industrialization.client.machines.gui.GuiComponentClient;
+import aztech.modern_industrialization.machines.gui.GuiComponentServer;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
+
+import java.util.function.BiFunction;
 
 public final class ClientGuiComponentsMIHookContext extends MIHookContext
 {
@@ -13,8 +15,8 @@ public final class ClientGuiComponentsMIHookContext extends MIHookContext
 		super(hook);
 	}
 	
-	public void register(ResourceLocation id, GuiComponentClient.Factory clientFactory)
+	public <P, D> void register(GuiComponentServer.Type<P, D> type, BiFunction<P, D, GuiComponentClient<P, D>> clientFactory)
 	{
-		GuiComponentsClient.register(id, clientFactory);
+		GuiComponentsClient.register(type, clientFactory);
 	}
 }

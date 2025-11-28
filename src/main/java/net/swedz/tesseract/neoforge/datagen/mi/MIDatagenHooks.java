@@ -1,6 +1,6 @@
 package net.swedz.tesseract.neoforge.datagen.mi;
 
-import aztech.modern_industrialization.datagen.texture.MISpriteSourceProvider;
+import aztech.modern_industrialization.client.datagen.texture.MISpriteSourceProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;

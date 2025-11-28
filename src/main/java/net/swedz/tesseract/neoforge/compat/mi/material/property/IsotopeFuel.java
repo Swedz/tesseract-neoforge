@@ -1,6 +1,6 @@
 package net.swedz.tesseract.neoforge.compat.mi.material.property;
 
-import aztech.modern_industrialization.nuclear.INeutronBehaviour;
+import aztech.modern_industrialization.nuclear.NeutronBehaviour;
 import aztech.modern_industrialization.nuclear.IsotopeParams;
 import net.swedz.tesseract.neoforge.material.Material;
 
@@ -19,9 +19,9 @@ public class IsotopeFuel extends IsotopeParams
 	{
 		super(
 				thermalAbsorbProba,
-				INeutronBehaviour.reduceCrossProba(thermalAbsorbProba, 0.1),
+				NeutronBehaviour.reduceCrossProba(thermalAbsorbProba, 0.1),
 				thermalScatterings,
-				INeutronBehaviour.reduceCrossProba(thermalScatterings, 0.5)
+				NeutronBehaviour.reduceCrossProba(thermalScatterings, 0.5)
 		);
 		this.maxTemp = maxTemp;
 		this.neutronsMultiplication = neutronsMultiplication;
@@ -34,8 +34,8 @@ public class IsotopeFuel extends IsotopeParams
 	{
 		factor = 1 - factor;
 		
-		double newThermalAbsorptionProba = INeutronBehaviour.probaFromCrossSection(mix(a.thermalAbsorption, b.thermalAbsorption, factor));
-		double newScatteringProba = INeutronBehaviour.probaFromCrossSection(mix(a.thermalScattering, b.thermalScattering, factor));
+		double newThermalAbsorptionProba = NeutronBehaviour.probaFromCrossSection(mix(a.thermalAbsorption, b.thermalAbsorption, factor));
+		double newScatteringProba = NeutronBehaviour.probaFromCrossSection(mix(a.thermalScattering, b.thermalScattering, factor));
 		double newNeutronMultiplicationFactor = mix(a.neutronsMultiplication, b.neutronsMultiplication, factor);
 		
 		double totalEnergy = mix(a.neutronsMultiplication * (1 + a.directEnergyFactor), b.neutronsMultiplication * (1 + b.directEnergyFactor), factor);

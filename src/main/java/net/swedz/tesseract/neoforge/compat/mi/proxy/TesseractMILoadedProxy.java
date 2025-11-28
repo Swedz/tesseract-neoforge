@@ -31,6 +31,6 @@ public class TesseractMILoadedProxy extends TesseractMIProxy
 	@Override
 	public boolean anyShiftTooltipsAreFor(ItemStack stack, Item item)
 	{
-		return MITooltips.TOOLTIPS.stream().anyMatch((attachment) -> attachment.requiresShift && attachment.tooltipLines.apply(stack, item).isPresent());
+		return MITooltips.TOOLTIPS.stream().anyMatch((attachment) -> attachment.requiresShift && !attachment.tooltipLines.apply(stack, item).isEmpty());
 	}
 }

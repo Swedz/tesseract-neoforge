@@ -219,13 +219,13 @@ public final class HackedMachineRegistrationHelper
 	}
 	
 	/**
-	 * @see SingleBlockCraftingMachines#registerMachineTiers(String, String, MachineRecipeType, int, int, int, int, Consumer, ProgressBar.Parameters, RecipeEfficiencyBar.Parameters, EnergyBar.Parameters, Consumer, Consumer, boolean, boolean, boolean, int, int, Config)
+	 * @see SingleBlockCraftingMachines#registerMachineTiers(String, String, MachineRecipeType, int, int, int, int, Consumer, ProgressBar.Params, RecipeEfficiencyBar.Params, EnergyBar.Params, Consumer, Consumer, boolean, boolean, boolean, int, int, Config)
 	 */
 	public static void registerMachineTiers(MIHook hook,
 											String englishName, String machineName, MachineRecipeType type, int itemInputCount, int itemOutputCount,
 											int fluidInputCount,
-											int fluidOutputCount, Consumer<MachineGuiParameters.Builder> guiParams, ProgressBar.Parameters progressBarParams,
-											RecipeEfficiencyBar.Parameters efficiencyBarParams, EnergyBar.Parameters energyBarParams, Consumer<SlotPositions.Builder> itemPositions,
+											int fluidOutputCount, Consumer<MachineGuiParameters.Builder> guiParams, ProgressBar.Params progressBarParams,
+											RecipeEfficiencyBar.Params efficiencyBarParams, EnergyBar.Params energyBarParams, Consumer<SlotPositions.Builder> itemPositions,
 											Consumer<SlotPositions.Builder> fluidPositions, boolean frontOverlay, boolean topOverlay, boolean sideOverlay, int tiers,
 											int ioBucketCapacity, SingleBlockCraftingMachines.Config extraConfig)
 	{
@@ -347,7 +347,7 @@ public final class HackedMachineRegistrationHelper
 	public static void registerRecipeCategory(MIHook hook, String id, String englishName, MachineRecipeType recipeType,
 											  SlotPositions itemInputs, SlotPositions itemOutputs,
 											  SlotPositions fluidInputs, SlotPositions fluidOutputs,
-											  ProgressBar.Parameters progressBarParams,
+											  ProgressBar.Params progressBarParams,
 											  Predicate<MachineRecipe> recipePredicate,
 											  boolean isMultiblock,
 											  SteamMode steamMode)

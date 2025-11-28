@@ -32,9 +32,9 @@ public final class MachineGuiConfiguration
 	private final MachineSlotConfiguration.Builder inventoryOnlySlots = new MachineSlotConfiguration.Builder();
 	private final MachineSlotConfiguration.Builder slots              = new MachineSlotConfiguration.Builder();
 	
-	private ProgressBar.Parameters         progressBar;
-	private EnergyBar.Parameters           energyBar;
-	private RecipeEfficiencyBar.Parameters efficiencyBar;
+	private ProgressBar.Params         progressBar;
+	private EnergyBar.Params           energyBar;
+	private RecipeEfficiencyBar.Params efficiencyBar;
 	
 	private MachineRecipePredicate predicate = (recipe) -> true;
 	
@@ -94,17 +94,17 @@ public final class MachineGuiConfiguration
 		return slots.build();
 	}
 	
-	public ProgressBar.Parameters getProgressBar()
+	public ProgressBar.Params getProgressBar()
 	{
 		return progressBar;
 	}
 	
-	public EnergyBar.Parameters getEnergyBar()
+	public EnergyBar.Params getEnergyBar()
 	{
 		return energyBar;
 	}
 	
-	public RecipeEfficiencyBar.Parameters getEfficiencyBar()
+	public RecipeEfficiencyBar.Params getEfficiencyBar()
 	{
 		return efficiencyBar;
 	}
@@ -140,7 +140,7 @@ public final class MachineGuiConfiguration
 	
 	public MachineGuiConfiguration progressBar(int renderX, int renderY, String progressBarType, boolean isVertical)
 	{
-		this.progressBar = new ProgressBar.Parameters(renderX, renderY, progressBarType, isVertical);
+		this.progressBar = new ProgressBar.Params(renderX, renderY, progressBarType, isVertical);
 		return this;
 	}
 	
@@ -151,13 +151,13 @@ public final class MachineGuiConfiguration
 	
 	public MachineGuiConfiguration energyBar(int renderX, int renderY)
 	{
-		this.energyBar = new EnergyBar.Parameters(renderX, renderY);
+		this.energyBar = new EnergyBar.Params(renderX, renderY);
 		return this;
 	}
 	
 	public MachineGuiConfiguration efficiencyBar(int renderX, int renderY)
 	{
-		this.efficiencyBar = new RecipeEfficiencyBar.Parameters(renderX, renderY);
+		this.efficiencyBar = new RecipeEfficiencyBar.Params(renderX, renderY);
 		return this;
 	}
 	
@@ -187,7 +187,7 @@ public final class MachineGuiConfiguration
 		Assert.noneNull(machine, progress);
 		if(progressBar != null)
 		{
-			machine.guiComponents.register(new ProgressBar.Server(progressBar, progress));
+			machine.guiComponents.register(new ProgressBar(progressBar, progress));
 		}
 	}
 	
@@ -196,7 +196,7 @@ public final class MachineGuiConfiguration
 		Assert.noneNull(machine, euSupplier, maxEuSupplier);
 		if(energyBar != null)
 		{
-			machine.guiComponents.register(new EnergyBar.Server(energyBar, euSupplier, maxEuSupplier));
+			machine.guiComponents.register(new EnergyBar(energyBar, euSupplier, maxEuSupplier));
 		}
 	}
 	
@@ -205,7 +205,7 @@ public final class MachineGuiConfiguration
 		Assert.noneNull(machine, crafter);
 		if(efficiencyBar != null)
 		{
-			machine.guiComponents.register(new RecipeEfficiencyBar.Server(efficiencyBar, crafter));
+			machine.guiComponents.register(new RecipeEfficiencyBar(efficiencyBar, crafter));
 		}
 	}
 	

@@ -10,12 +10,15 @@ import aztech.modern_industrialization.machines.components.OverdriveComponent;
 import aztech.modern_industrialization.machines.components.RedstoneControlComponent;
 import aztech.modern_industrialization.machines.components.UpgradeComponent;
 import aztech.modern_industrialization.machines.gui.GuiComponent;
+import aztech.modern_industrialization.machines.gui.GuiComponentServer;
 import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
 import aztech.modern_industrialization.machines.guicomponents.SlotPanel;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.swedz.tesseract.neoforge.Tesseract;
@@ -26,9 +29,9 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-public final class ModularSlotPanel
+public final class ModularSlotPanel implements GuiComponentServer<ModularSlotPanel.Params, ModularSlotPanel.Data>
 {
-	public static final ResourceLocation ID = Tesseract.id("modular_slot_panel");
+	public static final GuiComponentServer.Type<Params, Data> TYPE = new GuiComponentServer.Type<>(Tesseract.id("modular_slot_panel"), Params.STREAM_CODEC, Data.STREAM_CODEC);
 	
 	private static final Map<ResourceLocation, Slot> SLOTS = Maps.newHashMap();
 	
@@ -75,176 +78,116 @@ public final class ModularSlotPanel
 		return 19 + (index * 20);
 	}
 	
-	public static final class Server implements GuiComponent.Server<Data>
+	private final MachineBlockEntity machine;
+	
+	private final int offsetY;
+	
+	private final List<Slot>                     slots          = Lists.newArrayList();
+	private final List<Supplier<Integer>>        stackLimits    = Lists.newArrayList();
+	private final List<SimpleItemStackComponent> slotComponents = Lists.newArrayList();
+	
+	public ModularSlotPanel(MachineBlockEntity machine, int offsetY)
 	{
-		private final MachineBlockEntity machine;
-		
-		private final int offsetY;
-		
-		private final List<ResourceLocation>         slotIds        = Lists.newArrayList();
-		private final List<Slot>                     slots          = Lists.newArrayList();
-		private final List<Supplier<Integer>>        stackLimits    = Lists.newArrayList();
-		private final List<SimpleItemStackComponent> slotComponents = Lists.newArrayList();
-		
-		public Server(MachineBlockEntity machine, int offsetY)
-		{
-			this.machine = machine;
-			this.offsetY = offsetY;
-		}
-		
-		private Server with(Slot slot, Supplier<Integer> stackLimit, SimpleItemStackComponent component)
-		{
-			slotIds.add(slot.id());
-			slots.add(slot);
-			stackLimits.add(stackLimit);
-			slotComponents.add(component);
-			return this;
-		}
-		
-		public Server with(ResourceLocation slotId, Supplier<Integer> stackLimit, SimpleItemStackComponent component)
-		{
-			return this.with(getSlot(slotId), stackLimit, component);
-		}
-		
-		private Server with(Slot slot, SimpleItemStackComponent component)
-		{
-			return this.with(slot, slot::stackLimit, component);
-		}
-		
-		public Server with(ResourceLocation slotId, SimpleItemStackComponent component)
-		{
-			return this.with(getSlot(slotId), component);
-		}
-		
-		public Server withRedstoneModule(RedstoneControlComponent component)
-		{
-			return this.with(REDSTONE_MODULE, SimpleItemStackComponent.wrap(component));
-		}
-		
-		public Server withUpgrades(UpgradeComponent component)
-		{
-			return this.with(UPGRADES, SimpleItemStackComponent.wrap(component));
-		}
-		
-		public Server withCasings(CasingComponent component)
-		{
-			return this.with(CASINGS, SimpleItemStackComponent.wrap(component));
-		}
-		
-		public Server withOverdrive(OverdriveComponent component)
-		{
-			return this.with(OVERDRIVE_MODULE, SimpleItemStackComponent.wrap(component));
-		}
-		
-		@Override
-		public Data copyData()
-		{
-			return new Data(stackLimits);
-		}
-		
-		@Override
-		public boolean needsSync(Data cachedData)
-		{
-			return !cachedData.equals(this.copyData());
-		}
-		
-		@Override
-		public void writeInitialData(RegistryFriendlyByteBuf buf)
-		{
-			buf.writeVarInt(offsetY);
-			
-			buf.writeVarInt(slots.size());
-			for(ResourceLocation slotId : slotIds)
-			{
-				buf.writeResourceLocation(slotId);
-			}
-			
-			this.writeCurrentData(buf);
-		}
-		
-		@Override
-		public void writeCurrentData(RegistryFriendlyByteBuf buf)
-		{
-			for(Supplier<Integer> limit : stackLimits)
-			{
-				buf.writeVarInt(limit.get());
-			}
-		}
-		
-		@Override
-		public void setupMenu(GuiComponent.MenuFacade menu)
-		{
-			for(int i = 0; i < slots.size(); i++)
-			{
-				Slot slot = slots.get(i);
-				Supplier<Integer> stackLimit = stackLimits.get(i);
-				SimpleItemStackComponent component = slotComponents.get(i);
-				
-				menu.addSlotToMenu(new HackySlot(getSlotX(machine.guiParams), getSlotY(i))
-				{
-					@Override
-					protected ItemStack getRealStack()
-					{
-						return component.getStack().copy();
-					}
-					
-					@Override
-					protected void setRealStack(ItemStack stack)
-					{
-						component.setStackServer(machine, stack);
-					}
-					
-					@Override
-					public boolean mayPlace(ItemStack stack)
-					{
-						return slot.insertionChecker().test(stack);
-					}
-					
-					@Override
-					public int getMaxStackSize()
-					{
-						return stackLimit.get();
-					}
-				}, slot.group());
-			}
-		}
-		
-		@Override
-		public ResourceLocation getId()
-		{
-			return ID;
-		}
+		this.machine = machine;
+		this.offsetY = offsetY;
 	}
 	
-	public record Data(List<Supplier<Integer>> stackLimits)
+	private ModularSlotPanel with(Slot slot, Supplier<Integer> stackLimit, SimpleItemStackComponent component)
 	{
-		@Override
-		public boolean equals(Object o)
+		slots.add(slot);
+		stackLimits.add(stackLimit);
+		slotComponents.add(component);
+		return this;
+	}
+	
+	public ModularSlotPanel with(ResourceLocation slotId, Supplier<Integer> stackLimit, SimpleItemStackComponent component)
+	{
+		return this.with(getSlot(slotId), stackLimit, component);
+	}
+	
+	private ModularSlotPanel with(Slot slot, SimpleItemStackComponent component)
+	{
+		return this.with(slot, slot::stackLimit, component);
+	}
+	
+	public ModularSlotPanel with(ResourceLocation slotId, SimpleItemStackComponent component)
+	{
+		return this.with(getSlot(slotId), component);
+	}
+	
+	public ModularSlotPanel withRedstoneModule(RedstoneControlComponent component)
+	{
+		return this.with(REDSTONE_MODULE, SimpleItemStackComponent.wrap(component));
+	}
+	
+	public ModularSlotPanel withUpgrades(UpgradeComponent component)
+	{
+		return this.with(UPGRADES, SimpleItemStackComponent.wrap(component));
+	}
+	
+	public ModularSlotPanel withCasings(CasingComponent component)
+	{
+		return this.with(CASINGS, SimpleItemStackComponent.wrap(component));
+	}
+	
+	public ModularSlotPanel withOverdrive(OverdriveComponent component)
+	{
+		return this.with(OVERDRIVE_MODULE, SimpleItemStackComponent.wrap(component));
+	}
+	
+	@Override
+	public Params getParams()
+	{
+		return new Params(offsetY, slots);
+	}
+	
+	@Override
+	public Data extractData()
+	{
+		return new Data(stackLimits.stream().map(Supplier::get).toList());
+	}
+	
+	@Override
+	public Type<Params, Data> getType()
+	{
+		return TYPE;
+	}
+	
+	@Override
+	public void setupMenu(GuiComponent.MenuFacade menu)
+	{
+		for(int i = 0; i < slots.size(); i++)
 		{
-			if(this == o)
-			{
-				return true;
-			}
-			if(o == null || this.getClass() != o.getClass())
-			{
-				return false;
-			}
+			Slot slot = slots.get(i);
+			Supplier<Integer> stackLimit = stackLimits.get(i);
+			SimpleItemStackComponent component = slotComponents.get(i);
 			
-			Data other = (Data) o;
-			
-			if(stackLimits.size() != other.stackLimits().size())
+			menu.addSlotToMenu(new HackySlot(getSlotX(machine.guiParams), getSlotY(i))
 			{
-				return false;
-			}
-			for(int i = 0; i < stackLimits.size(); i++)
-			{
-				if(!stackLimits.get(i).equals(other.stackLimits.get(i)))
+				@Override
+				protected ItemStack getRealStack()
 				{
-					return false;
+					return component.getStack().copy();
 				}
-			}
-			
-			return true;
+				
+				@Override
+				protected void setRealStack(ItemStack stack)
+				{
+					component.setStackServer(machine, stack);
+				}
+				
+				@Override
+				public boolean mayPlace(ItemStack stack)
+				{
+					return slot.insertionChecker().test(stack);
+				}
+				
+				@Override
+				public int getMaxStackSize()
+				{
+					return stackLimit.get();
+				}
+			}, slot.group());
 		}
 	}
 	
@@ -255,5 +198,23 @@ public final class ModularSlotPanel
 			Supplier<Component> tooltip
 	)
 	{
+		public static final StreamCodec<ByteBuf, Slot> STREAM_CODEC = ResourceLocation.STREAM_CODEC
+				.map(ModularSlotPanel::getSlot, Slot::id);
+	}
+	
+	public record Params(int offsetY, List<Slot> slots)
+	{
+		public static final StreamCodec<ByteBuf, Params> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.INT, Params::offsetY,
+				Slot.STREAM_CODEC.apply(ByteBufCodecs.list()), Params::slots,
+				Params::new
+		);
+	}
+	
+	public record Data(List<Integer> stackLimits)
+	{
+		public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = ByteBufCodecs.VAR_INT
+				.apply(ByteBufCodecs.list())
+				.map(Data::new, Data::stackLimits);
 	}
 }

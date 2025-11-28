@@ -2,11 +2,11 @@ package net.swedz.tesseract.neoforge.datagen.mi.client;
 
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.MIText;
+import aztech.modern_industrialization.client.textures.TextureHelper;
+import aztech.modern_industrialization.client.textures.TextureManager;
+import aztech.modern_industrialization.client.textures.coloramp.Coloramp;
+import aztech.modern_industrialization.client.textures.coloramp.TabulatedColoramp;
 import aztech.modern_industrialization.resource.FastPathPackResources;
-import aztech.modern_industrialization.textures.TextureHelper;
-import aztech.modern_industrialization.textures.TextureManager;
-import aztech.modern_industrialization.textures.coloramp.Coloramp;
-import aztech.modern_industrialization.textures.coloramp.IColoramp;
 import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import com.google.gson.JsonElement;
@@ -32,6 +32,8 @@ import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.registry.MIFluidProperties;
 import net.swedz.tesseract.neoforge.registry.holder.FluidHolder;
 import net.swedz.tesseract.neoforge.registry.holder.MIFluidHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -54,6 +56,8 @@ import static net.minecraft.client.resources.ClientPackSource.*;
  */
 public final class TexturesMIHookDatagenProvider implements DataProvider
 {
+	private static final Logger LOGGER = LoggerFactory.getLogger(TexturesMIHookDatagenProvider.class);
+	
 	private final PackOutput         output;
 	private final ExistingFileHelper existingFileHelper;
 	
@@ -74,7 +78,7 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 			ResourceProvider manager, ExistingFileHelper fileHelper
 	)
 	{
-		TextureManager mtm = new TextureManager(manager, textureWriter, mcMetaWriter);
+		var textureManager = new TextureManager(manager, textureWriter, mcMetaWriter);
 		
 		List<CompletableFuture<?>> futures = new ArrayList<>();
 		Consumer<IORunnable> defer = (r) -> futures.add(CompletableFuture.runAsync(r::safeRun, Util.backgroundExecutor()));
@@ -83,13 +87,13 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 		{
 			if(holder instanceof MIFluidHolder fluid)
 			{
-				defer.accept(() -> this.registerFluidTextures(mtm, fluid));
+				defer.accept(() -> this.registerFluidTextures(textureManager, fluid));
 			}
 		}
 		
 		return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
-				.thenComposeAsync(v -> mtm.doEndWork(), Util.backgroundExecutor())
-				.thenRun(() -> mtm.markTexturesAsGenerated(fileHelper))
+				.thenComposeAsync(v -> textureManager.doEndWork(), Util.backgroundExecutor())
+				.thenRun(() -> textureManager.markTexturesAsGenerated(fileHelper))
 				.thenRun(() -> Tesseract.LOGGER.info("\"I used the png to destroy the png.\": 2 Electric Boogaloo"));
 	}
 	
@@ -101,7 +105,7 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 		String bucket = path + "bucket.png";
 		String bucket_content = path + "bucket_content.png";
 		
-		IColoramp fluidColoramp = new Coloramp(properties.color());
+		Coloramp fluidColoramp = new TabulatedColoramp(properties.color());
 		
 		try
 		{
@@ -117,9 +121,9 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 			}
 			tm.addTexture(String.format("%s:textures/item/%s_bucket.png", actualModId, fluid.identifier().id()), bucket_image);
 		}
-		catch (IOException e)
+		catch (IOException ex)
 		{
-			e.printStackTrace();
+			LOGGER.error("Failed to generate bucket texture for fluid {}", fluid.identifier().id(), ex);
 		}
 		
 		String pathFluid = path + String.format("template/%s.png", properties.texture().path);
@@ -131,9 +135,9 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 			tm.addTexture(String.format("%s:textures/fluid/%s_still.png", actualModId, fluid.identifier().id()), fluidAnim, true);
 			tm.addMcMeta(String.format("%s:textures/fluid/%s_still.png.mcmeta", actualModId, fluid.identifier().id()), properties.texture().mcMetaInfo);
 		}
-		catch (IOException e)
+		catch (IOException ex)
 		{
-			e.printStackTrace();
+			LOGGER.error("Failed to generate fluid texture for fluid {}", fluid.identifier().id(), ex);
 		}
 	}
 	
@@ -206,7 +210,7 @@ public final class TexturesMIHookDatagenProvider implements DataProvider
 				generatedResources
 		));
 		
-		MultiPackResourceManager outputPack = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, generatedPack);
+		var outputPack = new MultiPackResourceManager(PackType.CLIENT_RESOURCES, generatedPack);
 		return this.offerTextures(
 				(image, textureId) -> this.writeTexture(cache, image, textureId),
 				(json, path) -> futureList.accept(this.customJsonSave(cache, json, path)),

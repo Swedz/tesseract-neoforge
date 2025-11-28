@@ -1,59 +1,27 @@
 package net.swedz.tesseract.neoforge.compat.mi.guicomponent.configurationpanel;
 
-import aztech.modern_industrialization.machines.gui.ClientComponentRenderer;
-import aztech.modern_industrialization.machines.gui.GuiComponentClient;
-import aztech.modern_industrialization.machines.gui.MachineScreen;
+import aztech.modern_industrialization.client.machines.gui.ClientComponentRenderer;
+import aztech.modern_industrialization.client.machines.gui.GuiComponentClient;
+import aztech.modern_industrialization.client.machines.gui.MachineScreen;
 import aztech.modern_industrialization.util.Rectangle;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentSerialization;
 import net.swedz.tesseract.neoforge.compat.mi.network.packet.UpdateMachineConfigurationPanelPacket;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * This was stolen from {@link aztech.modern_industrialization.machines.guicomponents.ShapeSelectionClient} to make my own generic "configuration panel" component to be used for non-shape related configuring of machines.
  */
-public final class ConfigurationPanelClient implements GuiComponentClient
+public final class ConfigurationPanelClient extends GuiComponentClient<ConfigurationPanel.Params, ConfigurationPanel.Data>
 {
-	private final Component                     title;
-	private final Component                     description;
-	private final ConfigurationPanel.LineInfo[] lines;
-	final         int[]                         currentData;
-	private       Renderer                      renderer;
+	private Renderer renderer;
 	
-	public ConfigurationPanelClient(RegistryFriendlyByteBuf buf)
+	public ConfigurationPanelClient(ConfigurationPanel.Params params, ConfigurationPanel.Data data)
 	{
-		title = ComponentSerialization.STREAM_CODEC.decode(buf);
-		description = ComponentSerialization.STREAM_CODEC.decode(buf);
-		
-		lines = new ConfigurationPanel.LineInfo[buf.readVarInt()];
-		for(int i = 0; i < lines.length; ++i)
-		{
-			int numValues = buf.readVarInt();
-			List<Component> components = new ArrayList<>();
-			for(int j = 0; j < numValues; ++j)
-			{
-				components.add(ComponentSerialization.STREAM_CODEC.decode(buf));
-			}
-			lines[i] = new ConfigurationPanel.LineInfo(numValues, components, buf.readBoolean());
-		}
-		currentData = new int[lines.length];
-		
-		readCurrentData(buf);
-	}
-	
-	@Override
-	public void readCurrentData(RegistryFriendlyByteBuf buf)
-	{
-		for(int i = 0; i < currentData.length; ++i)
-		{
-			currentData[i] = buf.readVarInt();
-		}
+		super(params, data);
 	}
 	
 	@Override
@@ -61,7 +29,7 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 	{
 		// Compute the max width of all the components!
 		int maxWidth = 1;
-		for(ConfigurationPanel.LineInfo line : lines)
+		for(ConfigurationPanel.LineInfo line : params.lines())
 		{
 			for(Component tooltip : line.translations())
 			{
@@ -77,7 +45,7 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 		return renderer;
 	}
 	
-	class Renderer implements ClientComponentRenderer
+	final class Renderer implements ClientComponentRenderer
 	{
 		boolean isPanelOpen = false;
 		private final int btnSize      = 12;
@@ -103,10 +71,10 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 		public void addButtons(ButtonContainer container)
 		{
 			// Two buttons per line
-			for(int i = 0; i < lines.length; ++i)
+			for(int i = 0; i < params.lines().size(); ++i)
 			{
 				int iCopy = i;
-				ConfigurationPanel.LineInfo line = lines[i];
+				var line = params.lines().get(i);
 				int baseU = line.useArrows() ? 174 : 150;
 				int v = 58;
 				
@@ -117,7 +85,7 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 						List::of,
 						(screen, button, guiGraphics, mouseX, mouseY, delta) ->
 						{
-							if(currentData[iCopy] == 0)
+							if(data.selectedIndexes().get(iCopy) == 0)
 							{
 								screen.blitButtonNoHighlight(button, guiGraphics, baseU, v + 12);
 							}
@@ -136,7 +104,7 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 						List::of,
 						(screen, button, guiGraphics, mouseX, mouseY, delta) ->
 						{
-							if(currentData[iCopy] == line.numValues() - 1)
+							if(data.selectedIndexes().get(iCopy) == line.numValues() - 1)
 							{
 								screen.blitButtonNoHighlight(button, guiGraphics, baseU + 12, v + 12);
 							}
@@ -153,7 +121,7 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 			container.addButton(
 					-24, 17, 20, 20,
 					(syncId) -> isPanelOpen = !isPanelOpen,
-					() -> List.of(title, description),
+					() -> List.of(params.title(), params.description()),
 					(screen, button, guiGraphics, mouseX, mouseY, delta) -> screen.blitButton(button, guiGraphics, 138, 38)
 			);
 		}
@@ -169,15 +137,15 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 			if(isPanelOpen)
 			{
 				RenderSystem.disableDepthTest();
-				for(int i = 0; i < lines.length; ++i)
+				for(int index = 0; index < params.lines().size(); ++index)
 				{
-					ConfigurationPanel.LineInfo line = lines[i];
-					Component tooltip = line.translations().get(currentData[i]);
+					var line = params.lines().get(index);
+					Component tooltip = line.translations().get(data.selectedIndexes().get(index));
 					int width = Minecraft.getInstance().font.width(tooltip);
 					guiGraphics.drawString(
 							Minecraft.getInstance().font, tooltip,
 							box.x() + borderSize + outerPadding + btnSize + innerPadding + (textMaxWidth - width) / 2,
-							topPos + getVerticalPos(i) + 2, 0x404040, false
+							topPos + getVerticalPos(index) + 2, 0x404040, false
 					);
 				}
 				RenderSystem.enableDepthTest();
@@ -190,7 +158,7 @@ public final class ConfigurationPanelClient implements GuiComponentClient
 			{
 				int topOffset = 10;
 				return new Rectangle(leftPos - panelWidth, topPos + topOffset, panelWidth,
-						getVerticalPos(lines.length - 1) - topOffset + btnSize + outerPadding + borderSize
+						getVerticalPos(params.lines().size() - 1) - topOffset + btnSize + outerPadding + borderSize
 				);
 			}
 			else

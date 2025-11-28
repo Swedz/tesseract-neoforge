@@ -1,7 +1,10 @@
 package net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock;
 
 import com.google.common.collect.Lists;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
 import java.util.Collection;
@@ -10,12 +13,25 @@ import java.util.List;
 
 public final class ModularMultiblockGuiContent
 {
-	private final List<ModularMultiblockGuiLine> lines = Lists.newArrayList();
+	public static final StreamCodec<RegistryFriendlyByteBuf, ModularMultiblockGuiContent> STREAM_CODEC = ModularMultiblockGuiLine.STREAM_CODEC
+			.apply(ByteBufCodecs.list())
+			.map(ModularMultiblockGuiContent::new, ModularMultiblockGuiContent::lines);
 	
-	private boolean allowStyling;
+	private final List<ModularMultiblockGuiLine> lines;
+	
+	ModularMultiblockGuiContent(List<ModularMultiblockGuiLine> lines)
+	{
+		this.lines = lines;
+	}
 	
 	ModularMultiblockGuiContent()
 	{
+		this(Lists.newArrayList());
+	}
+	
+	public List<ModularMultiblockGuiLine> lines()
+	{
+		return Collections.unmodifiableList(lines);
 	}
 	
 	public ModularMultiblockGuiContent add(ModularMultiblockGuiLine line)
@@ -61,10 +77,5 @@ public final class ModularMultiblockGuiContent
 	{
 		lines.forEach(this::add);
 		return this;
-	}
-	
-	public List<ModularMultiblockGuiLine> lines()
-	{
-		return Collections.unmodifiableList(lines);
 	}
 }

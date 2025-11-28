@@ -1,6 +1,6 @@
 package net.swedz.tesseract.neoforge.compat.mi.mixin.client.hook;
 
-import aztech.modern_industrialization.machines.GuiComponentsClient;
+import aztech.modern_industrialization.client.machines.GuiComponentsClient;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.ClientGuiComponentsMIHookContext;
 import org.spongepowered.asm.mixin.Mixin;

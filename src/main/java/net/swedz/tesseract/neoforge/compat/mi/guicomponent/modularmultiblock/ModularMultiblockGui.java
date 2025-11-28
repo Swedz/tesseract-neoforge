@@ -1,98 +1,83 @@
 package net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock;
 
-import aztech.modern_industrialization.machines.gui.GuiComponent;
+import aztech.modern_industrialization.machines.gui.GuiComponentServer;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.Unit;
 import net.swedz.tesseract.neoforge.Tesseract;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public final class ModularMultiblockGui
+public final class ModularMultiblockGui implements GuiComponentServer<Unit, ModularMultiblockGui.Data>
 {
-	public static final ResourceLocation ID = Tesseract.id("modular_multiblock");
+	public static final GuiComponentServer.Type<Unit, Data> TYPE = new GuiComponentServer.Type<>(Tesseract.id("modular_multiblock"), StreamCodec.unit(Unit.INSTANCE), Data.STREAM_CODEC);
 	
-	public static final class Server implements GuiComponent.Server<Data>
+	private final int y, height;
+	
+	private final Consumer<ModularMultiblockGuiContent> contentAdder;
+	
+	public ModularMultiblockGui(int y, int height, Consumer<ModularMultiblockGuiContent> contentAdder)
 	{
-		private final int y, height;
-		
-		private final Consumer<ModularMultiblockGuiContent> contentAdder;
-		
-		public Server(int y, int height, Consumer<ModularMultiblockGuiContent> contentAdder)
+		if(height <= 4)
 		{
-			if(height <= 4)
-			{
-				throw new IllegalArgumentException("Provided height outside of acceptable bounds: must be >4 but %d was provided".formatted(height));
-			}
-			this.y = y;
-			this.height = height;
-			this.contentAdder = contentAdder;
+			throw new IllegalArgumentException("Provided height outside of acceptable bounds: must be >4 but %d was provided".formatted(height));
 		}
-		
-		public Server(int y, int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
-		{
-			this(y, height, (c) -> c.addAll(textSupplier.get()));
-		}
-		
-		public Server(int height, Consumer<ModularMultiblockGuiContent> contentAdder)
-		{
-			this(0, height, contentAdder);
-		}
-		
-		public Server(int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
-		{
-			this(0, height, textSupplier);
-		}
-		
-		private ModularMultiblockGuiContent content()
-		{
-			ModularMultiblockGuiContent content = new ModularMultiblockGuiContent();
-			contentAdder.accept(content);
-			return content;
-		}
-		
-		@Override
-		public Data copyData()
-		{
-			return new Data(y, height, this.content().lines());
-		}
-		
-		@Override
-		public boolean needsSync(Data cachedData)
-		{
-			return !cachedData.equals(this.copyData());
-		}
-		
-		@Override
-		public void writeInitialData(RegistryFriendlyByteBuf buf)
-		{
-			this.writeCurrentData(buf);
-		}
-		
-		@Override
-		public void writeCurrentData(RegistryFriendlyByteBuf buf)
-		{
-			buf.writeInt(y);
-			buf.writeInt(height);
-			
-			List<ModularMultiblockGuiLine> lines = this.content().lines();
-			buf.writeVarInt(lines.size());
-			for(ModularMultiblockGuiLine line : lines)
-			{
-				ModularMultiblockGuiLine.write(buf, line);
-			}
-		}
-		
-		@Override
-		public ResourceLocation getId()
-		{
-			return ID;
-		}
+		this.y = y;
+		this.height = height;
+		this.contentAdder = contentAdder;
 	}
 	
-	public record Data(int y, int height, List<ModularMultiblockGuiLine> text)
+	public ModularMultiblockGui(int y, int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
 	{
+		this(y, height, (c) -> c.addAll(textSupplier.get()));
+	}
+	
+	public ModularMultiblockGui(int height, Consumer<ModularMultiblockGuiContent> contentAdder)
+	{
+		this(0, height, contentAdder);
+	}
+	
+	public ModularMultiblockGui(int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
+	{
+		this(0, height, textSupplier);
+	}
+	
+	private ModularMultiblockGuiContent content()
+	{
+		ModularMultiblockGuiContent content = new ModularMultiblockGuiContent();
+		contentAdder.accept(content);
+		return content;
+	}
+	
+	@Override
+	public Unit getParams()
+	{
+		return Unit.INSTANCE;
+	}
+	
+	@Override
+	public Data extractData()
+	{
+		return new Data(y, height, this.content());
+	}
+	
+	@Override
+	public Type<Unit, Data> getType()
+	{
+		return TYPE;
+	}
+	
+	public record Data(int y, int height, ModularMultiblockGuiContent content)
+	{
+		public static final StreamCodec<RegistryFriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.VAR_INT, Data::y,
+				ByteBufCodecs.VAR_INT, Data::height,
+				ModularMultiblockGuiContent.STREAM_CODEC, Data::content,
+				Data::new
+		);
 	}
 	
 	public static final int X      = 5;

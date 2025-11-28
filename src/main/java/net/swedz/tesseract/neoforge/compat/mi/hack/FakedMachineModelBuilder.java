@@ -1,6 +1,6 @@
 package net.swedz.tesseract.neoforge.compat.mi.hack;
 
-import aztech.modern_industrialization.machines.models.MachineUnbakedModel;
+import aztech.modern_industrialization.client.machines.models.MachineUnbakedModel;
 import com.google.gson.JsonObject;
 import net.neoforged.neoforge.client.model.generators.CustomLoaderBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelBuilder;

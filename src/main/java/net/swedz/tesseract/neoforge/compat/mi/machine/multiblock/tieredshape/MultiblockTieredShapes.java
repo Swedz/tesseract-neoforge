@@ -98,7 +98,7 @@ public abstract class MultiblockTieredShapes<T extends MultiblockTier>
 		this.invalidateRecipeViewerShapes();
 	}
 	
-	public ShapeSelection.Server createShapeSelectionGuiComponent(MultiblockMachineBlockEntity machine, ActiveShapeComponent activeShape, boolean useArrows)
+	public ShapeSelection createShapeSelectionGuiComponent(MultiblockMachineBlockEntity machine, ActiveShapeComponent activeShape, boolean useArrows)
 	{
 		List<Component> tierNames = tiers.stream().map(MultiblockTier::getDisplayName).toList();
 		return CommonGuiComponents.rangedShapeSelection(machine, activeShape, tierNames, useArrows);

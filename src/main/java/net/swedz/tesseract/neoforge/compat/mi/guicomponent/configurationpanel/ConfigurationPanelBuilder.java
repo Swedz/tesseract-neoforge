@@ -26,16 +26,16 @@ public final class ConfigurationPanelBuilder
 		this(title, description, null);
 	}
 	
-	public ConfigurationPanelBuilder add(List<? extends Component> translations, boolean useArrows,
+	public ConfigurationPanelBuilder add(List<Component> translations, boolean useArrows,
 										 LineClickHandler handleClickAction, CurrentIndexSupplier currentIndexGetter)
 	{
 		lines.add(new Line(translations, useArrows, handleClickAction, currentIndexGetter));
 		return this;
 	}
 	
-	public ConfigurationPanel.Server build()
+	public ConfigurationPanel build()
 	{
-		return new ConfigurationPanel.Server(
+		return new ConfigurationPanel(
 				new ConfigurationPanel.Behavior()
 				{
 					@Override
@@ -55,12 +55,12 @@ public final class ConfigurationPanelBuilder
 					}
 				},
 				title, description,
-				lines.stream().map((line) -> new ConfigurationPanel.LineInfo(line.numValues(), line.translations(), line.useArrows())).toArray(ConfigurationPanel.LineInfo[]::new)
+				lines.stream().map((line) -> new ConfigurationPanel.LineInfo(line.translations(), line.useArrows())).toArray(ConfigurationPanel.LineInfo[]::new)
 		);
 	}
 	
 	private record Line(
-			List<? extends Component> translations, boolean useArrows,
+			List<Component> translations, boolean useArrows,
 			LineClickHandler handleClickAction, CurrentIndexSupplier currentIndexGetter
 	)
 	{
