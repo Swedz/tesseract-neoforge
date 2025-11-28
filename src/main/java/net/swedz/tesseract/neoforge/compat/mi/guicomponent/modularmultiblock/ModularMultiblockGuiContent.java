@@ -5,7 +5,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.swedz.tesseract.neoforge.tooltip.TranslatableTextEnum;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -45,32 +44,14 @@ public final class ModularMultiblockGuiContent
 		return this.add(new ModularMultiblockGuiLine(text, color, wrap));
 	}
 	
-	@Deprecated(forRemoval = true)
-	public ModularMultiblockGuiContent add(TranslatableTextEnum text, int color, boolean wrap)
-	{
-		return this.add(text.text(), color, wrap);
-	}
-	
 	public ModularMultiblockGuiContent add(Component text, int color)
 	{
 		return this.add(new ModularMultiblockGuiLine(text, color));
 	}
 	
-	@Deprecated(forRemoval = true)
-	public ModularMultiblockGuiContent add(TranslatableTextEnum text, int color)
-	{
-		return this.add(text.text(), color);
-	}
-	
 	public ModularMultiblockGuiContent add(Component text)
 	{
 		return this.add(new ModularMultiblockGuiLine(text));
-	}
-	
-	@Deprecated(forRemoval = true)
-	public ModularMultiblockGuiContent add(TranslatableTextEnum text)
-	{
-		return this.add(text.text());
 	}
 	
 	public ModularMultiblockGuiContent addAll(Collection<ModularMultiblockGuiLine> lines)
