@@ -9,7 +9,7 @@ import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAcce
 
 public final class ModularRecipeEfficiencyBar implements GuiComponentServer<ModularRecipeEfficiencyBar.Params, ModularRecipeEfficiencyBar.Data>
 {
-	public static final GuiComponentServer.Type<Params, Data> TYPE = new GuiComponentServer.Type<>(Tesseract.id("modular_recipe_efficiency"), Params.STREAM_CODEC, Data.STREAM_CODEC);
+	public static final Type<Params, Data> TYPE = new Type<>(Tesseract.id("modular_recipe_efficiency"), Params.STREAM_CODEC, Data.STREAM_CODEC);
 	
 	private final Params params;
 	private final ModularCrafterAccess crafter;

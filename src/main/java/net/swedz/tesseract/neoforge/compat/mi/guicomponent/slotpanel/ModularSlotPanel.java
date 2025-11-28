@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 
 public final class ModularSlotPanel implements GuiComponentServer<ModularSlotPanel.Params, ModularSlotPanel.Data>
 {
-	public static final GuiComponentServer.Type<Params, Data> TYPE = new GuiComponentServer.Type<>(Tesseract.id("modular_slot_panel"), Params.STREAM_CODEC, Data.STREAM_CODEC);
+	public static final Type<Params, Data> TYPE = new Type<>(Tesseract.id("modular_slot_panel"), Params.STREAM_CODEC, Data.STREAM_CODEC);
 	
 	private static final Map<ResourceLocation, Slot> SLOTS = Maps.newHashMap();
 	

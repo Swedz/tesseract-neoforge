@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
  */
 public class ConfigurationPanel implements GuiComponentServer<ConfigurationPanel.Params, ConfigurationPanel.Data>
 {
-	public static final GuiComponentServer.Type<Params, Data> TYPE = new GuiComponentServer.Type<>(Tesseract.id("configuration_panel"), Params.STREAM_CODEC, Data.STREAM_CODEC);
+	public static final Type<Params, Data> TYPE = new Type<>(Tesseract.id("configuration_panel"), Params.STREAM_CODEC, Data.STREAM_CODEC);
 	
 	public interface Behavior
 	{

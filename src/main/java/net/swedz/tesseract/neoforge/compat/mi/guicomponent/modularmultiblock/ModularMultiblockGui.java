@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 
 public final class ModularMultiblockGui implements GuiComponentServer<Unit, ModularMultiblockGui.Data>
 {
-	public static final GuiComponentServer.Type<Unit, Data> TYPE = new GuiComponentServer.Type<>(Tesseract.id("modular_multiblock"), StreamCodec.unit(Unit.INSTANCE), Data.STREAM_CODEC);
+	public static final Type<Unit, Data> TYPE = new Type<>(Tesseract.id("modular_multiblock"), StreamCodec.unit(Unit.INSTANCE), Data.STREAM_CODEC);
 	
 	private final int y, height;
 	
