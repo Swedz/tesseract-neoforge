@@ -76,7 +76,7 @@ public abstract class BasicMultiblockMachineBlockEntity extends MultiblockMachin
 	}
 	
 	@Override
-	protected MachineModelClientData getMachineModelData()
+	public MachineModelClientData getMachineModelData()
 	{
 		return new MachineModelClientData(null, orientation.facingDirection).active(isActive.isActive);
 	}

@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.mi.mixin.hook.listener;
 
-import aztech.modern_industrialization.compat.viewer.abstraction.ViewerCategory;
-import aztech.modern_industrialization.compat.viewer.usage.ViewerSetup;
+import aztech.modern_industrialization.client.compat.viewer.abstraction.ViewerCategory;
+import aztech.modern_industrialization.client.compat.viewer.usage.ViewerSetup;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.ViewerSetupMIHookContext;

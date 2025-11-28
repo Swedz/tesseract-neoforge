@@ -1,15 +1,13 @@
 package net.swedz.tesseract.neoforge.compat.mi.guicomponent.slotpanel;
 
+import aztech.modern_industrialization.client.machines.gui.ClientComponentRenderer;
+import aztech.modern_industrialization.client.machines.gui.GuiComponentClient;
+import aztech.modern_industrialization.client.machines.gui.MachineScreen;
 import aztech.modern_industrialization.inventory.BackgroundRenderedSlot;
-import aztech.modern_industrialization.machines.gui.ClientComponentRenderer;
 import aztech.modern_industrialization.machines.gui.GuiComponent;
-import aztech.modern_industrialization.machines.gui.GuiComponentClient;
-import aztech.modern_industrialization.machines.gui.MachineScreen;
 import aztech.modern_industrialization.util.Rectangle;
-import com.google.common.collect.Lists;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
@@ -20,50 +18,27 @@ import net.minecraft.world.item.ItemStack;
 import java.util.List;
 import java.util.function.Supplier;
 
-public final class ModularSlotPanelClient implements GuiComponentClient
+public final class ModularSlotPanelClient extends GuiComponentClient<ModularSlotPanel.Params, ModularSlotPanel.Data>
 {
-	private final int offsetY;
-	
-	private final List<ModularSlotPanel.Slot> slots       = Lists.newArrayList();
-	private final List<Integer>               stackLimits = Lists.newArrayList();
-	
-	public ModularSlotPanelClient(RegistryFriendlyByteBuf buf)
+	public ModularSlotPanelClient(ModularSlotPanel.Params params, ModularSlotPanel.Data data)
 	{
-		offsetY = buf.readVarInt();
-		
-		int count = buf.readVarInt();
-		for(int i = 0; i < count; i++)
-		{
-			slots.add(ModularSlotPanel.getSlot(buf.readResourceLocation()));
-		}
-		
-		this.readCurrentData(buf);
-	}
-	
-	@Override
-	public void readCurrentData(RegistryFriendlyByteBuf buf)
-	{
-		stackLimits.clear();
-		for(int i = 0; i < slots.size(); i++)
-		{
-			stackLimits.add(buf.readVarInt());
-		}
+		super(params, data);
 	}
 	
 	@Override
 	public void setupMenu(GuiComponent.MenuFacade menu)
 	{
-		for(int i = 0; i < slots.size(); i++)
+		for(int i = 0; i < params.slots().size(); i++)
 		{
 			int slotIndex = i;
-			ModularSlotPanel.Slot slot = slots.get(slotIndex);
-			Supplier<Integer> stackLimit = () -> stackLimits.get(slotIndex);
+			ModularSlotPanel.Slot slot = params.slots().get(slotIndex);
+			Supplier<Integer> stackLimit = () -> data.stackLimits().get(slotIndex);
 			
 			class ClientSlot extends SlotWithBackground implements SlotTooltip
 			{
 				public ClientSlot()
 				{
-					super(new SimpleContainer(1), 0, ModularSlotPanel.getSlotX(menu.getGuiParams()), ModularSlotPanel.getSlotY(slotIndex) + offsetY);
+					super(new SimpleContainer(1), 0, ModularSlotPanel.getSlotX(menu.getGuiParams()), ModularSlotPanel.getSlotY(slotIndex) + params.offsetY());
 				}
 				
 				@Override
@@ -114,7 +89,7 @@ public final class ModularSlotPanelClient implements GuiComponentClient
 		{
 			private Rectangle getBox(int leftPos, int topPos)
 			{
-				return new Rectangle(leftPos + machineScreen.getGuiParams().backgroundWidth, topPos + 10 + offsetY, 31, 14 + (slots.size() * 20));
+				return new Rectangle(leftPos + machineScreen.getGuiParams().backgroundWidth, topPos + 10 + params.offsetY(), 31, 14 + (params.slots().size() * 20));
 			}
 			
 			@Override

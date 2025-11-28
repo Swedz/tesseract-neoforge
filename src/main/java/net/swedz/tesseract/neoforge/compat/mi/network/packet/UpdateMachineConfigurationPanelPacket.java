@@ -18,12 +18,9 @@ public record UpdateMachineConfigurationPanelPacket(
 ) implements TesseractMICustomPacket
 {
 	public static final StreamCodec<ByteBuf, UpdateMachineConfigurationPanelPacket> STREAM_CODEC = StreamCodec.composite(
-			MIStreamCodecs.BYTE,
-			UpdateMachineConfigurationPanelPacket::syncId,
-			ByteBufCodecs.VAR_INT,
-			UpdateMachineConfigurationPanelPacket::line,
-			ByteBufCodecs.BOOL,
-			UpdateMachineConfigurationPanelPacket::clickedLeftButton,
+			MIStreamCodecs.BYTE, UpdateMachineConfigurationPanelPacket::syncId,
+			ByteBufCodecs.VAR_INT, UpdateMachineConfigurationPanelPacket::line,
+			ByteBufCodecs.BOOL, UpdateMachineConfigurationPanelPacket::clickedLeftButton,
 			UpdateMachineConfigurationPanelPacket::new
 	);
 	
@@ -35,8 +32,11 @@ public record UpdateMachineConfigurationPanelPacket(
 		AbstractContainerMenu menu = ctx.getPlayer().containerMenu;
 		if(menu.containerId == syncId && menu instanceof MachineMenuServer machineMenu)
 		{
-			ConfigurationPanel.Server configurationPanel = machineMenu.blockEntity.guiComponents.get(ConfigurationPanel.ID);
-			configurationPanel.behavior.handleClick(line, clickedLeftButton ? -1 : +1);
+			var configurationPanel = machineMenu.blockEntity.guiComponents.getNullable(ConfigurationPanel.class);
+			if(configurationPanel != null)
+			{
+				configurationPanel.behavior.handleClick(line, clickedLeftButton ? -1 : 1);
+			}
 		}
 	}
 }

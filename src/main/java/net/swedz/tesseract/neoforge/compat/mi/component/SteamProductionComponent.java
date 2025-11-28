@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.mi.component;
 
 import aztech.modern_industrialization.inventory.MIFluidStorage;
-import aztech.modern_industrialization.machines.IComponent;
+import aztech.modern_industrialization.machines.MachineComponent;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.storage.StorageView;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.transaction.Transaction;
@@ -17,7 +17,7 @@ import net.minecraft.world.level.material.Fluids;
 import java.util.List;
 import java.util.function.Supplier;
 
-public final class SteamProductionComponent implements IComponent.ServerOnly
+public final class SteamProductionComponent implements MachineComponent.ServerOnly
 {
 	private final MIFluidStorage fluidStorage;
 	

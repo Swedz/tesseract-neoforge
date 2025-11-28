@@ -18,9 +18,9 @@ public final class TesseractMIHookListener implements MIHookListener
 	@Override
 	public void clientGuiComponents(ClientGuiComponentsMIHookContext hook)
 	{
-		hook.register(ConfigurationPanel.ID, ConfigurationPanelClient::new);
-		hook.register(ModularMultiblockGui.ID, ModularMultiblockGuiClient::new);
-		hook.register(ModularRecipeEfficiencyBar.ID, ModularRecipeEfficiencyBarClient::new);
-		hook.register(ModularSlotPanel.ID, ModularSlotPanelClient::new);
+		hook.register(ConfigurationPanel.TYPE, ConfigurationPanelClient::new);
+		hook.register(ModularMultiblockGui.TYPE, ModularMultiblockGuiClient::new);
+		hook.register(ModularRecipeEfficiencyBar.TYPE, ModularRecipeEfficiencyBarClient::new);
+		hook.register(ModularSlotPanel.TYPE, ModularSlotPanelClient::new);
 	}
 }

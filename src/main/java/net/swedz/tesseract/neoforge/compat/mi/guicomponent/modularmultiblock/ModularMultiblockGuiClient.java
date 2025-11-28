@@ -1,43 +1,24 @@
 package net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock;
 
 import aztech.modern_industrialization.MI;
-import aztech.modern_industrialization.machines.gui.ClientComponentRenderer;
-import aztech.modern_industrialization.machines.gui.GuiComponentClient;
-import aztech.modern_industrialization.machines.gui.MachineScreen;
-import com.google.common.collect.Lists;
+import aztech.modern_industrialization.client.machines.gui.ClientComponentRenderer;
+import aztech.modern_industrialization.client.machines.gui.GuiComponentClient;
+import aztech.modern_industrialization.client.machines.gui.MachineScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.util.Unit;
 import net.swedz.tesseract.neoforge.helper.ComponentHelper;
 
 import java.util.List;
 
-public final class ModularMultiblockGuiClient implements GuiComponentClient
+public final class ModularMultiblockGuiClient extends GuiComponentClient<Unit, ModularMultiblockGui.Data>
 {
-	private int y, height;
-	
-	private List<ModularMultiblockGuiLine> text;
-	
-	public ModularMultiblockGuiClient(RegistryFriendlyByteBuf buf)
+	public ModularMultiblockGuiClient(Unit params, ModularMultiblockGui.Data data)
 	{
-		this.readCurrentData(buf);
-	}
-	
-	@Override
-	public void readCurrentData(RegistryFriendlyByteBuf buf)
-	{
-		y = buf.readInt();
-		height = buf.readInt();
-		
-		int lineCount = buf.readVarInt();
-		text = Lists.newArrayListWithCapacity(lineCount);
-		for(int i = 0; i < lineCount; i++)
-		{
-			text.add(ModularMultiblockGuiLine.read(buf));
-		}
+		super(params, data);
 	}
 	
 	@Override
@@ -57,11 +38,11 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 		{
 			graphics.blit(
 					TEXTURE,
-					x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + ModularMultiblockGuiClient.this.y, 0, 0,
+					x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + data.y(), 0, 0,
 					TEXTURE_WIDTH, 2, TEXTURE_WIDTH, TEXTURE_HEIGHT
 			);
 			
-			int remainingContentHeight = height - 4;
+			int remainingContentHeight = data.height() - 4;
 			int maxSectionHeight = TEXTURE_HEIGHT - 4;
 			int offsetY = 0;
 			while(remainingContentHeight > 0)
@@ -69,7 +50,7 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 				int sectionHeight = Math.min(remainingContentHeight, maxSectionHeight);
 				graphics.blit(
 						TEXTURE,
-						x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + ModularMultiblockGuiClient.this.y + offsetY + 2, 0, 2,
+						x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + data.y() + offsetY + 2, 0, 2,
 						TEXTURE_WIDTH, sectionHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT
 				);
 				offsetY += sectionHeight;
@@ -78,7 +59,7 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 			
 			graphics.blit(
 					TEXTURE,
-					x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + ModularMultiblockGuiClient.this.y + height - 2, 0, TEXTURE_HEIGHT - 2,
+					x + ModularMultiblockGui.X, y + ModularMultiblockGui.Y + data.y() + data.height() - 2, 0, TEXTURE_HEIGHT - 2,
 					TEXTURE_WIDTH, 2, TEXTURE_WIDTH, TEXTURE_HEIGHT
 			);
 		}
@@ -90,7 +71,7 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 			
 			int spaceWidth = font.width(" ");
 			int offsetY = 23;
-			for(ModularMultiblockGuiLine line : text)
+			for(var line : data.content().lines())
 			{
 				List<FormattedCharSequence> wrappedLines = line.wrap() ?
 						font.split(line.text(), TEXTURE_WIDTH - spaceWidth) :
@@ -101,7 +82,7 @@ public final class ModularMultiblockGuiClient implements GuiComponentClient
 					graphics.drawString(
 							font, ComponentHelper.stripStyle(wrappedLine),
 							x + ModularMultiblockGui.X + 5 + (index > 0 ? spaceWidth : 0),
-							y + ModularMultiblockGuiClient.this.y + offsetY,
+							y + data.y() + offsetY,
 							line.color(), false
 					);
 					offsetY += 11;

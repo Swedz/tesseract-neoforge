@@ -35,7 +35,7 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 		
 		this.registerComponents(crafter);
 		
-		this.registerGuiComponent(new ReiSlotLocking.Server(crafter::lockRecipe, () -> operatingState != OperatingState.NOT_MATCHED));
+		this.registerGuiComponent(new ReiSlotLocking(crafter::lockRecipe, () -> operatingState != OperatingState.NOT_MATCHED));
 		
 		this.registerGuiComponent(CommonGuiComponents.standardMultiblockScreen(this, crafter, isActive));
 	}

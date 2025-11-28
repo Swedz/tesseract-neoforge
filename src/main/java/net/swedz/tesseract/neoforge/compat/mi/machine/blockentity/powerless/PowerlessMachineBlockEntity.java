@@ -35,7 +35,7 @@ public class PowerlessMachineBlockEntity extends MachineBlockEntity implements T
 	protected final RedstoneControlComponent redstoneControl;
 	
 	public PowerlessMachineBlockEntity(
-			BEP bep, MachineGuiParameters guiParams, ProgressBar.Parameters progressBarParams,
+			BEP bep, MachineGuiParameters guiParams, ProgressBar.Params progressBarParams,
 			MachineInventoryComponent inventory,
 			MachineRecipeType recipeType, int baseRecipeEU, boolean hasRedstoneControl
 	)
@@ -63,13 +63,13 @@ public class PowerlessMachineBlockEntity extends MachineBlockEntity implements T
 		if(hasRedstoneControl)
 		{
 			this.registerComponents(redstoneControl);
-			this.registerGuiComponent(new SlotPanel.Server(this)
+			this.registerGuiComponent(new SlotPanel(this)
 					.withRedstoneControl(redstoneControl));
 		}
 		
-		this.registerGuiComponent(new AutoExtract.Server(orientation));
-		this.registerGuiComponent(new ProgressBar.Server(progressBarParams, crafter::getProgress));
-		this.registerGuiComponent(new ReiSlotLocking.Server(crafter::lockRecipe, () -> true));
+		this.registerGuiComponent(new AutoExtract(orientation));
+		this.registerGuiComponent(new ProgressBar(progressBarParams, crafter::getProgress));
+		this.registerGuiComponent(new ReiSlotLocking(crafter::lockRecipe, () -> true));
 	}
 	
 	@Override
@@ -79,7 +79,7 @@ public class PowerlessMachineBlockEntity extends MachineBlockEntity implements T
 	}
 	
 	@Override
-	protected MachineModelClientData getMachineModelData()
+	public MachineModelClientData getMachineModelData()
 	{
 		MachineModelClientData data = new MachineModelClientData();
 		orientation.writeModelData(data);

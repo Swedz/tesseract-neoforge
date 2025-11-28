@@ -3,9 +3,18 @@ package net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 public record ModularMultiblockGuiLine(Component text, int color, boolean wrap)
 {
+	public static final StreamCodec<RegistryFriendlyByteBuf, ModularMultiblockGuiLine> STREAM_CODEC = StreamCodec.composite(
+			ComponentSerialization.STREAM_CODEC, ModularMultiblockGuiLine::text,
+			ByteBufCodecs.INT, ModularMultiblockGuiLine::color,
+			ByteBufCodecs.BOOL, ModularMultiblockGuiLine::wrap,
+			ModularMultiblockGuiLine::new
+	);
+	
 	public ModularMultiblockGuiLine(Component text, int color)
 	{
 		this(text, color, false);
@@ -18,19 +27,4 @@ public record ModularMultiblockGuiLine(Component text, int color, boolean wrap)
 	
 	public static final int WHITE = 0xFFFFFF;
 	public static final int RED   = 0xFF0000;
-	
-	public static ModularMultiblockGuiLine read(RegistryFriendlyByteBuf buf)
-	{
-		Component text = ComponentSerialization.STREAM_CODEC.decode(buf);
-		int color = buf.readInt();
-		boolean wrap = buf.readBoolean();
-		return new ModularMultiblockGuiLine(text, color, wrap);
-	}
-	
-	public static void write(RegistryFriendlyByteBuf buf, ModularMultiblockGuiLine line)
-	{
-		ComponentSerialization.STREAM_CODEC.encode(buf, line.text());
-		buf.writeInt(line.color());
-		buf.writeBoolean(line.wrap());
-	}
 }

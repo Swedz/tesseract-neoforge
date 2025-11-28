@@ -49,7 +49,7 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 		
 		this.registerComponents(upgrades, redstoneControl, overdrive);
 		
-		this.registerGuiComponent(new SlotPanel.Server(this)
+		this.registerGuiComponent(new SlotPanel(this)
 				.withRedstoneControl(redstoneControl)
 				.withUpgrades(upgrades)
 				.withOverdrive(overdrive));

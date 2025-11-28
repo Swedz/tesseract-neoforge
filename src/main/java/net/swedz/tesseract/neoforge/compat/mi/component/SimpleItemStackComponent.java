@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.mi.component;
 
-import aztech.modern_industrialization.machines.IComponent;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
+import aztech.modern_industrialization.machines.MachineComponent;
 import aztech.modern_industrialization.machines.components.CasingComponent;
 import aztech.modern_industrialization.machines.components.DropableComponent;
 import aztech.modern_industrialization.machines.components.OverdriveComponent;
@@ -12,7 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.swedz.tesseract.neoforge.compat.mi.api.ComponentStackHolder;
 
-public class SimpleItemStackComponent implements IComponent, DropableComponent, ComponentStackHolder
+public class SimpleItemStackComponent implements MachineComponent, DropableComponent, ComponentStackHolder
 {
 	public interface UpdatedCallback
 	{

@@ -3,8 +3,8 @@ package net.swedz.tesseract.neoforge.compat.mi.component.craft;
 import aztech.modern_industrialization.api.machine.component.InventoryAccess;
 import aztech.modern_industrialization.inventory.ConfigurableFluidStack;
 import aztech.modern_industrialization.inventory.ConfigurableItemStack;
-import aztech.modern_industrialization.machines.IComponent;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
+import aztech.modern_industrialization.machines.MachineComponent;
 import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.recipe.condition.MachineProcessCondition;
 import net.minecraft.core.HolderLookup;
@@ -23,7 +23,7 @@ import static aztech.modern_industrialization.util.Simulation.*;
  *
  * @param <R> the recipe type to use
  */
-public abstract class AbstractModularCrafterComponent<R> implements IComponent.ServerOnly, ModularCrafterAccess<R>
+public abstract class AbstractModularCrafterComponent<R> implements MachineComponent.ServerOnly, ModularCrafterAccess<R>
 {
 	protected final MachineProcessCondition.Context conditionContext;
 	

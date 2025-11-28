@@ -52,12 +52,12 @@ public class PowerlessMultiblockMachineBlockEntity extends BasicMultiblockMachin
 		if(hasRedstoneControl)
 		{
 			this.registerComponents(redstoneControl);
-			this.registerGuiComponent(new SlotPanel.Server(this)
+			this.registerGuiComponent(new SlotPanel(this)
 					.withRedstoneControl(redstoneControl));
 		}
 		
-		this.registerGuiComponent(new ReiSlotLocking.Server(crafter::lockRecipe, () -> operatingState != OperatingState.NOT_MATCHED));
-		this.registerGuiComponent(new ModularMultiblockGui.Server(ModularMultiblockGui.HEIGHT, (content) ->
+		this.registerGuiComponent(new ReiSlotLocking(crafter::lockRecipe, () -> operatingState != OperatingState.NOT_MATCHED));
+		this.registerGuiComponent(new ModularMultiblockGui(ModularMultiblockGui.HEIGHT, (content) ->
 		{
 			boolean shapeValid = this.isShapeValid();
 			boolean active = isActive.isActive;
@@ -76,7 +76,7 @@ public class PowerlessMultiblockMachineBlockEntity extends BasicMultiblockMachin
 	}
 	
 	@Override
-	protected MachineModelClientData getMachineModelData()
+	public MachineModelClientData getMachineModelData()
 	{
 		MachineModelClientData data = new MachineModelClientData();
 		orientation.writeModelData(data);

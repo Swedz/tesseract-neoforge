@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(
-		value = RecipeEfficiencyBar.Server.class,
+		value = RecipeEfficiencyBar.class,
 		remap = false
 )
 public class RecipeEfficiencyBarEfficiencyHookMixin
@@ -23,11 +23,7 @@ public class RecipeEfficiencyBarEfficiencyHookMixin
 	private CrafterComponent crafter;
 	
 	@Redirect(
-			method = {
-					"copyData()Laztech/modern_industrialization/machines/guicomponents/RecipeEfficiencyBar$Data;",
-					"needsSync(Laztech/modern_industrialization/machines/guicomponents/RecipeEfficiencyBar$Data;)Z",
-					"writeCurrentData"
-			},
+			method = "extractData()Laztech/modern_industrialization/machines/guicomponents/RecipeEfficiencyBar$Data;",
 			at = @At(
 					value = "INVOKE",
 					target = "Laztech/modern_industrialization/machines/components/CrafterComponent$Behavior;getMaxRecipeEu()J"

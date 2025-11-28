@@ -1,8 +1,8 @@
 package net.swedz.tesseract.neoforge.datagen.mi.client;
 
-import aztech.modern_industrialization.machines.models.MachineBakedModel;
+import aztech.modern_industrialization.client.machines.models.MachineBakedModel;
+import aztech.modern_industrialization.client.machines.models.UseBlockModelUnbakedModel;
 import aztech.modern_industrialization.machines.models.MachineCasing;
-import aztech.modern_industrialization.machines.models.UseBlockModelUnbakedModel;
 import com.google.gson.JsonObject;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

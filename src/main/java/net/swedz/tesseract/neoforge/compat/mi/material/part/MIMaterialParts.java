@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.mi.material.part;
 
 import aztech.modern_industrialization.MI;
+import aztech.modern_industrialization.MICommonProxy;
 import aztech.modern_industrialization.MITags;
 import aztech.modern_industrialization.api.energy.CableTier;
 import aztech.modern_industrialization.blocks.storage.StorageBehaviour;
@@ -15,7 +16,7 @@ import aztech.modern_industrialization.datagen.model.DelegatingModelBuilder;
 import aztech.modern_industrialization.items.ContainerItem;
 import aztech.modern_industrialization.items.ForgeTool;
 import aztech.modern_industrialization.items.PortableStorageUnit;
-import aztech.modern_industrialization.nuclear.INeutronBehaviour;
+import aztech.modern_industrialization.nuclear.NeutronBehaviour;
 import aztech.modern_industrialization.nuclear.NuclearConstant;
 import aztech.modern_industrialization.nuclear.NuclearFuel;
 import aztech.modern_industrialization.pipes.api.PipeNetworkType;
@@ -23,7 +24,6 @@ import aztech.modern_industrialization.pipes.electricity.ElectricityNetwork;
 import aztech.modern_industrialization.pipes.electricity.ElectricityNetworkData;
 import aztech.modern_industrialization.pipes.electricity.ElectricityNetworkNode;
 import aztech.modern_industrialization.pipes.impl.PipeItem;
-import aztech.modern_industrialization.proxy.CommonProxy;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.bridge.SlotFluidHandler;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.bridge.SlotItemHandler;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
@@ -99,7 +99,7 @@ public interface MIMaterialParts
 				CapabilitiesListeners.register(context.registry().modId(), (event) ->
 						event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, bet.get(), (be, side) -> new SlotItemHandler(be)));
 				
-				CommonProxy.INSTANCE.registerPartBarrelClient(bet::get, context.get(MEAN_RGB));
+				MICommonProxy.INSTANCE.registerPartBarrelClient(bet::get, context.get(MEAN_RGB));
 				
 				return registered;
 			});
@@ -249,7 +249,7 @@ public interface MIMaterialParts
 					event.registerItem(Capabilities.FluidHandler.ITEM, (stack, __) -> new ContainerItem.FluidHandler(stack, item), item);
 				});
 				
-				CommonProxy.INSTANCE.registerPartTankClient(bet::get, context.get(MEAN_RGB));
+				MICommonProxy.INSTANCE.registerPartTankClient(bet::get, context.get(MEAN_RGB));
 				
 				return registered;
 			});
@@ -275,7 +275,7 @@ public interface MIMaterialParts
 			NuclearFuel.NuclearFuelParams fuelParams = new NuclearFuel.NuclearFuelParams(
 					NuclearConstant.DESINTEGRATION_BY_ROD * size, fuel.maxTemp, fuel.tempLimitLow, fuel.tempLimitHigh, fuel.neutronsMultiplication, fuel.directEnergyFactor, size
 			);
-			INeutronBehaviour neutronBehaviour = INeutronBehaviour.of(NuclearConstant.ScatteringType.HEAVY, fuel, size);
+			NeutronBehaviour neutronBehaviour = NeutronBehaviour.of(NuclearConstant.ScatteringType.HEAVY, fuel, size);
 			return new NuclearFuel(p.stacksTo(1), fuelParams, neutronBehaviour, c.registry().id("%s_fuel_rod_depleted".formatted(c.material().id().getPath())));
 		};
 	}
