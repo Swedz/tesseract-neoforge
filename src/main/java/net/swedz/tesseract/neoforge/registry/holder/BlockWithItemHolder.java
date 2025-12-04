@@ -10,6 +10,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class BlockWithItemHolder<BlockType extends Block, ItemType extends BlockItem> extends BlockHolder<BlockType> implements ItemLike
@@ -28,6 +29,12 @@ public class BlockWithItemHolder<BlockType extends Block, ItemType extends Block
 	public ItemHolder<ItemType> item()
 	{
 		return itemHolder;
+	}
+	
+	public BlockWithItemHolder<BlockType, ItemType> item(Consumer<ItemHolder<ItemType>> consumer)
+	{
+		consumer.accept(itemHolder);
+		return this;
 	}
 	
 	@Override
