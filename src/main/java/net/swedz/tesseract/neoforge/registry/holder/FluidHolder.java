@@ -16,6 +16,7 @@ import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 import net.swedz.tesseract.neoforge.registry.registerable.SimpleRegisterableWrapper;
 
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class FluidHolder<F extends Fluid, FT extends FluidType, FB extends Block, FBI extends BucketItem> extends RegisteredObjectHolder<Fluid, F, FluidHolder<F, FT, FB, FBI>> implements FluidLike
@@ -57,9 +58,21 @@ public class FluidHolder<F extends Fluid, FT extends FluidType, FB extends Block
 		return blockHolder;
 	}
 	
+	public FluidHolder<F, FT, FB, FBI> block(Consumer<BlockHolder<FB>> consumer)
+	{
+		consumer.accept(blockHolder);
+		return this;
+	}
+	
 	public ItemHolder<FBI> bucketItem()
 	{
 		return bucketItemHolder;
+	}
+	
+	public FluidHolder<F, FT, FB, FBI> bucketItem(Consumer<ItemHolder<FBI>> consumer)
+	{
+		consumer.accept(bucketItemHolder);
+		return this;
 	}
 	
 	@Override
