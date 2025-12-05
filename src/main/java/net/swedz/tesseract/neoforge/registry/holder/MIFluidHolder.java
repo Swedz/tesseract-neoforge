@@ -61,6 +61,18 @@ public class MIFluidHolder extends FluidHolder<MIFluid, MIFluidHolder.FakedMIFlu
 		return properties;
 	}
 	
+	public MIFluidHolder block(Consumer<BlockHolder<MIFluidBlock>> consumer)
+	{
+		super.block(consumer);
+		return this;
+	}
+	
+	public MIFluidHolder bucketItem(Consumer<ItemHolder<MIBucketItem>> consumer)
+	{
+		super.bucketItem(consumer);
+		return this;
+	}
+	
 	@Override
 	public MIFluidHolder register()
 	{
