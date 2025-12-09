@@ -182,9 +182,17 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see MachineRegistrationHelper#addMachineModel(String, String, MachineCasing, boolean, boolean, boolean, boolean)
 	 */
+	public static void addMachineModel(MIHook hook, String name, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active, String outputTexture)
+	{
+		MIHookTracker.addMachineModel(hook.id(name), defaultCasing, overlay, front, top, side, active, outputTexture);
+	}
+	
+	/**
+	 * @see MachineRegistrationHelper#addMachineModel(String, String, MachineCasing, boolean, boolean, boolean, boolean)
+	 */
 	public static void addMachineModel(MIHook hook, String name, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active)
 	{
-		MIHookTracker.addMachineModel(hook.id(name), defaultCasing, overlay, front, top, side, active);
+		addMachineModel(hook, name, defaultCasing, overlay, front, top, side, active, null);
 	}
 	
 	/**

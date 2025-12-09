@@ -52,9 +52,9 @@ public final class MIHookTracker
 		return MACHINE_MODELS.get(id);
 	}
 	
-	public static void addMachineModel(ResourceLocation id, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active)
+	public static void addMachineModel(ResourceLocation id, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active, String outputTexture)
 	{
-		MACHINE_MODELS.put(id, new MachineModelProperties(id.getNamespace(), defaultCasing, overlay, front, top, side, active));
+		MACHINE_MODELS.put(id, new MachineModelProperties(id.getNamespace(), defaultCasing, overlay, front, top, side, active, outputTexture));
 	}
 	
 	public static List<Consumer<MachineCasingModelsMIHookDatagenProvider>> getMachineCasingModels(String modId)
@@ -71,9 +71,15 @@ public final class MIHookTracker
 			String modId,
 			MachineCasing defaultCasing,
 			String overlay, boolean front, boolean top, boolean side,
-			boolean active
+			boolean active,
+			String outputTexture
 	)
 	{
+		public MachineModelProperties
+		{
+			outputTexture = outputTexture == null ? "%s:block/overlays/output".formatted(MI.ID) : outputTexture;
+		}
+		
 		public void addToMachineJson(JsonObject json)
 		{
 			json.addProperty("casing", defaultCasing.key.getNamespace().equals(MI.ID) ? defaultCasing.key.getPath() : defaultCasing.key.toString());
@@ -108,7 +114,7 @@ public final class MIHookTracker
 				}
 			}
 			
-			defaultOverlays.addProperty("output", "%s:block/overlays/output".formatted(MI.ID));
+			defaultOverlays.addProperty("output", outputTexture);
 			defaultOverlays.addProperty("item_auto", "%s:block/overlays/item_auto".formatted(MI.ID));
 			defaultOverlays.addProperty("fluid_auto", "%s:block/overlays/fluid_auto".formatted(MI.ID));
 			
