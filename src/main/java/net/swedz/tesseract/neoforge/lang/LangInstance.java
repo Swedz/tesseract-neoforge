@@ -1,12 +1,23 @@
 package net.swedz.tesseract.neoforge.lang;
 
 import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyInstance;
 
-public record LangInstance<L>(Class<L> langClass, L lang, LangHandler handler)
+public record LangInstance<L>(
+		Class<L> proxyClass,
+		L proxy,
+		LangHandler handler
+) implements InterfaceProxyInstance<L, LangHandler>
 {
+	public L lang()
+	{
+		return proxy;
+	}
+	
+	@Override
 	public LangInstance<L> load()
 	{
-		handler.loadValues(langClass, lang);
+		InterfaceProxyInstance.super.load();
 		return this;
 	}
 	
