@@ -9,16 +9,19 @@ import net.swedz.tesseract.neoforge.config.annotation.ConfigKey;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigOrder;
 import net.swedz.tesseract.neoforge.config.annotation.Range;
 import net.swedz.tesseract.neoforge.config.annotation.SubSection;
+import net.swedz.tesseract.neoforge.config.exception.IllegalConfigOptionException;
 import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
+import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyManager;
 import net.swedz.tesseract.neoforge.serialization.TomlOps;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
-public final class ConfigManager
+public final class ConfigManager extends InterfaceProxyManager.WithArgument<ConfigHandler, ConfigManagerArg>
 {
 	private final ConfigCodecMap codecs = new ConfigCodecMap();
 	
@@ -35,14 +38,19 @@ public final class ConfigManager
 		return this;
 	}
 	
-	<C> ConfigInstance<C> build(ModConfigSpec spec, Class<C> configClass, String path)
+	@Override
+	protected ConfigManagerArg defaultManagerArgument()
+	{
+		return new ConfigManagerArg(Optional.empty(), "");
+	}
+	
+	private <P> ModConfigSpec defaultConfigSpec(Class<P> proxyClass)
 	{
 		try
 		{
-			var handler = new ConfigHandler(this, spec, path);
-			var proxy = (C) Proxy.newProxyInstance(configClass.getClassLoader(), new Class[]{configClass}, handler);
-			
-			return new ConfigInstance<>(configClass, proxy, handler);
+			var builder = new ModConfigSpec.Builder();
+			this.buildSpec(builder, proxyClass);
+			return builder.build();
 		}
 		catch (Throwable ex)
 		{
@@ -50,14 +58,32 @@ public final class ConfigManager
 		}
 	}
 	
-	public <C> ConfigInstance<C> build(Class<C> configClass)
+	@Override
+	protected <P> ConfigHandler createHandler(Class<P> proxyClass, ConfigManagerArg arg)
+	{
+		return new ConfigHandler(this, arg.spec().orElse(this.defaultConfigSpec(proxyClass)), arg.path());
+	}
+	
+	@Override
+	protected <P> ConfigInstance<P> createInstance(Class<P> proxyClass, P proxy, ConfigHandler handler)
+	{
+		return new ConfigInstance<>(proxyClass, proxy, handler);
+	}
+	
+	@Override
+	public <P> ConfigInstance<P> build(Class<P> proxyClass)
+	{
+		return (ConfigInstance<P>) super.build(proxyClass);
+	}
+	
+	@Override
+	public <P> ConfigInstance<P> build(Class<P> proxyClass, ConfigManagerArg arg)
 	{
 		try
 		{
-			var builder = new ModConfigSpec.Builder();
-			buildSpec(builder, configClass);
-			var spec = builder.build();
-			return this.build(spec, configClass, "");
+			var handler = this.createHandler(proxyClass, arg);
+			var proxy = (P) Proxy.newProxyInstance(proxyClass.getClassLoader(), new Class[]{proxyClass}, handler);
+			return this.createInstance(proxyClass, proxy, handler);
 		}
 		catch (Throwable ex)
 		{

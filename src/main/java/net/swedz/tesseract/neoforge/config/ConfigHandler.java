@@ -1,26 +1,23 @@
 package net.swedz.tesseract.neoforge.config;
 
-import com.google.common.collect.Maps;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigKey;
 import net.swedz.tesseract.neoforge.config.annotation.SubSection;
 import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
+import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyHandler;
 import net.swedz.tesseract.neoforge.serialization.TomlOps;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Collections;
-import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
-public final class ConfigHandler implements InvocationHandler
+public final class ConfigHandler extends InterfaceProxyHandler<Object, ConfigEntry>
 {
 	private final ConfigManager manager;
 	private final ModConfigSpec spec;
 	private final String        path;
-	
-	private Map<String, Object> values = Maps.newHashMap();
 	
 	public ConfigHandler(ConfigManager manager, ModConfigSpec spec, String path)
 	{
@@ -32,6 +29,11 @@ public final class ConfigHandler implements InvocationHandler
 	ModConfigSpec spec()
 	{
 		return spec;
+	}
+	
+	String path()
+	{
+		return path;
 	}
 	
 	private String path(String key)
@@ -64,50 +66,30 @@ public final class ConfigHandler implements InvocationHandler
 		return configValue::get;
 	}
 	
-	void loadValues(Class<?> configClass, Object proxy)
-	{
-		Map<String, Object> values = Maps.newHashMap();
-		
-		for(var method : configClass.getMethods())
-		{
-			if(method.isAnnotationPresent(ConfigKey.class))
-			{
-				String key = method.getAnnotation(ConfigKey.class).value();
-				if(key.isEmpty())
-				{
-					key = NamingConventionHelper.fromCamelCaseToSnakeCase(method);
-				}
-				String path = this.path(key);
-				var type = method.getReturnType();
-				
-				Object value;
-				if(method.isAnnotationPresent(SubSection.class))
-				{
-					value = manager.build(spec, type, path).load();
-				}
-				else
-				{
-					value = this.loadValue(proxy, method, path);
-				}
-				values.put(method.getName(), value);
-			}
-		}
-		
-		this.values = Collections.unmodifiableMap(values);
-	}
-	
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+	protected Optional<ConfigEntry> generate(Class<?> proxyClass, Object proxy, Method method)
 	{
-		var value = values.get(method.getName());
-		if(value instanceof ConfigInstance<?> config)
+		if(method.isAnnotationPresent(ConfigKey.class))
 		{
-			return config.config();
+			String key = method.getAnnotation(ConfigKey.class).value();
+			if(key.isEmpty())
+			{
+				key = NamingConventionHelper.fromCamelCaseToSnakeCase(method);
+			}
+			String path = this.path(key);
+			var type = method.getReturnType();
+			
+			Object value;
+			if(method.isAnnotationPresent(SubSection.class))
+			{
+				value = manager.build(type, new ConfigManagerArg(Optional.of(spec), path)).load();
+			}
+			else
+			{
+				value = this.loadValue(proxy, method, path);
+			}
+			return Optional.of(new ConfigEntry(value));
 		}
-		else if(value instanceof Supplier<?> supplier)
-		{
-			return supplier.get();
-		}
-		return value;
+		return Optional.empty();
 	}
 }

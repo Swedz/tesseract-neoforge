@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.config.annotation;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.swedz.tesseract.neoforge.config.IllegalConfigOptionException;
+import net.swedz.tesseract.neoforge.config.exception.IllegalConfigOptionException;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.annotation.Annotation;

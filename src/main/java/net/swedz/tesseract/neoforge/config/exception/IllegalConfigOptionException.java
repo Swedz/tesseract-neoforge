@@ -1,4 +1,4 @@
-package net.swedz.tesseract.neoforge.config;
+package net.swedz.tesseract.neoforge.config.exception;
 
 public class IllegalConfigOptionException extends RuntimeException
 {

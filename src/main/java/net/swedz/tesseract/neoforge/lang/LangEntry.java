@@ -3,13 +3,20 @@ package net.swedz.tesseract.neoforge.lang;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyEntry;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 
 import java.util.function.Supplier;
 
-public record LangEntry(String key, String defaultText, Supplier<Style> style, Supplier<Parser<?>>[] parsers)
+public record LangEntry(
+		String key,
+		String defaultText,
+		Supplier<Style> style,
+		Supplier<Parser<?>>[] parsers
+) implements InterfaceProxyEntry<Component>
 {
-	public MutableComponent toComponent(Object[] args)
+	@Override
+	public MutableComponent resolve(Object[] args)
 	{
 		Object[] parsedArgs = new Object[0];
 		if(args != null)

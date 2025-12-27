@@ -1,10 +1,11 @@
 package net.swedz.tesseract.neoforge.lang;
 
-import com.google.common.collect.Maps;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
+import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyHandler;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKey;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKeyPattern;
 import net.swedz.tesseract.neoforge.lang.annotation.Parsed;
@@ -13,30 +14,17 @@ import net.swedz.tesseract.neoforge.lang.exception.UndefinedParserException;
 import net.swedz.tesseract.neoforge.lang.exception.UndefinedStyleException;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 
-public final class LangHandler implements InvocationHandler
+public final class LangHandler extends InterfaceProxyHandler<Component, LangEntry>
 {
 	private final LangManager manager;
-	
-	private Map<String, LangEntry> values = Map.of();
 	
 	public LangHandler(LangManager manager)
 	{
 		this.manager = manager;
-	}
-	
-	public Collection<LangEntry> entries()
-	{
-		return values.values().stream()
-				.sorted(Comparator.comparing(LangEntry::key))
-				.toList();
 	}
 	
 	private String createLangKey(Class<?> langClass, Method method)
@@ -122,81 +110,26 @@ public final class LangHandler implements InvocationHandler
 		return parsers;
 	}
 	
-	void loadValues(Class<?> langClass, Object proxy)
-	{
-		Map<String, LangEntry> values = Maps.newHashMap();
-		
-		for(var method : langClass.getMethods())
-		{
-			if(method.isAnnotationPresent(LangKey.class))
-			{
-				var annotation = method.getAnnotation(LangKey.class);
-				var methodSignature = method.toGenericString();
-				if(method.getReturnType().equals(MutableComponent.class))
-				{
-					var key = this.createLangKey(langClass, method);
-					var style = this.getStyle(method.getAnnotation(WithStyle.class));
-					var parsers = this.getParsers(method);
-					var entry = new LangEntry(key, annotation.text().length == 0 ? null : annotation.text()[0], style, parsers);
-					if(values.put(methodSignature, entry) != null)
-					{
-						throw new IllegalStateException("Method with signature %s already exists.".formatted(methodSignature));
-					}
-				}
-				else
-				{
-					throw new IllegalStateException("Method %s does not return MutableComponent".formatted(methodSignature));
-				}
-			}
-		}
-		
-		this.values = Collections.unmodifiableMap(values);
-	}
-	
-	private static final Method METHOD_EQUALS, METHOD_HASHCODE, METHOD_TOSTRING;
-	
-	static
-	{
-		try
-		{
-			METHOD_EQUALS = Object.class.getDeclaredMethod("equals", Object.class);
-			METHOD_HASHCODE = Object.class.getDeclaredMethod("hashCode");
-			METHOD_TOSTRING = Object.class.getDeclaredMethod("toString");
-		}
-		catch (NoSuchMethodException ex)
-		{
-			throw new RuntimeException(ex);
-		}
-	}
-	
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+	protected Optional<LangEntry> generate(Class<?> proxyClass, Object proxy, Method method)
 	{
-		if(method.equals(METHOD_EQUALS))
+		if(method.isAnnotationPresent(LangKey.class))
 		{
-			return proxy == args[0];
-		}
-		else if(method.equals(METHOD_HASHCODE))
-		{
-			return System.identityHashCode(proxy);
-		}
-		else if(method.equals(METHOD_TOSTRING))
-		{
-			return proxy.getClass().getName() + "@" + Integer.toHexString(System.identityHashCode(proxy));
-		}
-		
-		var value = values.get(method.toGenericString());
-		if(value == null)
-		{
-			try
+			var annotation = method.getAnnotation(LangKey.class);
+			var methodSignature = method.toGenericString();
+			if(method.getReturnType().equals(MutableComponent.class))
 			{
-				return InvocationHandler.invokeDefault(proxy, method, args);
+				var key = this.createLangKey(proxyClass, method);
+				var style = this.getStyle(method.getAnnotation(WithStyle.class));
+				var parsers = this.getParsers(method);
+				var entry = new LangEntry(key, annotation.text().length == 0 ? null : annotation.text()[0], style, parsers);
+				return Optional.of(entry);
 			}
-			catch (Throwable ex)
+			else
 			{
-				throw new RuntimeException(ex);
+				throw new IllegalStateException("Method %s does not return MutableComponent".formatted(methodSignature));
 			}
 		}
-		return value.toComponent(args);
+		return Optional.empty();
 	}
 }

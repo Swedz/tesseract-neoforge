@@ -16,13 +16,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.api.WorldPos;
+import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyManager;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 
-import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public final class LangManager
+public final class LangManager extends InterfaceProxyManager<LangHandler>
 {
 	private final String modId;
 	
@@ -113,17 +113,21 @@ public final class LangManager
 		return parsers.get(new ParserKey(key, paramClass));
 	}
 	
-	public <L> LangInstance<L> build(Class<L> langClass)
+	@Override
+	protected <P> LangHandler createHandler(Class<P> proxyClass)
 	{
-		try
-		{
-			var handler = new LangHandler(this);
-			var proxy = (L) Proxy.newProxyInstance(langClass.getClassLoader(), new Class[]{langClass}, handler);
-			return new LangInstance<>(langClass, proxy, handler);
-		}
-		catch (Throwable ex)
-		{
-			throw new RuntimeException(ex);
-		}
+		return new LangHandler(this);
+	}
+	
+	@Override
+	protected <P> LangInstance<P> createInstance(Class<P> proxyClass, P proxy, LangHandler handler)
+	{
+		return new LangInstance<>(proxyClass, proxy, handler);
+	}
+	
+	@Override
+	public <P> LangInstance<P> build(Class<P> proxyClass)
+	{
+		return (LangInstance<P>) super.build(proxyClass);
 	}
 }
