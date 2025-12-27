@@ -35,7 +35,7 @@ dependencies {
 		compileOnly "dev.emi:emi-neoforge:${emi_version}"
 	}
 
-	if (project.runtime_include_mi.toBoolean()) {
+	/*if (project.runtime_include_mi.toBoolean()) {
 		localImplementation "aztech:Modern-Industrialization:${modern_industrialization_version}"
 		localImplementation "dev.technici4n:GrandPower:${grandpower_version}"
 		localImplementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
@@ -43,5 +43,5 @@ dependencies {
 		compileOnly "aztech:Modern-Industrialization:${modern_industrialization_version}"
 		compileOnly "dev.technici4n:GrandPower:${grandpower_version}"
 		compileOnly "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
-	}
+	}*/
 }

@@ -5,7 +5,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.swedz.tesseract.neoforge.Tesseract;
-import net.swedz.tesseract.neoforge.compat.mi.proxy.TesseractMIProxy;
 import net.swedz.tesseract.neoforge.proxy.Proxies;
 import net.swedz.tesseract.neoforge.proxy.builtin.TesseractProxy;
 
@@ -38,10 +37,10 @@ public final class TooltipHandler
 				else if(tooltip.requiresShift() && !hasPrintRequiredShift && maybeComponents.isPresent())
 				{
 					hasPrintRequiredShift = true;
-					if(Proxies.get(TesseractMIProxy.class).anyShiftTooltipsAreFor(stack, item))
+					/*if(Proxies.get(TesseractMIProxy.class).anyShiftTooltipsAreFor(stack, item))
 					{
 						continue;
-					}
+					}*/
 					lines.add(Tesseract.text().tooltipsShiftRequired());
 				}
 			}

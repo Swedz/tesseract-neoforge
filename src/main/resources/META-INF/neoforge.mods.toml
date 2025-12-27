@@ -15,8 +15,8 @@ displayURL = "${mod_github}"
 [[mixins]]
 config = "${mod_id}.mixins.json"
 
-[[mixins]]
-config = "${mod_id}_mi.mixins.json"
+#[[mixins]]
+#config = "${mod_id}_mi.mixins.json"
 
 [[mixins]]
 config = "${mod_id}_tyg.mixins.json"
