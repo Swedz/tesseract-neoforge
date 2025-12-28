@@ -11,6 +11,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.attribute.EnvironmentAttributeReader;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.flag.FeatureFlagSet;
@@ -41,7 +42,6 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-@SuppressWarnings("deprecation")
 public final class TrackingWorldGenLevel implements WorldGenLevel
 {
 	private final WorldGenLevel level;
@@ -116,9 +116,9 @@ public final class TrackingWorldGenLevel implements WorldGenLevel
 	}
 	
 	@Override
-	public void playSound(Player player, BlockPos pos, SoundEvent sound, SoundSource source, float volume, float pitch)
+	public void playSound(Entity entity, BlockPos blockPos, SoundEvent soundEvent, SoundSource soundSource, float volume, float pitch)
 	{
-		level.playSound(player, pos, sound, source, volume, pitch);
+		level.playSound(entity, blockPos, soundEvent, soundSource, volume, pitch);
 	}
 	
 	@Override
@@ -128,9 +128,9 @@ public final class TrackingWorldGenLevel implements WorldGenLevel
 	}
 	
 	@Override
-	public void levelEvent(Player player, int type, BlockPos pos, int data)
+	public void levelEvent(Entity entity, int type, BlockPos blockPos, int data)
 	{
-		level.levelEvent(player, type, pos, data);
+		level.levelEvent(entity, type, blockPos, data);
 	}
 	
 	@Override
@@ -251,6 +251,12 @@ public final class TrackingWorldGenLevel implements WorldGenLevel
 	public FeatureFlagSet enabledFeatures()
 	{
 		return level.enabledFeatures();
+	}
+	
+	@Override
+	public EnvironmentAttributeReader environmentAttributes()
+	{
+		return level.environmentAttributes();
 	}
 	
 	@Override

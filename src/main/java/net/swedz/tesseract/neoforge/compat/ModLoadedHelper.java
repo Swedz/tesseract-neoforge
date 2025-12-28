@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.compat;
 
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.loading.LoadingModList;
+import net.neoforged.fml.loading.FMLLoader;
 
 public final class ModLoadedHelper
 {
@@ -9,6 +9,6 @@ public final class ModLoadedHelper
 	{
 		return modId != null && !modId.isEmpty() && ModList.get() != null ?
 				ModList.get().isLoaded(modId) :
-				LoadingModList.get().getModFileById(modId) != null;
+				FMLLoader.getCurrent().getLoadingModList().getModFileById(modId) != null;
 	}
 }

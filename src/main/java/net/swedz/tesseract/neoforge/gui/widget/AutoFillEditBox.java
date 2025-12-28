@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import org.lwjgl.glfw.GLFW;
 
@@ -99,8 +100,9 @@ public class AutoFillEditBox extends EditBox
 	}
 	
 	@Override
-	public boolean keyPressed(int keyCode, int scanCode, int modifiers)
+	public boolean keyPressed(KeyEvent event)
 	{
+		var keyCode = event.key();
 		if(keyCode == GLFW.GLFW_KEY_UP)
 		{
 			highlightedOptionIndex = Math.max(0, highlightedOptionIndex - 1);
@@ -129,7 +131,7 @@ public class AutoFillEditBox extends EditBox
 			}
 			return true;
 		}
-		return super.keyPressed(keyCode, scanCode, modifiers);
+		return super.keyPressed(event);
 	}
 	
 	@Override

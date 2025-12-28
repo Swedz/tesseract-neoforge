@@ -29,19 +29,19 @@ repositories {
 }
 
 dependencies {
-	if (project.runtime_include_emi.toBoolean()) {
+	// TODO wait for EMI
+	/*if (project.runtime_include_emi.toBoolean()) {
 		localImplementation "dev.emi:emi-neoforge:${emi_version}"
 	} else {
 		compileOnly "dev.emi:emi-neoforge:${emi_version}"
-	}
+	}*/
 
+	// TODO wait for MI
 	/*if (project.runtime_include_mi.toBoolean()) {
 		localImplementation "aztech:Modern-Industrialization:${modern_industrialization_version}"
 		localImplementation "dev.technici4n:GrandPower:${grandpower_version}"
-		localImplementation "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 	} else {
 		compileOnly "aztech:Modern-Industrialization:${modern_industrialization_version}"
 		compileOnly "dev.technici4n:GrandPower:${grandpower_version}"
-		compileOnly "me.shedaniel.cloth:cloth-config-neoforge:${cloth_config_version}"
 	}*/
 }

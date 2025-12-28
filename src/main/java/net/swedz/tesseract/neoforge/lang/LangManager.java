@@ -6,8 +6,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -95,10 +95,10 @@ public final class LangManager extends InterfaceProxyManager<LangHandler>
 				.parser(ResourceKey.class, () -> Parser.RESOURCE_KEY::parse)
 				.parser(ItemStack.class, () -> Parser.ITEM_STACK)
 				.parser(Item.class, () -> Parser.ITEM)
-				.parser("item", ResourceLocation.class, () -> Parser.ITEM_ID)
+				.parser("item", Identifier.class, () -> Parser.ITEM_ID)
 				.parser(Block.class, () -> Parser.BLOCK)
 				.parser(BlockState.class, () -> Parser.BLOCK_STATE)
-				.parser("block", ResourceLocation.class, () -> Parser.BLOCK_ID)
+				.parser("block", Identifier.class, () -> Parser.BLOCK_ID)
 				.parser(Fluid.class, () -> Parser.FLUID)
 				.parser(EntityType.class, () -> Parser.ENTITY_TYPE)
 				.parser("keybind", String.class, () -> Parser.KEYBIND)

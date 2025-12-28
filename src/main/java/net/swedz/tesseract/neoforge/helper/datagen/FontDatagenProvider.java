@@ -6,9 +6,7 @@ import com.google.gson.JsonObject;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.minecraft.resources.Identifier;
 import net.swedz.tesseract.neoforge.api.Assert;
 
 import java.nio.file.Path;
@@ -17,34 +15,31 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class FontDatagenProvider implements DataProvider
 {
-	private final PackOutput         output;
-	private final ExistingFileHelper existingFileHelper;
-	private final String             modId, fontName;
+	private final PackOutput output;
+	private final String     modId, fontName;
 	
 	private final Map<Character, BitmapCharacterProvider> providers = Maps.newHashMap();
 	
-	public FontDatagenProvider(PackOutput output, ExistingFileHelper existingFileHelper, String modId, String fontName)
+	public FontDatagenProvider(PackOutput output, String modId, String fontName)
 	{
 		this.output = output;
-		this.existingFileHelper = existingFileHelper;
 		this.modId = modId;
 		this.fontName = fontName;
 	}
 	
 	protected abstract void addCharacters();
 	
-	public void addBitmap(char character, ResourceLocation file, int height, int ascent)
+	public void addBitmap(char character, Identifier file, int height, int ascent)
 	{
 		Assert.noneNull(character, file);
 		file = file.withPath("%s.png"::formatted);
-		Assert.that(existingFileHelper.exists(file.withPrefix("textures/"), PackType.CLIENT_RESOURCES), "Texture %s does not exist in any known resource pack".formatted(file));
 		if(providers.put(character, new BitmapCharacterProvider(file, height, ascent)) != null)
 		{
 			throw new IllegalStateException("Duplicate character " + character);
 		}
 	}
 	
-	public void addBitmap(char character, ResourceLocation file)
+	public void addBitmap(char character, Identifier file)
 	{
 		this.addBitmap(character, file, 7, 7);
 	}
@@ -80,10 +75,10 @@ public abstract class FontDatagenProvider implements DataProvider
 	
 	private static final class BitmapCharacterProvider
 	{
-		private final ResourceLocation file;
-		private final int              height, ascent;
+		private final Identifier file;
+		private final int        height, ascent;
 		
-		public BitmapCharacterProvider(ResourceLocation file, int height, int ascent)
+		public BitmapCharacterProvider(Identifier file, int height, int ascent)
 		{
 			this.file = file;
 			this.height = height;

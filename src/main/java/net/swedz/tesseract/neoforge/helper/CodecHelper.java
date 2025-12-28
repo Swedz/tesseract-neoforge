@@ -6,7 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.core.Registry;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -21,7 +21,7 @@ public final class CodecHelper
 	
 	public static <R> StreamCodec<ByteBuf, R> forRegistryStream(Registry<R> registry)
 	{
-		return ResourceLocation.STREAM_CODEC.map(registry::get, registry::getKey);
+		return Identifier.STREAM_CODEC.map(registry::getValue, registry::getKey);
 	}
 	
 	public static <E extends Enum<E>> Codec<E> forEnum(Class<E> enumClass, Supplier<E[]> values, boolean uppercase)

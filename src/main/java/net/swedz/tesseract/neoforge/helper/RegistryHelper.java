@@ -29,6 +29,6 @@ public final class RegistryHelper
 	 */
 	public static <T> Holder.Reference<T> holder(Registry<T> registry, T value)
 	{
-		return registry.getHolderOrThrow(resourceKey(registry, value));
+		return registry.getOrThrow(resourceKey(registry, value));
 	}
 }

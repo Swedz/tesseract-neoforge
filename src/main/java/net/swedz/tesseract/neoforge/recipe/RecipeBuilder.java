@@ -1,15 +1,24 @@
 package net.swedz.tesseract.neoforge.recipe;
 
 import net.minecraft.advancements.AdvancementHolder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 
 public abstract class RecipeBuilder implements RecipeOfferable
 {
+	protected final HolderGetter<Item> itemGetter;
+	
 	protected ItemStack result;
+	
+	public RecipeBuilder(HolderGetter<Item> itemGetter)
+	{
+		this.itemGetter = itemGetter;
+	}
 	
 	public ItemStack result()
 	{
@@ -27,18 +36,18 @@ public abstract class RecipeBuilder implements RecipeOfferable
 		return this.output(new ItemStack(result, count));
 	}
 	
-	public RecipeBuilder output(ResourceLocation result, int count)
+	public RecipeBuilder output(Identifier result, int count)
 	{
-		return this.output(BuiltInRegistries.ITEM.get(result), count);
+		return this.output(BuiltInRegistries.ITEM.getValue(result), count);
 	}
 	
 	public RecipeBuilder output(String result, int count)
 	{
-		return this.output(ResourceLocation.parse(result), count);
+		return this.output(Identifier.parse(result), count);
 	}
 	
 	@Override
-	public void offerTo(RecipeOutput recipeOutput, ResourceLocation location, AdvancementHolder advancement)
+	public void offerTo(RecipeOutput recipeOutput, Identifier location, AdvancementHolder advancement)
 	{
 		if(result == null)
 		{

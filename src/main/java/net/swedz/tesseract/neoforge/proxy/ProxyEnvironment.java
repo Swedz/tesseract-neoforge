@@ -16,7 +16,7 @@ public enum ProxyEnvironment
 	/**
 	 * The client proxy environment. Proxies with this environment will only be loaded if its on the client.
 	 */
-	CLIENT(FMLEnvironment.dist::isClient),
+	CLIENT(FMLEnvironment.getDist()::isClient),
 	/**
 	 * The mod proxy environment. Proxies with this environment will only be loaded if the mod with the id of {@link ProxyEntrypoint#modid()} is loaded.
 	 */

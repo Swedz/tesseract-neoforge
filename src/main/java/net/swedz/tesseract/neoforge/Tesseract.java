@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge;
 
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -28,9 +28,9 @@ public final class Tesseract
 	public static final String ID   = "tesseract_api";
 	public static final String NAME = "Tesseract API";
 	
-	public static ResourceLocation id(String path)
+	public static Identifier id(String path)
 	{
-		return ResourceLocation.fromNamespaceAndPath(ID, path);
+		return Identifier.fromNamespaceAndPath(ID, path);
 	}
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(NAME);
@@ -41,6 +41,7 @@ public final class Tesseract
 		
 		setupText();
 		
+		// TODO wait for MI
 		/*if(ModLoadedHelper.isLoaded("modern_industrialization"))
 		{
 			try
@@ -54,8 +55,8 @@ public final class Tesseract
 			MIHookTracker.registerRecipeCategoryForMachines(bus);
 		}*/
 		
-		bus.addListener(GatherDataEvent.class, (event) ->
-				event.getGenerator().addProvider(event.includeClient(), new LanguageDatagenProvider(event)));
+		bus.addListener(GatherDataEvent.Client.class, (event) ->
+				event.getGenerator().addProvider(true, new LanguageDatagenProvider(event)));
 		
 		NeoForge.EVENT_BUS.addListener(EntityTickEvent.Pre.class, (event) ->
 		{

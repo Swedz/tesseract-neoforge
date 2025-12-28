@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.vanilla.recipe;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +22,11 @@ public class SmeltingRecipeBuilder extends RecipeBuilder
 	protected float      experience;
 	protected boolean    blasting;
 	
+	public SmeltingRecipeBuilder(HolderGetter<Item> itemGetter)
+	{
+		super(itemGetter);
+	}
+	
 	public Ingredient input()
 	{
 		return input;
@@ -28,7 +34,7 @@ public class SmeltingRecipeBuilder extends RecipeBuilder
 	
 	public SmeltingRecipeBuilder input(Ingredient input)
 	{
-		if(input == null || input == Ingredient.EMPTY)
+		if(input == null || input.isEmpty())
 		{
 			throw new NullPointerException("Input ingredient cannot be null or empty");
 		}
@@ -41,24 +47,19 @@ public class SmeltingRecipeBuilder extends RecipeBuilder
 		return this.input(Ingredient.of(items));
 	}
 	
-	public SmeltingRecipeBuilder input(ItemStack... stacks)
-	{
-		return this.input(Ingredient.of(stacks));
-	}
-	
 	public SmeltingRecipeBuilder input(TagKey<Item> tag)
 	{
-		return this.input(Ingredient.of(tag));
+		return this.input(Ingredient.of(itemGetter.getOrThrow(tag)));
 	}
 	
-	public SmeltingRecipeBuilder input(ResourceLocation... itemIds)
+	public SmeltingRecipeBuilder input(Identifier... itemIds)
 	{
 		return this.input(RecipeHelper.ingredient(itemIds));
 	}
 	
 	public SmeltingRecipeBuilder input(String maybeTag)
 	{
-		return this.input(RecipeHelper.ingredient(maybeTag));
+		return this.input(RecipeHelper.ingredient(itemGetter, maybeTag));
 	}
 	
 	public int cookingTime()
@@ -105,7 +106,7 @@ public class SmeltingRecipeBuilder extends RecipeBuilder
 	@Override
 	public void validate()
 	{
-		if(input == null || input == Ingredient.EMPTY)
+		if(input == null || input.isEmpty())
 		{
 			throw new IllegalArgumentException("No input ingredient was provided");
 		}

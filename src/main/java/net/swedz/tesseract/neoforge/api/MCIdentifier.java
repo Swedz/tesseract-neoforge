@@ -1,8 +1,8 @@
 package net.swedz.tesseract.neoforge.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-public record MCIdentifier(ResourceLocation location, String englishName)
+public record MCIdentifier(Identifier location, String englishName)
 {
 	public String modId()
 	{

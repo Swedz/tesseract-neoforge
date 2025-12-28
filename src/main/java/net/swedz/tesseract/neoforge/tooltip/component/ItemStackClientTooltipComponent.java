@@ -7,7 +7,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 public record ItemStackClientTooltipComponent(ItemStackTooltipComponent component) implements ClientTooltipComponent
 {
 	@Override
-	public int getHeight()
+	public int getHeight(Font font)
 	{
 		return 20;
 	}
@@ -19,7 +19,7 @@ public record ItemStackClientTooltipComponent(ItemStackTooltipComponent componen
 	}
 	
 	@Override
-	public void renderImage(Font font, int mouseX, int mouseY, GuiGraphics graphics)
+	public void renderImage(Font font, int x, int y, int mouseX, int mouseY, GuiGraphics graphics)
 	{
 		var stack = component.stack();
 		graphics.renderItem(stack, mouseX, mouseY);

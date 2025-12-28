@@ -96,6 +96,6 @@ public record WorldPos(ResourceKey<Level> dimension, BlockPos pos)
 	@Override
 	public int hashCode()
 	{
-		return Objects.hash(dimension.registry(), dimension.location(), pos);
+		return Objects.hash(dimension.registry(), dimension.identifier(), pos);
 	}
 }

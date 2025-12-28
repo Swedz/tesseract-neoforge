@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -43,7 +43,7 @@ public final class PacketRegistry<P extends CustomPacket>
 			throw new IllegalStateException("Registry has already been registered, new packets cannot be created anymore.");
 		}
 		
-		CustomPacketPayload.Type type = new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(namespace, id));
+		CustomPacketPayload.Type type = new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(namespace, id));
 		registrations.add(new PacketRegistration<>(type, packetClass, packetCodec));
 		types.put(packetClass, type);
 	}

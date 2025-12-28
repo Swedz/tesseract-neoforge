@@ -3,8 +3,8 @@ package net.swedz.tesseract.neoforge.helper;
 import com.google.common.collect.Lists;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -14,14 +14,14 @@ import java.util.List;
 
 public final class TagHelper
 {
-	public static TagKey<Item> item(ResourceLocation location)
+	public static TagKey<Item> item(Identifier location)
 	{
 		return TagKey.create(BuiltInRegistries.ITEM.key(), location);
 	}
 	
 	public static TagKey<Item> itemCommon(String path)
 	{
-		return item(ResourceLocation.fromNamespaceAndPath("c", path));
+		return item(Identifier.fromNamespaceAndPath("c", path));
 	}
 	
 	public static List<TagKey<Item>> itemCommonWithChild(String path, String child)
@@ -29,14 +29,14 @@ public final class TagHelper
 		return Lists.newArrayList(itemCommon(path), itemCommon("%s/%s".formatted(path, child)));
 	}
 	
-	public static TagKey<Block> block(ResourceLocation location)
+	public static TagKey<Block> block(Identifier location)
 	{
 		return TagKey.create(BuiltInRegistries.BLOCK.key(), location);
 	}
 	
 	public static TagKey<Block> blockCommon(String path)
 	{
-		return block(ResourceLocation.fromNamespaceAndPath("c", path));
+		return block(Identifier.fromNamespaceAndPath("c", path));
 	}
 	
 	public static List<TagKey<Block>> blockCommonWithChild(String path, String child)

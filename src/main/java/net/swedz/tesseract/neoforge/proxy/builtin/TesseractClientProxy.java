@@ -1,7 +1,6 @@
 package net.swedz.tesseract.neoforge.proxy.builtin;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -49,18 +48,18 @@ public class TesseractClientProxy extends TesseractProxy
 	@Override
 	public boolean hasControlDown()
 	{
-		return Screen.hasControlDown();
+		return Minecraft.getInstance().hasControlDown();
 	}
 	
 	@Override
 	public boolean hasShiftDown()
 	{
-		return Screen.hasShiftDown();
+		return Minecraft.getInstance().hasShiftDown();
 	}
 	
 	@Override
 	public boolean hasAltDown()
 	{
-		return Screen.hasAltDown();
+		return Minecraft.getInstance().hasAltDown();
 	}
 }

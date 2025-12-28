@@ -3,10 +3,10 @@ package net.swedz.tesseract.neoforge.helper.model;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
+import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.InventoryMenu;
-import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
+import net.minecraft.data.AtlasIds;
+import net.minecraft.resources.Identifier;
 import net.swedz.tesseract.neoforge.api.Assert;
 
 import java.util.LinkedHashMap;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public final class ModelHelper
 {
-	public static LinkedHashMap<String, Material> gatherTextures(ResourceLocation atlas, JsonObject json, String name)
+	public static LinkedHashMap<String, Material> gatherTextures(Identifier atlas, JsonObject json, String name)
 	{
 		Assert.notNull(name);
 		if(json == null || !json.has(name))
@@ -24,17 +24,17 @@ public final class ModelHelper
 		LinkedHashMap<String, Material> textures = Maps.newLinkedHashMap();
 		for(var entry : json.getAsJsonObject(name).entrySet())
 		{
-			textures.put(entry.getKey(), new Material(atlas, ResourceLocation.parse(entry.getValue().getAsString())));
+			textures.put(entry.getKey(), new Material(atlas, Identifier.parse(entry.getValue().getAsString())));
 		}
 		return textures;
 	}
 	
 	public static LinkedHashMap<String, Material> gatherTextures(JsonObject json, String name)
 	{
-		return gatherTextures(InventoryMenu.BLOCK_ATLAS, json, name);
+		return gatherTextures(AtlasIds.BLOCKS, json, name);
 	}
 	
-	public static List<Material> gatherLayerTextures(ResourceLocation atlas, JsonObject json, String name)
+	public static List<Material> gatherLayerTextures(Identifier atlas, JsonObject json, String name)
 	{
 		Assert.notNull(name);
 		if(json == null || !json.has(name))
@@ -45,23 +45,23 @@ public final class ModelHelper
 		ImmutableList.Builder<Material> builder = ImmutableList.builder();
 		for(int index = 0; json.has("layer" + index); index++)
 		{
-			builder.add(new Material(atlas, ResourceLocation.parse(json.get("layer" + index).getAsString())));
+			builder.add(new Material(atlas, Identifier.parse(json.get("layer" + index).getAsString())));
 		}
 		return builder.build();
 	}
 	
 	public static List<Material> gatherLayerTextures(JsonObject json, String name)
 	{
-		return gatherLayerTextures(InventoryMenu.BLOCK_ATLAS, json, name);
+		return gatherLayerTextures(AtlasIds.BLOCKS, json, name);
 	}
 	
-	public static List<Material> gatherTextures(IGeometryBakingContext context)
+	public static List<Material> gatherTextures(TextureSlots textureSlots)
 	{
-		Assert.notNull(context);
+		Assert.notNull(textureSlots);
 		ImmutableList.Builder<Material> builder = ImmutableList.builder();
-		for(int index = 0; context.hasMaterial("layer" + index); index++)
+		for(int index = 0; textureSlots.getMaterial("layer" + index) != null; index++)
 		{
-			builder.add(context.getMaterial("layer" + index));
+			builder.add(textureSlots.getMaterial("layer" + index));
 		}
 		return builder.build();
 	}

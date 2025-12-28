@@ -2,7 +2,7 @@ package net.swedz.tesseract.neoforge.tooltip;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -28,7 +28,7 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 		return multilinesOptional(ItemFilter.of(itemLike), function);
 	}
 	
-	public static TooltipAttachment multilinesOptional(List<ResourceLocation> itemIds, TooltipFunction function)
+	public static TooltipAttachment multilinesOptional(List<Identifier> itemIds, TooltipFunction function)
 	{
 		return multilinesOptional(ItemFilter.of(itemIds), function);
 	}
@@ -48,7 +48,7 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 		return multilines(ItemFilter.of(itemLike), function);
 	}
 	
-	public static TooltipAttachment multilines(List<ResourceLocation> itemIds, TooltipContentFunction function)
+	public static TooltipAttachment multilines(List<Identifier> itemIds, TooltipContentFunction function)
 	{
 		return multilines(ItemFilter.of(itemIds), function);
 	}
@@ -68,7 +68,7 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 		return multilines(ItemFilter.of(itemLike), lines);
 	}
 	
-	public static TooltipAttachment multilines(List<ResourceLocation> itemIds, List<Component> lines)
+	public static TooltipAttachment multilines(List<Identifier> itemIds, List<Component> lines)
 	{
 		return multilines(ItemFilter.of(itemIds), lines);
 	}
@@ -93,7 +93,7 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 		return singleLineOptional(ItemFilter.of(itemLike), function);
 	}
 	
-	public static TooltipAttachment singleLineOptional(List<ResourceLocation> itemIds, SingleLineTooltipFunction function)
+	public static TooltipAttachment singleLineOptional(List<Identifier> itemIds, SingleLineTooltipFunction function)
 	{
 		return singleLineOptional(ItemFilter.of(itemIds), function);
 	}
@@ -113,7 +113,7 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 		return singleLine(ItemFilter.of(itemLike), function);
 	}
 	
-	public static TooltipAttachment singleLine(List<ResourceLocation> itemIds, SingleLineTooltipContentFunction function)
+	public static TooltipAttachment singleLine(List<Identifier> itemIds, SingleLineTooltipContentFunction function)
 	{
 		return singleLine(ItemFilter.of(itemIds), function);
 	}
@@ -133,7 +133,7 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 		return singleLine(ItemFilter.of(itemLike), line);
 	}
 	
-	public static TooltipAttachment singleLine(List<ResourceLocation> itemIds, Component line)
+	public static TooltipAttachment singleLine(List<Identifier> itemIds, Component line)
 	{
 		return singleLine(ItemFilter.of(itemIds), line);
 	}
@@ -194,7 +194,7 @@ public final class TooltipAttachment implements Comparable<TooltipAttachment>
 			return (stack, item) -> item == itemLike.asItem();
 		}
 		
-		static ItemFilter of(List<ResourceLocation> itemIds)
+		static ItemFilter of(List<Identifier> itemIds)
 		{
 			return (stack, item) -> itemIds.contains(BuiltInRegistries.ITEM.getKey(item));
 		}

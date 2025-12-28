@@ -2,7 +2,8 @@ package net.swedz.tesseract.neoforge.compat.vanilla.recipe;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -24,6 +25,11 @@ public class ShapedRecipeBuilder extends RecipeBuilder
 	protected final Map<Character, Ingredient> key     = Maps.newHashMap();
 	protected final List<String>               pattern = Lists.newArrayList();
 	
+	public ShapedRecipeBuilder(HolderGetter<Item> itemGetter)
+	{
+		super(itemGetter);
+	}
+	
 	public Map<Character, Ingredient> key()
 	{
 		return Collections.unmodifiableMap(key);
@@ -36,7 +42,7 @@ public class ShapedRecipeBuilder extends RecipeBuilder
 	
 	public ShapedRecipeBuilder define(char key, Ingredient ingredient)
 	{
-		if(ingredient == null || ingredient == Ingredient.EMPTY)
+		if(ingredient == null || ingredient.isEmpty())
 		{
 			throw new NullPointerException("Input ingredient cannot be null or empty");
 		}
@@ -52,24 +58,19 @@ public class ShapedRecipeBuilder extends RecipeBuilder
 		return this.define(key, Ingredient.of(items));
 	}
 	
-	public ShapedRecipeBuilder define(char key, ItemStack... stacks)
-	{
-		return this.define(key, Ingredient.of(stacks));
-	}
-	
 	public ShapedRecipeBuilder define(char key, TagKey<Item> tag)
 	{
-		return this.define(key, Ingredient.of(tag));
+		return this.define(key, Ingredient.of(itemGetter.getOrThrow(tag)));
 	}
 	
-	public ShapedRecipeBuilder define(char key, ResourceLocation... itemIds)
+	public ShapedRecipeBuilder define(char key, Identifier... itemIds)
 	{
 		return this.define(key, RecipeHelper.ingredient(itemIds));
 	}
 	
 	public ShapedRecipeBuilder define(char key, String maybeTag)
 	{
-		return this.define(key, RecipeHelper.ingredient(maybeTag));
+		return this.define(key, RecipeHelper.ingredient(itemGetter, maybeTag));
 	}
 	
 	public ShapedRecipeBuilder pattern(String line)

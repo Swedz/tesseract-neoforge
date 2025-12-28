@@ -1,6 +1,6 @@
 package net.swedz.tesseract.neoforge.helper;
 
-import net.neoforged.fml.loading.LoadingModList;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforgespi.language.IModFileInfo;
 import net.neoforged.neoforgespi.language.IModInfo;
 import net.neoforged.neoforgespi.language.ModFileScanData;
@@ -13,7 +13,7 @@ public final class ScanDataHelper
 {
 	public static List<ModFileScanData> getAllScanData()
 	{
-		return LoadingModList.get().getMods().stream()
+		return FMLLoader.getCurrent().getLoadingModList().getMods().stream()
 				.map(IModInfo::getOwningFile)
 				.filter(Objects::nonNull)
 				.map(IModFileInfo::getFile)

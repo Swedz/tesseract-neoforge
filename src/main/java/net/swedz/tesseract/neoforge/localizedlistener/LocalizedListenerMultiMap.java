@@ -46,13 +46,13 @@ public final class LocalizedListenerMultiMap
 			throw new RuntimeException("Could not remove element at position " + chunk + " as it does not exist.");
 		}
 		
-		if(listeners.size() == 0)
+		if(listeners.isEmpty())
 		{
 			listenerMap.remove(listenerClass);
-			if(listenerMap.size() == 0)
+			if(listenerMap.isEmpty())
 			{
 				chunkMap.remove(chunk);
-				if(chunkMap.size() == 0)
+				if(chunkMap.isEmpty())
 				{
 					storage.remove(level);
 				}

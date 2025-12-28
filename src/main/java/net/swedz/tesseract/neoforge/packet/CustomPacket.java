@@ -5,6 +5,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.function.Predicate;
@@ -15,7 +16,7 @@ public interface CustomPacket extends CustomPacketPayload
 	
 	default void sendToServer()
 	{
-		PacketDistributor.sendToServer(this);
+		ClientPacketDistributor.sendToServer(this);
 	}
 	
 	default void sendToClient(ServerPlayer player)

@@ -1,6 +1,5 @@
 package net.swedz.tesseract.neoforge.tooltip;
 
-import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.core.HolderLookup;
@@ -8,8 +7,9 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -36,15 +36,15 @@ public interface Parser<T>
 	BiParser<Float, Integer>                                  FLOAT_PERCENTAGE          = (value, precision) -> FLOAT.parse(value * 100, precision).copy().append("%");
 	BiParser<Float, Integer>                                  FLOAT_PERCENTAGE_SPACED   = (value, precision) -> FLOAT.parse(value * 100, precision).copy().append(" %");
 	
-	Parser<ResourceKey<?>>                                    RESOURCE_KEY              = (key) -> Component.translatable(Util.makeDescriptionId(key.registryKey().registryKey().registry().toShortLanguageKey(), key.location()));
+	Parser<ResourceKey<?>>                                    RESOURCE_KEY              = (key) -> Component.translatable(Util.makeDescriptionId(key.registryKey().registryKey().registry().toShortLanguageKey(), key.identifier()));
 	
 	Parser<ItemStack>                                         ITEM_STACK                = (stack) -> stack.getHoverName().copy();
 	Parser<Item>                                              ITEM                      = (item) -> ITEM_STACK.parse(item.getDefaultInstance());
-	Parser<ResourceLocation>                                  ITEM_ID                   = (id) -> ITEM.parse(BuiltInRegistries.ITEM.get(id));
+	Parser<Identifier>                                        ITEM_ID                   = (id) -> ITEM.parse(BuiltInRegistries.ITEM.getValue(id));
 	
 	Parser<Block>                                             BLOCK                     = Block::getName;
 	Parser<BlockState>                                        BLOCK_STATE               = (blockState) -> BLOCK.parse(blockState.getBlock());
-	Parser<ResourceLocation>                                  BLOCK_ID                  = (id) -> BLOCK.parse(BuiltInRegistries.BLOCK.get(id));
+	Parser<Identifier>                                        BLOCK_ID                  = (id) -> BLOCK.parse(BuiltInRegistries.BLOCK.getValue(id));
 	
 	Parser<Fluid>                                             FLUID                     = (fluid) -> fluid.getFluidType().getDescription();
 	
@@ -67,7 +67,7 @@ public interface Parser<T>
 	Parser<String>                                            KEYBIND                   = (key) -> Component.keybind("key.%s".formatted(key));
 	
 	Parser<BlockPos>                                          BLOCK_POS                 = (pos) -> Component.literal(pos.toShortString());
-	BiParser<ResourceKey<Level>, BlockPos>                    DIMENSION_POS             = (dimension, pos) -> Component.literal("%s (%s)".formatted(pos.toShortString(), dimension.location().toString()));
+	BiParser<ResourceKey<Level>, BlockPos>                    DIMENSION_POS             = (dimension, pos) -> Component.literal("%s (%s)".formatted(pos.toShortString(), dimension.identifier().toString()));
 	BiParser<Level, BlockPos>                                 LEVEL_POS                 = (level, pos) -> DIMENSION_POS.parse(level.dimension(), pos);
 	Parser<GlobalPos>                                         GLOBAL_POS                = (pos) -> DIMENSION_POS.parse(pos.dimension(), pos.pos());
 	Parser<WorldPos>                                          WORLD_POS                 = (pos) -> DIMENSION_POS.parse(pos.dimension(), pos.pos());

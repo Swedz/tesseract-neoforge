@@ -1,8 +1,9 @@
 package net.swedz.tesseract.neoforge.compat.vanilla.recipe;
 
 import com.google.common.collect.Lists;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.NonNullList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -21,6 +22,11 @@ public class ShapelessRecipeBuilder extends RecipeBuilder
 {
 	protected final List<Ingredient> input = Lists.newArrayList();
 	
+	public ShapelessRecipeBuilder(HolderGetter<Item> itemGetter)
+	{
+		super(itemGetter);
+	}
+	
 	public List<Ingredient> input()
 	{
 		return Collections.unmodifiableList(input);
@@ -28,7 +34,7 @@ public class ShapelessRecipeBuilder extends RecipeBuilder
 	
 	public ShapelessRecipeBuilder with(Ingredient ingredient)
 	{
-		if(ingredient == null || ingredient == Ingredient.EMPTY)
+		if(ingredient == null || ingredient.isEmpty())
 		{
 			throw new NullPointerException("Input ingredient cannot be null or empty");
 		}
@@ -41,24 +47,19 @@ public class ShapelessRecipeBuilder extends RecipeBuilder
 		return this.with(Ingredient.of(items));
 	}
 	
-	public ShapelessRecipeBuilder with(ItemStack... stacks)
-	{
-		return this.with(Ingredient.of(stacks));
-	}
-	
 	public ShapelessRecipeBuilder with(TagKey<Item> tag)
 	{
-		return this.with(Ingredient.of(tag));
+		return this.with(Ingredient.of(itemGetter.getOrThrow(tag)));
 	}
 	
-	public ShapelessRecipeBuilder with(ResourceLocation... itemIds)
+	public ShapelessRecipeBuilder with(Identifier... itemIds)
 	{
 		return this.with(RecipeHelper.ingredient(itemIds));
 	}
 	
 	public ShapelessRecipeBuilder with(String maybeTag)
 	{
-		return this.with(RecipeHelper.ingredient(maybeTag));
+		return this.with(RecipeHelper.ingredient(itemGetter, maybeTag));
 	}
 	
 	@Override

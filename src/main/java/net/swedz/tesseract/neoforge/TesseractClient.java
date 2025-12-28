@@ -6,11 +6,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import net.swedz.tesseract.neoforge.model.DynamicAtlasUnbakedModel;
 import net.swedz.tesseract.neoforge.tooltip.TooltipHandler;
 import net.swedz.tesseract.neoforge.tooltip.component.ItemStackClientTooltipComponent;
 import net.swedz.tesseract.neoforge.tooltip.component.ItemStackTooltipComponent;
@@ -31,9 +29,10 @@ public final class TesseractClient
 		event.register(ItemStackTooltipComponent.class, ItemStackClientTooltipComponent::new);
 	}
 	
-	@SubscribeEvent
+	// TODO 1.21.11
+	/*@SubscribeEvent
 	private static void registerModelLoaders(ModelEvent.RegisterGeometryLoaders event)
 	{
 		event.register(DynamicAtlasUnbakedModel.LOADER_ID, DynamicAtlasUnbakedModel.LOADER);
-	}
+	}*/
 }
