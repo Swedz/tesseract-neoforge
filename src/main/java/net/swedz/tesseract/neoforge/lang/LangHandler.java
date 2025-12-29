@@ -122,7 +122,7 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 				var key = this.createLangKey(proxyClass, method);
 				var style = this.getStyle(method.getAnnotation(WithStyle.class));
 				var parsers = this.getParsers(method);
-				var entry = new LangEntry(key, annotation.text().length == 0 ? null : annotation.text()[0], style, parsers);
+				var entry = new LangEntry(key, annotation.text().length == 0 ? null : annotation.text()[0], annotation.includeFallback(), style, parsers);
 				return Optional.of(entry);
 			}
 			else
