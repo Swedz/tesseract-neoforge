@@ -47,4 +47,14 @@ public @interface LangKey
 	 * @return the default text for the method
 	 */
 	String[] text() default {};
+	
+	/**
+	 * <p>Whether the translatable component should include the default text as fallback.</p>
+	 *
+	 * <p>This is helpful for when you may or may not have the language file distributed to all clients and want to
+	 * allow clients to override text in their own local resource pack.</p>
+	 *
+	 * @return true if the default text should be included on the component as fallback, false if not
+	 */
+	boolean includeFallback() default false;
 }

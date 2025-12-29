@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 public record LangEntry(
 		String key,
 		String defaultText,
+		boolean includeFallback,
 		Supplier<Style> style,
 		Supplier<Parser<?>>[] parsers
 ) implements InterfaceProxyEntry<Component>
@@ -29,6 +30,6 @@ public record LangEntry(
 				parsedArgs[index] = parsedArg;
 			}
 		}
-		return Component.translatable(key, parsedArgs).withStyle(style.get());
+		return Component.translatableWithFallback(key, includeFallback ? defaultText : null, parsedArgs).withStyle(style.get());
 	}
 }
