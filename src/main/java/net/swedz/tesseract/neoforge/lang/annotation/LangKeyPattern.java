@@ -16,4 +16,17 @@ public @interface LangKeyPattern
 	 * @return the prefix pattern
 	 */
 	String value() default "text.{}.";
+	
+	/**
+	 * <p>Whether the translatable component should include the default text as fallback.</p>
+	 *
+	 * <p>This is helpful for when you may or may not have the language file distributed to all clients and want to
+	 * allow clients to override text in their own local resource pack.</p>
+	 *
+	 * <p>When set, this will force all {@link LangKey#includeFallback()} values to be interpreted using this value.
+	 * When unspecified, the default behavior will be respected.</p>
+	 *
+	 * @return true if the default text should be included on the component as fallback, false if not
+	 */
+	boolean[] includeFallback() default {};
 }
