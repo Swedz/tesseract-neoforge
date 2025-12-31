@@ -110,6 +110,19 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 		return parsers;
 	}
 	
+	private static boolean includeFallback(Class<?> proxyClass, LangKey methodAnnotation)
+	{
+		if(proxyClass.isAnnotationPresent(LangKeyPattern.class))
+		{
+			var proxyAnnotation = proxyClass.getAnnotation(LangKeyPattern.class);
+			if(proxyAnnotation.includeFallback().length > 0)
+			{
+				return proxyAnnotation.includeFallback()[0];
+			}
+		}
+		return methodAnnotation.includeFallback();
+	}
+	
 	@Override
 	protected Optional<LangEntry> generate(Class<?> proxyClass, Object proxy, Method method)
 	{
@@ -122,7 +135,13 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 				var key = this.createLangKey(proxyClass, method);
 				var style = this.getStyle(method.getAnnotation(WithStyle.class));
 				var parsers = this.getParsers(method);
-				var entry = new LangEntry(key, annotation.text().length == 0 ? null : annotation.text()[0], annotation.includeFallback(), style, parsers);
+				var entry = new LangEntry(
+						key,
+						annotation.text().length == 0 ? null : annotation.text()[0],
+						includeFallback(proxyClass, annotation),
+						style,
+						parsers
+				);
 				return Optional.of(entry);
 			}
 			else
