@@ -149,7 +149,7 @@ public abstract class FontDatagenProvider implements DataProvider
 	public CompletableFuture<?> run(CachedOutput cachedOutput)
 	{
 		this.addProviders();
-		return !bitmapCharacters.isEmpty() ?
+		return !providers.isEmpty() ?
 				this.save(cachedOutput, output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(modId).resolve("font").resolve(fontName + ".json")) :
 				CompletableFuture.allOf();
 	}
