@@ -43,11 +43,6 @@ public abstract class FontDatagenProvider implements DataProvider
 		this.fontName = fontName;
 	}
 	
-	@Deprecated(forRemoval = true)
-	protected void addCharacters()
-	{
-	}
-	
 	protected abstract void addProviders();
 	
 	private static int[][] bitmapToCodepointMap(List<String> characters)
@@ -153,7 +148,6 @@ public abstract class FontDatagenProvider implements DataProvider
 	@Override
 	public CompletableFuture<?> run(CachedOutput cachedOutput)
 	{
-		this.addCharacters();
 		this.addProviders();
 		return !bitmapCharacters.isEmpty() ?
 				this.save(cachedOutput, output.getOutputFolder(PackOutput.Target.RESOURCE_PACK).resolve(modId).resolve("font").resolve(fontName + ".json")) :
