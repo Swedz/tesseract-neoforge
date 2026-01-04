@@ -13,9 +13,7 @@ import net.minecraft.client.gui.font.providers.ProviderReferenceDefinition;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.PackType;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import net.minecraft.resources.Identifier;
 import net.swedz.tesseract.neoforge.api.Assert;
 
 import java.nio.file.Path;
@@ -27,18 +25,16 @@ import java.util.concurrent.CompletableFuture;
 
 public abstract class FontDatagenProvider implements DataProvider
 {
-	private final PackOutput         output;
-	private final ExistingFileHelper existingFileHelper;
-	private final String             modId, fontName;
+	private final PackOutput output;
+	private final String     modId, fontName;
 	
 	private final List<GlyphProviderDefinition.Conditional> providers = Lists.newArrayList();
 	
 	private final Set<Character> bitmapCharacters = Sets.newHashSet();
 	
-	public FontDatagenProvider(PackOutput output, ExistingFileHelper existingFileHelper, String modId, String fontName)
+	public FontDatagenProvider(PackOutput output, String modId, String fontName)
 	{
 		this.output = output;
-		this.existingFileHelper = existingFileHelper;
 		this.modId = modId;
 		this.fontName = fontName;
 	}
@@ -56,12 +52,11 @@ public abstract class FontDatagenProvider implements DataProvider
 		return codepoints;
 	}
 	
-	public void addBitmap(List<String> characters, ResourceLocation file, int height, int ascent, FontOption.Filter condition)
+	public void addBitmap(List<String> characters, Identifier file, int height, int ascent, FontOption.Filter condition)
 	{
 		Assert.noneNull(characters, file);
 		
 		file = file.withPath("%s.png"::formatted);
-		Assert.that(existingFileHelper.exists(file.withPrefix("textures/"), PackType.CLIENT_RESOURCES), "Texture %s does not exist in any known resource pack".formatted(file));
 		
 		for(var characterRow : characters)
 		{
@@ -78,37 +73,37 @@ public abstract class FontDatagenProvider implements DataProvider
 		this.add(definition, condition);
 	}
 	
-	public void addBitmap(List<String> characters, ResourceLocation file, int height, int ascent)
+	public void addBitmap(List<String> characters, Identifier file, int height, int ascent)
 	{
 		this.addBitmap(characters, file, height, ascent, null);
 	}
 	
-	public void addBitmap(char character, ResourceLocation file, int height, int ascent, FontOption.Filter condition)
+	public void addBitmap(char character, Identifier file, int height, int ascent, FontOption.Filter condition)
 	{
 		this.addBitmap(List.of(String.valueOf(character)), file, height, ascent, condition);
 	}
 	
-	public void addBitmap(char character, ResourceLocation file, int height, int ascent)
+	public void addBitmap(char character, Identifier file, int height, int ascent)
 	{
 		this.addBitmap(character, file, height, ascent, null);
 	}
 	
-	public void addBitmap(char character, ResourceLocation file, FontOption.Filter condition)
+	public void addBitmap(char character, Identifier file, FontOption.Filter condition)
 	{
 		this.addBitmap(character, file, 7, 7, condition);
 	}
 	
-	public void addBitmap(char character, ResourceLocation file)
+	public void addBitmap(char character, Identifier file)
 	{
 		this.addBitmap(character, file, null);
 	}
 	
-	public void addReference(ResourceLocation id, FontOption.Filter condition)
+	public void addReference(Identifier id, FontOption.Filter condition)
 	{
 		this.add(new ProviderReferenceDefinition(id), condition);
 	}
 	
-	public void addReference(ResourceLocation id)
+	public void addReference(Identifier id)
 	{
 		this.add(new ProviderReferenceDefinition(id), null);
 	}
