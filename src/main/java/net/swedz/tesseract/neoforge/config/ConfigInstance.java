@@ -17,6 +17,12 @@ public record ConfigInstance<C>(
 		return proxy;
 	}
 	
+	public ConfigInstance<C> register(ModContainer container, ModConfig.Type type, String fileName)
+	{
+		container.registerConfig(type, handler.spec(), fileName);
+		return this;
+	}
+	
 	public ConfigInstance<C> register(ModContainer container, ModConfig.Type type)
 	{
 		container.registerConfig(type, handler.spec());
