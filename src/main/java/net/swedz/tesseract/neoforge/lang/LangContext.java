@@ -65,7 +65,7 @@ public final class LangContext
 	{
 		var present = annotations.get(type);
 		return present == null ?
-				(A[]) new Object[0] :
+				(A[]) new Annotation[0] :
 				(A[]) Arrays.copyOf(present, present.length);
 	}
 	
