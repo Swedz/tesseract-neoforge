@@ -170,7 +170,7 @@ public final class LangManager extends InterfaceProxyManager<LangHandler>
 		{
 			if(key.equals("default"))
 			{
-				parser = ParserProvider.simple(() -> Parser.OBJECT);
+				parser = ParserProvider.simple(Parser.OBJECT);
 			}
 			else
 			{
