@@ -2,7 +2,6 @@ package net.swedz.tesseract.neoforge.lang;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
 import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyHandler;
@@ -10,13 +9,13 @@ import net.swedz.tesseract.neoforge.lang.annotation.LangKey;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKeyPattern;
 import net.swedz.tesseract.neoforge.lang.annotation.Parsed;
 import net.swedz.tesseract.neoforge.lang.annotation.WithStyle;
-import net.swedz.tesseract.neoforge.lang.exception.UndefinedParserException;
-import net.swedz.tesseract.neoforge.lang.exception.UndefinedStyleException;
-import net.swedz.tesseract.neoforge.tooltip.Parser;
+import net.swedz.tesseract.neoforge.lang.parser.LangEntryParser;
+import net.swedz.tesseract.neoforge.lang.parser.ParserProvider;
+import net.swedz.tesseract.neoforge.lang.style.LangEntryStyle;
+import net.swedz.tesseract.neoforge.lang.style.StyleProvider;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public final class LangHandler extends InterfaceProxyHandler<Component, LangEntry>
 {
@@ -48,23 +47,16 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 		return prefix + key;
 	}
 	
-	private Supplier<Style> getStyle(WithStyle annotationStyle)
+	private StyleProvider getStyle(WithStyle annotationStyle)
 	{
-		if(annotationStyle != null)
-		{
-			var style = manager.getStyle(annotationStyle.value());
-			if(style == null)
-			{
-				throw new UndefinedStyleException(annotationStyle.value());
-			}
-			return style;
-		}
-		return manager.getStyle("default");
+		return annotationStyle != null ?
+				manager.getStyle(annotationStyle.value()) :
+				manager.getStyle("default");
 	}
 	
-	private Supplier<Parser<?>>[] getParsers(Method method)
+	private LangEntryParser[] getParsers(Method method)
 	{
-		Supplier<Parser<?>>[] parsers = new Supplier[method.getParameterCount()];
+		LangEntryParser[] parsers = new LangEntryParser[method.getParameterCount()];
 		for(int index = 0; index < method.getParameterCount(); index++)
 		{
 			var param = method.getParameters()[index];
@@ -82,30 +74,21 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 			}
 			
 			var parser = manager.getParser(parserKey, paramType);
-			if(parser == null)
-			{
-				if(parserKey.equals("default"))
-				{
-					parser = () -> Parser.OBJECT;
-				}
-				else
-				{
-					throw new UndefinedParserException(parserKey);
-				}
-			}
 			
 			if(param.isAnnotationPresent(WithStyle.class))
 			{
 				var annotationStyle = param.getAnnotation(WithStyle.class);
-				final Supplier<Parser> finalParser = parser::get;
-				parser = () -> (value) ->
+				final ParserProvider finalParser = parser;
+				parser = (context, value) ->
 				{
 					var style = this.getStyle(annotationStyle);
-					return finalParser.get().parse(value).copy().withStyle(style == null ? null : style.get());
+					return finalParser.parse(context, value).copy().withStyle(style == null ? null : style.get(context));
 				};
 			}
 			
-			parsers[index] = parser;
+			var context = LangContext.of(param, manager::getStyle, manager::getParser);
+			
+			parsers[index] = new LangEntryParser(context, parser);
 		}
 		return parsers;
 	}
@@ -139,7 +122,7 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 						key,
 						annotation.text().length == 0 ? null : annotation.text()[0],
 						includeFallback(proxyClass, annotation),
-						style,
+						new LangEntryStyle(LangContext.of(method, manager::getStyle, manager::getParser), style),
 						parsers
 				);
 				return Optional.of(entry);

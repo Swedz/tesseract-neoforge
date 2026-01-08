@@ -2,18 +2,16 @@ package net.swedz.tesseract.neoforge.lang;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
 import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyEntry;
-import net.swedz.tesseract.neoforge.tooltip.Parser;
-
-import java.util.function.Supplier;
+import net.swedz.tesseract.neoforge.lang.parser.LangEntryParser;
+import net.swedz.tesseract.neoforge.lang.style.LangEntryStyle;
 
 public record LangEntry(
 		String key,
 		String defaultText,
 		boolean includeFallback,
-		Supplier<Style> style,
-		Supplier<Parser<?>>[] parsers
+		LangEntryStyle style,
+		LangEntryParser[] parsers
 ) implements InterfaceProxyEntry<Component>
 {
 	@Override
@@ -26,7 +24,7 @@ public record LangEntry(
 			for(int index = 0; index < args.length; index++)
 			{
 				var arg = args[index];
-				var parsedArg = ((Parser) parsers[index].get()).parse(arg);
+				var parsedArg = parsers[index].parse(arg);
 				parsedArgs[index] = parsedArg;
 			}
 		}
