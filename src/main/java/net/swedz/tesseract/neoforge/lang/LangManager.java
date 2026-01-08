@@ -17,6 +17,10 @@ import net.minecraft.world.level.material.Fluid;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.api.WorldPos;
 import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyManager;
+import net.swedz.tesseract.neoforge.lang.exception.UndefinedParserException;
+import net.swedz.tesseract.neoforge.lang.exception.UndefinedStyleException;
+import net.swedz.tesseract.neoforge.lang.parser.ParserProvider;
+import net.swedz.tesseract.neoforge.lang.style.StyleProvider;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 
 import java.util.Map;
@@ -26,8 +30,8 @@ public final class LangManager extends InterfaceProxyManager<LangHandler>
 {
 	private final String modId;
 	
-	private final Map<String, Supplier<Style>>        styles  = Maps.newHashMap();
-	private final Map<ParserKey, Supplier<Parser<?>>> parsers = Maps.newHashMap();
+	private final Map<String, StyleProvider>        styles  = Maps.newHashMap();
+	private final Map<ParserKey, ParserProvider<?>> parsers = Maps.newHashMap();
 	
 	private record ParserKey(String key, Class<?> paramClass)
 	{
@@ -37,9 +41,9 @@ public final class LangManager extends InterfaceProxyManager<LangHandler>
 	{
 		this.modId = modId;
 		
-		this.style(() -> Style.EMPTY);
+		this.style(Style.EMPTY);
 		
-		this.parser(Component.class, () -> Parser.COMPONENT);
+		this.parser(Component.class, Parser.COMPONENT);
 	}
 	
 	String modId()
@@ -47,16 +51,37 @@ public final class LangManager extends InterfaceProxyManager<LangHandler>
 		return modId;
 	}
 	
-	public LangManager style(String key, Supplier<Style> style)
+	public LangManager style(String key, StyleProvider style)
 	{
 		Assert.noneNull(key, style);
 		styles.put(key, style);
 		return this;
 	}
 	
-	public LangManager style(Supplier<Style> style)
+	public LangManager style(StyleProvider style)
 	{
 		return this.style("default", style);
+	}
+	
+	public LangManager style(String key, Supplier<Style> style)
+	{
+		return this.style(key, StyleProvider.simple(style));
+	}
+	
+	public LangManager style(String key, Style style)
+	{
+		return this.style(key, StyleProvider.simple(style));
+	}
+	
+	public LangManager style(Supplier<Style> style)
+	{
+		return this.style(StyleProvider.simple(style));
+	}
+	
+	public LangManager style(Style style)
+	{
+		Assert.noneNull(style);
+		return this.style(StyleProvider.simple(style));
 	}
 	
 	public LangManager builtinColorStyles()
@@ -65,52 +90,95 @@ public final class LangManager extends InterfaceProxyManager<LangHandler>
 		{
 			if(formatting.isColor())
 			{
-				this.style(formatting.getName().toLowerCase(), () -> Style.EMPTY.withColor(formatting).withItalic(false));
+				this.style(formatting.getName().toLowerCase(), Style.EMPTY.withColor(formatting).withItalic(false));
 			}
 		}
 		return this;
 	}
 	
-	Supplier<Style> getStyle(String key)
+	StyleProvider getStyle(String key)
 	{
 		Assert.notNull(key);
-		return styles.get(key);
+		
+		var style = styles.get(key);
+		
+		if(style == null)
+		{
+			throw new UndefinedStyleException(key);
+		}
+		
+		return style;
+	}
+	
+	public <T> LangManager parser(String key, Class<T> paramClass, ParserProvider<T> parser)
+	{
+		Assert.noneNull(key, paramClass, parser);
+		parsers.put(new ParserKey(key, paramClass), parser);
+		return this;
+	}
+	
+	public <T> LangManager parser(Class<T> paramClass, ParserProvider<T> parser)
+	{
+		return this.parser("default", paramClass, parser);
 	}
 	
 	public <T> LangManager parser(String key, Class<T> paramClass, Supplier<Parser<T>> parser)
 	{
-		Assert.noneNull(key, paramClass, parser);
-		parsers.put(new ParserKey(key, paramClass), parser::get);
-		return this;
+		return this.parser(key, paramClass, ParserProvider.simple(parser));
 	}
 	
 	public <T> LangManager parser(Class<T> paramClass, Supplier<Parser<T>> parser)
 	{
-		return this.parser("default", paramClass, parser);
+		return this.parser(paramClass, ParserProvider.simple(parser));
+	}
+	
+	public <T> LangManager parser(String key, Class<T> paramClass, Parser<T> parser)
+	{
+		return this.parser(key, paramClass, ParserProvider.simple(parser));
+	}
+	
+	public <T> LangManager parser(Class<T> paramClass, Parser<T> parser)
+	{
+		return this.parser(paramClass, ParserProvider.simple(parser));
 	}
 	
 	public LangManager builtinParsers()
 	{
 		return this
-				.parser(ResourceKey.class, () -> Parser.RESOURCE_KEY::parse)
-				.parser(ItemStack.class, () -> Parser.ITEM_STACK)
-				.parser(Item.class, () -> Parser.ITEM)
-				.parser("item", ResourceLocation.class, () -> Parser.ITEM_ID)
-				.parser(Block.class, () -> Parser.BLOCK)
-				.parser(BlockState.class, () -> Parser.BLOCK_STATE)
-				.parser("block", ResourceLocation.class, () -> Parser.BLOCK_ID)
-				.parser(Fluid.class, () -> Parser.FLUID)
-				.parser(EntityType.class, () -> Parser.ENTITY_TYPE)
-				.parser("keybind", String.class, () -> Parser.KEYBIND)
-				.parser(BlockPos.class, () -> Parser.BLOCK_POS)
-				.parser(GlobalPos.class, () -> Parser.GLOBAL_POS)
-				.parser(WorldPos.class, () -> Parser.WORLD_POS);
+				.parser(ResourceKey.class, Parser.RESOURCE_KEY::parse)
+				.parser(ItemStack.class, Parser.ITEM_STACK)
+				.parser(Item.class, Parser.ITEM)
+				.parser("item", ResourceLocation.class, Parser.ITEM_ID)
+				.parser(Block.class, Parser.BLOCK)
+				.parser(BlockState.class, Parser.BLOCK_STATE)
+				.parser("block", ResourceLocation.class, Parser.BLOCK_ID)
+				.parser(Fluid.class, Parser.FLUID)
+				.parser(EntityType.class, Parser.ENTITY_TYPE)
+				.parser("keybind", String.class, Parser.KEYBIND)
+				.parser(BlockPos.class, Parser.BLOCK_POS)
+				.parser(GlobalPos.class, Parser.GLOBAL_POS)
+				.parser(WorldPos.class, Parser.WORLD_POS);
 	}
 	
-	Supplier<Parser<?>> getParser(String key, Class<?> paramClass)
+	ParserProvider<?> getParser(String key, Class<?> paramClass)
 	{
 		Assert.noneNull(key, paramClass);
-		return parsers.get(new ParserKey(key, paramClass));
+		
+		var parser = parsers.get(new ParserKey(key, paramClass));
+		
+		if(parser == null)
+		{
+			if(key.equals("default"))
+			{
+				parser = ParserProvider.simple(() -> Parser.OBJECT);
+			}
+			else
+			{
+				throw new UndefinedParserException(key);
+			}
+		}
+		
+		return parser;
 	}
 	
 	@Override
