@@ -229,6 +229,12 @@ public final class LangManager extends InterfaceProxyManager<LangHandler>
 		return this.placeholder(block, PlaceholderProvider.simple(provider));
 	}
 	
+	public <T extends PlaceholderFilter & PlaceholderProvider> LangManager placeholder(T placeholder)
+	{
+		Assert.notNull(placeholder);
+		return this.placeholder(placeholder, placeholder);
+	}
+	
 	private void annotatedPlaceholder(LangInstance<?> instance, Method method, PlaceholderKey placeholderKey)
 	{
 		var key = placeholderKey.value();
