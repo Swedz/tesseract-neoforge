@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.lang;
 
+import com.google.common.collect.Lists;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.swedz.tesseract.neoforge.api.Assert;
@@ -11,11 +12,15 @@ import net.swedz.tesseract.neoforge.lang.annotation.Parsed;
 import net.swedz.tesseract.neoforge.lang.annotation.WithStyle;
 import net.swedz.tesseract.neoforge.lang.parser.LangEntryParser;
 import net.swedz.tesseract.neoforge.lang.parser.ParserProvider;
+import net.swedz.tesseract.neoforge.lang.placeholder.LangEntryPlaceholder;
 import net.swedz.tesseract.neoforge.lang.style.LangEntryStyle;
 import net.swedz.tesseract.neoforge.lang.style.StyleProvider;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class LangHandler extends InterfaceProxyHandler<Component, LangEntry>
 {
@@ -93,7 +98,7 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 		return parsers;
 	}
 	
-	private static boolean includeFallback(Class<?> proxyClass, LangKey methodAnnotation)
+	private static boolean includeFallback(Class<?> proxyClass, LangKey langKey)
 	{
 		if(proxyClass.isAnnotationPresent(LangKeyPattern.class))
 		{
@@ -103,7 +108,88 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 				return proxyAnnotation.includeFallback()[0];
 			}
 		}
-		return methodAnnotation.includeFallback();
+		return langKey.includeFallback();
+	}
+	
+	private static final Pattern PLACEHOLDER_BLOCK_PATTERN = Pattern.compile("""
+			(\\\\<(?<escaped>[^<>]+)\\\\>)\
+			|\
+			((?<!\\\\)<(?<block>[^<>]+)(?<!\\\\)>)\
+			|\
+			(%(\\$\\d+)?[sdf])""");
+	
+	private record PlaceholdersResult(
+			String text,
+			LangEntryPlaceholder[] providers
+	)
+	{
+	}
+	
+	private static String replaceInString(String full, String insert, int start, int end)
+	{
+		return full.substring(0, start) + insert + full.substring(end);
+	}
+	
+	private static Matcher rematch(String updatedText, int index)
+	{
+		var matcher = PLACEHOLDER_BLOCK_PATTERN.matcher(updatedText);
+		matcher.find(index);
+		return matcher;
+	}
+	
+	private PlaceholdersResult getPlaceholders(Method method, LangKey langKey)
+	{
+		if(langKey.text().length == 0 ||
+		   !langKey.placeholders())
+		{
+			return new PlaceholdersResult(null, new LangEntryPlaceholder[method.getParameterCount()]);
+		}
+		
+		var context = LangContext.of(method, manager::getStyle, manager::getParser);
+		
+		var text = langKey.text()[0];
+		var replacedText = text;
+		
+		List<LangEntryPlaceholder> placeholders = Lists.newArrayList();
+		
+		var matcher = PLACEHOLDER_BLOCK_PATTERN.matcher(text);
+		while(matcher.find())
+		{
+			var escapedBlock = matcher.group("escaped");
+			if(escapedBlock != null)
+			{
+				int startIndex = matcher.start("escaped");
+				int endIndex = matcher.end("escaped");
+				replacedText = replaceInString(replacedText, "<" + escapedBlock + ">", startIndex - 2, endIndex + 2);
+				
+				matcher = rematch(replacedText, startIndex - 2);
+				
+				continue;
+			}
+			
+			var block = matcher.group("block");
+			if(block != null)
+			{
+				var placeholder = manager.getPlaceholder(block);
+				if(placeholder.isEmpty())
+				{
+					continue;
+				}
+				placeholders.add(new LangEntryPlaceholder(context, block, placeholder.get()));
+				
+				int startIndex = matcher.start("block");
+				int endIndex = matcher.end("block");
+				replacedText = replaceInString(replacedText, "%s", startIndex - 1, endIndex + 1);
+				
+				matcher = rematch(replacedText, startIndex - 1);
+			}
+			else
+			{
+				placeholders.add(null);
+			}
+		}
+		
+		return new PlaceholdersResult(replacedText, placeholders.toArray(LangEntryPlaceholder[]::new));
 	}
 	
 	@Override
@@ -111,19 +197,21 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 	{
 		if(method.isAnnotationPresent(LangKey.class))
 		{
-			var annotation = method.getAnnotation(LangKey.class);
+			var langKey = method.getAnnotation(LangKey.class);
 			var methodSignature = method.toGenericString();
 			if(method.getReturnType().equals(MutableComponent.class))
 			{
 				var key = this.createLangKey(proxyClass, method);
 				var style = this.getStyle(method.getAnnotation(WithStyle.class));
 				var parsers = this.getParsers(method);
+				var placeholders = this.getPlaceholders(method, langKey);
 				var entry = new LangEntry(
 						key,
-						annotation.text().length == 0 ? null : annotation.text()[0],
-						includeFallback(proxyClass, annotation),
+						placeholders.text(),
+						includeFallback(proxyClass, langKey),
 						new LangEntryStyle(LangContext.of(method, manager::getStyle, manager::getParser), style),
-						parsers
+						parsers,
+						placeholders.providers()
 				);
 				return Optional.of(entry);
 			}

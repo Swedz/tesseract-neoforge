@@ -1,10 +1,12 @@
 package net.swedz.tesseract.neoforge.lang;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.GlobalPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -17,21 +19,30 @@ import net.minecraft.world.level.material.Fluid;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.api.WorldPos;
 import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyManager;
+import net.swedz.tesseract.neoforge.lang.annotation.PlaceholderKey;
 import net.swedz.tesseract.neoforge.lang.exception.UndefinedParserException;
 import net.swedz.tesseract.neoforge.lang.exception.UndefinedStyleException;
 import net.swedz.tesseract.neoforge.lang.parser.ParserProvider;
+import net.swedz.tesseract.neoforge.lang.placeholder.Placeholder;
+import net.swedz.tesseract.neoforge.lang.placeholder.PlaceholderFilter;
+import net.swedz.tesseract.neoforge.lang.placeholder.PlaceholderProvider;
 import net.swedz.tesseract.neoforge.lang.style.StyleProvider;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public final class LangManager extends InterfaceProxyManager<LangHandler>
 {
 	private final String modId;
 	
-	private final Map<String, StyleProvider>        styles  = Maps.newHashMap();
-	private final Map<ParserKey, ParserProvider<?>> parsers = Maps.newHashMap();
+	private final Map<String, StyleProvider>        styles       = Maps.newHashMap();
+	private final Map<ParserKey, ParserProvider<?>> parsers      = Maps.newHashMap();
+	private final Set<Placeholder>                  placeholders = Sets.newHashSet();
 	
 	private record ParserKey(String key, Class<?> paramClass)
 	{
@@ -181,6 +192,98 @@ public final class LangManager extends InterfaceProxyManager<LangHandler>
 		return parser;
 	}
 	
+	public LangManager placeholder(PlaceholderFilter filter, PlaceholderProvider provider)
+	{
+		Assert.noneNull(filter, provider);
+		placeholders.add(new Placeholder(filter, provider));
+		return this;
+	}
+	
+	public LangManager placeholder(PlaceholderFilter filter, Component component)
+	{
+		Assert.noneNull(filter, component);
+		return this.placeholder(filter, PlaceholderProvider.simple(component));
+	}
+	
+	public LangManager placeholder(PlaceholderFilter filter, Supplier<Component> provider)
+	{
+		Assert.noneNull(filter, provider);
+		return this.placeholder(filter, PlaceholderProvider.simple(provider));
+	}
+	
+	public LangManager placeholder(String block, PlaceholderProvider provider)
+	{
+		Assert.noneNull(block, provider);
+		return this.placeholder((check) -> check.equals(block), provider);
+	}
+	
+	public LangManager placeholder(String block, Component component)
+	{
+		Assert.noneNull(block, component);
+		return this.placeholder(block, PlaceholderProvider.simple(component));
+	}
+	
+	public LangManager placeholder(String block, Supplier<Component> provider)
+	{
+		Assert.noneNull(block, provider);
+		return this.placeholder(block, PlaceholderProvider.simple(provider));
+	}
+	
+	private void annotatedPlaceholder(LangInstance<?> instance, Method method, PlaceholderKey placeholderKey)
+	{
+		var key = placeholderKey.value();
+		this.placeholder(key, () ->
+		{
+			try
+			{
+				return (MutableComponent) method.invoke(instance.proxy());
+			}
+			catch (IllegalAccessException | InvocationTargetException ex)
+			{
+				throw new RuntimeException(ex);
+			}
+		});
+	}
+	
+	private void includeAnnotatedPlaceholders(LangInstance<?> instance)
+	{
+		for(var method : instance.proxyClass().getMethods())
+		{
+			if(method.isAnnotationPresent(PlaceholderKey.class))
+			{
+				var methodSignature = method.toGenericString();
+				
+				if(!method.getReturnType().equals(MutableComponent.class))
+				{
+					throw new IllegalStateException("Method %s does not return MutableComponent".formatted(methodSignature));
+				}
+				
+				if(method.getParameterCount() > 0)
+				{
+					throw new IllegalStateException("Method with signature %s is annotated with @PlaceholderKey but has parameters".formatted(methodSignature));
+				}
+				
+				var placeholderKey = method.getAnnotation(PlaceholderKey.class);
+				this.annotatedPlaceholder(instance, method, placeholderKey);
+			}
+		}
+	}
+	
+	Optional<Placeholder> getPlaceholder(String block)
+	{
+		Assert.notNull(block);
+		
+		for(var placeholder : placeholders)
+		{
+			if(placeholder.test(block))
+			{
+				return Optional.of(placeholder);
+			}
+		}
+		
+		return Optional.empty();
+	}
+	
 	@Override
 	protected <P> LangHandler createHandler(Class<P> proxyClass)
 	{
@@ -196,6 +299,8 @@ public final class LangManager extends InterfaceProxyManager<LangHandler>
 	@Override
 	public <P> LangInstance<P> build(Class<P> proxyClass)
 	{
-		return (LangInstance<P>) super.build(proxyClass);
+		var instance = (LangInstance<P>) super.build(proxyClass);
+		this.includeAnnotatedPlaceholders(instance);
+		return instance;
 	}
 }

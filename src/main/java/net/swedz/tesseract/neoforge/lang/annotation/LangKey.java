@@ -39,7 +39,8 @@ public @interface LangKey
 	String key() default "";
 	
 	/**
-	 * <p>Defines the default text for the method. This is purely used for datagen.</p>
+	 * <p>Defines the default text for the method. This is used for datagen and the fallback parameter if
+	 * {@link #includeFallback()} or {@link LangKeyPattern#includeFallback()} is true.</p>
 	 *
 	 * <p>Note that this is an array type simply so an empty string can be provided for a text value. Any strings
 	 * beyond index 0 will be ignored.</p>
@@ -47,6 +48,13 @@ public @interface LangKey
 	 * @return the default text for the method
 	 */
 	String[] text() default {};
+	
+	/**
+	 * <p>Whether placeholders should be applied to this language entry.</p>
+	 *
+	 * @return true if placeholders should be used, false otherwise
+	 */
+	boolean placeholders() default true;
 	
 	/**
 	 * <p>Whether the translatable component should include the default text as fallback.</p>
