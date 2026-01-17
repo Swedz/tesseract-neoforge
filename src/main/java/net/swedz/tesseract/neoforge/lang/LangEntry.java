@@ -4,6 +4,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyEntry;
 import net.swedz.tesseract.neoforge.lang.parser.LangEntryParser;
+import net.swedz.tesseract.neoforge.lang.placeholder.LangEntryPlaceholder;
 import net.swedz.tesseract.neoforge.lang.style.LangEntryStyle;
 
 public record LangEntry(
@@ -11,21 +12,31 @@ public record LangEntry(
 		String defaultText,
 		boolean includeFallback,
 		LangEntryStyle style,
-		LangEntryParser[] parsers
+		LangEntryParser[] parsers,
+		LangEntryPlaceholder[] placeholders
 ) implements InterfaceProxyEntry<Component>
 {
 	@Override
 	public MutableComponent resolve(Object[] args)
 	{
-		Object[] parsedArgs = new Object[0];
-		if(args != null)
+		Object[] parsedArgs = new Object[placeholders.length];
+		int argIndex = 0;
+		for(int placeholderIndex = 0; placeholderIndex < placeholders.length; placeholderIndex++)
 		{
-			parsedArgs = new Object[args.length];
-			for(int index = 0; index < args.length; index++)
+			var placeholder = placeholders[placeholderIndex];
+			if(placeholder == null)
 			{
-				var arg = args[index];
-				var parsedArg = parsers[index].parse(arg);
-				parsedArgs[index] = parsedArg;
+				if(args != null)
+				{
+					var arg = args[argIndex];
+					var parsedArg = parsers[argIndex].parse(arg);
+					parsedArgs[placeholderIndex] = parsedArg;
+					argIndex++;
+				}
+			}
+			else
+			{
+				parsedArgs[placeholderIndex] = placeholder.resolve();
 			}
 		}
 		return Component.translatableWithFallback(key, includeFallback ? defaultText : null, parsedArgs).withStyle(style.get());
