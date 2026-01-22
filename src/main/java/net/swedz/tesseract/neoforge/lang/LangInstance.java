@@ -21,14 +21,30 @@ public record LangInstance<L>(
 		return this;
 	}
 	
-	public void datagen(LanguageProvider provider)
+	private static void datagen(LangHandler handler, LanguageProvider provider)
 	{
 		for(var entry : handler.entries())
 		{
-			if(entry.defaultText() != null)
+			if(entry instanceof LangEntry.SubSection subSection)
 			{
-				provider.add(entry.key(), entry.defaultText());
+				datagen(subSection.handler(), provider);
+			}
+			else if(entry instanceof LangEntry.Text text)
+			{
+				if(text.defaultText() != null)
+				{
+					provider.add(text.key(), text.defaultText());
+				}
+			}
+			else
+			{
+				throw new UnsupportedOperationException();
 			}
 		}
+	}
+	
+	public void datagen(LanguageProvider provider)
+	{
+		datagen(handler, provider);
 	}
 }

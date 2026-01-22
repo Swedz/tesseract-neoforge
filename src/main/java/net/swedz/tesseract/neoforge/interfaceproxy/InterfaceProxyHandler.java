@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class InterfaceProxyHandler<R, E extends InterfaceProxyEntry<R>> implements InvocationHandler
+public abstract class InterfaceProxyHandler<E extends InterfaceProxyEntry<?>> implements InvocationHandler
 {
 	private Map<String, E> values = Map.of();
 	

@@ -7,38 +7,53 @@ import net.swedz.tesseract.neoforge.lang.parser.LangEntryParser;
 import net.swedz.tesseract.neoforge.lang.placeholder.LangEntryPlaceholder;
 import net.swedz.tesseract.neoforge.lang.style.LangEntryStyle;
 
-public record LangEntry(
-		String key,
-		String defaultText,
-		boolean includeFallback,
-		LangEntryStyle style,
-		LangEntryParser[] parsers,
-		LangEntryPlaceholder[] placeholders
-) implements InterfaceProxyEntry<Component>
+public interface LangEntry<R> extends InterfaceProxyEntry<R>
 {
-	@Override
-	public MutableComponent resolve(Object[] args)
+	record SubSection(
+			LangHandler handler,
+			Object instance
+	) implements LangEntry<Object>
 	{
-		Object[] parsedArgs = new Object[placeholders.length];
-		int argIndex = 0;
-		for(int placeholderIndex = 0; placeholderIndex < placeholders.length; placeholderIndex++)
+		@Override
+		public Object resolve(Object[] args)
 		{
-			var placeholder = placeholders[placeholderIndex];
-			if(placeholder == null)
+			return instance;
+		}
+	}
+	
+	record Text(
+			String key,
+			String defaultText,
+			boolean includeFallback,
+			LangEntryStyle style,
+			LangEntryParser[] parsers,
+			LangEntryPlaceholder[] placeholders
+	) implements LangEntry<Component>
+	{
+		@Override
+		public MutableComponent resolve(Object[] args)
+		{
+			Object[] parsedArgs = new Object[placeholders.length];
+			int argIndex = 0;
+			for(int placeholderIndex = 0; placeholderIndex < placeholders.length; placeholderIndex++)
 			{
-				if(args != null)
+				var placeholder = placeholders[placeholderIndex];
+				if(placeholder == null)
 				{
-					var arg = args[argIndex];
-					var parsedArg = parsers[argIndex].parse(arg);
-					parsedArgs[placeholderIndex] = parsedArg;
-					argIndex++;
+					if(args != null)
+					{
+						var arg = args[argIndex];
+						var parsedArg = parsers[argIndex].parse(arg);
+						parsedArgs[placeholderIndex] = parsedArg;
+						argIndex++;
+					}
+				}
+				else
+				{
+					parsedArgs[placeholderIndex] = placeholder.resolve();
 				}
 			}
-			else
-			{
-				parsedArgs[placeholderIndex] = placeholder.resolve();
-			}
+			return Component.translatableWithFallback(key, includeFallback ? defaultText : null, parsedArgs).withStyle(style.get());
 		}
-		return Component.translatableWithFallback(key, includeFallback ? defaultText : null, parsedArgs).withStyle(style.get());
 	}
 }
