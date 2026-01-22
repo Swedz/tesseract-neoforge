@@ -1,7 +1,6 @@
 package net.swedz.tesseract.neoforge.lang;
 
 import com.google.common.collect.Lists;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
@@ -9,6 +8,7 @@ import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyHandler;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKey;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKeyPattern;
 import net.swedz.tesseract.neoforge.lang.annotation.Parsed;
+import net.swedz.tesseract.neoforge.lang.annotation.TextSubSection;
 import net.swedz.tesseract.neoforge.lang.annotation.WithStyle;
 import net.swedz.tesseract.neoforge.lang.parser.LangEntryParser;
 import net.swedz.tesseract.neoforge.lang.parser.ParserProvider;
@@ -22,13 +22,23 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class LangHandler extends InterfaceProxyHandler<Component, LangEntry>
+public final class LangHandler extends InterfaceProxyHandler<LangEntry<?>>
 {
 	private final LangManager manager;
+	
+	private String subSectionPrefix = "";
 	
 	public LangHandler(LangManager manager)
 	{
 		this.manager = manager;
+	}
+	
+	private void setSubSectionPrefix(String subSectionPrefix)
+	{
+		Assert.notNull(subSectionPrefix);
+		subSectionPrefix = subSectionPrefix.trim();
+		Assert.that(!subSectionPrefix.isBlank(), "TextSubSection must be provided");
+		this.subSectionPrefix = subSectionPrefix + ".";
 	}
 	
 	private String createLangKey(Class<?> langClass, Method method)
@@ -45,6 +55,7 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 				langClass.getAnnotation(LangKeyPattern.class).value() :
 				"text.{}.";
 		prefix = prefix.replace("{}", manager.modId());
+		prefix += subSectionPrefix;
 		
 		var key = !annotation.key().isEmpty() ?
 				annotation.key() :
@@ -193,19 +204,33 @@ public final class LangHandler extends InterfaceProxyHandler<Component, LangEntr
 	}
 	
 	@Override
-	protected Optional<LangEntry> generate(Class<?> proxyClass, Object proxy, Method method)
+	protected Optional<LangEntry<?>> generate(Class<?> proxyClass, Object proxy, Method method)
 	{
-		if(method.isAnnotationPresent(LangKey.class))
+		var methodSignature = method.toGenericString();
+		if(method.isAnnotationPresent(TextSubSection.class))
+		{
+			var textSubSection = method.getAnnotation(TextSubSection.class);
+			var section = textSubSection.value();
+			if(section.isEmpty())
+			{
+				section = NamingConventionHelper.fromCamelCaseToSnakeCase(method);
+			}
+			
+			var instance = manager.build(method.getReturnType());
+			instance.handler().setSubSectionPrefix(subSectionPrefix + section);
+			instance.load();
+			return Optional.of(new LangEntry.SubSection(instance.handler(), instance.lang()));
+		}
+		else if(method.isAnnotationPresent(LangKey.class))
 		{
 			var langKey = method.getAnnotation(LangKey.class);
-			var methodSignature = method.toGenericString();
 			if(method.getReturnType().equals(MutableComponent.class))
 			{
 				var key = this.createLangKey(proxyClass, method);
 				var style = this.getStyle(method.getAnnotation(WithStyle.class));
 				var parsers = this.getParsers(method);
 				var placeholders = this.getPlaceholders(method, langKey);
-				var entry = new LangEntry(
+				var entry = new LangEntry.Text(
 						key,
 						placeholders.text(),
 						includeFallback(proxyClass, langKey),
