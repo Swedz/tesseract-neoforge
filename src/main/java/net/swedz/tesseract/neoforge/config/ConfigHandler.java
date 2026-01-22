@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public final class ConfigHandler extends InterfaceProxyHandler<Object, ConfigEntry>
+public final class ConfigHandler extends InterfaceProxyHandler<ConfigEntry>
 {
 	private final ConfigManager manager;
 	private final ModConfigSpec spec;
