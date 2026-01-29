@@ -9,9 +9,8 @@
         "event.FarmlandLoseMoistureEventMixin",
         "event.ItemHurtEventMixin",
         "event.PlayerInventoryChangeEventMixin",
-        "event.treegrowth.FeaturePlaceContextGrowthEventMixin",
-        "event.treegrowth.HugeFungusFeatureAndAbstractHugeMushroomFeatureTreeGrowthEventMixin",
-        "event.treegrowth.TreeFeatureTreeGrowthEventMixin"
+        "event.treegrowth.TreeGrowthFeatureTestCacheMixin",
+        "event.treegrowth.TreeGrowthEventMixin"
     ],
     "client": [],
     "injectors": {
