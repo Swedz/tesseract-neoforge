@@ -1,5 +1,5 @@
 {
-    "net/minecraft/world/level/levelgen/feature/FeaturePlaceContext": [
-        "net/swedz/tesseract/neoforge/event/treegrowth/FeaturePlacedBlockTracker"
+    "net/minecraft/world/level/levelgen/feature/Feature": [
+        "net/swedz/tesseract/neoforge/event/treegrowth/TreeGrowthFeatureTestCache"
     ]
 }
