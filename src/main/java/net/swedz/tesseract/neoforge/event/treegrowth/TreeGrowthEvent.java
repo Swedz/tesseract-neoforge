@@ -3,7 +3,7 @@ package net.swedz.tesseract.neoforge.event.treegrowth;
 import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -20,23 +20,23 @@ public final class TreeGrowthEvent extends BlockEvent
 	/**
 	 * <p>Defines identifiers for features that should be considered trees for the sake of {@link TreeGrowthEvent}.</p>
 	 */
-	private static final Set<ResourceLocation> TREE_FEATURE_IDS = Set.of(
+	private static final Set<Identifier> TREE_FEATURE_IDS = Set.of(
 			// Vanilla tree features
-			ResourceLocation.withDefaultNamespace("tree"),
-			ResourceLocation.withDefaultNamespace("huge_fungus"),
-			ResourceLocation.withDefaultNamespace("huge_brown_mushroom"),
-			ResourceLocation.withDefaultNamespace("huge_red_mushroom"),
+			Identifier.withDefaultNamespace("tree"),
+			Identifier.withDefaultNamespace("huge_fungus"),
+			Identifier.withDefaultNamespace("huge_brown_mushroom"),
+			Identifier.withDefaultNamespace("huge_red_mushroom"),
 			// Oh The Trees You'll Grow (Oh The Biomes You'll Go)
-			ResourceLocation.fromNamespaceAndPath("ohthetreesyoullgrow", "tree_from_nbt_v1"),
-			ResourceLocation.fromNamespaceAndPath("ohthetreesyoullgrow", "tree_from_nbt_v2"),
+			Identifier.fromNamespaceAndPath("ohthetreesyoullgrow", "tree_from_nbt_v1"),
+			Identifier.fromNamespaceAndPath("ohthetreesyoullgrow", "tree_from_nbt_v2"),
 			// Regions Unexplored has some tree features that don't use RuTreeConfiguration so we need to include them manually
-			ResourceLocation.fromNamespaceAndPath("regions_unexplored", "small_yellow_bioshroom"),
-			ResourceLocation.fromNamespaceAndPath("regions_unexplored", "cobalt_tree"),
-			ResourceLocation.fromNamespaceAndPath("regions_unexplored", "large_joshua_tree"),
-			ResourceLocation.fromNamespaceAndPath("regions_unexplored", "medium_joshua_tree"),
-			ResourceLocation.fromNamespaceAndPath("regions_unexplored", "small_socotra_tree"),
-			ResourceLocation.fromNamespaceAndPath("regions_unexplored", "brim_willow"),
-			ResourceLocation.fromNamespaceAndPath("regions_unexplored", "tall_brim_willow")
+			Identifier.fromNamespaceAndPath("regions_unexplored", "small_yellow_bioshroom"),
+			Identifier.fromNamespaceAndPath("regions_unexplored", "cobalt_tree"),
+			Identifier.fromNamespaceAndPath("regions_unexplored", "large_joshua_tree"),
+			Identifier.fromNamespaceAndPath("regions_unexplored", "medium_joshua_tree"),
+			Identifier.fromNamespaceAndPath("regions_unexplored", "small_socotra_tree"),
+			Identifier.fromNamespaceAndPath("regions_unexplored", "brim_willow"),
+			Identifier.fromNamespaceAndPath("regions_unexplored", "tall_brim_willow")
 	);
 	
 	/**
