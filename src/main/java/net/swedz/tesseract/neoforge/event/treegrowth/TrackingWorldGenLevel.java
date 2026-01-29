@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.event.treegrowth;
 
+import com.google.common.collect.Sets;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -38,7 +39,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.ticks.LevelTickAccess;
 import net.swedz.tesseract.neoforge.api.Assert;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -48,11 +51,25 @@ public final class TrackingWorldGenLevel implements WorldGenLevel
 	
 	private final Consumer<BlockPos> onSetBlock;
 	
+	private final Set<BlockPos> modifiedBlocks = Sets.newConcurrentHashSet();
+	
 	public TrackingWorldGenLevel(WorldGenLevel level, Consumer<BlockPos> onSetBlock)
 	{
 		Assert.noneNull(level, onSetBlock);
 		this.level = level;
 		this.onSetBlock = onSetBlock;
+	}
+	
+	public TrackingWorldGenLevel(WorldGenLevel level)
+	{
+		this(level, (pos) ->
+		{
+		});
+	}
+	
+	public Set<BlockPos> getModifiedBlockPositions()
+	{
+		return Collections.unmodifiableSet(modifiedBlocks);
 	}
 	
 	@Override
@@ -276,7 +293,9 @@ public final class TrackingWorldGenLevel implements WorldGenLevel
 	{
 		if(level.setBlock(pos, state, flags, recursionLeft))
 		{
-			onSetBlock.accept(pos.immutable());
+			var immutablePos = pos.immutable();
+			modifiedBlocks.add(immutablePos);
+			onSetBlock.accept(immutablePos);
 			return true;
 		}
 		return false;
