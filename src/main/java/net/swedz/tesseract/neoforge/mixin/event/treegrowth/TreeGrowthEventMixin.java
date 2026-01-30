@@ -29,13 +29,18 @@ public class TreeGrowthEventMixin
 			)
 	)
 	private WorldGenLevel place(WorldGenLevel level,
+								@Local(argsOnly = true) FeatureConfiguration configuration,
 								@Share("trackingLevel") LocalRef<TrackingWorldGenLevel> trackingLevelReference)
 	{
 		if(!(level instanceof WorldGenRegion))
 		{
-			var trackingLevel = new TrackingWorldGenLevel(level);
-			trackingLevelReference.set(trackingLevel);
-			return trackingLevel;
+			var feature = (Feature) (Object) this;
+			if(TreeGrowthEvent.shouldPostEventFor(feature, configuration))
+			{
+				var trackingLevel = new TrackingWorldGenLevel(level);
+				trackingLevelReference.set(trackingLevel);
+				return trackingLevel;
+			}
 		}
 		return level;
 	}
@@ -52,7 +57,6 @@ public class TreeGrowthEventMixin
 			FeaturePlaceContext<FeatureConfiguration> context,
 			Operation<Boolean> original,
 			@Local(argsOnly = true) WorldGenLevel level,
-			@Local(argsOnly = true) FeatureConfiguration configuration,
 			@Local(argsOnly = true) BlockPos origin,
 			@Share("trackingLevel") LocalRef<TrackingWorldGenLevel> trackingLevelReference
 	)
@@ -63,17 +67,13 @@ public class TreeGrowthEventMixin
 			var trackingLevel = trackingLevelReference.get();
 			if(trackingLevel != null)
 			{
-				var feature = (Feature) (Object) this;
-				if(TreeGrowthEvent.shouldPostEventFor(feature, configuration))
-				{
-					var event = new TreeGrowthEvent(
-							level,
-							origin,
-							level.getBlockState(origin),
-							trackingLevel.getModifiedBlockPositions()
-					);
-					NeoForge.EVENT_BUS.post(event);
-				}
+				var event = new TreeGrowthEvent(
+						level,
+						origin,
+						level.getBlockState(origin),
+						trackingLevel.getModifiedBlockPositions()
+				);
+				NeoForge.EVENT_BUS.post(event);
 			}
 		}
 		return result;
