@@ -64,6 +64,11 @@ public final class TreeGrowthEvent extends BlockEvent
 	{
 		var featureId = BuiltInRegistries.FEATURE.getKey(feature);
 		
+		if(featureId == null)
+		{
+			return false;
+		}
+		
 		if(TREE_FEATURE_IDS.contains(featureId))
 		{
 			return true;
