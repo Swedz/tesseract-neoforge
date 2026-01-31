@@ -9,6 +9,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.StonecutterRecipe;
 import net.minecraft.world.level.ItemLike;
+import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.helper.RecipeHelper;
 import net.swedz.tesseract.neoforge.recipe.RecipeBuilder;
 
@@ -28,10 +29,7 @@ public class StonecutterRecipeBuilder extends RecipeBuilder
 	
 	public StonecutterRecipeBuilder input(Ingredient input)
 	{
-		if(input == null || input.isEmpty())
-		{
-			throw new NullPointerException("Input ingredient cannot be null or empty");
-		}
+		Assert.notNull(input);
 		this.input = input;
 		return this;
 	}

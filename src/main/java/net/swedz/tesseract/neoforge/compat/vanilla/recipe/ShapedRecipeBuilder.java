@@ -13,6 +13,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
+import net.swedz.tesseract.neoforge.api.Assert;
 import net.swedz.tesseract.neoforge.helper.RecipeHelper;
 import net.swedz.tesseract.neoforge.recipe.RecipeBuilder;
 
@@ -42,10 +43,7 @@ public class ShapedRecipeBuilder extends RecipeBuilder
 	
 	public ShapedRecipeBuilder define(char key, Ingredient ingredient)
 	{
-		if(ingredient == null || ingredient.isEmpty())
-		{
-			throw new NullPointerException("Input ingredient cannot be null or empty");
-		}
+		Assert.noneNull(key, ingredient);
 		if(this.key.put(key, ingredient) != null)
 		{
 			throw new IllegalStateException("Key mapping is already registered: " + key);
