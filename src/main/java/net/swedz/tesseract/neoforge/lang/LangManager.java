@@ -23,6 +23,7 @@ import net.swedz.tesseract.neoforge.lang.annotation.PlaceholderKey;
 import net.swedz.tesseract.neoforge.lang.exception.UndefinedParserException;
 import net.swedz.tesseract.neoforge.lang.exception.UndefinedStyleException;
 import net.swedz.tesseract.neoforge.lang.parser.ParserProvider;
+import net.swedz.tesseract.neoforge.lang.parser.parser.DecimalParser;
 import net.swedz.tesseract.neoforge.lang.placeholder.Placeholder;
 import net.swedz.tesseract.neoforge.lang.placeholder.PlaceholderFilter;
 import net.swedz.tesseract.neoforge.lang.placeholder.PlaceholderProvider;
@@ -168,7 +169,12 @@ public final class LangManager extends InterfaceProxyManager<LangHandler>
 				.parser("keybind", String.class, Parser.KEYBIND)
 				.parser(BlockPos.class, Parser.BLOCK_POS)
 				.parser(GlobalPos.class, Parser.GLOBAL_POS)
-				.parser(WorldPos.class, Parser.WORLD_POS);
+				.parser(WorldPos.class, Parser.WORLD_POS)
+				
+				.parser(float.class, new DecimalParser<>())
+				.parser(double.class, new DecimalParser<>())
+				.parser(Float.class, new DecimalParser<>())
+				.parser(Double.class, new DecimalParser<>());
 	}
 	
 	ParserProvider<?> getParser(String key, Class<?> paramClass)
