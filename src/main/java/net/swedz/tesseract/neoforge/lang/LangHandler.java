@@ -127,7 +127,7 @@ public final class LangHandler extends InterfaceProxyHandler<LangEntry<?>>
 			|\
 			((?<!\\\\)<(?<block>[^<>]+)(?<!\\\\)>)\
 			|\
-			(%(\\$\\d+)?[sdf])""");
+			(%(\\d+\\$)?.?[0-9a-zA-Z]+)""");
 	
 	private record PlaceholdersResult(
 			String text,
