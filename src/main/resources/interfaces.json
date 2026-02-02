@@ -1,5 +1,8 @@
 {
     "net/minecraft/world/level/levelgen/feature/Feature": [
         "net/swedz/tesseract/neoforge/event/treegrowth/TreeGrowthFeatureTestCache"
+    ],
+    "net/minecraft/world/level/Level": [
+        "net/swedz/tesseract/neoforge/event/treegrowth/TrackBlockChangesExtension"
     ]
 }
