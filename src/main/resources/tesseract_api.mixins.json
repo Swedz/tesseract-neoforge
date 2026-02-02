@@ -9,8 +9,9 @@
         "event.FarmlandLoseMoistureEventMixin",
         "event.ItemHurtEventMixin",
         "event.PlayerInventoryChangeEventMixin",
-        "event.treegrowth.TreeGrowthFeatureTestCacheMixin",
-        "event.treegrowth.TreeGrowthEventMixin"
+        "event.treegrowth.LevelTrackBlockChangesExtensionMixin",
+        "event.treegrowth.TreeGrowthEventMixin",
+        "event.treegrowth.TreeGrowthFeatureTestCacheMixin"
     ],
     "client": [],
     "injectors": {
