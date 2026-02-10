@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.data.AtlasIds;
 import net.minecraft.resources.Identifier;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
 
 import java.util.LinkedHashMap;
 import java.util.List;

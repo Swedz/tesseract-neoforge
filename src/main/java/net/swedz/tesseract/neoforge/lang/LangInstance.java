@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.lang;
 
 import net.neoforged.neoforge.common.data.LanguageProvider;
-import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyInstance;
+import net.swedz.tesseract.interfaceproxy.InterfaceProxyInstance;
 
 public record LangInstance<L>(
 		Class<L> proxyClass,

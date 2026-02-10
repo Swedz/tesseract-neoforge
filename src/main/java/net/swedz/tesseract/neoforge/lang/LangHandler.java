@@ -2,9 +2,9 @@ package net.swedz.tesseract.neoforge.lang;
 
 import com.google.common.collect.Lists;
 import net.minecraft.network.chat.MutableComponent;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
+import net.swedz.tesseract.interfaceproxy.InterfaceProxyHandler;
 import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
-import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyHandler;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKey;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKeyPattern;
 import net.swedz.tesseract.neoforge.lang.annotation.Parsed;

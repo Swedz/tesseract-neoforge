@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.lang.style;
 
 import net.minecraft.network.chat.Style;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.neoforge.lang.LangContext;
 
 import java.util.function.Supplier;

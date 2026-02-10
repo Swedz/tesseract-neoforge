@@ -11,7 +11,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
 import net.swedz.tesseract.neoforge.event.ItemHurtEvent;
 import net.swedz.tesseract.neoforge.item.ArmorTickHandler;

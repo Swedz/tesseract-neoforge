@@ -2,7 +2,7 @@ package net.swedz.tesseract.neoforge.lang;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyEntry;
+import net.swedz.tesseract.interfaceproxy.InterfaceProxyEntry;
 import net.swedz.tesseract.neoforge.lang.parser.LangEntryParser;
 import net.swedz.tesseract.neoforge.lang.placeholder.LangEntryPlaceholder;
 import net.swedz.tesseract.neoforge.lang.style.LangEntryStyle;
