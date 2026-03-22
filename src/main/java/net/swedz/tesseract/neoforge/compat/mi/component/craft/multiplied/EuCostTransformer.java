@@ -46,7 +46,7 @@ public abstract class EuCostTransformer
 		@Override
 		public long transform(MultipliedCrafterComponent crafter, long eu, long bonusEu)
 		{
-			return (long) (((eu * crafter.getRecipeMultiplier()) + bonusEu) * percentage.get());
+			return (long) ((eu * crafter.getRecipeMultiplier() * percentage.get()) + bonusEu);
 		}
 		
 		@Override
