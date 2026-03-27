@@ -3,7 +3,7 @@ package net.swedz.tesseract.neoforge.mixin.event;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.block.FarmBlock;
+import net.minecraft.world.level.block.FarmlandBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.common.NeoForge;
 import net.swedz.tesseract.neoforge.event.FarmlandLoseMoistureEvent;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(FarmBlock.class)
+@Mixin(FarmlandBlock.class)
 public class FarmlandLoseMoistureEventMixin
 {
 	@Inject(
@@ -28,7 +28,7 @@ public class FarmlandLoseMoistureEventMixin
 	private void beforeSetBlock(BlockState state, ServerLevel level, BlockPos pos, RandomSource random,
 								CallbackInfo callback)
 	{
-		int moistureLevel = state.getValue(FarmBlock.MOISTURE);
+		int moistureLevel = state.getValue(FarmlandBlock.MOISTURE);
 		int moistureBefore = moistureLevel + 1;
 		FarmlandLoseMoistureEvent event = new FarmlandLoseMoistureEvent(level, pos, state, moistureBefore, moistureLevel);
 		NeoForge.EVENT_BUS.post(event);

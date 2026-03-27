@@ -7,33 +7,39 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.ItemLike;
 
 public abstract class RecipeBuilder implements RecipeOfferable
 {
 	protected final HolderGetter<Item> itemGetter;
 	
-	protected ItemStack result;
+	protected ItemStackTemplate result;
 	
 	public RecipeBuilder(HolderGetter<Item> itemGetter)
 	{
 		this.itemGetter = itemGetter;
 	}
 	
-	public ItemStack result()
+	public ItemStackTemplate result()
 	{
 		return result;
 	}
 	
-	public RecipeBuilder output(ItemStack result)
+	public RecipeBuilder output(ItemStackTemplate result)
 	{
 		this.result = result;
 		return this;
 	}
 	
+	public RecipeBuilder output(ItemStack result)
+	{
+		return this.output(ItemStackTemplate.fromNonEmptyStack(result));
+	}
+	
 	public RecipeBuilder output(ItemLike result, int count)
 	{
-		return this.output(new ItemStack(result, count));
+		return this.output(new ItemStackTemplate(result.asItem(), count));
 	}
 	
 	public RecipeBuilder output(Identifier result, int count)
