@@ -1,24 +1,28 @@
 package net.swedz.tesseract.neoforge.recipe;
 
 import net.minecraft.advancements.AdvancementHolder;
-import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.ItemLike;
 
 public abstract class RecipeBuilder implements RecipeOfferable
 {
-	protected final HolderGetter<Item> itemGetter;
+	protected final HolderLookup.Provider registries;
 	
 	protected ItemStackTemplate result;
 	
-	public RecipeBuilder(HolderGetter<Item> itemGetter)
+	public RecipeBuilder(HolderLookup.Provider registries)
 	{
-		this.itemGetter = itemGetter;
+		this.registries = registries;
+	}
+	
+	public HolderLookup.Provider registries()
+	{
+		return registries;
 	}
 	
 	public ItemStackTemplate result()

@@ -1,6 +1,6 @@
 package net.swedz.tesseract.neoforge.compat.vanilla.recipe;
 
-import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -23,9 +23,9 @@ public class SmeltingRecipeBuilder extends RecipeBuilder
 	protected float      experience;
 	protected boolean    blasting;
 	
-	public SmeltingRecipeBuilder(HolderGetter<Item> itemGetter)
+	public SmeltingRecipeBuilder(HolderLookup.Provider registries)
 	{
-		super(itemGetter);
+		super(registries);
 	}
 	
 	public Ingredient input()
@@ -47,7 +47,7 @@ public class SmeltingRecipeBuilder extends RecipeBuilder
 	
 	public SmeltingRecipeBuilder input(TagKey<Item> tag)
 	{
-		return this.input(Ingredient.of(itemGetter.getOrThrow(tag)));
+		return this.input(Ingredient.of(RecipeHelper.items(registries).getOrThrow(tag)));
 	}
 	
 	public SmeltingRecipeBuilder input(Identifier... itemIds)
@@ -57,7 +57,7 @@ public class SmeltingRecipeBuilder extends RecipeBuilder
 	
 	public SmeltingRecipeBuilder input(String maybeTag)
 	{
-		return this.input(RecipeHelper.ingredient(itemGetter, maybeTag));
+		return this.input(RecipeHelper.ingredient(RecipeHelper.items(registries), maybeTag));
 	}
 	
 	public int cookingTime()

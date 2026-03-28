@@ -15,9 +15,7 @@ dependencies {
 
 	if (project.runtime_include_mi.toBoolean()) {
 		localImplementation "aztech:Modern-Industrialization:${modern_industrialization_version}"
-		localImplementation "dev.technici4n:GrandPower:${grandpower_version}"
 	} else {
 		compileOnly "aztech:Modern-Industrialization:${modern_industrialization_version}"
-		compileOnly "dev.technici4n:GrandPower:${grandpower_version}"
 	}
 }

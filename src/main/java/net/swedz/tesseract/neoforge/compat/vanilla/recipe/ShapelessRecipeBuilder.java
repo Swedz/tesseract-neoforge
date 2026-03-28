@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.vanilla.recipe;
 
 import com.google.common.collect.Lists;
-import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
@@ -23,9 +23,9 @@ public class ShapelessRecipeBuilder extends RecipeBuilder
 {
 	protected final List<Ingredient> input = Lists.newArrayList();
 	
-	public ShapelessRecipeBuilder(HolderGetter<Item> itemGetter)
+	public ShapelessRecipeBuilder(HolderLookup.Provider registries)
 	{
-		super(itemGetter);
+		super(registries);
 	}
 	
 	public List<Ingredient> input()
@@ -47,7 +47,7 @@ public class ShapelessRecipeBuilder extends RecipeBuilder
 	
 	public ShapelessRecipeBuilder with(TagKey<Item> tag)
 	{
-		return this.with(Ingredient.of(itemGetter.getOrThrow(tag)));
+		return this.with(Ingredient.of(RecipeHelper.items(registries).getOrThrow(tag)));
 	}
 	
 	public ShapelessRecipeBuilder with(Identifier... itemIds)
@@ -57,7 +57,7 @@ public class ShapelessRecipeBuilder extends RecipeBuilder
 	
 	public ShapelessRecipeBuilder with(String maybeTag)
 	{
-		return this.with(RecipeHelper.ingredient(itemGetter, maybeTag));
+		return this.with(RecipeHelper.ingredient(RecipeHelper.items(registries), maybeTag));
 	}
 	
 	@Override

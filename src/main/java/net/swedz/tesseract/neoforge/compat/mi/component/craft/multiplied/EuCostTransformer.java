@@ -1,0 +1,58 @@
+package net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied;
+
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.Identifier;
+import net.swedz.tesseract.neoforge.Tesseract;
+
+import java.util.function.Supplier;
+
+public abstract class EuCostTransformer
+{
+	private final Identifier id;
+	
+	public EuCostTransformer(Identifier id)
+	{
+		this.id = id;
+	}
+	
+	public String getTranslationKey()
+	{
+		return "eu_cost_transformer.%s.%s".formatted(id.getNamespace(), id.getPath());
+	}
+	
+	public MutableComponent text()
+	{
+		return Component.translatable(this.getTranslationKey());
+	}
+	
+	public abstract long transform(MultipliedCrafterComponent crafter, long eu, long bonusEu);
+	
+	public long transform(MultipliedCrafterComponent crafter, long eu)
+	{
+		return this.transform(crafter, eu, 0);
+	}
+	
+	public static final class PercentageEuCostTransformer extends EuCostTransformer
+	{
+		private final Supplier<Float> percentage;
+		
+		public PercentageEuCostTransformer(Supplier<Float> percentage)
+		{
+			super(Tesseract.id("percentage"));
+			this.percentage = percentage;
+		}
+		
+		@Override
+		public long transform(MultipliedCrafterComponent crafter, long eu, long bonusEu)
+		{
+			return (long) (((eu * crafter.getRecipeMultiplier()) + bonusEu) * percentage.get());
+		}
+		
+		@Override
+		public MutableComponent text()
+		{
+			return Component.translatable(this.getTranslationKey(), (int) (percentage.get() * 100));
+		}
+	}
+}

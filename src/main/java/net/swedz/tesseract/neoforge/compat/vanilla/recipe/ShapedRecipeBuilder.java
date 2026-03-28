@@ -2,7 +2,7 @@ package net.swedz.tesseract.neoforge.compat.vanilla.recipe;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -26,9 +26,9 @@ public class ShapedRecipeBuilder extends RecipeBuilder
 	protected final Map<Character, Ingredient> key     = Maps.newHashMap();
 	protected final List<String>               pattern = Lists.newArrayList();
 	
-	public ShapedRecipeBuilder(HolderGetter<Item> itemGetter)
+	public ShapedRecipeBuilder(HolderLookup.Provider registries)
 	{
-		super(itemGetter);
+		super(registries);
 	}
 	
 	public Map<Character, Ingredient> key()
