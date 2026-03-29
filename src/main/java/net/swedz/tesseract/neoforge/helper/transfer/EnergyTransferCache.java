@@ -6,6 +6,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.transfer.energy.EnergyHandler;
 import net.swedz.tesseract.neoforge.helper.TransferHelper;
 import org.slf4j.Logger;
@@ -28,10 +29,10 @@ public class EnergyTransferCache extends TransferCache<EnergyHandler>
 	
 	public boolean autoExtract(Level level, BlockPos pos, Direction direction, int maxAmount)
 	{
-		EnergyHandler target = cache.output(level, pos, direction);
+		var target = cache.output(level, pos, direction);
 		if(target != null)
 		{
-			return TransferHelper.move(this.sourceHandler(), target, maxAmount) > 0;
+			return TransferHelper.move(IEnergyStorage.of(this.sourceHandler()), IEnergyStorage.of(target), maxAmount) > 0;
 		}
 		return false;
 	}
@@ -44,10 +45,10 @@ public class EnergyTransferCache extends TransferCache<EnergyHandler>
 	
 	public boolean autoInsert(Level level, BlockPos pos, Direction direction, int maxAmount)
 	{
-		EnergyHandler target = cache.input(level, pos, direction);
+		var target = cache.input(level, pos, direction);
 		if(target != null)
 		{
-			return TransferHelper.move(target, this.sourceHandler(), maxAmount) > 0;
+			return TransferHelper.move(IEnergyStorage.of(target), IEnergyStorage.of(this.sourceHandler()), maxAmount) > 0;
 		}
 		return false;
 	}

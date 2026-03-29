@@ -218,11 +218,6 @@ public final class AccessibleBlockLootSubProvider
 		return provider.createCandleDrops(candleBlock);
 	}
 	
-	public LootTable.Builder createPetalsDrops(Block petalBlock)
-	{
-		return provider.createPetalsDrops(petalBlock);
-	}
-	
 	public LootTable.Builder createDoorTable(Block doorBlock)
 	{
 		return provider.createDoorTable(doorBlock);
@@ -250,7 +245,7 @@ public final class AccessibleBlockLootSubProvider
 	
 	public LootTable.Builder createShearsOnlyDrop(ItemLike item)
 	{
-		return BlockLootSubProvider.createShearsOnlyDrop(item);
+		return provider.createShearsOnlyDrop(item);
 	}
 	
 	public LootTable.Builder createCandleCakeDrops(Block candleCakeBlock)

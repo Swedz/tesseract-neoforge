@@ -61,7 +61,7 @@ public class MIForgeHammerRecipeBuilder extends RecipeBuilder
 	@Override
 	public void validate()
 	{
-		if(input == null || input == Ingredient.EMPTY || inputCount <= 0)
+		if(input == null || input.isEmpty() || inputCount <= 0)
 		{
 			throw new IllegalArgumentException("No input was provided");
 		}

@@ -7,13 +7,16 @@ import aztech.modern_industrialization.machines.MachineBlockEntity;
 import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.AbstractModularCrafterComponent;
@@ -285,10 +288,10 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 			outer:
 			for(int tries = 0; tries < 2; tries++)
 			{
-				for(ConfigurableFluidStack stack : inventory.getFluidOutputs())
+				for(var stack : inventory.getFluidOutputs())
 				{
-					FluidVariant outputKey = FluidVariant.of(output.fluid());
-					if(stack.isResourceAllowedByLock(outputKey) && ((tries == 1 && stack.isResourceBlank()) || stack.getResource().equals(outputKey)))
+					var outputKey = FluidResource.of(output.fluid());
+					if(stack.isResourceAllowedByLock(outputKey) && ((tries == 1 && stack.isEmpty()) || stack.getResource().equals(outputKey)))
 					{
 						long outputSpace = Math.min(stack.getRemainingSpace(), maxOutputCount);
 						
@@ -375,17 +378,17 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	}
 	
 	@Override
-	public void writeNbt(CompoundTag tag, HolderLookup.Provider registries)
+	public void writeNbt(ValueOutput output)
 	{
-		super.writeNbt(tag, registries);
-		tag.putInt("recipeMultiplier", recipeMultiplier);
+		super.writeNbt(output);
+		output.putInt("recipeMultiplier", recipeMultiplier);
 	}
 	
 	@Override
-	public void readNbt(CompoundTag tag, HolderLookup.Provider registries, boolean isUpgradingMachine)
+	public void readNbt(ValueInput input, boolean isUpgradingMachine)
 	{
-		super.readNbt(tag, registries, isUpgradingMachine);
-		recipeMultiplier = tag.getInt("recipeMultiplier");
+		super.readNbt(input, isUpgradingMachine);
+		recipeMultiplier = input.getIntOr("recipeMultiplier", 0);
 	}
 	
 	@Override
@@ -396,7 +399,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	}
 	
 	@Override
-	public void lockRecipe(Identifier recipeId, Inventory inventory)
+	public void lockRecipe(ResourceKey<Recipe<?>> recipeId, Inventory inventory)
 	{
 		MachineRecipeType recipeType = this.getRecipeType();
 		if(recipeType == null)

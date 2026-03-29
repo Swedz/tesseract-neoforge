@@ -85,8 +85,8 @@ public final class HatchMachineBuilder extends MachineBuilder<HatchMachineBuilde
 		blockEntityFactory = (bep, input, machineId) ->
 		{
 			List<ConfigurableFluidStack> fluidStacks = Collections.singletonList(input ?
-					ConfigurableFluidStack.standardInputSlot(bucketCapacity * 1000L) :
-					ConfigurableFluidStack.standardOutputSlot(bucketCapacity * 1000L));
+					ConfigurableFluidStack.standardInputSlot(bucketCapacity * 1000) :
+					ConfigurableFluidStack.standardOutputSlot(bucketCapacity * 1000));
 			var inventory = new MIInventory(
 					Collections.emptyList(), fluidStacks,
 					SlotPositions.empty(), new SlotPositions.Builder().addSlot(80, 40).build()

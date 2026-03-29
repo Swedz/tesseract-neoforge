@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.compat.mi.hook;
 
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.compat.rei.machines.ReiMachineRecipes;
+import aztech.modern_industrialization.datagen.model.MachineModelProperties;
 import aztech.modern_industrialization.machines.models.MachineCasing;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -22,7 +23,7 @@ public final class MIHookTracker
 {
 	private static final Map<Identifier, Identifier>                                                              REI_CATEGORY_IDS      = Maps.newConcurrentMap();
 	private static final Map<Identifier, String>                                                                  REI_CATEGORY_NAMES    = Maps.newConcurrentMap();
-	private static final Map<Identifier, MachineModelProperties>                                                  MACHINE_MODELS        = Maps.newConcurrentMap();
+	private static final Map<Identifier, MachineModelProperties>                                            MACHINE_MODELS        = Maps.newConcurrentMap();
 	private static final Map<String, List<BiConsumer<MachineCasingModelsMIHookDatagenProvider, ModelGenerators>>> MACHINE_CASING_MODELS = Maps.newConcurrentMap();
 	
 	public static void registerRecipeCategoryForMachines(IEventBus bus)
@@ -56,9 +57,48 @@ public final class MIHookTracker
 		return MACHINE_MODELS.get(id);
 	}
 	
+	private static MachineModelProperties createModelProperties(Identifier id, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active, String outputTexture)
+	{
+		outputTexture = outputTexture == null ? "%s:block/overlays/output".formatted(MI.ID) : outputTexture;
+		
+		var namespace = id.getNamespace();
+		var builder = new MachineModelProperties.Builder(defaultCasing);
+		
+		if(top)
+		{
+			builder.addOverlay("top", Identifier.fromNamespaceAndPath(namespace, "block/machines/%s/overlay_top".formatted(overlay)));
+			if(active)
+			{
+				builder.addOverlay("top_active", Identifier.fromNamespaceAndPath(namespace, "block/machines/%s/overlay_top_active".formatted(overlay)));
+			}
+		}
+		if(front)
+		{
+			builder.addOverlay("front", Identifier.fromNamespaceAndPath(namespace, "block/machines/%s/overlay_front".formatted(overlay)));
+			if(active)
+			{
+				builder.addOverlay("front_active", Identifier.fromNamespaceAndPath(namespace, "block/machines/%s/overlay_front_active".formatted(overlay)));
+			}
+		}
+		if(side)
+		{
+			builder.addOverlay("side", Identifier.fromNamespaceAndPath(namespace, "block/machines/%s/overlay_side".formatted(overlay)));
+			if(active)
+			{
+				builder.addOverlay("side_active", Identifier.fromNamespaceAndPath(namespace, "block/machines/%s/overlay_side_active".formatted(overlay)));
+			}
+		}
+		
+		builder.addOverlay("output", Identifier.parse(outputTexture));
+		builder.addOverlay("item_auto", MI.id("block/overlays/item_auto"));
+		builder.addOverlay("fluid_auto", MI.id("block/overlays/fluid_auto"));
+		
+		return builder.build();
+	}
+	
 	public static void addMachineModel(Identifier id, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active, String outputTexture)
 	{
-		MACHINE_MODELS.put(id, new MachineModelProperties(id.getNamespace(), defaultCasing, overlay, front, top, side, active, outputTexture));
+		MACHINE_MODELS.put(id, createModelProperties(id, defaultCasing, overlay, front, top, side, active, outputTexture));
 	}
 	
 	public static List<BiConsumer<MachineCasingModelsMIHookDatagenProvider, ModelGenerators>> getMachineCasingModels(String modId)
@@ -71,15 +111,18 @@ public final class MIHookTracker
 		MACHINE_CASING_MODELS.computeIfAbsent(hook.modId(), (k) -> Lists.newArrayList()).add(action);
 	}
 	
-	public record MachineModelProperties(
+	public record MachineModelPropertiesLEGACY(
 			String modId,
 			MachineCasing defaultCasing,
-			String overlay, boolean front, boolean top, boolean side,
+			String overlay,
+			boolean front,
+			boolean top,
+			boolean side,
 			boolean active,
 			String outputTexture
 	)
 	{
-		public MachineModelProperties
+		public MachineModelPropertiesLEGACY
 		{
 			outputTexture = outputTexture == null ? "%s:block/overlays/output".formatted(MI.ID) : outputTexture;
 		}

@@ -81,7 +81,7 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 	{
 		super.tick();
 		
-		if(!level.isClientSide)
+		if(!level.isClientSide())
 		{
 			boolean newActive = false;
 			

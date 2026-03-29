@@ -49,17 +49,17 @@ public final class MachineInventoryHelper
 		List<ConfigurableFluidStack> fluidInputStacks = new ArrayList<>();
 		if(steamBuckets > 0)
 		{
-			fluidInputStacks.add(ConfigurableFluidStack.lockedInputSlot(1000L * steamBuckets, MIFluids.STEAM.asFluid()));
+			fluidInputStacks.add(ConfigurableFluidStack.lockedInputSlot(1000 * steamBuckets, MIFluids.STEAM.asFluid()));
 		}
 		for(int i = 0; i < fluidInputCount; ++i)
 		{
-			fluidInputStacks.add(ConfigurableFluidStack.standardInputSlot(1000L * ioBucketCapacity));
+			fluidInputStacks.add(ConfigurableFluidStack.standardInputSlot(1000 * ioBucketCapacity));
 		}
 		
 		List<ConfigurableFluidStack> fluidOutputStacks = new ArrayList<>();
 		for(int i = 0; i < fluidOutputCount; ++i)
 		{
-			fluidOutputStacks.add(ConfigurableFluidStack.standardOutputSlot(1000L * ioBucketCapacity));
+			fluidOutputStacks.add(ConfigurableFluidStack.standardOutputSlot(1000 * ioBucketCapacity));
 		}
 		
 		return new MachineInventoryComponent(itemInputStacks, itemOutputStacks, fluidInputStacks, fluidOutputStacks, itemPositions, fluidPositions);
@@ -85,7 +85,7 @@ public final class MachineInventoryHelper
 		return hasFluid(fluids, () -> fluid, amount);
 	}
 	
-	public static long consumeFluid(List<ConfigurableFluidStack> fluids, FluidLike fluid, long max, Simulation simulation)
+	public static long consumeFluid(List<ConfigurableFluidStack> fluids, FluidLike fluid, int max, Simulation simulation)
 	{
 		if(max <= 0)
 		{
@@ -94,12 +94,12 @@ public final class MachineInventoryHelper
 		
 		long totalRemoved = 0;
 		
-		for(ConfigurableFluidStack fluidStack : fluids)
+		for(var fluidStack : fluids)
 		{
 			if(fluidStack.getResource().getFluid() == fluid.asFluid())
 			{
-				long amount = fluidStack.getAmount();
-				long remove = Math.min(max, amount);
+				int amount = fluidStack.getAmount();
+				int remove = Math.min(max, amount);
 				if(simulation.isActing())
 				{
 					fluidStack.decrement(remove);
@@ -112,17 +112,17 @@ public final class MachineInventoryHelper
 		return totalRemoved;
 	}
 	
-	public static long consumeFluid(List<ConfigurableFluidStack> fluids, FluidLike fluid, long max, boolean simulation)
+	public static long consumeFluid(List<ConfigurableFluidStack> fluids, FluidLike fluid, int max, boolean simulation)
 	{
 		return consumeFluid(fluids, fluid, max, simulation ? Simulation.SIMULATE : Simulation.ACT);
 	}
 	
-	public static long consumeFluid(List<ConfigurableFluidStack> fluids, Fluid fluid, long max, Simulation simulation)
+	public static long consumeFluid(List<ConfigurableFluidStack> fluids, Fluid fluid, int max, Simulation simulation)
 	{
 		return consumeFluid(fluids, () -> fluid, max, simulation);
 	}
 	
-	public static long consumeFluid(List<ConfigurableFluidStack> fluids, Fluid fluid, long max, boolean simulate)
+	public static long consumeFluid(List<ConfigurableFluidStack> fluids, Fluid fluid, int max, boolean simulate)
 	{
 		return consumeFluid(fluids, fluid, max, simulate ? Simulation.SIMULATE : Simulation.ACT);
 	}

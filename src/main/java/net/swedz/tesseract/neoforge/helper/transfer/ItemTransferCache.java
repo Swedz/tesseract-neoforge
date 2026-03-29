@@ -6,29 +6,31 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.swedz.tesseract.neoforge.helper.TransferHelper;
 
 import java.util.function.Supplier;
 
-public class ItemTransferCache extends TransferCache<IItemHandler>
+public class ItemTransferCache extends TransferCache<ResourceHandler<ItemResource>>
 {
-	public ItemTransferCache(BlockCapability<IItemHandler, Direction> capability, Supplier<IItemHandler> sourceHandler)
+	public ItemTransferCache(BlockCapability<ResourceHandler<ItemResource>, Direction> capability, Supplier<ResourceHandler<ItemResource>> sourceHandler)
 	{
 		super(capability, sourceHandler);
 	}
 	
-	public ItemTransferCache(Supplier<IItemHandler> sourceHandler)
+	public ItemTransferCache(Supplier<ResourceHandler<ItemResource>> sourceHandler)
 	{
-		this(Capabilities.ItemHandler.BLOCK, sourceHandler);
+		this(Capabilities.Item.BLOCK, sourceHandler);
 	}
 	
 	@Override
 	public boolean autoExtract(Level level, BlockPos pos, Direction direction)
 	{
-		IItemHandler target = cache.output(level, pos, direction);
+		var target = cache.output(level, pos, direction);
 		if(target != null)
 		{
-			return !TransferHelper.moveAll(this.sourceHandler(), target, true).isEmpty();
+			return !TransferHelper.moveAll(IItemHandler.of(this.sourceHandler()), IItemHandler.of(target), true).isEmpty();
 		}
 		return false;
 	}
@@ -36,10 +38,10 @@ public class ItemTransferCache extends TransferCache<IItemHandler>
 	@Override
 	public boolean autoInsert(Level level, BlockPos pos, Direction direction)
 	{
-		IItemHandler target = cache.input(level, pos, direction);
+		var target = cache.input(level, pos, direction);
 		if(target != null)
 		{
-			return !TransferHelper.moveAll(target, this.sourceHandler(), true).isEmpty();
+			return !TransferHelper.moveAll(IItemHandler.of(target), IItemHandler.of(this.sourceHandler()), true).isEmpty();
 		}
 		return false;
 	}

@@ -1,6 +1,9 @@
 package net.swedz.tesseract.neoforge.compat.mi.hack;
 
 import aztech.modern_industrialization.api.energy.CableTier;
+import aztech.modern_industrialization.client.machines.models.MachineItemModel;
+import aztech.modern_industrialization.client.machines.models.MachineUnbakedModel;
+import aztech.modern_industrialization.client.machines.models.OverlayName;
 import aztech.modern_industrialization.compat.rei.machines.MachineCategoryParams;
 import aztech.modern_industrialization.compat.rei.machines.ReiMachineRecipes;
 import aztech.modern_industrialization.compat.rei.machines.SteamMode;
@@ -23,8 +26,9 @@ import aztech.modern_industrialization.machines.models.MachineCasings;
 import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.util.MobSpawning;
+import net.minecraft.client.data.models.MultiVariant;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
@@ -34,6 +38,8 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import net.neoforged.neoforge.client.model.block.CustomUnbakedBlockStateModel;
+import net.neoforged.neoforge.client.model.generators.blockstate.CustomBlockStateModelBuilder;
 import net.swedz.tesseract.neoforge.compat.mi.helper.MachineInventoryHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookRegistry;
@@ -49,7 +55,9 @@ import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -113,16 +121,29 @@ public final class HackedMachineRegistrationHelper
 				})
 				.withModel((holder) -> (generators) ->
 				{
-					MIHookTracker.MachineModelProperties machineModelProperties = MIHookTracker.getMachineModel(id);
+					var machineModelProperties = MIHookTracker.getMachineModel(id);
 					if(machineModelProperties == null)
 					{
 						CommonModelBuilders.blockstateOnly(holder).accept(generators);
 						return;
 					}
-					generators.simpleBlockWithItem(BuiltInRegistries.BLOCK.get(id), generators.models()
-							.getBuilder(name)
-							.customLoader((bmb, exFile) -> new FakedMachineModelBuilder<>(machineModelProperties, bmb, exFile))
-							.end());
+					
+					var block = holder.get();
+					
+					var defaultOverlays = new HashMap<OverlayName, Identifier>();
+					for(var overlay : machineModelProperties.defaultOverlays().entrySet())
+					{
+						defaultOverlays.put(OverlayName.CODEC.byName(overlay.getKey()), overlay.getValue());
+					}
+					
+					var model = new MachineUnbakedModel(
+							machineModelProperties.casing(),
+							defaultOverlays,
+							Map.of(),
+							machineModelProperties.noOverlayOnOutputSide()
+					);
+					generators.block().blockStateOutput.accept(customModel(block, model));
+					generators.item().itemModelOutput.accept(block.asItem(), new MachineItemModel.Unbaked(block));
 				});
 		if(holderModifier != null)
 		{
@@ -133,21 +154,29 @@ public final class HackedMachineRegistrationHelper
 		registry.onBlockRegister(blockHolder);
 		registry.onItemRegister(blockHolder.item());
 		
-		return registry.blockEntityRegistry().register(name, () ->
-		{
-			Block block = blockHolder.get();
-			
-			bet.set(BlockEntityType.Builder.of(ctor::apply, block).build(null));
-			
-			for(var extraRegistrator : extraRegistrators)
-			{
-				extraRegistrator.apply(bet.get());
-			}
-			
-			registry.onBlockEntityRegister(bet.get());
-			
-			return bet.get();
-		});
+		return registry.blockEntityRegistry().register(
+				name, () ->
+				{
+					Block block = blockHolder.get();
+					
+					bet.set(new BlockEntityType<>(ctor::apply, block));
+					
+					for(var extraRegistrator : extraRegistrators)
+					{
+						extraRegistrator.apply(bet.get());
+					}
+					
+					registry.onBlockEntityRegister(bet.get());
+					
+					return bet.get();
+				}
+		);
+	}
+	
+	// TODO 26.1 see also CommonModelBuilders#blockstateOnly
+	private static MultiVariantGenerator customModel(Block block, CustomUnbakedBlockStateModel customModel)
+	{
+		return MultiVariantGenerator.dispatch(block, MultiVariant.of(new CustomBlockStateModelBuilder.Simple(customModel)));
 	}
 	
 	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
@@ -208,7 +237,7 @@ public final class HackedMachineRegistrationHelper
 	 */
 	public static void addMachineModel(MIHook hook, String name, MachineTier tier, String overlay, boolean front, boolean top, boolean side, boolean active)
 	{
-		MachineCasing defaultCasing = switch (tier)
+		MachineCasing defaultCasing = switch(tier)
 		{
 			case BRONZE -> MachineCasings.BRONZE;
 			case STEEL -> MachineCasings.STEEL;

@@ -8,7 +8,9 @@ import aztech.modern_industrialization.machines.MachineComponent;
 import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.recipe.condition.MachineProcessCondition;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.swedz.tesseract.neoforge.Tesseract;
@@ -92,7 +94,7 @@ public abstract class AbstractModularCrafterComponent<R> implements MachineCompo
 	
 	protected abstract boolean putFluidOutputs(R recipe, boolean simulate, boolean toggleLock);
 	
-	public abstract void lockRecipe(Identifier recipeId, Inventory inventory);
+	public abstract void lockRecipe(ResourceKey<Recipe<?>> recipeId, Inventory inventory);
 	
 	@Override
 	public InventoryAccess getInventory()

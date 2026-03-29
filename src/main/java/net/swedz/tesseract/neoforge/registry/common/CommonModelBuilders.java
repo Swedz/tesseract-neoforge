@@ -1,13 +1,18 @@
 package net.swedz.tesseract.neoforge.registry.common;
 
+import aztech.modern_industrialization.client.machines.models.UseBlockModelBakedModel;
+import net.minecraft.client.data.models.MultiVariant;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.data.models.model.TexturedModel;
 import net.minecraft.client.renderer.item.BlockModelWrapper;
 import net.minecraft.client.renderer.item.CompositeModel;
 import net.minecraft.client.renderer.item.SpecialModelWrapper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.neoforged.neoforge.client.model.generators.blockstate.CustomBlockStateModelBuilder;
 import net.swedz.tesseract.neoforge.model.ModelGenerators;
 import net.swedz.tesseract.neoforge.model.UseBlockEntityRenderer;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
@@ -131,32 +136,36 @@ public final class CommonModelBuilders
 	
 	public static Consumer<ModelGenerators> block(ItemHolder item)
 	{
-		return (generators) -> {};
-		/*return (builder) -> builder
-				.parent(new ModelFile.UncheckedModelFile("%s:block/%s".formatted(item.identifier().modId(), item.identifier().id())));*/
+		return (generators) ->
+				ModelTemplates.create(item.identifier().location().toString())
+						.create(
+								item.get(),
+								new TextureMapping(),
+								generators.item().modelOutput
+						);
 	}
 	
 	public static Consumer<ModelGenerators> blockstateOnly(BlockHolder block)
 	{
-		return (builder) -> builder
-				.simpleBlock(block.get(), builder.models().getExistingFile(builder.modLoc("block/%s".formatted(block.identifier().id()))));
+		return (generators) ->
+				generators.block().blockStateOutput.accept(MultiVariantGenerator.dispatch(block.get(), MultiVariant.of(new CustomBlockStateModelBuilder.Simple(new UseBlockModelBakedModel.Unbaked(block.get())))));
 	}
 	
 	public static Consumer<ModelGenerators> blockCubeAll(BlockHolder block)
 	{
-		return (builder) -> builder
-				.simpleBlockWithItem(block.get(), builder.cubeAll(block.get()));
+		return (generators) ->
+				generators.block().createTrivialBlock(block.get(), TexturedModel.CUBE);
 	}
 	
 	public static Consumer<ModelGenerators> blockTopEnd(BlockHolder block)
 	{
-		return (builder) -> builder.simpleBlockWithItem(
-				block.get(),
-				builder.models().cubeColumn(
-						block.identifier().id(),
-						Identifier.fromNamespaceAndPath(block.identifier().modId(), "block/%s_side".formatted(block.identifier().id())),
-						Identifier.fromNamespaceAndPath(block.identifier().modId(), "block/%s_end".formatted(block.identifier().id()))
-				)
-		);
+		return (generators) ->
+				ModelTemplates.CUBE_COLUMN.create(
+						block.get(),
+						new TextureMapping()
+								.put(TextureSlot.END, Identifier.fromNamespaceAndPath(block.identifier().modId(), "block/%s_end".formatted(block.identifier().id())))
+								.put(TextureSlot.SIDE, Identifier.fromNamespaceAndPath(block.identifier().modId(), "block/%s_side".formatted(block.identifier().id()))),
+						generators.block().modelOutput
+				);
 	}
 }

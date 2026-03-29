@@ -1,6 +1,6 @@
 package net.swedz.tesseract.neoforge.compat.vanilla.recipe;
 
-import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -17,9 +17,9 @@ public class StonecutterRecipeBuilder extends RecipeBuilder
 {
 	protected Ingredient input;
 	
-	public StonecutterRecipeBuilder(HolderGetter<Item> itemGetter)
+	public StonecutterRecipeBuilder(HolderLookup.Provider registries)
 	{
-		super(itemGetter);
+		super(registries);
 	}
 	
 	public Ingredient input()
@@ -41,7 +41,7 @@ public class StonecutterRecipeBuilder extends RecipeBuilder
 	
 	public StonecutterRecipeBuilder input(TagKey<Item> tag)
 	{
-		return this.input(Ingredient.of(itemGetter.getOrThrow(tag)));
+		return this.input(Ingredient.of(RecipeHelper.items(registries).getOrThrow(tag)));
 	}
 	
 	public StonecutterRecipeBuilder input(Identifier... itemIds)
@@ -51,7 +51,7 @@ public class StonecutterRecipeBuilder extends RecipeBuilder
 	
 	public StonecutterRecipeBuilder input(String maybeTag)
 	{
-		return this.input(RecipeHelper.ingredient(itemGetter, maybeTag));
+		return this.input(RecipeHelper.ingredient(RecipeHelper.items(registries), maybeTag));
 	}
 	
 	@Override

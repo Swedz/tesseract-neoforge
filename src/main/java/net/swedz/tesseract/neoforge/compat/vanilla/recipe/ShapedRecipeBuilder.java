@@ -58,7 +58,7 @@ public class ShapedRecipeBuilder extends RecipeBuilder
 	
 	public ShapedRecipeBuilder define(char key, TagKey<Item> tag)
 	{
-		return this.define(key, Ingredient.of(itemGetter.getOrThrow(tag)));
+		return this.define(key, Ingredient.of(RecipeHelper.items(registries).getOrThrow(tag)));
 	}
 	
 	public ShapedRecipeBuilder define(char key, Identifier... itemIds)
@@ -68,7 +68,7 @@ public class ShapedRecipeBuilder extends RecipeBuilder
 	
 	public ShapedRecipeBuilder define(char key, String maybeTag)
 	{
-		return this.define(key, RecipeHelper.ingredient(itemGetter, maybeTag));
+		return this.define(key, RecipeHelper.ingredient(RecipeHelper.items(registries), maybeTag));
 	}
 	
 	public ShapedRecipeBuilder pattern(String line)
