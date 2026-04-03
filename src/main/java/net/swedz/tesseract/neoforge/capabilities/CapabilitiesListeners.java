@@ -4,17 +4,18 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 public final class CapabilitiesListeners
 {
-	private static final Map<String, List<Consumer<RegisterCapabilitiesEvent>>> LISTENERS = Maps.newHashMap();
+	private static final Map<String, List<Consumer<RegisterCapabilitiesEvent>>> LISTENERS = Maps.newConcurrentMap();
 	
 	private static List<Consumer<RegisterCapabilitiesEvent>> getListeners(String modId)
 	{
-		return LISTENERS.computeIfAbsent(modId, (k) -> Lists.newArrayList());
+		return LISTENERS.computeIfAbsent(modId, (__) -> Collections.synchronizedList(Lists.newArrayList()));
 	}
 	
 	public static void triggerAll(String modId, RegisterCapabilitiesEvent event)
