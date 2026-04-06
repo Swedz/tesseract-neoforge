@@ -26,8 +26,11 @@ public final class MIHookTracker
 	
 	public static void registerRecipeCategoryForMachines(IEventBus bus)
 	{
-		bus.addListener(FMLCommonSetupEvent.class, (event) ->
-				REI_CATEGORY_IDS.forEach(ReiMachineRecipes::registerRecipeCategoryForMachine));
+		bus.addListener(
+				FMLCommonSetupEvent.class,
+				(event) -> event.enqueueWork(() ->
+						REI_CATEGORY_IDS.forEach(ReiMachineRecipes::registerRecipeCategoryForMachine))
+		);
 	}
 	
 	public static void addReiCategoryId(ResourceLocation machineId, ResourceLocation categoryId)
