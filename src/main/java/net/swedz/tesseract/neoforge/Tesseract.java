@@ -95,6 +95,8 @@ public final class Tesseract
 				handler.onHurt(event.getEntity(), event.getItemStack(), event.getDamageAmount());
 			}
 		});
+		
+		LOGGER.info("Tesseract API has completed initialization!");
 	}
 	
 	private static TesseractText TEXT;
