@@ -12,6 +12,8 @@ import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.swedz.tesseract.api.Assert;
+import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
+import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
 import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
 import net.swedz.tesseract.neoforge.event.ItemHurtEvent;
 import net.swedz.tesseract.neoforge.item.ArmorTickHandler;
@@ -41,8 +43,7 @@ public final class Tesseract
 		
 		setupText();
 		
-		// TODO wait for MI
-		/*if(ModLoadedHelper.isLoaded("modern_industrialization"))
+		if(ModLoadedHelper.isLoaded("modern_industrialization"))
 		{
 			try
 			{
@@ -51,9 +52,9 @@ public final class Tesseract
 			catch (ClassNotFoundException ignored)
 			{
 			}
-			TesseractMILootConditions.init(bus);
+			// TODO TesseractMILootConditions.init(bus);
 			MIHookTracker.registerRecipeCategoryForMachines(bus);
-		}*/
+		}
 		
 		bus.addListener(GatherDataEvent.Client.class, (event) ->
 				event.getGenerator().addProvider(true, new LanguageDatagenProvider(event)));

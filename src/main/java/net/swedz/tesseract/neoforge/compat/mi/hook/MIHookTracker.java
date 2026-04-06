@@ -30,8 +30,8 @@ public final class MIHookTracker
 	{
 		bus.addListener(
 				FMLCommonSetupEvent.class,
-				(event) ->
-						REI_CATEGORY_IDS.forEach(ReiMachineRecipes::registerRecipeCategoryForMachine)
+				(event) -> event.enqueueWork(() ->
+						REI_CATEGORY_IDS.forEach(ReiMachineRecipes::registerRecipeCategoryForMachine))
 		);
 	}
 	
