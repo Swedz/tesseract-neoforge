@@ -25,6 +25,7 @@ public interface LangEntry<R> extends InterfaceProxyEntry<R>
 			String key,
 			String defaultText,
 			boolean includeFallback,
+			boolean datagen,
 			LangEntryStyle style,
 			LangEntryParser[] parsers,
 			LangEntryPlaceholder[] placeholders
