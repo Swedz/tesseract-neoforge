@@ -234,6 +234,7 @@ public final class LangHandler extends InterfaceProxyHandler<LangEntry<?>>
 						key,
 						placeholders.text(),
 						includeFallback(proxyClass, langKey),
+						langKey.datagen(),
 						new LangEntryStyle(LangContext.of(method, manager::getStyle, manager::getParser), style),
 						parsers,
 						placeholders.providers()
