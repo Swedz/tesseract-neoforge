@@ -31,7 +31,7 @@ public record LangInstance<L>(
 			}
 			else if(entry instanceof LangEntry.Text text)
 			{
-				if(text.defaultText() != null)
+				if(text.datagen() && text.defaultText() != null)
 				{
 					provider.add(text.key(), text.defaultText());
 				}
