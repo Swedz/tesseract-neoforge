@@ -65,4 +65,12 @@ public @interface LangKey
 	 * @return true if the default text should be included on the component as fallback, false if not
 	 */
 	boolean includeFallback() default false;
+	
+	/**
+	 * <p>Whether this key should be datagenned. This exists to support overloaded methods that point to the same
+	 * translation key.</p>
+	 *
+	 * @return true if the key should be datagenned, false otherwise
+	 */
+	boolean datagen() default true;
 }
