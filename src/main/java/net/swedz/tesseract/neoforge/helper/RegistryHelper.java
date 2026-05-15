@@ -1,8 +1,13 @@
 package net.swedz.tesseract.neoforge.helper;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+
+import java.util.stream.Stream;
 
 public final class RegistryHelper
 {
@@ -30,5 +35,21 @@ public final class RegistryHelper
 	public static <T> Holder.Reference<T> holder(Registry<T> registry, T value)
 	{
 		return registry.getHolderOrThrow(resourceKey(registry, value));
+	}
+	
+	/**
+	 * Get the registered {@link Holder}s that are tagged with the {@link TagKey}.
+	 *
+	 * @param registryAccess the registry access
+	 * @param tag the tag
+	 * @param <T> the type the registry holds
+	 * @return a stream of {@link Holder}s that are tagged with the {@link TagKey}
+	 */
+	public static <T> Stream<Holder<T>> values(RegistryAccess registryAccess, TagKey<T> tag)
+	{
+		var registry = registryAccess.registryOrThrow(tag.registry());
+		return registry.getTag(tag)
+				.map(HolderSet.ListBacked::stream)
+				.orElseGet(Stream::of);
 	}
 }
