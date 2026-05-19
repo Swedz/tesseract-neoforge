@@ -256,6 +256,16 @@ public final class TesseractGuiGraphics implements BlitGuiGraphics, FillGuiGraph
 	public void setPackedLight(Integer packedLight)
 	{
 		this.packedLight = packedLight;
+		
+		var lightTexture = Minecraft.getInstance().gameRenderer.lightTexture();
+		if(packedLight == null)
+		{
+			lightTexture.turnOffLightLayer();
+		}
+		else
+		{
+			lightTexture.turnOnLightLayer();
+		}
 	}
 	
 	@Override
