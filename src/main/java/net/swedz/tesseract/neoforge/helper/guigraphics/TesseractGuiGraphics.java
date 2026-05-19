@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.helper.guigraphics;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,15 +11,17 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.FormattedCharSequence;
 import net.swedz.tesseract.neoforge.api.Assert;
 import org.jetbrains.annotations.ApiStatus;
+import org.joml.Matrix4f;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-public final class TesseractGuiGraphics implements BlitGuiGraphics, FillGuiGraphics, StringGuiGraphics, TooltipGuiGraphics, ItemGuiGraphics
+public final class TesseractGuiGraphics implements BlitGuiGraphics, FillGuiGraphics, StringGuiGraphics, TooltipGuiGraphics, ItemGuiGraphics, PackedLightGuiGraphics
 {
 	private final TesseractGuiGraphics parent;
 	private final GuiGraphics          internal;
@@ -38,6 +41,8 @@ public final class TesseractGuiGraphics implements BlitGuiGraphics, FillGuiGraph
 	private TextureShaderConfiguration textureShader = TextureShaderConfiguration.DEFAULT;
 	private ResourceLocation[]         textures      = new ResourceLocation[]{MissingTextureAtlasSprite.getLocation()};
 	private List<DrawAction>           textureBatch;
+	
+	private Integer packedLight;
 	
 	private Font font = Minecraft.getInstance().font;
 	
@@ -248,6 +253,28 @@ public final class TesseractGuiGraphics implements BlitGuiGraphics, FillGuiGraph
 	}
 	
 	@Override
+	public void setPackedLight(Integer packedLight)
+	{
+		this.packedLight = packedLight;
+		
+		var lightTexture = Minecraft.getInstance().gameRenderer.lightTexture();
+		if(packedLight == null)
+		{
+			lightTexture.turnOffLightLayer();
+		}
+		else
+		{
+			lightTexture.turnOnLightLayer();
+		}
+	}
+	
+	@Override
+	public Integer getPackedLight()
+	{
+		return packedLight;
+	}
+	
+	@Override
 	public Font getFont()
 	{
 		return font;
@@ -311,6 +338,19 @@ public final class TesseractGuiGraphics implements BlitGuiGraphics, FillGuiGraph
 		}
 	}
 	
+	private void addVertex(Matrix4f pose, VertexConsumer buffer, float x, float y, float z, Float u, Float v, int red, int green, int blue, int alpha, Integer packedLight)
+	{
+		var vertex = buffer.addVertex(pose, x, y, z).setColor(red, green, blue, alpha);
+		if(u != null && v != null)
+		{
+			vertex.setUv(u, v);
+		}
+		if(packedLight != null)
+		{
+			vertex.setLight(packedLight);
+		}
+	}
+	
 	@ApiStatus.Internal
 	@Override
 	public void innerBlit(int x1, int x2, int y1, int y2, int blitOffset, float minU, float maxU, float minV, float maxV)
@@ -319,13 +359,14 @@ public final class TesseractGuiGraphics implements BlitGuiGraphics, FillGuiGraph
 		int green = color[1];
 		int blue = color[2];
 		int alpha = color[3];
+		var packedLight = this.getPackedLight();
 		
 		final DrawAction draw = (pose, buffer) ->
 		{
-			buffer.addVertex(pose, (float) x1, (float) y1, (float) blitOffset).setUv(minU, minV).setColor(red, green, blue, alpha);
-			buffer.addVertex(pose, (float) x1, (float) y2, (float) blitOffset).setUv(minU, maxV).setColor(red, green, blue, alpha);
-			buffer.addVertex(pose, (float) x2, (float) y2, (float) blitOffset).setUv(maxU, maxV).setColor(red, green, blue, alpha);
-			buffer.addVertex(pose, (float) x2, (float) y1, (float) blitOffset).setUv(maxU, minV).setColor(red, green, blue, alpha);
+			this.addVertex(pose, buffer, (float) x1, (float) y1, (float) blitOffset, minU, minV, red, green, blue, alpha, packedLight);
+			this.addVertex(pose, buffer, (float) x1, (float) y2, (float) blitOffset, minU, maxV, red, green, blue, alpha, packedLight);
+			this.addVertex(pose, buffer, (float) x2, (float) y2, (float) blitOffset, maxU, maxV, red, green, blue, alpha, packedLight);
+			this.addVertex(pose, buffer, (float) x2, (float) y1, (float) blitOffset, maxU, minV, red, green, blue, alpha, packedLight);
 		};
 		
 		if(batching)
@@ -340,16 +381,51 @@ public final class TesseractGuiGraphics implements BlitGuiGraphics, FillGuiGraph
 		}
 	}
 	
-	@Override
-	public void fill(RenderType renderType, int minX, int minY, int maxX, int maxY, int z)
+	@SuppressWarnings("deprecation")
+	private void internalFill(RenderType renderType, int minX, int minY, int maxX, int maxY, int z, int color, Integer packedLight)
 	{
-		int color = this.getColorARGB();
-		this.delayed(() -> internal.fill(renderType, minX, minY, maxX, maxY, z, color));
+		var pose = this.pose().last().pose();
+		if(minX < maxX)
+		{
+			int flip = minX;
+			minX = maxX;
+			maxX = flip;
+		}
+		
+		if(minY < maxY)
+		{
+			int flip = minY;
+			minY = maxY;
+			maxY = flip;
+		}
+		
+		int red = FastColor.ARGB32.red(color);
+		int green = FastColor.ARGB32.green(color);
+		int blue = FastColor.ARGB32.blue(color);
+		int alpha = FastColor.ARGB32.alpha(color);
+		
+		var buffer = this.bufferSource().getBuffer(renderType);
+		this.addVertex(pose, buffer, minX, minY, z, null, null, red, green, blue, alpha, packedLight);
+		this.addVertex(pose, buffer, minX, maxY, z, null, null, red, green, blue, alpha, packedLight);
+		this.addVertex(pose, buffer, maxX, maxY, z, null, null, red, green, blue, alpha, packedLight);
+		this.addVertex(pose, buffer, maxX, minY, z, null, null, red, green, blue, alpha, packedLight);
+		internal.flushIfUnmanaged();
 	}
 	
 	@Override
+	public void fill(RenderType renderType, int minX, int minY, int maxX, int maxY, int z)
+	{
+		var color = this.getColorARGB();
+		var packedLight = this.getPackedLight();
+		this.delayed(() -> this.internalFill(renderType, minX, minY, maxX, maxY, z, color, packedLight));
+	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
 	public int drawString(FormattedCharSequence text, float x, float y)
 	{
-		return internal.drawString(font, text, x, y, this.getColorARGB(), this.isStringDropShadow());
+		int result = font.drawInBatch(text, x, y, this.getColorARGB(), this.isStringDropShadow(), this.pose().last().pose(), internal.bufferSource(), Font.DisplayMode.NORMAL, 0, this.getPackedLightOrFull());
+		internal.flushIfUnmanaged();
+		return result;
 	}
 }
