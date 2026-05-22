@@ -6,6 +6,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.swedz.tesseract.api.Assert;
+import net.swedz.tesseract.api.Transcoder;
 import net.swedz.tesseract.config.ConfigFileAccess;
 import net.swedz.tesseract.config.DefaultValueConfigHandler;
 import net.swedz.tesseract.config.annotation.ConfigComment;
@@ -13,7 +14,7 @@ import net.swedz.tesseract.config.annotation.ConfigKey;
 import net.swedz.tesseract.config.annotation.ConfigOrder;
 import net.swedz.tesseract.config.annotation.Range;
 import net.swedz.tesseract.config.annotation.SubSection;
-import net.swedz.tesseract.config.exception.IllegalConfigOptionException;
+import net.swedz.tesseract.config.exception.IllegalConfigMethodException;
 import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
 
 import java.lang.annotation.Annotation;
@@ -71,15 +72,15 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 		
 		List<Method> methods = Lists.newArrayList(configClass.getMethods());
 		methods.sort((a, b) ->
-					 {
-						 if(a.isAnnotationPresent(ConfigOrder.class) && b.isAnnotationPresent(ConfigOrder.class))
-						 {
-							 var orderA = a.getAnnotation(ConfigOrder.class).value();
-							 var orderB = b.getAnnotation(ConfigOrder.class).value();
-							 return Integer.compare(orderA, orderB);
-						 }
-						 return 0;
-					 });
+		{
+			if(a.isAnnotationPresent(ConfigOrder.class) && b.isAnnotationPresent(ConfigOrder.class))
+			{
+				var orderA = a.getAnnotation(ConfigOrder.class).value();
+				var orderB = b.getAnnotation(ConfigOrder.class).value();
+				return Integer.compare(orderA, orderB);
+			}
+			return 0;
+		});
 		
 		Set<String> keys = Sets.newHashSet();
 		
@@ -87,9 +88,18 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 		{
 			if(method.isAnnotationPresent(ConfigKey.class))
 			{
+				if(method.getReturnType() == void.class)
+				{
+					if(method.getParameterCount() != 1)
+					{
+						throw new IllegalConfigMethodException("Cannot have void config setter method without exactly one parameter");
+					}
+					continue;
+				}
+				
 				if(method.getParameterCount() != 0)
 				{
-					throw new IllegalConfigOptionException("Cannot have config method with parameters");
+					throw new IllegalConfigMethodException("Cannot have config method with parameters");
 				}
 				
 				if(method.isAnnotationPresent(ConfigComment.class))
@@ -107,7 +117,7 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 				
 				if(!keys.add(key))
 				{
-					throw new IllegalConfigOptionException("Duplicate config key: %s".formatted(key));
+					throw new IllegalConfigMethodException("Duplicate config key: %s".formatted(key));
 				}
 				
 				if(method.isAnnotationPresent(SubSection.class))
@@ -125,7 +135,7 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 				}
 				else
 				{
-					throw new IllegalConfigOptionException("Cannot retrieve default value from method %s".formatted(method.getName()));
+					throw new IllegalConfigMethodException("Cannot retrieve default value from method %s".formatted(method.getName()));
 				}
 			}
 		}
@@ -157,16 +167,15 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 		{
 			if(!numberType.isAssignableFrom(value.getClass()))
 			{
-				throw new IllegalConfigOptionException("Type of %s is not a fitting numeric but has a range annotation".formatted(key));
+				throw new IllegalConfigMethodException("Type of %s is not a fitting numeric but has a range annotation".formatted(key));
 			}
 			Annotation annotationInstance = method.getAnnotation(annotation);
-			switch (annotationInstance)
+			switch(annotationInstance)
 			{
 				case Range.Integer range -> builder.defineInRange(key, (java.lang.Integer) value, range.min(), range.max());
 				case Range.Double range -> builder.defineInRange(key, (java.lang.Double) value, range.min(), range.max());
 				case Range.Long range -> builder.defineInRange(key, (java.lang.Long) value, range.min(), range.max());
-				default ->
-						throw new IllegalConfigOptionException("Unsupported numeric range annotation: %s".formatted(annotationInstance.annotationType().getName()));
+				default -> throw new IllegalConfigMethodException("Unsupported numeric range annotation: %s".formatted(annotationInstance.annotationType().getName()));
 			}
 			return true;
 		}
@@ -187,18 +196,20 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 		{
 			var codec = codecs.get(type);
 			value = codec.encode(defaultValue);
-			builder.define(key, value, (currentValue) ->
-			{
-				try
-				{
-					codec.decode(currentValue);
-					return true;
-				}
-				catch(Exception ex)
-				{
-					return false;
-				}
-			});
+			builder.define(
+					key, value, (currentValue) ->
+					{
+						try
+						{
+							codec.decode(currentValue);
+							return true;
+						}
+						catch(Exception ex)
+						{
+							return false;
+						}
+					}
+			);
 		}
 		else
 		{
@@ -257,5 +268,24 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 			return codec.decode(value);
 		}
 		return value;
+	}
+	
+	@Override
+	public void set(Class<?> type, String path, Object value)
+	{
+		Assert.notNull(spec, "Config file has not yet been loaded", IllegalStateException::new);
+		
+		ModConfigSpec.ConfigValue configValue = spec.getValues().get(path);
+		if(codecs.has(type))
+		{
+			var codec = (Transcoder<Object, Object>) codecs.get(type);
+			configValue.set(codec.encode(value));
+			configValue.save();
+		}
+		else
+		{
+			configValue.set(value);
+			configValue.save();
+		}
 	}
 }
