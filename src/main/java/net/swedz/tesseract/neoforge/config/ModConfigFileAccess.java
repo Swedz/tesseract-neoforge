@@ -197,7 +197,9 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 			var codec = codecs.get(type);
 			value = codec.encode(defaultValue);
 			builder.define(
-					key, value, (currentValue) ->
+					key,
+					value,
+					(currentValue) ->
 					{
 						try
 						{
