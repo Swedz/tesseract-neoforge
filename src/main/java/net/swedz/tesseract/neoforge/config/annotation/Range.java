@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.config.annotation;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.swedz.tesseract.neoforge.config.exception.IllegalConfigOptionException;
+import net.swedz.tesseract.neoforge.config.exception.IllegalConfigMethodException;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.annotation.Annotation;
@@ -41,7 +41,7 @@ public final class Range
 		{
 			if(!numberType.isAssignableFrom(value.getClass()))
 			{
-				throw new IllegalConfigOptionException("Type of %s is not a fitting numeric but has a range annotation".formatted(key));
+				throw new IllegalConfigMethodException("Type of %s is not a fitting numeric but has a range annotation".formatted(key));
 			}
 			Annotation annotationInstance = method.getAnnotation(annotation);
 			switch (annotationInstance)
@@ -50,7 +50,7 @@ public final class Range
 				case Double range -> builder.defineInRange(key, (java.lang.Double) value, range.min(), range.max());
 				case Long range -> builder.defineInRange(key, (java.lang.Long) value, range.min(), range.max());
 				default ->
-						throw new IllegalConfigOptionException("Unsupported numeric range annotation: %s".formatted(annotationInstance.annotationType().getName()));
+						throw new IllegalConfigMethodException("Unsupported numeric range annotation: %s".formatted(annotationInstance.annotationType().getName()));
 			}
 			return true;
 		}

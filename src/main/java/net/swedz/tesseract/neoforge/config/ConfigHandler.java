@@ -1,9 +1,11 @@
 package net.swedz.tesseract.neoforge.config;
 
+import com.mojang.serialization.Codec;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigKey;
 import net.swedz.tesseract.neoforge.config.annotation.SubSection;
+import net.swedz.tesseract.neoforge.config.exception.IllegalConfigMethodException;
 import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
 import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyHandler;
 import net.swedz.tesseract.neoforge.serialization.TomlOps;
@@ -11,6 +13,7 @@ import net.swedz.tesseract.neoforge.serialization.TomlOps;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public final class ConfigHandler extends InterfaceProxyHandler<ConfigEntry>
@@ -77,12 +80,38 @@ public final class ConfigHandler extends InterfaceProxyHandler<ConfigEntry>
 				key = NamingConventionHelper.fromCamelCaseToSnakeCase(method);
 			}
 			String path = this.path(key);
-			var type = method.getReturnType();
+			var returnType = method.getReturnType();
+			
+			if(returnType == void.class)
+			{
+				if(method.getParameterCount() != 1)
+				{
+					throw new IllegalConfigMethodException(method.getName() + " doesn't have exactly 1 parameter");
+				}
+				var parameterType = method.getParameterTypes()[0];
+				if(manager.codecs().has(parameterType))
+				{
+					var codec = (Codec) manager.codecs().get(parameterType);
+					return Optional.of(new ConfigEntry((Consumer<Object>) (value) ->
+					{
+						ModConfigSpec.ConfigValue configValue = spec.getValues().get(path);
+						Object encoded = codec.encodeStart(TomlOps.INSTANCE, value).getOrThrow();
+						configValue.set(encoded);
+						configValue.save();
+					}));
+				}
+				return Optional.of(new ConfigEntry((Consumer<Object>) (value) ->
+				{
+					ModConfigSpec.ConfigValue configValue = spec.getValues().get(path);
+					configValue.set(value);
+					configValue.save();
+				}));
+			}
 			
 			Object value;
 			if(method.isAnnotationPresent(SubSection.class))
 			{
-				value = manager.build(type, new ConfigManagerArg(Optional.of(spec), path)).load();
+				value = manager.build(returnType, new ConfigManagerArg(Optional.of(spec), path)).load();
 			}
 			else
 			{
