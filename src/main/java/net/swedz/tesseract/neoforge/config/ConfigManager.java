@@ -9,7 +9,7 @@ import net.swedz.tesseract.neoforge.config.annotation.ConfigKey;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigOrder;
 import net.swedz.tesseract.neoforge.config.annotation.Range;
 import net.swedz.tesseract.neoforge.config.annotation.SubSection;
-import net.swedz.tesseract.neoforge.config.exception.IllegalConfigOptionException;
+import net.swedz.tesseract.neoforge.config.exception.IllegalConfigMethodException;
 import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
 import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyManager;
 import net.swedz.tesseract.neoforge.serialization.TomlOps;
@@ -52,7 +52,7 @@ public final class ConfigManager extends InterfaceProxyManager.WithArgument<Conf
 			this.buildSpec(builder, proxyClass);
 			return builder.build();
 		}
-		catch (Throwable ex)
+		catch(Throwable ex)
 		{
 			throw new RuntimeException(ex);
 		}
@@ -106,20 +106,18 @@ public final class ConfigManager extends InterfaceProxyManager.WithArgument<Conf
 		{
 			if(method.isAnnotationPresent(ConfigKey.class))
 			{
-				if(method.getReturnType() != void.class &&
-				   method.getParameterCount() != 0)
-				{
-					throw new IllegalConfigOptionException("Cannot have config method with parameters");
-				}
-				else if(method.getReturnType() == void.class &&
-						method.getParameterCount() != 1)
-				{
-					throw new IllegalConfigOptionException("Cannot have config editing method with not exactly 1 parameter");
-				}
-				
 				if(method.getReturnType() == void.class)
 				{
+					if(method.getParameterCount() != 1)
+					{
+						throw new IllegalConfigMethodException("Cannot have config editing method with not exactly 1 parameter");
+					}
 					continue;
+				}
+				
+				if(method.getParameterCount() != 0)
+				{
+					throw new IllegalConfigMethodException("Cannot have config method with parameters");
 				}
 				
 				if(method.isAnnotationPresent(ConfigComment.class))
@@ -137,7 +135,7 @@ public final class ConfigManager extends InterfaceProxyManager.WithArgument<Conf
 				
 				if(!keys.add(key))
 				{
-					throw new IllegalConfigOptionException("Duplicate config key: %s".formatted(key));
+					throw new IllegalConfigMethodException("Duplicate config key: %s".formatted(key));
 				}
 				
 				if(method.isAnnotationPresent(SubSection.class))
@@ -155,7 +153,7 @@ public final class ConfigManager extends InterfaceProxyManager.WithArgument<Conf
 				}
 				else
 				{
-					throw new IllegalConfigOptionException("Cannot retrieve default value from method %s".formatted(method.getName()));
+					throw new IllegalConfigMethodException("Cannot retrieve default value from method %s".formatted(method.getName()));
 				}
 			}
 		}
@@ -172,7 +170,7 @@ public final class ConfigManager extends InterfaceProxyManager.WithArgument<Conf
 		{
 			var codec = codecs.get(type);
 			value = codec.encodeStart(TomlOps.INSTANCE, defaultValue)
-					.getOrThrow((error) -> new IllegalConfigOptionException("Unable to encode default value %s: %s".formatted(defaultValue, error)));
+					.getOrThrow((error) -> new IllegalConfigMethodException("Unable to encode default value %s: %s".formatted(defaultValue, error)));
 			builder.define(key, value, (currentValue) -> codec.parse(TomlOps.INSTANCE, currentValue).isSuccess());
 		}
 		else

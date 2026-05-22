@@ -5,7 +5,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.config.annotation.ConfigKey;
 import net.swedz.tesseract.neoforge.config.annotation.SubSection;
-import net.swedz.tesseract.neoforge.config.exception.IllegalConfigOptionException;
+import net.swedz.tesseract.neoforge.config.exception.IllegalConfigMethodException;
 import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
 import net.swedz.tesseract.neoforge.interfaceproxy.InterfaceProxyHandler;
 import net.swedz.tesseract.neoforge.serialization.TomlOps;
@@ -86,7 +86,7 @@ public final class ConfigHandler extends InterfaceProxyHandler<ConfigEntry>
 			{
 				if(method.getParameterCount() != 1)
 				{
-					throw new IllegalConfigOptionException(method.getName() + " doesn't have exactly 1 parameter");
+					throw new IllegalConfigMethodException(method.getName() + " doesn't have exactly 1 parameter");
 				}
 				var parameterType = method.getParameterTypes()[0];
 				if(manager.codecs().has(parameterType))
