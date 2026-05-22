@@ -79,16 +79,7 @@ public final class ConfigManager extends InterfaceProxyManager.WithArgument<Conf
 	@Override
 	public <P> ConfigInstance<P> build(Class<P> proxyClass, ConfigManagerArg arg)
 	{
-		try
-		{
-			var handler = this.createHandler(proxyClass, arg);
-			var proxy = (P) Proxy.newProxyInstance(proxyClass.getClassLoader(), new Class[]{proxyClass}, handler);
-			return this.createInstance(proxyClass, proxy, handler);
-		}
-		catch (Throwable ex)
-		{
-			throw new RuntimeException(ex);
-		}
+		return (ConfigInstance<P>) super.build(proxyClass, arg);
 	}
 	
 	private <C> void buildSpec(ModConfigSpec.Builder builder, Class<C> configClass) throws Throwable
@@ -115,9 +106,20 @@ public final class ConfigManager extends InterfaceProxyManager.WithArgument<Conf
 		{
 			if(method.isAnnotationPresent(ConfigKey.class))
 			{
-				if(method.getParameterCount() != 0)
+				if(method.getReturnType() != void.class &&
+				   method.getParameterCount() != 0)
 				{
 					throw new IllegalConfigOptionException("Cannot have config method with parameters");
+				}
+				else if(method.getReturnType() == void.class &&
+						method.getParameterCount() != 1)
+				{
+					throw new IllegalConfigOptionException("Cannot have config editing method with not exactly 1 parameter");
+				}
+				
+				if(method.getReturnType() == void.class)
+				{
+					continue;
 				}
 				
 				if(method.isAnnotationPresent(ConfigComment.class))
