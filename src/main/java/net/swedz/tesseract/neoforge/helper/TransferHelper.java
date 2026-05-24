@@ -13,8 +13,8 @@ import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.wrapper.PlayerInvWrapper;
-import net.swedz.tesseract.neoforge.api.Assert;
-import net.swedz.tesseract.neoforge.api.tuple.Pair;
+import net.swedz.tesseract.api.Assert;
+import net.swedz.tesseract.api.tuple.Pair;
 import org.slf4j.Logger;
 
 import java.util.Collections;

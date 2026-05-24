@@ -3,7 +3,7 @@ package net.swedz.tesseract.neoforge.lang;
 import com.google.common.collect.Maps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.neoforge.lang.parser.ParserProvider;
 import net.swedz.tesseract.neoforge.lang.style.StyleProvider;
 

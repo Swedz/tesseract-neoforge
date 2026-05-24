@@ -3,7 +3,7 @@ package net.swedz.tesseract.neoforge.compat.mi.machine.builder;
 import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.machines.models.MachineCasing;
 import net.minecraft.resources.ResourceLocation;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 

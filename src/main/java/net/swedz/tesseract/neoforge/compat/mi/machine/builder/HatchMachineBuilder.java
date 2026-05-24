@@ -11,7 +11,7 @@ import aztech.modern_industrialization.machines.blockentities.hatches.ItemHatch;
 import aztech.modern_industrialization.machines.gui.MachineGuiParameters;
 import aztech.modern_industrialization.machines.models.MachineCasing;
 import com.google.common.collect.Lists;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockHatchBlockEntityFactory;
