@@ -2,7 +2,7 @@ package net.swedz.tesseract.neoforge.tooltip;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.swedz.tesseract.neoforge.api.tuple.Pair;
+import net.swedz.tesseract.api.tuple.Pair;
 
 public interface BiParser<A, B> extends Parser<Pair<A, B>>
 {

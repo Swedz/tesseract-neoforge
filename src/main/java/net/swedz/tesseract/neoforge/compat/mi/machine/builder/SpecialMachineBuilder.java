@@ -6,7 +6,7 @@ import aztech.modern_industrialization.machines.models.MachineCasing;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import net.minecraft.resources.ResourceLocation;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.neoforge.compat.mi.hack.HackedMachineRegistrationHelper;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.machine.builder.function.MachineBlockEntityFactory;

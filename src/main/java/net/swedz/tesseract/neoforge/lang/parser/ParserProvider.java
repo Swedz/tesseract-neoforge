@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.lang.parser;
 
 import net.minecraft.network.chat.Component;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.neoforge.lang.LangContext;
 import net.swedz.tesseract.neoforge.tooltip.Parser;
 

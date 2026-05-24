@@ -7,7 +7,7 @@ import net.minecraft.client.resources.model.Material;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.neoforged.neoforge.client.model.geometry.IGeometryBakingContext;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
 
 import java.util.LinkedHashMap;
 import java.util.List;

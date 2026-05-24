@@ -19,7 +19,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.swedz.tesseract.neoforge.api.WorldPos;
-import net.swedz.tesseract.neoforge.api.tuple.Pair;
+import net.swedz.tesseract.api.tuple.Pair;
 
 public interface Parser<T>
 {

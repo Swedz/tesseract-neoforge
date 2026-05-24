@@ -3,7 +3,7 @@ package net.swedz.tesseract.neoforge.compat.mi.machine.builder.slots;
 import aztech.modern_industrialization.inventory.ConfigurableFluidStack;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
 import net.minecraft.world.level.material.Fluid;
-import net.swedz.tesseract.neoforge.api.Assert;
+import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.neoforge.compat.mi.mixin.accessor.ConfigurableStackAccessor;
 
 import java.util.function.Supplier;
