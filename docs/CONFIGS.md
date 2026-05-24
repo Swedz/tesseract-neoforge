@@ -38,17 +38,18 @@ And then in your mod constructor, you can load it like so:
 ```java
 public MyMod(IEventBus bus, ModContainer container)
 {
-	MyModConfig config = new ConfigManager()
+	ModConfigFileAccess file = new ModConfigFileAccess(container, ModConfig.Type.COMMON); // use whatever config type you need
+	ConfigInstance<MyModConfig> instance = new ConfigManager(file)
 			.build(MyModConfig.class)
-			.register(container, ModConfig.Type.COMMON) // use whatever config type you need
-			.listenToLoad(bus)
-			.config();
+			.load(); // loads the config immediately, this is optional
+	bus.addListener(FMLCommonSetupEvent.class, (event) -> instance.load(false));
+	MyModConfig config = instance.config();
 	
 	// use your config values ...
 }
 ```
 
-This system also supports storing custom data types using a codec. You can register codecs on your `ConfigManager`
+This system also supports storing custom data types using a codec. You can register codecs on your `ConfigFileAccess`
 instance with `.codecs().register(type, codec)`. That is all! You can then use your type as the return type for your
 methods in your config.
 
