@@ -1,5 +1,5 @@
 dependencies {
-	jarJar(implementation("net.swedz:tesseract-api:${tesseract_version}")) {
+	jarJar(api("net.swedz:tesseract-api:${tesseract_version}")) {
 		version {
 			strictly tesseract_version_range
 			prefer tesseract_version

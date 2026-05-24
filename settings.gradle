@@ -31,14 +31,6 @@ dependencyResolutionManagement {
 			}
 		}
 		maven {
-			name = "shedaniel"
-			url = "https://maven.shedaniel.me"
-			content {
-				// Cloth Config
-				includeGroup "me.shedaniel.cloth"
-			}
-		}
-		maven {
 			name = "TerraformersMC"
 			url = "https://maven.terraformersmc.com/releases/"
 			content {

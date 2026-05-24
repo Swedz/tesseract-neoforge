@@ -6,7 +6,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.swedz.tesseract.api.Assert;
-import net.swedz.tesseract.api.Transcoder;
+import net.swedz.tesseract.config.ConfigCodecMap;
 import net.swedz.tesseract.config.ConfigFileAccess;
 import net.swedz.tesseract.config.DefaultValueConfigHandler;
 import net.swedz.tesseract.config.annotation.ConfigComment;
@@ -15,7 +15,8 @@ import net.swedz.tesseract.config.annotation.ConfigOrder;
 import net.swedz.tesseract.config.annotation.Range;
 import net.swedz.tesseract.config.annotation.SubSection;
 import net.swedz.tesseract.config.exception.IllegalConfigMethodException;
-import net.swedz.tesseract.neoforge.helper.NamingConventionHelper;
+import net.swedz.tesseract.helper.NamingConventionHelper;
+import net.swedz.tesseract.neoforge.serialization.TomlOps;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
@@ -27,7 +28,7 @@ import java.util.Set;
 
 public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 {
-	private final ModConfigCodecMap codecs = new ModConfigCodecMap();
+	private final ConfigCodecMap<Object> codecs = new ConfigCodecMap<>(TomlOps.INSTANCE);
 	
 	private final ModContainer   container;
 	private final ModConfig.Type type;
@@ -56,7 +57,7 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 	}
 	
 	@Override
-	public ModConfigCodecMap codecs()
+	public ConfigCodecMap<Object> codecs()
 	{
 		return codecs;
 	}
@@ -194,8 +195,7 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 		Object value;
 		if(codecs.has(type))
 		{
-			var codec = codecs.get(type);
-			value = codec.encode(defaultValue);
+			value = codecs.encode(type, defaultValue);
 			builder.define(
 					key,
 					value,
@@ -203,7 +203,7 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 					{
 						try
 						{
-							codec.decode(currentValue);
+							codecs.decode(type, currentValue);
 							return true;
 						}
 						catch(Exception ex)
@@ -266,8 +266,7 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 		var value = configValue.get();
 		if(codecs.has(type))
 		{
-			var codec = codecs.get(type);
-			return codec.decode(value);
+			return codecs.decode(type, value);
 		}
 		return value;
 	}
@@ -278,16 +277,16 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 		Assert.notNull(spec, "Config file has not yet been loaded", IllegalStateException::new);
 		
 		ModConfigSpec.ConfigValue configValue = spec.getValues().get(path);
+		Object encoded;
 		if(codecs.has(type))
 		{
-			var codec = (Transcoder<Object, Object>) codecs.get(type);
-			configValue.set(codec.encode(value));
-			configValue.save();
+			encoded = codecs.encode(type, value);
 		}
 		else
 		{
-			configValue.set(value);
-			configValue.save();
+			encoded = value;
 		}
+		configValue.set(encoded);
+		configValue.save();
 	}
 }
