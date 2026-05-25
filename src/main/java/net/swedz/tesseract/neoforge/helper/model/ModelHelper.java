@@ -3,8 +3,8 @@ package net.swedz.tesseract.neoforge.helper.model;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
-import net.minecraft.client.renderer.block.model.TextureSlots;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.Material;
+import net.minecraft.client.resources.model.sprite.TextureSlots;
 import net.minecraft.data.AtlasIds;
 import net.minecraft.resources.Identifier;
 import net.swedz.tesseract.api.Assert;
@@ -12,6 +12,7 @@ import net.swedz.tesseract.api.Assert;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+// TODO what to do about atlases?
 public final class ModelHelper
 {
 	public static LinkedHashMap<String, Material> gatherTextures(Identifier atlas, JsonObject json, String name)
@@ -24,7 +25,7 @@ public final class ModelHelper
 		LinkedHashMap<String, Material> textures = Maps.newLinkedHashMap();
 		for(var entry : json.getAsJsonObject(name).entrySet())
 		{
-			textures.put(entry.getKey(), new Material(atlas, Identifier.parse(entry.getValue().getAsString())));
+			textures.put(entry.getKey(), new Material(Identifier.parse(entry.getValue().getAsString())));
 		}
 		return textures;
 	}
@@ -45,7 +46,7 @@ public final class ModelHelper
 		ImmutableList.Builder<Material> builder = ImmutableList.builder();
 		for(int index = 0; json.has("layer" + index); index++)
 		{
-			builder.add(new Material(atlas, Identifier.parse(json.get("layer" + index).getAsString())));
+			builder.add(new Material(Identifier.parse(json.get("layer" + index).getAsString())));
 		}
 		return builder.build();
 	}

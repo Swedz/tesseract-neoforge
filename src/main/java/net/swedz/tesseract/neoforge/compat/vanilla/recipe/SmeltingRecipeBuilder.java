@@ -119,8 +119,13 @@ public class SmeltingRecipeBuilder extends RecipeBuilder
 	{
 		AbstractCookingRecipe.Factory<?> factory = blasting ? BlastingRecipe::new : SmeltingRecipe::new;
 		return factory.create(
-				"",
-				CookingBookCategory.MISC,
+				new Recipe.CommonInfo(
+						false
+				),
+				new AbstractCookingRecipe.CookingBookInfo(
+						CookingBookCategory.MISC,
+						""
+				),
 				input,
 				result,
 				experience,

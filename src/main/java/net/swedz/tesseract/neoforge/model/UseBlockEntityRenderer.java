@@ -5,11 +5,10 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.phys.Vec3;
@@ -23,7 +22,7 @@ import java.util.function.Consumer;
 public final class UseBlockEntityRenderer implements SpecialModelRenderer<ItemResource>
 {
 	@Override
-	public void submit(ItemResource resource, ItemDisplayContext type, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor)
+	public void submit(ItemResource resource, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor)
 	{
 		Objects.requireNonNull(resource, "UseBlockEntityRenderer resource must not be null");
 		if(!(resource.getItem() instanceof BlockItem blockItem))

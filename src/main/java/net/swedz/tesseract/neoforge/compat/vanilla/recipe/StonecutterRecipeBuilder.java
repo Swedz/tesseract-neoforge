@@ -66,7 +66,7 @@ public class StonecutterRecipeBuilder extends RecipeBuilder
 	@Override
 	public Recipe<?> convert()
 	{
-		return new StonecutterRecipe("", input, result);
+		return new StonecutterRecipe(new Recipe.CommonInfo(false), input, result);
 	}
 	
 	//<editor-fold desc="Inherited...">

@@ -3,7 +3,7 @@ package net.swedz.tesseract.neoforge.gui.widget;
 import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
@@ -142,9 +142,9 @@ public class AutoFillEditBox extends EditBox
 	}
 	
 	@Override
-	public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick)
+	public void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick)
 	{
-		super.renderWidget(graphics, mouseX, mouseY, partialTick);
+		super.extractWidgetRenderState(graphics, mouseX, mouseY, partialTick);
 		
 		if(this.isVisible() && this.isFocused() && !matchingFillOptions.isEmpty())
 		{
@@ -167,7 +167,7 @@ public class AutoFillEditBox extends EditBox
 			for(int index = viewOptionIndex; index < endIndex; index++)
 			{
 				String option = matchingFillOptions.get(index);
-				graphics.drawString(Minecraft.getInstance().font, option, lineX, lineY, highlightedOptionIndex == index ? textColor : textColorUneditable);
+				graphics.text(Minecraft.getInstance().font, option, lineX, lineY, highlightedOptionIndex == index ? textColor : textColorUneditable);
 				
 				lineY += Minecraft.getInstance().font.lineHeight + 4;
 			}

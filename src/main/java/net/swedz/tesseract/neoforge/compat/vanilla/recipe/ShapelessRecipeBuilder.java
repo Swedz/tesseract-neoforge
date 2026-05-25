@@ -8,6 +8,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
@@ -73,8 +74,13 @@ public class ShapelessRecipeBuilder extends RecipeBuilder
 	public Recipe<?> convert()
 	{
 		return new ShapelessRecipe(
-				"",
-				CraftingBookCategory.MISC,
+				new Recipe.CommonInfo(
+						false
+				),
+				new CraftingRecipe.CraftingBookInfo(
+						CraftingBookCategory.MISC,
+						""
+				),
 				result,
 				NonNullList.copyOf(input)
 		);

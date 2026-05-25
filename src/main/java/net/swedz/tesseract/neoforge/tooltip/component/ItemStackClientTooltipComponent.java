@@ -1,7 +1,7 @@
 package net.swedz.tesseract.neoforge.tooltip.component;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 
 public record ItemStackClientTooltipComponent(ItemStackTooltipComponent component) implements ClientTooltipComponent
@@ -19,10 +19,10 @@ public record ItemStackClientTooltipComponent(ItemStackTooltipComponent componen
 	}
 	
 	@Override
-	public void renderImage(Font font, int x, int y, int mouseX, int mouseY, GuiGraphics graphics)
+	public void extractImage(Font font, int x, int y, int mouseX, int mouseY, GuiGraphicsExtractor graphics)
 	{
 		var stack = component.stack();
-		graphics.renderItem(stack, mouseX, mouseY);
-		graphics.renderItemDecorations(font, stack, mouseX, mouseY, null);
+		graphics.item(stack, mouseX, mouseY);
+		graphics.itemDecorations(font, stack, mouseX, mouseY, null);
 	}
 }

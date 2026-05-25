@@ -13,7 +13,6 @@ import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
-import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
 import net.swedz.tesseract.neoforge.datagen.client.LanguageDatagenProvider;
 import net.swedz.tesseract.neoforge.event.ItemHurtEvent;
 import net.swedz.tesseract.neoforge.item.ArmorTickHandler;
@@ -53,7 +52,7 @@ public final class Tesseract
 			{
 			}
 			// TODO TesseractMILootConditions.init(bus);
-			MIHookTracker.registerRecipeCategoryForMachines(bus);
+			// TODO MIHookTracker.registerRecipeCategoryForMachines(bus);
 		}
 		
 		bus.addListener(GatherDataEvent.Client.class, (event) ->

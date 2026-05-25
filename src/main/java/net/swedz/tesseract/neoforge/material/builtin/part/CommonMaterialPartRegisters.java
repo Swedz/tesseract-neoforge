@@ -48,7 +48,7 @@ public final class CommonMaterialPartRegisters
 				return provider.createSilkTouchDispatchTable(block, provider.applyExplosionDecay(
 						block,
 						LootItem.lootTableItem(drop)
-								.apply(SetItemCountFunction.setCount(UniformGenerator.between(drops.drops().getMinValue(), drops.drops().getMaxValue())))
+								.apply(SetItemCountFunction.setCount(UniformGenerator.between(drops.drops().minInclusive(), drops.drops().maxInclusive())))
 								.apply(ApplyBonusCount.addUniformBonusCount(lookup.getOrThrow(Enchantments.FORTUNE)))
 				));
 			};

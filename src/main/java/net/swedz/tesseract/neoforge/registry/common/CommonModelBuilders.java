@@ -7,9 +7,10 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.data.models.model.TexturedModel;
-import net.minecraft.client.renderer.item.BlockModelWrapper;
 import net.minecraft.client.renderer.item.CompositeModel;
+import net.minecraft.client.renderer.item.CuboidItemModelWrapper;
 import net.minecraft.client.renderer.item.SpecialModelWrapper;
+import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.client.model.generators.blockstate.CustomBlockStateModelBuilder;
@@ -19,6 +20,7 @@ import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.ItemHolder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public final class CommonModelBuilders
@@ -29,7 +31,7 @@ public final class CommonModelBuilders
 				ModelTemplates.FLAT_ITEM.create(
 						item.asItem(),
 						new TextureMapping()
-								.put(TextureSlot.LAYER0, Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture)),
+								.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))),
 						generators.item().modelOutput
 				);
 	}
@@ -45,8 +47,8 @@ public final class CommonModelBuilders
 				ModelTemplates.FLAT_ITEM.create(
 						item.asItem(),
 						new TextureMapping()
-								.put(TextureSlot.LAYER0, Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))
-								.put(TextureSlot.LAYER1, Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay")),
+								.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture)))
+								.put(TextureSlot.LAYER1, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay"))),
 						generators.item().modelOutput
 				);
 	}
@@ -62,7 +64,7 @@ public final class CommonModelBuilders
 				ModelTemplates.FLAT_HANDHELD_ITEM.create(
 						item.asItem(),
 						new TextureMapping()
-								.put(TextureSlot.LAYER0, Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture)),
+								.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))),
 						generators.item().modelOutput
 				);
 	}
@@ -78,8 +80,8 @@ public final class CommonModelBuilders
 				ModelTemplates.FLAT_HANDHELD_ITEM.create(
 						item.asItem(),
 						new TextureMapping()
-								.put(TextureSlot.LAYER0, Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))
-								.put(TextureSlot.LAYER1, Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay")),
+								.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture)))
+								.put(TextureSlot.LAYER1, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay"))),
 						generators.item().modelOutput
 				);
 	}
@@ -96,10 +98,13 @@ public final class CommonModelBuilders
 			var baseBlockModel = BuiltInRegistries.ITEM.getKey(item.asItem()).withPrefix("block/");
 			generators.item().itemModelOutput.accept(
 					item.asItem(),
-					new CompositeModel.Unbaked(List.of(
-							new BlockModelWrapper.Unbaked(baseBlockModel, List.of()),
-							new SpecialModelWrapper.Unbaked(baseBlockModel, new UseBlockEntityRenderer.Unbaked())
-					))
+					new CompositeModel.Unbaked(
+							List.of(
+									new CuboidItemModelWrapper.Unbaked(baseBlockModel, Optional.empty(), List.of()),
+									new SpecialModelWrapper.Unbaked(baseBlockModel, Optional.empty(), new UseBlockEntityRenderer.Unbaked())
+							),
+							Optional.empty()
+					)
 			);
 		};
 		// TODO 26.1
@@ -163,8 +168,8 @@ public final class CommonModelBuilders
 				ModelTemplates.CUBE_COLUMN.create(
 						block.get(),
 						new TextureMapping()
-								.put(TextureSlot.END, Identifier.fromNamespaceAndPath(block.identifier().modId(), "block/%s_end".formatted(block.identifier().id())))
-								.put(TextureSlot.SIDE, Identifier.fromNamespaceAndPath(block.identifier().modId(), "block/%s_side".formatted(block.identifier().id()))),
+								.put(TextureSlot.END, new Material(Identifier.fromNamespaceAndPath(block.identifier().modId(), "block/%s_end".formatted(block.identifier().id()))))
+								.put(TextureSlot.SIDE, new Material(Identifier.fromNamespaceAndPath(block.identifier().modId(), "block/%s_side".formatted(block.identifier().id())))),
 						generators.block().modelOutput
 				);
 	}
