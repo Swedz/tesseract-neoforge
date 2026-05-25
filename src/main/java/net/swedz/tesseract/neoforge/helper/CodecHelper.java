@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.helper;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -19,9 +20,22 @@ public final class CodecHelper
 		return registry.byNameCodec();
 	}
 	
+	public static <R> Codec<Holder<R>> forRegistryHolder(Registry<R> registry)
+	{
+		return registry.holderByNameCodec();
+	}
+	
 	public static <R> StreamCodec<ByteBuf, R> forRegistryStream(Registry<R> registry)
 	{
 		return Identifier.STREAM_CODEC.map(registry::getValue, registry::getKey);
+	}
+	
+	public static <R> StreamCodec<ByteBuf, Holder<R>> forRegistryHolderStream(Registry<R> registry)
+	{
+		return Identifier.STREAM_CODEC.map(
+				(id) -> registry.get(id).orElseThrow(),
+				(holder) -> registry.getKey(holder.value())
+		);
 	}
 	
 	public static <E extends Enum<E>> Codec<E> forEnum(Class<E> enumClass, Supplier<E[]> values, boolean uppercase)
