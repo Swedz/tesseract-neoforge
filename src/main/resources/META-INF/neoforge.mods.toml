@@ -15,6 +15,7 @@ displayURL = "${mod_github}"
 [[mixins]]
 config = "${mod_id}.mixins.json"
 
+#TODO wait for MI
 #[[mixins]]
 #config = "${mod_id}_mi.mixins.json"
 
