@@ -4,5 +4,8 @@
     ],
     "net/minecraft/world/level/Level": [
         "net/swedz/tesseract/neoforge/event/treegrowth/TrackBlockChangesExtension"
+    ],
+    "net/minecraft/client/gui/GuiGraphicsExtractor": [
+        "net/swedz/tesseract/neoforge/gui/GuiGraphicsExtractorExtension"
     ]
 }

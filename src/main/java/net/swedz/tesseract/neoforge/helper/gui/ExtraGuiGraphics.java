@@ -10,11 +10,13 @@ import net.minecraft.util.FormattedCharSequence;
 
 public final class ExtraGuiGraphics
 {
+	// TODO might be unnecessary now since mc has nineslicing built in with mcmeta files and blitSprite
 	public static void nineSlice(
 			GuiGraphicsExtractor graphics,
 			RenderPipeline pipeline,
 			Identifier texture,
 			int color,
+			int packedLight,
 			int screenX,
 			int screenY,
 			int screenWidth,
@@ -28,10 +30,10 @@ public final class ExtraGuiGraphics
 		int texCenterHeight = textureHeight - (border * 2);
 		
 		// Corners
-		graphics.blit(pipeline, texture, screenX, screenY, 0, 0, border, border, border, border, textureWidth, textureHeight, color);
-		graphics.blit(pipeline, texture, screenX + screenWidth - border, screenY, textureWidth - border, 0, border, border, border, border, textureWidth, textureHeight, color);
-		graphics.blit(pipeline, texture, screenX, screenY + screenHeight - border, 0, textureHeight - border, border, border, border, border, textureWidth, textureHeight, color);
-		graphics.blit(pipeline, texture, screenX + screenWidth - border, screenY + screenHeight - border, textureWidth - border, textureHeight - border, border, border, border, border, textureWidth, textureHeight, color);
+		graphics.blit(pipeline, texture, screenX, screenY, 0, 0, border, border, textureWidth, textureHeight, color);
+		graphics.blit(pipeline, texture, screenX + screenWidth - border, screenY, textureWidth - border, 0, border, border, textureWidth, textureHeight, color);
+		graphics.blit(pipeline, texture, screenX, screenY + screenHeight - border, 0, textureHeight - border, border, border, textureWidth, textureHeight, color);
+		graphics.blit(pipeline, texture, screenX + screenWidth - border, screenY + screenHeight - border, textureWidth - border, textureHeight - border, border, border, textureWidth, textureHeight, color);
 		/*this.blit(screenX, screenY, 0, 0, border, border, textureWidth, textureHeight);
 		this.blit(screenX + screenWidth - border, screenY, textureWidth - border, 0, border, border, textureWidth, textureHeight);
 		this.blit(screenX, screenY + screenHeight - border, 0, textureHeight - border, border, border, textureWidth, textureHeight);
@@ -42,8 +44,8 @@ public final class ExtraGuiGraphics
 		{
 			int x = screenX + border + (i * texCenterWidth);
 			int width = Math.min(texCenterWidth, screenWidth - (i * texCenterWidth) - (border * 2));
-			graphics.blit(pipeline, texture, x, screenY, border, 0, width, border, width, border, textureWidth, textureHeight, color);
-			graphics.blit(pipeline, texture, x, screenY + screenHeight - border, border, textureHeight - border, width, border, width, border, textureWidth, textureHeight, color);
+			graphics.blit(pipeline, texture, x, screenY, border, 0, width, border, textureWidth, textureHeight, color);
+			graphics.blit(pipeline, texture, x, screenY + screenHeight - border, border, textureHeight - border, width, border, textureWidth, textureHeight, color);
 			/*this.blit(x, screenY, border, 0, width, border, textureWidth, textureHeight);
 			this.blit(x, screenY + screenHeight - border, border, textureHeight - border, width, border, textureWidth, textureHeight);*/
 		}
@@ -51,8 +53,8 @@ public final class ExtraGuiGraphics
 		{
 			int y = screenY + border + (i * texCenterHeight);
 			int height = Math.min(texCenterHeight, screenHeight - (i * texCenterHeight) - (border * 2));
-			graphics.blit(pipeline, texture, screenX, y, 0, border, border, height, border, height, textureWidth, textureHeight, color);
-			graphics.blit(pipeline, texture, screenX + screenWidth - border, y, textureWidth - border, border, border, height, border, height, textureWidth, textureHeight, color);
+			graphics.blit(pipeline, texture, screenX, y, 0, border, border, height, textureWidth, textureHeight, color);
+			graphics.blit(pipeline, texture, screenX + screenWidth - border, y, textureWidth - border, border, border, height, textureWidth, textureHeight, color);
 			/*this.blit(screenX, y, 0, border, border, height, textureWidth, textureHeight);
 			this.blit(screenX + screenWidth - border, y, textureWidth - border, border, border, height, textureWidth, textureHeight);*/
 		}
@@ -68,7 +70,7 @@ public final class ExtraGuiGraphics
 				int y = screenY + border + (iy * texCenterHeight);
 				int width = Math.min(texCenterWidth, screenWidth - (ix * texCenterWidth) - (border * 2));
 				int height = Math.min(texCenterHeight, screenHeight - (iy * texCenterHeight) - (border * 2));
-				graphics.blit(pipeline, texture, x, y, border, border, width, height, width, height, textureWidth, textureHeight, color);
+				graphics.blit(pipeline, texture, x, y, border, border, width, height, textureWidth, textureHeight, color);
 				//this.blit(x, y, border, border, width, height, textureWidth, textureHeight);
 			}
 		}
@@ -92,6 +94,7 @@ public final class ExtraGuiGraphics
 				pipeline,
 				texture,
 				-1,
+				0xFFFFFFFF,
 				screenX,
 				screenY,
 				screenWidth,
@@ -106,6 +109,7 @@ public final class ExtraGuiGraphics
 			GuiGraphicsExtractor graphics,
 			Identifier texture,
 			int color,
+			int packedLight,
 			int screenX,
 			int screenY,
 			int screenWidth,
@@ -117,9 +121,10 @@ public final class ExtraGuiGraphics
 	{
 		nineSlice(
 				graphics,
-				RenderPipelines.GUI,
+				RenderPipelines.GUI_TEXTURED,
 				texture,
 				color,
+				packedLight,
 				screenX,
 				screenY,
 				screenWidth,
@@ -146,6 +151,7 @@ public final class ExtraGuiGraphics
 				graphics,
 				texture,
 				-1,
+				0xFFFFFFFF,
 				screenX,
 				screenY,
 				screenWidth,
@@ -156,6 +162,7 @@ public final class ExtraGuiGraphics
 		);
 	}
 	
+	// TODO move to GuiGraphicsExtractorExtension
 	public static void centeredText(
 			GuiGraphicsExtractor graphics,
 			Font font,

@@ -14,7 +14,9 @@
         "event.treegrowth.TreeGrowthEventMixin",
         "event.treegrowth.TreeGrowthFeatureTestCacheMixin"
     ],
-    "client": [],
+    "client": [
+        "GuiGraphicsExtractorExtensionMixin"
+    ],
     "injectors": {
         "defaultRequire": 1
     }

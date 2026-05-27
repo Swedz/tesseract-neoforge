@@ -5,7 +5,10 @@ neoForge {
 	accessTransformers = [
 			"src/main/resources/${mod_id}.accesstransformer.cfg"
 	]
-	interfaceInjectionData.from "src/main/resources/interfaces.json"
+	interfaceInjectionData {
+		from "src/main/resources/interfaces.json"
+		publish file("src/main/resources/interfaces.json")
+	}
 
 	runs {
 		configureEach {
