@@ -92,12 +92,9 @@ public record ItemStackInstance(
 		int remaining = count;
 		while(remaining > 0)
 		{
-			int stackCount = Math.min(64, remaining);
-			var stack = new ItemStack(item, stackCount);
-			if(!components.isEmpty())
-			{
-				stack.applyComponents(components);
-			}
+			var stack = new ItemStack(item, 1, components);
+			int stackCount = Math.min(stack.getMaxStackSize(), remaining);
+			stack.setCount(stackCount);
 			stacks.add(stack);
 			remaining -= stackCount;
 		}
