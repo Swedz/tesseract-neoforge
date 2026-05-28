@@ -7,6 +7,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 import java.util.Map;
@@ -60,8 +61,9 @@ public final class PacketRegistry<P extends CustomPacket>
 		PayloadRegistrar registrar = event.registrar(namespace);
 		for(PacketRegistration<P> packetRegistration : registrations)
 		{
-			registrar.playBidirectional(packetRegistration.type(), packetRegistration.codec(), (packet, context) ->
-					packet.handle(new PacketContext(packetRegistration.clazz(), context)));
+			IPayloadHandler<P> handler = (packet, context) ->
+					packet.handle(new PacketContext(packetRegistration.clazz(), context));
+			registrar.playBidirectional(packetRegistration.type(), packetRegistration.codec(), handler, handler);
 		}
 	}
 }
