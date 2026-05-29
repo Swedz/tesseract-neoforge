@@ -7,12 +7,14 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.data.models.model.TexturedModel;
+import net.minecraft.client.renderer.item.ClientItem;
 import net.minecraft.client.renderer.item.CompositeModel;
 import net.minecraft.client.renderer.item.CuboidItemModelWrapper;
 import net.minecraft.client.renderer.item.SpecialModelWrapper;
 import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.client.model.generators.blockstate.CustomBlockStateModelBuilder;
 import net.swedz.tesseract.neoforge.model.ModelGenerators;
 import net.swedz.tesseract.neoforge.model.UseBlockEntityRenderer;
@@ -25,15 +27,23 @@ import java.util.function.Consumer;
 
 public final class CommonModelBuilders
 {
+	private static void registerSimpleClientItem(ModelGenerators generators, ItemLike item, Identifier modelId)
+	{
+		generators.item().itemModelOutput.register(item.asItem(), new ClientItem(new CuboidItemModelWrapper.Unbaked(modelId, Optional.empty(), List.of()), ClientItem.Properties.DEFAULT));
+	}
+	
 	public static Consumer<ModelGenerators> generated(ItemHolder item, String texture)
 	{
 		return (generators) ->
-				ModelTemplates.FLAT_ITEM.create(
-						item.asItem(),
-						new TextureMapping()
-								.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))),
-						generators.item().modelOutput
-				);
+		{
+			var modelId = ModelTemplates.FLAT_ITEM.create(
+					item.asItem(),
+					new TextureMapping()
+							.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))),
+					generators.item().modelOutput
+			);
+			registerSimpleClientItem(generators, item, modelId);
+		};
 	}
 	
 	public static Consumer<ModelGenerators> generated(ItemHolder item)
@@ -44,13 +54,16 @@ public final class CommonModelBuilders
 	public static Consumer<ModelGenerators> generatedOverlayed(ItemHolder item, String texture)
 	{
 		return (generators) ->
-				ModelTemplates.FLAT_ITEM.create(
-						item.asItem(),
-						new TextureMapping()
-								.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture)))
-								.put(TextureSlot.LAYER1, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay"))),
-						generators.item().modelOutput
-				);
+		{
+			var modelId = ModelTemplates.FLAT_ITEM.create(
+					item.asItem(),
+					new TextureMapping()
+							.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture)))
+							.put(TextureSlot.LAYER1, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay"))),
+					generators.item().modelOutput
+			);
+			registerSimpleClientItem(generators, item, modelId);
+		};
 	}
 	
 	public static Consumer<ModelGenerators> generatedOverlayed(ItemHolder item)
@@ -61,12 +74,15 @@ public final class CommonModelBuilders
 	public static Consumer<ModelGenerators> handheld(ItemHolder item, String texture)
 	{
 		return (generators) ->
-				ModelTemplates.FLAT_HANDHELD_ITEM.create(
-						item.asItem(),
-						new TextureMapping()
-								.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))),
-						generators.item().modelOutput
-				);
+		{
+			var modelId = ModelTemplates.FLAT_HANDHELD_ITEM.create(
+					item.asItem(),
+					new TextureMapping()
+							.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture))),
+					generators.item().modelOutput
+			);
+			registerSimpleClientItem(generators, item, modelId);
+		};
 	}
 	
 	public static Consumer<ModelGenerators> handheld(ItemHolder item)
@@ -77,13 +93,16 @@ public final class CommonModelBuilders
 	public static Consumer<ModelGenerators> handheldOverlayed(ItemHolder item, String texture)
 	{
 		return (generators) ->
-				ModelTemplates.FLAT_HANDHELD_ITEM.create(
-						item.asItem(),
-						new TextureMapping()
-								.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture)))
-								.put(TextureSlot.LAYER1, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay"))),
-						generators.item().modelOutput
-				);
+		{
+			var modelId = ModelTemplates.FLAT_HANDHELD_ITEM.create(
+					item.asItem(),
+					new TextureMapping()
+							.put(TextureSlot.LAYER0, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture)))
+							.put(TextureSlot.LAYER1, new Material(Identifier.fromNamespaceAndPath(item.identifier().modId(), "item/" + texture + "_overlay"))),
+					generators.item().modelOutput
+			);
+			registerSimpleClientItem(generators, item, modelId);
+		};
 	}
 	
 	public static Consumer<ModelGenerators> handheldOverlayed(ItemHolder item)
