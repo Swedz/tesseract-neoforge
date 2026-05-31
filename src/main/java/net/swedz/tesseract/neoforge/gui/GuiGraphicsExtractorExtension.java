@@ -87,6 +87,11 @@ public interface GuiGraphicsExtractorExtension
 		throw new UnsupportedOperationException();
 	}
 	
+	default void tooltip(Font font, List<Component> tooltip, boolean dropShadow, Optional<TooltipComponent> component, ExtendedClientTooltipPositioner positioner, int xo, int yo, int maxWidth, boolean replaceExisting, Identifier style)
+	{
+		throw new UnsupportedOperationException();
+	}
+	
 	default void tooltip(Font font, List<Component> tooltip, boolean dropShadow, Optional<TooltipComponent> component, ExtendedClientTooltipPositioner positioner, int xo, int yo, boolean replaceExisting, Identifier style)
 	{
 		throw new UnsupportedOperationException();

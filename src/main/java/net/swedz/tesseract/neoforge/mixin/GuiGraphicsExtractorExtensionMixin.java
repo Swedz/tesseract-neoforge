@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.mixin;
 
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTextureView;
@@ -42,7 +43,6 @@ import org.spongepowered.asm.mixin.Unique;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Mixin(GuiGraphicsExtractor.class)
 @Implements(@Interface(iface = GuiGraphicsExtractorExtension.class, prefix = "tesseractapi$"))
@@ -166,14 +166,29 @@ public abstract class GuiGraphicsExtractorExtensionMixin
 		}
 	}
 	
-	public void tesseractapi$tooltip(Font font, List<Component> tooltip, boolean dropShadow, Optional<TooltipComponent> component, ExtendedClientTooltipPositioner positioner, int xo, int yo, boolean replaceExisting, Identifier style)
+	public void tesseractapi$tooltip(Font font, List<Component> tooltip, boolean dropShadow, Optional<TooltipComponent> component, ExtendedClientTooltipPositioner positioner, int xo, int yo, int maxWidth, boolean replaceExisting, Identifier style)
 	{
-		List<ClientTooltipComponent> components = tooltip.stream()
-				.map(Component::getVisualOrderText)
-				.map((line) -> new ClientTextTooltipDropShadow(line, dropShadow))
-				.collect(Collectors.toList());
+		List<ClientTooltipComponent> components = Lists.newArrayList();
+		for(var line : tooltip)
+		{
+			if(line.equals(Component.empty()))
+			{
+				components.add(new ClientTextTooltipDropShadow(line.getVisualOrderText(), dropShadow));
+				continue;
+			}
+			var splitLine = maxWidth > 0 ? font.split(line, maxWidth) : List.of(line.getVisualOrderText());
+			for(var splitLineLine : splitLine)
+			{
+				components.add(new ClientTextTooltipDropShadow(splitLineLine, dropShadow));
+			}
+		}
 		component.ifPresent((tooltipComponent) -> components.add(components.isEmpty() ? 0 : 1, ClientTooltipComponent.create(tooltipComponent)));
 		this.setTooltipForNextFrameInternal(font, components, xo, yo, positioner, style, replaceExisting);
+	}
+	
+	public void tesseractapi$tooltip(Font font, List<Component> tooltip, boolean dropShadow, Optional<TooltipComponent> component, ExtendedClientTooltipPositioner positioner, int xo, int yo, boolean replaceExisting, Identifier style)
+	{
+		this.tesseractapi$tooltip(font, tooltip, dropShadow, component, positioner, xo, yo, -1, replaceExisting, style);
 	}
 	
 	@Unique
