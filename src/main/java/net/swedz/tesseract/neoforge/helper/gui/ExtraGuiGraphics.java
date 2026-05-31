@@ -8,9 +8,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 
+// TODO 26.1 remove this
+@Deprecated(forRemoval = true)
 public final class ExtraGuiGraphics
 {
-	// TODO might be unnecessary now since mc has nineslicing built in with mcmeta files and blitSprite
 	public static void nineSlice(
 			GuiGraphicsExtractor graphics,
 			RenderPipeline pipeline,
