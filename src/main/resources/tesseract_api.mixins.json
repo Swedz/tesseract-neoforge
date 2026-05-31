@@ -15,7 +15,13 @@
         "event.treegrowth.TreeGrowthFeatureTestCacheMixin"
     ],
     "client": [
-        "GuiGraphicsExtractorExtensionMixin"
+        "BlockBlockAndItemModelGeneratorsByIdentifierMixin",
+        "BlockModelGeneratorsByIdentifierMixin",
+        "BlockStateGeneratorCollectorByIdentifierMixin",
+        "GuiGraphicsExtractorExtensionMixin",
+        "ItemBlockAndItemModelGeneratorsByIdentifierMixin",
+        "SimpleModelCollectorByIdentifierMixin",
+        "event.RegisterFakeBlockStateDefinitionsEventMixin"
     ],
     "injectors": {
         "defaultRequire": 1
