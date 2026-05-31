@@ -12,13 +12,6 @@
         "net/swedz/tesseract/neoforge/helper/datagen/BlockStateGeneratorCollectorByIdentifier"
     ],
     "net/minecraft/client/data/models/BlockModelGenerators": [
-        "net/swedz/tesseract/neoforge/helper/datagen/BlockModelGeneratorsByIdentifier",
-        "net/swedz/tesseract/neoforge/helper/datagen/BlockAndItemModelGeneratorsByIdentifier"
-    ],
-    "net/minecraft/client/data/models/ModelProvider$SimpleModelCollector": [
-        "net/swedz/tesseract/neoforge/helper/datagen/SimpleModelCollectorByIdentifier"
-    ],
-    "net/minecraft/client/data/models/ItemModelGenerators": [
-        "net/swedz/tesseract/neoforge/helper/datagen/BlockAndItemModelGeneratorsByIdentifier"
+        "net/swedz/tesseract/neoforge/helper/datagen/BlockModelGeneratorsByIdentifier"
     ]
 }
