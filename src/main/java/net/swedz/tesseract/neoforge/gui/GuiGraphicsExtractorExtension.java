@@ -4,7 +4,6 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.renderer.state.gui.GuiElementRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,11 +17,6 @@ import java.util.Optional;
 
 public interface GuiGraphicsExtractorExtension
 {
-	default void addGuiElement(GuiElementRenderState element)
-	{
-		throw new UnsupportedOperationException();
-	}
-	
 	default void blitLight(RenderPipeline pipeline, Identifier texture, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight, int color, int packedLight)
 	{
 		throw new UnsupportedOperationException();
