@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.state.gui.GuiItemRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -76,6 +77,9 @@ public abstract class GuiGraphicsExtractorExtensionMixin
 	
 	@Shadow
 	protected abstract void innerBlit(RenderPipeline pipeline, GpuTextureView textureView, GpuSampler sampler, int x0, int y0, int x1, int y1, float u0, float u1, float v0, float v1, int color);
+	
+	@Shadow
+	public abstract void text(Font font, FormattedCharSequence str, int x, int y, int color, boolean dropShadow);
 	
 	public void tesseractapi$blitLight(RenderPipeline pipeline, Identifier texture, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight, int color, int packedLight)
 	{
@@ -164,6 +168,16 @@ public abstract class GuiGraphicsExtractorExtensionMixin
 				throw new ReportedException(report);
 			}
 		}
+	}
+	
+	public void tesseractapi$centeredText(Font font, FormattedCharSequence text, int x, int y, int color, boolean dropShadow)
+	{
+		this.text(font, text, x - font.width(text) / 2, y, color, dropShadow);
+	}
+	
+	public void tesseractapi$centeredText(Font font, Component text, int x, int y, int color, boolean dropShadow)
+	{
+		this.tesseractapi$centeredText(font, text.getVisualOrderText(), x, y, color, dropShadow);
 	}
 	
 	public void tesseractapi$tooltip(Font font, List<Component> tooltip, boolean dropShadow, Optional<TooltipComponent> component, ExtendedClientTooltipPositioner positioner, int xo, int yo, int maxWidth, boolean replaceExisting, Identifier style)

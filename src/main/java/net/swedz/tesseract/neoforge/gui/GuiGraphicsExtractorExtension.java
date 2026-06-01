@@ -6,6 +6,7 @@ import com.mojang.blaze3d.textures.GpuTextureView;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -83,6 +84,16 @@ public interface GuiGraphicsExtractorExtension
 	}
 	
 	default void item(LivingEntity owner, Level level, ItemStack stack, ItemDisplayContext context, int x, int y, int seed)
+	{
+		throw new UnsupportedOperationException();
+	}
+	
+	default void centeredText(Font font, FormattedCharSequence text, int x, int y, int color, boolean dropShadow)
+	{
+		throw new UnsupportedOperationException();
+	}
+	
+	default void centeredText(Font font, Component text, int x, int y, int color, boolean dropShadow)
 	{
 		throw new UnsupportedOperationException();
 	}
