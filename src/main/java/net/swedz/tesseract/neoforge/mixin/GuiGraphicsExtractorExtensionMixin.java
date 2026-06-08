@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.item.TrackingItemStackRenderState;
 import net.minecraft.client.renderer.state.gui.GuiItemRenderState;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
@@ -31,6 +32,7 @@ import net.neoforged.neoforge.client.ClientHooks;
 import net.swedz.tesseract.neoforge.gui.ClientTextTooltipDropShadow;
 import net.swedz.tesseract.neoforge.gui.ExtendedClientTooltipPositioner;
 import net.swedz.tesseract.neoforge.gui.GuiGraphicsExtractorExtension;
+import net.swedz.tesseract.neoforge.gui.tinteditem.TintedItemPictureInPictureRenderState;
 import net.swedz.tesseract.neoforge.helper.gui.BlitWithLightRenderState;
 import org.joml.Matrix3x2f;
 import org.joml.Matrix3x2fStack;
@@ -80,6 +82,9 @@ public abstract class GuiGraphicsExtractorExtensionMixin
 	
 	@Shadow
 	public abstract void text(Font font, FormattedCharSequence str, int x, int y, int color, boolean dropShadow);
+	
+	@Shadow
+	public abstract void submitPictureInPictureRenderState(PictureInPictureRenderState renderState);
 	
 	public void tesseractapi$blitLight(RenderPipeline pipeline, Identifier texture, int x, int y, float u, float v, int width, int height, int textureWidth, int textureHeight, int color, int packedLight)
 	{
@@ -151,12 +156,77 @@ public abstract class GuiGraphicsExtractorExtensionMixin
 	{
 		if(!stack.isEmpty())
 		{
-			TrackingItemStackRenderState itemStackRenderState = new TrackingItemStackRenderState();
-			Minecraft.getInstance().getItemModelResolver().updateForTopItem(itemStackRenderState, stack, context, level, owner, seed);
+			var itemStackRenderState = new TrackingItemStackRenderState();
+			Minecraft.getInstance()
+					.getItemModelResolver()
+					.updateForTopItem(itemStackRenderState, stack, context, level, owner, seed);
 			
 			try
 			{
 				guiRenderState.addItem(new GuiItemRenderState(new Matrix3x2f(pose), itemStackRenderState, x, y, this.peekScissorStack()));
+			}
+			catch(Throwable ex)
+			{
+				CrashReport report = CrashReport.forThrowable(ex, "Rendering item");
+				CrashReportCategory category = report.addCategory("Item being rendered");
+				category.setDetail("Item Type", () -> String.valueOf(stack.getItem()));
+				category.setDetail("Item Components", () -> String.valueOf(stack.getComponents()));
+				category.setDetail("Item Foil", () -> String.valueOf(stack.hasFoil()));
+				throw new ReportedException(report);
+			}
+		}
+	}
+	
+	public void tesseractapi$itemTinted(ItemStack stack, int x, int y, int color)
+	{
+		this.tesseractapi$itemTinted(stack, ItemDisplayContext.GUI, x, y, color);
+	}
+	
+	public void tesseractapi$itemTinted(ItemStack stack, int x, int y, int seed, int color)
+	{
+		this.tesseractapi$itemTinted(stack, ItemDisplayContext.GUI, x, y, seed, color);
+	}
+	
+	public void tesseractapi$itemTinted(LivingEntity owner, Level level, ItemStack stack, int x, int y, int seed, int color)
+	{
+		this.tesseractapi$itemTinted(owner, level, stack, ItemDisplayContext.GUI, x, y, seed, color);
+	}
+	
+	public void tesseractapi$itemTinted(ItemStack stack, ItemDisplayContext context, int x, int y, int color)
+	{
+		this.tesseractapi$itemTinted(stack, context, x, y, 0, color);
+	}
+	
+	public void tesseractapi$itemTinted(ItemStack stack, ItemDisplayContext context, int x, int y, int seed, int color)
+	{
+		this.tesseractapi$itemTinted(null, null, stack, context, x, y, seed, color);
+	}
+	
+	public void tesseractapi$itemTinted(LivingEntity owner, Level level, ItemStack stack, ItemDisplayContext context, int x, int y, int seed, int color)
+	{
+		if(!stack.isEmpty())
+		{
+			var itemStackRenderState = new TrackingItemStackRenderState();
+			Minecraft.getInstance()
+					.getItemModelResolver()
+					.updateForTopItem(itemStackRenderState, stack, context, level, owner, seed);
+			
+			try
+			{
+				this.submitPictureInPictureRenderState(new TintedItemPictureInPictureRenderState(
+						new GuiItemRenderState(
+								new Matrix3x2f(pose),
+								itemStackRenderState,
+								0,
+								0,
+								this.peekScissorStack()
+						),
+						0,
+						0,
+						16,
+						16,
+						color
+				));
 			}
 			catch(Throwable ex)
 			{

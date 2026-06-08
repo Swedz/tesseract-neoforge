@@ -7,8 +7,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.swedz.tesseract.neoforge.gui.tinteditem.TintedItemPictureInPictureRenderState;
+import net.swedz.tesseract.neoforge.gui.tinteditem.TintedItemPictureInPictureRenderer;
 import net.swedz.tesseract.neoforge.tooltip.TooltipHandler;
 import net.swedz.tesseract.neoforge.tooltip.component.ItemStackClientTooltipComponent;
 import net.swedz.tesseract.neoforge.tooltip.component.ItemStackTooltipComponent;
@@ -35,4 +38,10 @@ public final class TesseractClient
 	{
 		event.register(DynamicAtlasUnbakedModel.LOADER_ID, DynamicAtlasUnbakedModel.LOADER);
 	}*/
+	
+	@SubscribeEvent
+	private static void registerPictureInPictureRenderers(RegisterPictureInPictureRenderersEvent event)
+	{
+		event.register(TintedItemPictureInPictureRenderState.class, TintedItemPictureInPictureRenderer::new);
+	}
 }

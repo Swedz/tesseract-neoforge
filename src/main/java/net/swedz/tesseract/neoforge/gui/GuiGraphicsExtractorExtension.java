@@ -88,6 +88,36 @@ public interface GuiGraphicsExtractorExtension
 		throw new UnsupportedOperationException();
 	}
 	
+	default void itemTinted(ItemStack stack, int x, int y, int color)
+	{
+		throw new UnsupportedOperationException();
+	}
+	
+	default void itemTinted(ItemStack stack, int x, int y, int seed, int color)
+	{
+		throw new UnsupportedOperationException();
+	}
+	
+	default void itemTinted(LivingEntity owner, Level level, ItemStack stack, int x, int y, int seed, int color)
+	{
+		throw new UnsupportedOperationException();
+	}
+	
+	default void itemTinted(ItemStack stack, ItemDisplayContext context, int x, int y, int color)
+	{
+		throw new UnsupportedOperationException();
+	}
+	
+	default void itemTinted(ItemStack stack, ItemDisplayContext context, int x, int y, int seed, int color)
+	{
+		throw new UnsupportedOperationException();
+	}
+	
+	default void itemTinted(LivingEntity owner, Level level, ItemStack stack, ItemDisplayContext context, int x, int y, int seed, int color)
+	{
+		throw new UnsupportedOperationException();
+	}
+	
 	default void centeredText(Font font, FormattedCharSequence text, int x, int y, int color, boolean dropShadow)
 	{
 		throw new UnsupportedOperationException();
