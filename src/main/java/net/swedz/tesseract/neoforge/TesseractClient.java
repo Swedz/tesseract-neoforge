@@ -2,13 +2,11 @@ package net.swedz.tesseract.neoforge;
 
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.swedz.tesseract.neoforge.gui.tinteditem.TintedItemPictureInPictureRenderState;
 import net.swedz.tesseract.neoforge.gui.tinteditem.TintedItemPictureInPictureRenderer;
@@ -20,10 +18,10 @@ import net.swedz.tesseract.neoforge.tooltip.component.ItemStackTooltipComponent;
 @EventBusSubscriber(value = Dist.CLIENT, modid = Tesseract.ID)
 public final class TesseractClient
 {
-	public TesseractClient(IEventBus bus)
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	private static void attachTooltips(ItemTooltipEvent event)
 	{
-		NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, ItemTooltipEvent.class, (event) ->
-				TooltipHandler.attach(event.getFlags(), event.getContext(), event.getItemStack(), event.getToolTip()));
+		TooltipHandler.attach(event.getFlags(), event.getContext(), event.getItemStack(), event.getToolTip());
 	}
 	
 	@SubscribeEvent
