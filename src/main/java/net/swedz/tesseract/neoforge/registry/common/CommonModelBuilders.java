@@ -1,8 +1,5 @@
 package net.swedz.tesseract.neoforge.registry.common;
 
-import aztech.modern_industrialization.client.machines.models.UseBlockModelBakedModel;
-import net.minecraft.client.data.models.MultiVariant;
-import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
@@ -15,7 +12,6 @@ import net.minecraft.client.resources.model.sprite.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.ItemLike;
-import net.neoforged.neoforge.client.model.generators.blockstate.CustomBlockStateModelBuilder;
 import net.swedz.tesseract.neoforge.model.ModelGenerators;
 import net.swedz.tesseract.neoforge.model.UseBlockEntityRenderer;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
@@ -167,12 +163,6 @@ public final class CommonModelBuilders
 								new TextureMapping(),
 								generators.item().modelOutput
 						);
-	}
-	
-	public static Consumer<ModelGenerators> blockstateOnly(BlockHolder block)
-	{
-		return (generators) ->
-				generators.block().blockStateOutput.accept(MultiVariantGenerator.dispatch(block.get(), MultiVariant.of(new CustomBlockStateModelBuilder.Simple(new UseBlockModelBakedModel.Unbaked(block.get())))));
 	}
 	
 	public static Consumer<ModelGenerators> blockCubeAll(BlockHolder block)
