@@ -15,7 +15,6 @@ import net.swedz.tesseract.neoforge.material.MaterialRegistry;
 import net.swedz.tesseract.neoforge.material.property.MaterialProperty;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyHolder;
 import net.swedz.tesseract.neoforge.material.property.MaterialPropertyMap;
-import net.swedz.tesseract.neoforge.model.ModelGenerators;
 import net.swedz.tesseract.neoforge.registry.AccessibleBlockLootSubProvider;
 import net.swedz.tesseract.neoforge.registry.holder.BlockHolder;
 import net.swedz.tesseract.neoforge.registry.holder.BlockWithItemHolder;
@@ -217,16 +216,6 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 		return this.itemTag(Arrays.asList(tags));
 	}
 	
-	public MaterialPart itemModel(Function<ItemHolder<? extends Item>, Consumer<ModelGenerators>> modelProvider)
-	{
-		return this.item((c, h) -> h.withModel(modelProvider::apply));
-	}
-	
-	public MaterialPart itemModelBuilder(Function<ItemHolder<? extends Item>, Consumer<ModelGenerators>> modelBuilder)
-	{
-		return this.item((c, h) -> h.withModelBuilder(modelBuilder::apply));
-	}
-	
 	public MaterialPart block(MaterialPartAction<BlockWithItemHolder<Block, BlockItem>> action)
 	{
 		MaterialPart copy = this.asBlock();
@@ -259,11 +248,6 @@ public final class MaterialPart implements MaterialPropertyHolder.Mutable
 	public MaterialPart blockTag(TagKey<Block>... tag)
 	{
 		return this.blockTag(Arrays.asList(tag));
-	}
-	
-	public MaterialPart blockModel(Function<BlockHolder<Block>, Consumer<ModelGenerators>> modelBuilder)
-	{
-		return this.block((c, h) -> h.withModel(modelBuilder));
 	}
 	
 	public MaterialPart blockLoot(Function<BlockHolder<Block>, Function<AccessibleBlockLootSubProvider, LootTable.Builder>> lootBuilder)

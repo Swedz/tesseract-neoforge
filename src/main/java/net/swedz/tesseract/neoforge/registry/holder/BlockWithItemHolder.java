@@ -7,7 +7,6 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -27,8 +26,7 @@ public class BlockWithItemHolder<BlockType extends Block, ItemType extends Block
 	)
 	{
 		super(location, englishName, registerBlocks, blockCreator);
-		this.itemHolder = new ItemHolder<>(location, englishName, registerItems, (p) -> itemCreator.apply(this.get(), p))
-				.withModelBuilder(CommonModelBuilders::block);
+		this.itemHolder = new ItemHolder<>(location, englishName, registerItems, (p) -> itemCreator.apply(this.get(), p));
 	}
 	
 	public ItemHolder<ItemType> item()

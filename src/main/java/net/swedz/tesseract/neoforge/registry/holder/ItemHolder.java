@@ -4,15 +4,14 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.swedz.tesseract.neoforge.model.ModelGenerators;
-import net.swedz.tesseract.neoforge.registry.ModeledRegisteredObjectHolder;
+import net.swedz.tesseract.neoforge.registry.RegisteredObjectHolder;
 import net.swedz.tesseract.neoforge.registry.SortOrder;
 import net.swedz.tesseract.neoforge.registry.registerable.ItemRegisterableWrapper;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class ItemHolder<Type extends Item> extends ModeledRegisteredObjectHolder<Item, Type, ModelGenerators, ItemHolder<Type>> implements ItemLike
+public class ItemHolder<Type extends Item> extends RegisteredObjectHolder<Item, Type, ItemHolder<Type>> implements ItemLike
 {
 	private final ItemRegisterableWrapper<Type> registerableItem;
 	
@@ -44,11 +43,6 @@ public class ItemHolder<Type extends Item> extends ModeledRegisteredObjectHolder
 	{
 		this.sortOrder = sortOrder;
 		return this;
-	}
-	
-	public ItemHolder<Type> withModelBuilder(Function<ItemHolder<Type>, Consumer<ModelGenerators>> modelBuilder)
-	{
-		return this.withModel((holder) -> (generators) -> modelBuilder.apply(holder).accept(generators));
 	}
 	
 	@Override
