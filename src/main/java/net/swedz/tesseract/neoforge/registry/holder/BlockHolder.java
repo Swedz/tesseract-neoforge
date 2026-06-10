@@ -6,15 +6,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.swedz.tesseract.neoforge.model.ModelGenerators;
 import net.swedz.tesseract.neoforge.registry.AccessibleBlockLootSubProvider;
-import net.swedz.tesseract.neoforge.registry.ModeledRegisteredObjectHolder;
+import net.swedz.tesseract.neoforge.registry.RegisteredObjectHolder;
 import net.swedz.tesseract.neoforge.registry.registerable.BlockRegisterableWrapper;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public class BlockHolder<BlockType extends Block> extends ModeledRegisteredObjectHolder<Block, BlockType, ModelGenerators, BlockHolder<BlockType>>
+public class BlockHolder<BlockType extends Block> extends RegisteredObjectHolder<Block, BlockType, BlockHolder<BlockType>>
 {
 	protected final BlockRegisterableWrapper<BlockType> registerableBlock;
 	

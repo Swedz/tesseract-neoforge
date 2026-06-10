@@ -12,7 +12,6 @@ import net.swedz.tesseract.neoforge.api.FluidLike;
 import net.swedz.tesseract.neoforge.registry.RegisteredObjectHolder;
 import net.swedz.tesseract.neoforge.registry.SortOrder;
 import net.swedz.tesseract.neoforge.registry.common.CommonCapabilities;
-import net.swedz.tesseract.neoforge.registry.common.CommonModelBuilders;
 import net.swedz.tesseract.neoforge.registry.registerable.SimpleRegisterableWrapper;
 
 import java.util.function.BiFunction;
@@ -46,7 +45,6 @@ public class FluidHolder<F extends Fluid, FT extends FluidType, FB extends Block
 		this.blockHolder = new BlockHolder<>(location, englishName, registerBlocks, (p) -> creatorFluidBlock.apply(this, p));
 		this.bucketItemHolder = new ItemHolder<>(Identifier.fromNamespaceAndPath(location.getNamespace(), location.getPath() + "_bucket"), englishName + " Bucket", registerItems, (p) -> creatorBucketItem.apply(this, p))
 				.sorted(bucketSortOrder)
-				.withModelBuilder(CommonModelBuilders::generated)
 				.withCapabilities(CommonCapabilities::bucketItem);
 	}
 	
