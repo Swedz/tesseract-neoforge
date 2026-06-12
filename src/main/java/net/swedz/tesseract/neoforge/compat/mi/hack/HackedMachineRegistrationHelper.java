@@ -73,14 +73,17 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see MachineRegistrationHelper#registerMachine(String, String, Function, Consumer[])
 	 */
-	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
-															   String englishName, String name,
-															   MachineBlockFactory blockFactory,
-															   MachineBlockHolderModifier holderModifier,
-															   MachineBlockPropertiesModifier overrideProperties,
-															   boolean defaultMineableTags,
-															   MachineBlockEntityFactory factory,
-															   MachineBlockRegistrators... extraRegistrators)
+	public static Supplier<BlockEntityType<?>> registerMachine(
+			MIHook hook,
+			String englishName,
+			String name,
+			MachineBlockFactory blockFactory,
+			MachineBlockHolderModifier holderModifier,
+			MachineBlockPropertiesModifier overrideProperties,
+			boolean defaultMineableTags,
+			MachineBlockEntityFactory factory,
+			MachineBlockRegistrators... extraRegistrators
+	)
 	{
 		MIHookRegistry registry = hook.registry();
 		ResourceLocation id = hook.id(name);
@@ -89,9 +92,15 @@ public final class HackedMachineRegistrationHelper
 		BiFunction<BlockPos, BlockState, MachineBlockEntity> ctor = (pos, state) -> factory.create(new BEP(bet.get(), pos, state));
 		
 		BlockWithItemHolder<?, ?> blockHolder = new BlockWithItemHolder<>(
-				id, englishName,
-				registry.blockRegistry(), (p) -> blockFactory == null ? new MachineBlock(ctor, p) : blockFactory.create(ctor, p),
-				registry.itemRegistry(), BlockItem::new
+				id,
+				englishName,
+				registry.blockRegistry(),
+				(p) ->
+						blockFactory == null ?
+								new MachineBlock(ctor, p) :
+								blockFactory.create(ctor, p),
+				registry.itemRegistry(),
+				BlockItem::new
 		);
 		blockHolder.item().sorted(registry.sortOrderMachines());
 		if(defaultMineableTags)
@@ -119,10 +128,12 @@ public final class HackedMachineRegistrationHelper
 						CommonModelBuilders.blockstateOnly(holder).accept(provider);
 						return;
 					}
-					provider.simpleBlockWithItem(BuiltInRegistries.BLOCK.get(id), provider.models()
-							.getBuilder(name)
-							.customLoader((bmb, exFile) -> new FakedMachineModelBuilder<>(machineModelProperties, bmb, exFile))
-							.end());
+					provider.simpleBlockWithItem(
+							BuiltInRegistries.BLOCK.get(id), provider.models()
+									.getBuilder(name)
+									.customLoader((bmb, exFile) -> new FakedMachineModelBuilder<>(machineModelProperties, bmb, exFile))
+									.end()
+					);
 				});
 		if(holderModifier != null)
 		{
@@ -133,38 +144,47 @@ public final class HackedMachineRegistrationHelper
 		registry.onBlockRegister(blockHolder);
 		registry.onItemRegister(blockHolder.item());
 		
-		return registry.blockEntityRegistry().register(name, () ->
-		{
-			Block block = blockHolder.get();
-			
-			bet.set(BlockEntityType.Builder.of(ctor::apply, block).build(null));
-			
-			for(var extraRegistrator : extraRegistrators)
-			{
-				extraRegistrator.apply(bet.get());
-			}
-			
-			registry.onBlockEntityRegister(bet.get());
-			
-			return bet.get();
-		});
+		return registry.blockEntityRegistry().register(
+				name,
+				() ->
+				{
+					Block block = blockHolder.get();
+					
+					bet.set(BlockEntityType.Builder.of(ctor::apply, block).build(null));
+					
+					for(var extraRegistrator : extraRegistrators)
+					{
+						extraRegistrator.apply(bet.get());
+					}
+					
+					registry.onBlockEntityRegister(bet.get());
+					
+					return bet.get();
+				}
+		);
 	}
 	
-	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
-															   String englishName, String name,
-															   MachineBlockFactory blockCreator,
-															   MachineBlockHolderModifier modifyBlock,
-															   MachineBlockPropertiesModifier overrideProperties,
-															   MachineBlockEntityFactory factory,
-															   MachineBlockRegistrators... extraRegistrators)
+	public static Supplier<BlockEntityType<?>> registerMachine(
+			MIHook hook,
+			String englishName,
+			String name,
+			MachineBlockFactory blockCreator,
+			MachineBlockHolderModifier modifyBlock,
+			MachineBlockPropertiesModifier overrideProperties,
+			MachineBlockEntityFactory factory,
+			MachineBlockRegistrators... extraRegistrators
+	)
 	{
 		return registerMachine(hook, englishName, name, blockCreator, modifyBlock, overrideProperties, true, factory, extraRegistrators);
 	}
 	
-	public static Supplier<BlockEntityType<?>> registerMachine(MIHook hook,
-															   String englishName, String name,
-															   MachineBlockEntityFactory factory,
-															   MachineBlockRegistrators... extraRegistrators)
+	public static Supplier<BlockEntityType<?>> registerMachine(
+			MIHook hook,
+			String englishName,
+			String name,
+			MachineBlockEntityFactory factory,
+			MachineBlockRegistrators... extraRegistrators
+	)
 	{
 		return registerMachine(hook, englishName, name, null, null, null, factory, extraRegistrators);
 	}
@@ -182,7 +202,17 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see MachineRegistrationHelper#addMachineModel(String, String, MachineCasing, boolean, boolean, boolean, boolean)
 	 */
-	public static void addMachineModel(MIHook hook, String name, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active, String outputTexture)
+	public static void addMachineModel(
+			MIHook hook,
+			String name,
+			MachineCasing defaultCasing,
+			String overlay,
+			boolean front,
+			boolean top,
+			boolean side,
+			boolean active,
+			String outputTexture
+	)
 	{
 		MIHookTracker.addMachineModel(hook.id(name), defaultCasing, overlay, front, top, side, active, outputTexture);
 	}
@@ -190,7 +220,16 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see MachineRegistrationHelper#addMachineModel(String, String, MachineCasing, boolean, boolean, boolean, boolean)
 	 */
-	public static void addMachineModel(MIHook hook, String name, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side, boolean active)
+	public static void addMachineModel(
+			MIHook hook,
+			String name,
+			MachineCasing defaultCasing,
+			String overlay,
+			boolean front,
+			boolean top,
+			boolean side,
+			boolean active
+	)
 	{
 		addMachineModel(hook, name, defaultCasing, overlay, front, top, side, active, null);
 	}
@@ -198,7 +237,15 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see MachineRegistrationHelper#addMachineModel(String, String, MachineCasing, boolean, boolean, boolean)
 	 */
-	public static void addMachineModel(MIHook hook, String name, MachineCasing defaultCasing, String overlay, boolean front, boolean top, boolean side)
+	public static void addMachineModel(
+			MIHook hook,
+			String name,
+			MachineCasing defaultCasing,
+			String overlay,
+			boolean front,
+			boolean top,
+			boolean side
+	)
 	{
 		addMachineModel(hook, name, defaultCasing, overlay, front, top, side, true);
 	}
@@ -206,9 +253,18 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see MachineRegistrationHelper#addMachineModel(String, String, String, boolean, boolean, boolean)
 	 */
-	public static void addMachineModel(MIHook hook, String name, MachineTier tier, String overlay, boolean front, boolean top, boolean side, boolean active)
+	public static void addMachineModel(
+			MIHook hook,
+			String name,
+			MachineTier tier,
+			String overlay,
+			boolean front,
+			boolean top,
+			boolean side,
+			boolean active
+	)
 	{
-		MachineCasing defaultCasing = switch (tier)
+		var defaultCasing = switch(tier)
 		{
 			case BRONZE -> MachineCasings.BRONZE;
 			case STEEL -> MachineCasings.STEEL;
@@ -221,7 +277,15 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see MachineRegistrationHelper#addMachineModel(String, String, MachineCasing, boolean, boolean, boolean, boolean)
 	 */
-	public static void addMachineModel(MIHook hook, String name, MachineTier tier, String overlay, boolean front, boolean top, boolean side)
+	public static void addMachineModel(
+			MIHook hook,
+			String name,
+			MachineTier tier,
+			String overlay,
+			boolean front,
+			boolean top,
+			boolean side
+	)
 	{
 		addMachineModel(hook, name, tier, overlay, front, top, side, true);
 	}
@@ -229,13 +293,28 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see SingleBlockCraftingMachines#registerMachineTiers(String, String, MachineRecipeType, int, int, int, int, Consumer, ProgressBar.Params, RecipeEfficiencyBar.Params, EnergyBar.Params, Consumer, Consumer, boolean, boolean, boolean, int, int, Config)
 	 */
-	public static void registerMachineTiers(MIHook hook,
-											String englishName, String machineName, MachineRecipeType type, int itemInputCount, int itemOutputCount,
-											int fluidInputCount,
-											int fluidOutputCount, Consumer<MachineGuiParameters.Builder> guiParams, ProgressBar.Params progressBarParams,
-											RecipeEfficiencyBar.Params efficiencyBarParams, EnergyBar.Params energyBarParams, Consumer<SlotPositions.Builder> itemPositions,
-											Consumer<SlotPositions.Builder> fluidPositions, boolean frontOverlay, boolean topOverlay, boolean sideOverlay, int tiers,
-											int ioBucketCapacity, SingleBlockCraftingMachines.Config extraConfig)
+	public static void registerMachineTiers(
+			MIHook hook,
+			String englishName,
+			String machineName,
+			MachineRecipeType type,
+			int itemInputCount,
+			int itemOutputCount,
+			int fluidInputCount,
+			int fluidOutputCount,
+			Consumer<MachineGuiParameters.Builder> guiParams,
+			ProgressBar.Params progressBarParams,
+			RecipeEfficiencyBar.Params efficiencyBarParams,
+			EnergyBar.Params energyBarParams,
+			Consumer<SlotPositions.Builder> itemPositions,
+			Consumer<SlotPositions.Builder> fluidPositions,
+			boolean frontOverlay,
+			boolean topOverlay,
+			boolean sideOverlay,
+			int tiers,
+			int ioBucketCapacity,
+			SingleBlockCraftingMachines.Config extraConfig
+	)
 	{
 		for(int i = 0; i < 2; ++i)
 		{
@@ -261,11 +340,25 @@ public final class HackedMachineRegistrationHelper
 			
 			registerMachine(
 					hook,
-					englishPrefix + englishName, id,
+					englishPrefix + englishName,
+					id,
 					(bet) -> new SteamCraftingMachineBlockEntity(
-							bet, type,
-							MachineInventoryHelper.buildInventoryComponent(itemInputCount, itemOutputCount, fluidInputCount, fluidOutputCount, items, fluids, steamBuckets, ioBucketCapacity),
-							builtGuiParams, progressBarParams, tier, extraConfig.steamOverclockCatalysts
+							bet,
+							type,
+							MachineInventoryHelper.buildInventoryComponent(
+									itemInputCount,
+									itemOutputCount,
+									fluidInputCount,
+									fluidOutputCount,
+									items,
+									fluids,
+									steamBuckets,
+									ioBucketCapacity
+							),
+							builtGuiParams,
+							progressBarParams,
+							tier,
+							extraConfig.steamOverclockCatalysts
 					),
 					(bet) ->
 					{
@@ -300,10 +393,24 @@ public final class HackedMachineRegistrationHelper
 					hook,
 					electricEnglishName, id,
 					(bet) -> new ElectricCraftingMachineBlockEntity(
-							bet, type,
-							MachineInventoryHelper.buildInventoryComponent(itemInputCount, itemOutputCount, fluidInputCount, fluidOutputCount, items, fluids, 0, ioBucketCapacity),
+							bet,
+							type,
+							MachineInventoryHelper.buildInventoryComponent(
+									itemInputCount,
+									itemOutputCount,
+									fluidInputCount,
+									fluidOutputCount,
+									items,
+									fluids,
+									0,
+									ioBucketCapacity
+							),
 							builtGuiParams,
-							energyBarParams, progressBarParams, efficiencyBarParams, MachineTier.LV, 3200
+							energyBarParams,
+							progressBarParams,
+							efficiencyBarParams,
+							MachineTier.LV,
+							3200
 					),
 					(bet) ->
 					{
@@ -325,25 +432,46 @@ public final class HackedMachineRegistrationHelper
 		SlotPositions fluids = new SlotPositions.Builder().buildWithConsumer(fluidPositions);
 		registerReiTiers(
 				hook,
-				englishName, machineName, type,
+				englishName,
+				machineName,
+				type,
 				new MachineCategoryParams(
-						null, null, items.sublist(0, itemInputCount),
+						null,
+						null,
+						items.sublist(0, itemInputCount),
 						items.sublist(itemInputCount, itemInputCount + itemOutputCount),
-						fluids.sublist(0, fluidInputCount), fluids.sublist(fluidInputCount, fluidInputCount + fluidOutputCount), progressBarParams,
-						null, null, false, SteamMode.BOTH
+						fluids.sublist(0, fluidInputCount),
+						fluids.sublist(fluidInputCount, fluidInputCount + fluidOutputCount), progressBarParams,
+						null,
+						null,
+						false,
+						SteamMode.BOTH
 				),
 				tiers
 		);
 	}
 	
-	public static void registerRecipeCategory(MIHook hook, String id, String englishName, MachineRecipeType recipeType, MachineCategoryParams params)
+	public static void registerRecipeCategory(
+			MIHook hook,
+			String id,
+			String englishName,
+			MachineRecipeType recipeType,
+			MachineCategoryParams params
+	)
 	{
 		var machineId = hook.id(id);
 		params = new MachineCategoryParams(
-				englishName, machineId,
-				params.itemInputs, params.itemOutputs, params.fluidInputs, params.fluidOutputs,
-				params.progressBarParams, recipeType, params.recipePredicate,
-				params.isMultiblock, params.steamMode
+				englishName,
+				machineId,
+				params.itemInputs,
+				params.itemOutputs,
+				params.fluidInputs,
+				params.fluidOutputs,
+				params.progressBarParams,
+				recipeType,
+				params.recipePredicate,
+				params.isMultiblock,
+				params.steamMode
 		);
 		MIHookTracker.addReiCategoryName(machineId, englishName);
 		ReiMachineRecipes.registerCategory(machineId, params);
@@ -352,22 +480,39 @@ public final class HackedMachineRegistrationHelper
 		MIHookTracker.addReiCategoryId(machineId, params.category);
 	}
 	
-	public static void registerRecipeCategory(MIHook hook, String id, String englishName, MachineRecipeType recipeType,
-											  SlotPositions itemInputs, SlotPositions itemOutputs,
-											  SlotPositions fluidInputs, SlotPositions fluidOutputs,
-											  ProgressBar.Params progressBarParams,
-											  Predicate<MachineRecipe> recipePredicate,
-											  boolean isMultiblock,
-											  SteamMode steamMode)
+	public static void registerRecipeCategory(
+			MIHook hook,
+			String id,
+			String englishName,
+			MachineRecipeType recipeType,
+			SlotPositions itemInputs,
+			SlotPositions itemOutputs,
+			SlotPositions fluidInputs,
+			SlotPositions fluidOutputs,
+			ProgressBar.Params progressBarParams,
+			Predicate<MachineRecipe> recipePredicate,
+			boolean isMultiblock,
+			SteamMode steamMode
+	)
 	{
 		var machineId = hook.id(id);
 		registerRecipeCategory(
-				hook, id, englishName, recipeType,
+				hook,
+				id,
+				englishName,
+				recipeType,
 				new MachineCategoryParams(
-						null, null,
-						itemInputs, itemOutputs, fluidInputs, fluidOutputs,
-						progressBarParams, null, recipePredicate,
-						isMultiblock, steamMode
+						null,
+						null,
+						itemInputs,
+						itemOutputs,
+						fluidInputs,
+						fluidOutputs,
+						progressBarParams,
+						null,
+						recipePredicate,
+						isMultiblock,
+						steamMode
 				)
 		);
 	}
@@ -375,7 +520,14 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see SingleBlockCraftingMachines#registerReiTiers(String, String, MachineRecipeType, MachineCategoryParams, int)
 	 */
-	public static void registerReiTiers(MIHook hook, String englishName, String machine, MachineRecipeType recipeType, MachineCategoryParams categoryParams, int tiers)
+	public static void registerReiTiers(
+			MIHook hook,
+			String englishName,
+			String machine,
+			MachineRecipeType recipeType,
+			MachineCategoryParams categoryParams,
+			int tiers
+	)
 	{
 		List<MachineCategoryParams> previousCategories = new ArrayList<>();
 		int previousMaxEu = 0;
@@ -390,7 +542,9 @@ public final class HackedMachineRegistrationHelper
 				String englishPrefix = i == 0 ? "Bronze " : i == 1 ? "Steel " : "Electric ";
 				String fullEnglishName = tiers == TIER_ELECTRIC || previousMaxEu == 0 ? englishName : englishPrefix + englishName;
 				MachineCategoryParams category = new MachineCategoryParams(
-						fullEnglishName, itemId, categoryParams.itemInputs,
+						fullEnglishName,
+						itemId,
+						categoryParams.itemInputs,
 						categoryParams.itemOutputs,
 						categoryParams.fluidInputs,
 						categoryParams.fluidOutputs,
@@ -420,7 +574,11 @@ public final class HackedMachineRegistrationHelper
 	/**
 	 * @see MIMachineRecipeTypes#create(String, Function)
 	 */
-	public static MachineRecipeType createMachineRecipeType(MIHook hook, String name, Function<ResourceLocation, MachineRecipeType> creator)
+	public static MachineRecipeType createMachineRecipeType(
+			MIHook hook,
+			String name,
+			Function<ResourceLocation, MachineRecipeType> creator
+	)
 	{
 		MIHookRegistry registry = hook.registry();
 		

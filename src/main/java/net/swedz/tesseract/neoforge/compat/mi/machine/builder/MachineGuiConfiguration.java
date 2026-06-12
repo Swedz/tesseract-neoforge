@@ -214,9 +214,12 @@ public final class MachineGuiConfiguration
 		return recipeType != null;
 	}
 	
-	void registerRecipeCategory(MIHook hook,
-								String name, String englishName,
-								int tiers)
+	void registerRecipeCategory(
+			MIHook hook,
+			String name,
+			String englishName,
+			int tiers
+	)
 	{
 		Assert.notNull(recipeType, "Recipe type must be provided");
 		Assert.notNull(progressBar, "Progress bar must be configured");
@@ -226,12 +229,17 @@ public final class MachineGuiConfiguration
 		
 		HackedMachineRegistrationHelper.registerReiTiers(
 				hook,
-				englishName, name, recipeType,
+				englishName,
+				name,
+				recipeType,
 				// The null and false constants are populated by registerReiTiers
 				new MachineCategoryParams(
-						null, null,
-						slotPositions.itemInputs(), slotPositions.itemOutputs(),
-						slotPositions.fluidInputs(), slotPositions.fluidOutputs(),
+						null,
+						null,
+						slotPositions.itemInputs(),
+						slotPositions.itemOutputs(),
+						slotPositions.fluidInputs(),
+						slotPositions.fluidOutputs(),
 						progressBar,
 						null,
 						(recipe) -> predicate.test(recipe),
@@ -242,8 +250,11 @@ public final class MachineGuiConfiguration
 		);
 	}
 	
-	void registerRecipeCategory(MIHook hook,
-								String name, String englishName)
+	void registerRecipeCategory(
+			MIHook hook,
+			String name,
+			String englishName
+	)
 	{
 		Assert.notNull(recipeType, "Recipe type must be provided");
 		Assert.notNull(progressBar, "Progress bar must be configured");
@@ -253,12 +264,17 @@ public final class MachineGuiConfiguration
 		
 		HackedMachineRegistrationHelper.registerRecipeCategory(
 				hook,
-				name, englishName, recipeType,
-				slotPositions.itemInputs(), slotPositions.itemOutputs(),
-				slotPositions.fluidInputs(), slotPositions.fluidOutputs(),
+				name,
+				englishName,
+				recipeType,
+				slotPositions.itemInputs(),
+				slotPositions.itemOutputs(),
+				slotPositions.fluidInputs(),
+				slotPositions.fluidOutputs(),
 				progressBar,
 				(recipe) -> predicate.test(recipe),
-				isMultiblock, steamMode
+				isMultiblock,
+				steamMode
 		);
 	}
 }
