@@ -233,7 +233,10 @@ public final class MachineGuiConfiguration
 						slotPositions.itemInputs(), slotPositions.itemOutputs(),
 						slotPositions.fluidInputs(), slotPositions.fluidOutputs(),
 						progressBar,
-						null, null, false, null
+						null,
+						(recipe) -> predicate.test(recipe),
+						false,
+						null
 				),
 				tiers
 		);

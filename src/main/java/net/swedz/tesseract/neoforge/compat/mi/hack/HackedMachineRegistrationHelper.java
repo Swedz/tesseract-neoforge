@@ -392,8 +392,15 @@ public final class HackedMachineRegistrationHelper
 				MachineCategoryParams category = new MachineCategoryParams(
 						fullEnglishName, itemId, categoryParams.itemInputs,
 						categoryParams.itemOutputs,
-						categoryParams.fluidInputs, categoryParams.fluidOutputs, categoryParams.progressBarParams,
-						recipeType, (recipe) -> minEu <= recipe.eu && recipe.eu <= maxEu, false,
+						categoryParams.fluidInputs,
+						categoryParams.fluidOutputs,
+						categoryParams.progressBarParams,
+						recipeType,
+						(recipe) ->
+								categoryParams.recipePredicate.test(recipe) &&
+								minEu <= recipe.eu &&
+								recipe.eu <= maxEu,
+						false,
 						i < 2 ? SteamMode.BOTH : SteamMode.ELECTRIC_ONLY
 				);
 				MIHookTracker.addReiCategoryName(itemId, fullEnglishName);
