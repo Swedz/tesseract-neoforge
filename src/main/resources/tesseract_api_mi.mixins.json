@@ -1,11 +1,15 @@
 {
     "required": true,
     "minVersion": "0.8",
+    "mixinextras": {
+        "minVersion": "0.5.0"
+    },
     "package": "net.swedz.tesseract.neoforge.compat.mi.mixin",
     "plugin": "net.swedz.tesseract.neoforge.compat.mi.MIMixinPlugin",
     "compatibilityLevel": "JAVA_21",
     "mixins": [
         "ActiveRecipeHolderMixin",
+        "FixSteelUpgradeItemMixin",
         "accessor.CasingComponentAccessor",
         "accessor.ConfigurableStackAccessor",
         "accessor.CrafterComponentAccessor",
