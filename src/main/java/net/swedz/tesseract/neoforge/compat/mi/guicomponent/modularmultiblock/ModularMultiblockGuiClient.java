@@ -4,6 +4,7 @@ import aztech.modern_industrialization.MI;
 import aztech.modern_industrialization.client.machines.gui.ClientComponentRenderer;
 import aztech.modern_industrialization.client.machines.gui.GuiComponentClient;
 import aztech.modern_industrialization.client.machines.gui.MachineScreen;
+import aztech.modern_industrialization.client.util.RenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,7 +32,7 @@ public final class ModularMultiblockGuiClient extends GuiComponentClient<Unit, M
 	{
 		private static final ResourceLocation TEXTURE = MI.id("textures/gui/container/multiblock_info.png");
 		
-		private static final int TEXTURE_WIDTH = ModularMultiblockGui.WIDTH;
+		private static final int TEXTURE_WIDTH  = ModularMultiblockGui.WIDTH;
 		private static final int TEXTURE_HEIGHT = ModularMultiblockGui.HEIGHT;
 		
 		private void renderInfoBackground(GuiGraphics graphics, int x, int y)
@@ -74,16 +75,18 @@ public final class ModularMultiblockGuiClient extends GuiComponentClient<Unit, M
 			for(var line : data.content().lines())
 			{
 				List<FormattedCharSequence> wrappedLines = line.wrap() ?
-						font.split(line.text(), TEXTURE_WIDTH - spaceWidth) :
+						font.split(line.text(), TEXTURE_WIDTH - 10) :
 						List.of(line.text().getVisualOrderText());
 				int index = 0;
-				for(FormattedCharSequence wrappedLine : wrappedLines)
+				for(var wrappedLine : wrappedLines)
 				{
 					graphics.drawString(
-							font, ComponentHelper.stripStyle(wrappedLine),
+							font,
+							ComponentHelper.stripStyle(wrappedLine),
 							x + ModularMultiblockGui.X + 5 + (index > 0 ? spaceWidth : 0),
 							y + data.y() + offsetY,
-							line.color(), false
+							line.color(),
+							false
 					);
 					offsetY += 11;
 					index++;
@@ -96,6 +99,21 @@ public final class ModularMultiblockGuiClient extends GuiComponentClient<Unit, M
 		{
 			this.renderInfoBackground(graphics, x, y);
 			this.renderInfoText(graphics, x, y);
+		}
+		
+		@Override
+		public boolean renderTooltip(MachineScreen screen, Font font, GuiGraphics graphics, int x, int y, int mouseX, int mouseY)
+		{
+			if(RenderHelper.isPointWithinRectangle(ModularMultiblockGui.X, ModularMultiblockGui.Y, ModularMultiblockGui.WIDTH, ModularMultiblockGui.HEIGHT, mouseX - x, mouseY - y))
+			{
+				var tooltip = data.tooltip();
+				if(!tooltip.isEmpty())
+				{
+					graphics.renderComponentTooltip(font, tooltip, mouseX, mouseY);
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 }

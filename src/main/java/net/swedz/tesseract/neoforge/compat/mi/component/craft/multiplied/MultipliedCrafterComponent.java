@@ -21,6 +21,7 @@ import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAcce
 import net.swedz.tesseract.neoforge.compat.mi.helper.CrafterComponentHelper;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Supplier;
@@ -113,7 +114,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	}
 	
 	@Override
-	protected Iterable<RecipeHolder<MachineRecipe>> getRecipes()
+	protected Collection<RecipeHolder<MachineRecipe>> getRecipes()
 	{
 		if(this.getRecipeType() == null)
 		{
@@ -125,24 +126,6 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		}
 		else
 		{
-			int currentHash = inventory.hash();
-			if(currentHash == lastInvHash)
-			{
-				if(lastForcedTick == 0)
-				{
-					lastForcedTick = 100;
-				}
-				else
-				{
-					--lastForcedTick;
-					return Collections.emptyList();
-				}
-			}
-			else
-			{
-				lastInvHash = currentHash;
-			}
-			
 			ServerLevel serverWorld = behavior.getCrafterWorld();
 			MachineRecipeType recipeType = this.getRecipeType();
 			List<RecipeHolder<MachineRecipe>> recipes = new ArrayList<>(recipeType.getFluidOnlyRecipes(serverWorld));
@@ -214,7 +197,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	
 	private boolean canItemOutputsAllFit(MachineRecipe recipe, int multiplier)
 	{
-		try (Transaction transaction = Transaction.openRoot())
+		try(Transaction transaction = Transaction.openRoot())
 		{
 			MIItemStorage outputStorage = new MIItemStorage(inventory.getItemOutputs());
 			
@@ -309,6 +292,34 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		return fluidMultiplier;
 	}
 	
+	private int calculateMultiplier(RecipeHolder<MachineRecipe> recipe)
+	{
+		if(this.getMaxMultiplier() > 1)
+		{
+			int itemInputMultiplier = this.calculateItemInputRecipeMultiplier(recipe.value());
+			if(itemInputMultiplier > 1)
+			{
+				int itemOutputMultiplier = this.calculateItemOutputRecipeMultiplier(recipe.value());
+				if(itemOutputMultiplier > 1)
+				{
+					int itemMultiplier = Math.min(itemInputMultiplier, itemOutputMultiplier);
+					
+					int fluidInputMultiplier = this.calculateFluidInputRecipeMultiplier(recipe.value());
+					if(fluidInputMultiplier > 1)
+					{
+						int fluidOutputMultiplier = this.calculateFluidOutputRecipeMultiplier(recipe.value());
+						if(fluidOutputMultiplier > 1)
+						{
+							int fluidMultiplier = Math.min(fluidInputMultiplier, fluidOutputMultiplier);
+							return Math.min(itemMultiplier, fluidMultiplier);
+						}
+					}
+				}
+			}
+		}
+		return 1;
+	}
+	
 	@Override
 	protected boolean takeItemInputs(RecipeHolder<MachineRecipe> recipeHolder, boolean simulate)
 	{
@@ -334,44 +345,34 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	}
 	
 	@Override
-	protected boolean tryStartRecipe(RecipeHolder<MachineRecipe> recipe)
+	protected boolean canStartRecipe(RecipeHolder<MachineRecipe> recipe, boolean ignoreConditions)
 	{
-		if(this.getMaxMultiplier() > 1)
-		{
-			int itemInputMultiplier = this.calculateItemInputRecipeMultiplier(recipe.value());
-			if(itemInputMultiplier > 1)
-			{
-				int itemOutputMultiplier = this.calculateItemOutputRecipeMultiplier(recipe.value());
-				if(itemOutputMultiplier > 1)
-				{
-					int itemMultiplier = Math.min(itemInputMultiplier, itemOutputMultiplier);
-					
-					int fluidInputMultiplier = this.calculateFluidInputRecipeMultiplier(recipe.value());
-					if(fluidInputMultiplier > 1)
-					{
-						int fluidOutputMultiplier = this.calculateFluidOutputRecipeMultiplier(recipe.value());
-						if(fluidOutputMultiplier > 1)
-						{
-							int fluidMultiplier = Math.min(fluidInputMultiplier, fluidOutputMultiplier);
-							
-							tryRecipeMultiplier = Math.min(itemMultiplier, fluidMultiplier);
-							if(super.tryStartRecipe(recipe))
-							{
-								recipeMultiplier = tryRecipeMultiplier;
-								tryRecipeMultiplier = 0;
-								return true;
-							}
-						}
-					}
-				}
-			}
-		}
-		
-		tryRecipeMultiplier = 1;
-		recipeMultiplier = 1;
-		boolean success = super.tryStartRecipe(recipe);
+		tryRecipeMultiplier = this.calculateMultiplier(recipe);
+		boolean success = super.canStartRecipe(recipe, ignoreConditions);
 		tryRecipeMultiplier = 0;
 		return success;
+	}
+	
+	@Override
+	protected boolean tryStartRecipe(RecipeHolder<MachineRecipe> recipe)
+	{
+		tryRecipeMultiplier = this.calculateMultiplier(recipe);
+		recipeMultiplier = 1;
+		try
+		{
+			if(super.canStartRecipe(recipe, false))
+			{
+				recipeMultiplier = tryRecipeMultiplier;
+				this.takeInputs(recipe, false);
+				this.putOutputs(recipe, true, true);
+				return true;
+			}
+			return false;
+		}
+		finally
+		{
+			tryRecipeMultiplier = 0;
+		}
 	}
 	
 	@Override

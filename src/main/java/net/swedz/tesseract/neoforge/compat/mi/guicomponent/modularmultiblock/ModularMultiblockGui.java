@@ -2,6 +2,8 @@ package net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock;
 
 import aztech.modern_industrialization.machines.gui.GuiComponentServer;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Unit;
@@ -18,8 +20,9 @@ public final class ModularMultiblockGui implements GuiComponentServer<Unit, Modu
 	private final int y, height;
 	
 	private final Consumer<ModularMultiblockGuiContent> contentAdder;
+	private final Supplier<List<Component>>             tooltipSupplier;
 	
-	public ModularMultiblockGui(int y, int height, Consumer<ModularMultiblockGuiContent> contentAdder)
+	public ModularMultiblockGui(int y, int height, Consumer<ModularMultiblockGuiContent> contentAdder, Supplier<List<Component>> tooltipSupplier)
 	{
 		if(height <= 4)
 		{
@@ -28,21 +31,22 @@ public final class ModularMultiblockGui implements GuiComponentServer<Unit, Modu
 		this.y = y;
 		this.height = height;
 		this.contentAdder = contentAdder;
+		this.tooltipSupplier = tooltipSupplier;
 	}
 	
-	public ModularMultiblockGui(int y, int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
+	public ModularMultiblockGui(int y, int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier, Supplier<List<Component>> tooltipSupplier)
 	{
-		this(y, height, (c) -> c.addAll(textSupplier.get()));
+		this(y, height, (c) -> c.addAll(textSupplier.get()), tooltipSupplier);
 	}
 	
-	public ModularMultiblockGui(int height, Consumer<ModularMultiblockGuiContent> contentAdder)
+	public ModularMultiblockGui(int height, Consumer<ModularMultiblockGuiContent> contentAdder, Supplier<List<Component>> tooltipSupplier)
 	{
-		this(0, height, contentAdder);
+		this(0, height, contentAdder, tooltipSupplier);
 	}
 	
-	public ModularMultiblockGui(int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier)
+	public ModularMultiblockGui(int height, Supplier<List<ModularMultiblockGuiLine>> textSupplier, Supplier<List<Component>> tooltipSupplier)
 	{
-		this(0, height, textSupplier);
+		this(0, height, textSupplier, tooltipSupplier);
 	}
 	
 	private ModularMultiblockGuiContent content()
@@ -50,6 +54,11 @@ public final class ModularMultiblockGui implements GuiComponentServer<Unit, Modu
 		ModularMultiblockGuiContent content = new ModularMultiblockGuiContent();
 		contentAdder.accept(content);
 		return content;
+	}
+	
+	private List<Component> tooltip()
+	{
+		return tooltipSupplier.get();
 	}
 	
 	@Override
@@ -61,7 +70,7 @@ public final class ModularMultiblockGui implements GuiComponentServer<Unit, Modu
 	@Override
 	public Data extractData()
 	{
-		return new Data(y, height, this.content());
+		return new Data(y, height, this.content(), this.tooltip());
 	}
 	
 	@Override
@@ -70,12 +79,13 @@ public final class ModularMultiblockGui implements GuiComponentServer<Unit, Modu
 		return TYPE;
 	}
 	
-	public record Data(int y, int height, ModularMultiblockGuiContent content)
+	public record Data(int y, int height, ModularMultiblockGuiContent content, List<Component> tooltip)
 	{
 		public static final StreamCodec<RegistryFriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT, Data::y,
 				ByteBufCodecs.VAR_INT, Data::height,
 				ModularMultiblockGuiContent.STREAM_CODEC, Data::content,
+				ComponentSerialization.STREAM_CODEC.apply(ByteBufCodecs.list()), Data::tooltip,
 				Data::new
 		);
 	}

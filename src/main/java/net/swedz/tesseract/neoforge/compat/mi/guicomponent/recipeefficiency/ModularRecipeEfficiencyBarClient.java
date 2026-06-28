@@ -48,7 +48,7 @@ public final class ModularRecipeEfficiencyBarClient extends GuiComponentClient<M
 		}
 		
 		@Override
-		public void renderTooltip(MachineScreen screen, Font font, GuiGraphics guiGraphics, int x, int y, int cursorX, int cursorY)
+		public boolean renderTooltip(MachineScreen screen, Font font, GuiGraphics guiGraphics, int x, int y, int cursorX, int cursorY)
 		{
 			if(RenderHelper.isPointWithinRectangle(params.renderX(), params.renderY(), WIDTH, HEIGHT, cursorX - x, cursorY - y))
 			{
@@ -70,7 +70,10 @@ public final class ModularRecipeEfficiencyBarClient extends GuiComponentClient<M
 				tooltip.add(MIText.EfficiencyMaxOverclock.text(data.maxRecipeEu()));
 				
 				guiGraphics.renderTooltip(font, tooltip, Optional.empty(), cursorX, cursorY);
+				
+				return true;
 			}
+			return false;
 		}
 	}
 }

@@ -108,7 +108,7 @@ public final class ModularSlotPanelClient extends GuiComponentClient<ModularSlot
 			}
 			
 			@Override
-			public void renderTooltip(MachineScreen screen, Font font, GuiGraphics graphics, int x, int y, int cursorX, int cursorY)
+			public boolean renderTooltip(MachineScreen screen, Font font, GuiGraphics graphics, int x, int y, int cursorX, int cursorY)
 			{
 				Slot slot = screen.getFocusedSlot();
 				if(slot instanceof SlotTooltip tooltip)
@@ -116,8 +116,10 @@ public final class ModularSlotPanelClient extends GuiComponentClient<ModularSlot
 					if(!screen.getFocusedSlot().hasItem())
 					{
 						graphics.renderTooltip(font, tooltip.getTooltip(), cursorX, cursorY);
+						return true;
 					}
 				}
+				return false;
 			}
 		};
 	}

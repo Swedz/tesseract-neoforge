@@ -14,10 +14,12 @@ import aztech.modern_industrialization.machines.multiblocks.ShapeMatcher;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.util.Simulation;
+import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerLevel;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGui;
 import net.swedz.tesseract.neoforge.compat.mi.machine.blockentity.multiblock.BasicMultiblockMachineBlockEntity;
 
+import java.util.List;
 import java.util.UUID;
 
 import static net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGuiLine.*;
@@ -57,22 +59,40 @@ public class PowerlessMultiblockMachineBlockEntity extends BasicMultiblockMachin
 		}
 		
 		this.registerGuiComponent(new ReiSlotLocking(crafter::lockRecipe, () -> operatingState != OperatingState.NOT_MATCHED));
-		this.registerGuiComponent(new ModularMultiblockGui(ModularMultiblockGui.HEIGHT, (content) ->
-		{
-			boolean shapeValid = this.isShapeValid();
-			boolean active = isActive.isActive;
-			
-			content.add((shapeValid ? MIText.MultiblockShapeValid : MIText.MultiblockShapeInvalid).text(), shapeValid ? WHITE : RED);
-			if(shapeValid)
-			{
-				content.add(MIText.MultiblockStatusActive.text());
-				
-				if(crafter != null && crafter.hasActiveRecipe())
+		this.registerGuiComponent(new ModularMultiblockGui(
+				ModularMultiblockGui.HEIGHT,
+				(content) ->
 				{
-					content.add(MIText.Progress.text(String.format("%.1f", crafter.getProgress() * 100) + " %"));
+					boolean shapeValid = this.isShapeValid();
+					boolean active = isActive.isActive;
+					
+					content.add((shapeValid ? MIText.MultiblockShapeValid : MIText.MultiblockShapeInvalid).text(), shapeValid ? WHITE : RED);
+					if(shapeValid)
+					{
+						content.add(MIText.MultiblockStatusActive.text());
+						
+						if(crafter.hasActiveRecipe())
+						{
+							content.add(MIText.Progress.text(String.format("%.1f", crafter.getProgress() * 100) + " %"));
+						}
+					}
+					if(crafter.matchesMultipleRecipes())
+					{
+						content.add(MIText.MachineMultipleRecipes1.text(), RED);
+					}
+				},
+				() ->
+				{
+					if(crafter.matchesMultipleRecipes())
+					{
+						return List.of(
+								MIText.MachineMultipleRecipes1.text().withStyle(ChatFormatting.RED),
+								MIText.MachineMultipleRecipes2.text().withStyle(ChatFormatting.RED)
+						);
+					}
+					return List.of();
 				}
-			}
-		}));
+		));
 	}
 	
 	@Override
