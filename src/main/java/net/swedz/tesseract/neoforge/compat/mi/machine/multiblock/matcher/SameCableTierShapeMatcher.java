@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.compat.mi.machine.multiblock.matcher;
 
 import aztech.modern_industrialization.api.energy.CableTier;
 import aztech.modern_industrialization.machines.blockentities.hatches.EnergyHatch;
+import aztech.modern_industrialization.machines.components.ShapeValidComponent;
 import aztech.modern_industrialization.machines.multiblocks.HatchBlockEntity;
 import aztech.modern_industrialization.machines.multiblocks.ShapeMatcher;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
@@ -17,9 +18,9 @@ public class SameCableTierShapeMatcher extends ShapeMatcher
 {
 	protected final Consumer<Boolean> mismatchingHatchesCallback;
 	
-	public SameCableTierShapeMatcher(Level level, BlockPos controllerPos, Direction controllerDirection, ShapeTemplate template, Consumer<Boolean> mismatchingHatchesCallback)
+	public SameCableTierShapeMatcher(Level level, BlockPos controllerPos, Direction controllerDirection, ShapeTemplate template, ShapeValidComponent shapeValid, Consumer<Boolean> mismatchingHatchesCallback)
 	{
-		super(level, controllerPos, controllerDirection, template);
+		super(level, controllerPos, controllerDirection, template, shapeValid);
 		this.mismatchingHatchesCallback = mismatchingHatchesCallback;
 	}
 	

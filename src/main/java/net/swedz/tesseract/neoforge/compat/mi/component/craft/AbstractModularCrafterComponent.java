@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.compat.mi.component.craft;
 
 import aztech.modern_industrialization.api.machine.component.InventoryAccess;
+import aztech.modern_industrialization.inventory.AbstractConfigurableStack;
 import aztech.modern_industrialization.inventory.ConfigurableFluidStack;
 import aztech.modern_industrialization.inventory.ConfigurableItemStack;
 import aztech.modern_industrialization.machines.MachineBlockEntity;
@@ -15,6 +16,9 @@ import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookEfficiency;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.machine.EfficiencyMIHookContext;
+
+import java.util.Collection;
+import java.util.List;
 
 import static aztech.modern_industrialization.util.Simulation.*;
 
@@ -32,6 +36,8 @@ public abstract class AbstractModularCrafterComponent<R> implements MachineCompo
 	
 	protected R                activeRecipe;
 	protected ResourceLocation delayedActiveRecipe;
+	
+	protected boolean matchesMultipleRecipes;
 	
 	protected long usedEnergy;
 	protected long recipeEnergy;
@@ -64,7 +70,7 @@ public abstract class AbstractModularCrafterComponent<R> implements MachineCompo
 	
 	protected abstract boolean canContinueRecipe();
 	
-	protected abstract Iterable<R> getRecipes();
+	protected abstract Collection<R> getRecipes();
 	
 	protected abstract ResourceLocation getRecipeId(R recipe);
 	
@@ -116,6 +122,12 @@ public abstract class AbstractModularCrafterComponent<R> implements MachineCompo
 	public R getActiveRecipe()
 	{
 		return activeRecipe;
+	}
+	
+	@Override
+	public boolean matchesMultipleRecipes()
+	{
+		return matchesMultipleRecipes;
 	}
 	
 	@Override
@@ -216,38 +228,108 @@ public abstract class AbstractModularCrafterComponent<R> implements MachineCompo
 		}
 	}
 	
+	private static boolean areAllSlotsLocked(List<? extends AbstractConfigurableStack<?, ?>> slots)
+	{
+		for(var output : slots)
+		{
+			if(!output.canPlayerLock())
+			{
+				return true;
+			}
+			if(!output.isPlayerLocked())
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private boolean areAllOutputSlotsLocked()
+	{
+		return areAllSlotsLocked(inventory.getItemOutputs()) &&
+			   areAllSlotsLocked(inventory.getFluidOutputs());
+	}
+	
+	private boolean shouldUpdateActiveRecipe()
+	{
+		int currentHash = inventory.hash();
+		if(currentHash == lastInvHash)
+		{
+			if(lastForcedTick == 0)
+			{
+				lastForcedTick = 100;
+			}
+			else
+			{
+				--lastForcedTick;
+				return false;
+			}
+		}
+		else
+		{
+			lastInvHash = currentHash;
+		}
+		return true;
+	}
+	
 	protected boolean updateActiveRecipe()
 	{
-		for(R recipe : this.getRecipes())
+		if(!this.shouldUpdateActiveRecipe())
+		{
+			return false;
+		}
+		var outputsLocked = this.areAllOutputSlotsLocked();
+		var recipes = this.getRecipes();
+		R newActiveRecipe = null;
+		for(R recipe : recipes)
 		{
 			if(behavior.isRecipeBanned(this.getRecipeEuCost(recipe)))
 			{
 				continue;
 			}
-			if(this.tryStartRecipe(recipe))
+			if(this.canStartRecipe(recipe, true))
 			{
-				// Make sure we recalculate the max efficiency ticks if the recipe changes or if
-				// the efficiency has reached 0 (the latter is to recalculate the efficiency for
-				// 0.3.6 worlds without having to break and replace the machines)
-				if(activeRecipe != recipe || efficiencyTicks == 0)
+				if(newActiveRecipe != null)
 				{
-					maxEfficiencyTicks = this.getRecipeMaxEfficiencyTicks(recipe);
+					matchesMultipleRecipes = true;
+					return false;
 				}
-				activeRecipe = recipe;
-				usedEnergy = 0;
-				recipeEnergy = this.transformEuCost(this.getRecipeTotalEuCost(recipe), 0);
-				recipeMaxEu = this.getRecipeMaxEu(this.getRecipeEuCost(recipe), recipeEnergy, efficiencyTicks);
-				return true;
+				newActiveRecipe = recipe;
+				if(outputsLocked)
+				{
+					break;
+				}
 			}
+		}
+		matchesMultipleRecipes = false;
+		if(newActiveRecipe != null && this.tryStartRecipe(newActiveRecipe))
+		{
+			// Make sure we recalculate the max efficiency ticks if the recipe changes or if
+			// the efficiency has reached 0 (the latter is to recalculate the efficiency for
+			// 0.3.6 worlds without having to break and replace the machines)
+			if(activeRecipe != newActiveRecipe || efficiencyTicks == 0)
+			{
+				maxEfficiencyTicks = this.getRecipeMaxEfficiencyTicks(newActiveRecipe);
+			}
+			activeRecipe = newActiveRecipe;
+			usedEnergy = 0;
+			recipeEnergy = this.transformEuCost(this.getRecipeTotalEuCost(newActiveRecipe), 0);
+			recipeMaxEu = this.getRecipeMaxEu(this.getRecipeEuCost(newActiveRecipe), recipeEnergy, efficiencyTicks);
+			return true;
 		}
 		return false;
 	}
 	
+	protected boolean canStartRecipe(R recipe, boolean ignoreConditions)
+	{
+		return this.takeInputs(recipe, true) &&
+			   this.putOutputs(recipe, true, false) &&
+			   (ignoreConditions || this.doConditionsMatchForRecipe(recipe));
+	}
+	
 	protected boolean tryStartRecipe(R recipe)
 	{
-		if(this.takeInputs(recipe, true) &&
-		   this.putOutputs(recipe, true, false) &&
-		   this.doConditionsMatchForRecipe(recipe))
+		if(this.canStartRecipe(recipe, false))
 		{
 			this.takeInputs(recipe, false);
 			this.putOutputs(recipe, true, true);

@@ -17,7 +17,7 @@ public record ModularMultiblockGuiLine(Component text, int color, boolean wrap)
 	
 	public ModularMultiblockGuiLine(Component text, int color)
 	{
-		this(text, color, false);
+		this(text, color, true);
 	}
 	
 	public ModularMultiblockGuiLine(Component text)
