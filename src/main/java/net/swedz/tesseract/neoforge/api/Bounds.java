@@ -77,12 +77,10 @@ public record Bounds(int minX, int minY, int width, int height)
 	 */
 	public boolean overlaps(Bounds other)
 	{
-		int minX = other.minX();
-		int minY = other.minY();
-		int maxX = other.maxX();
-		int maxY = other.maxY();
-		return this.contains(minX, minY) || this.contains(maxX, minY) ||
-			   this.contains(minX, maxY) || this.contains(maxX, maxY);
+		return this.minX() <= other.maxX() &&
+			   this.maxX() >= other.minX() &&
+			   this.minY() <= other.maxY() &&
+			   this.maxY() >= other.minY();
 	}
 	
 	/**
