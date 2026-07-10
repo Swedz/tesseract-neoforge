@@ -54,7 +54,7 @@ public final class CommonGuiComponents
 					{
 						content.add(MIText.MultiblockStatusActive.text());
 						
-						if(crafter.hasActiveRecipe())
+						if(crafter != null && crafter.hasActiveRecipe())
 						{
 							content.add(MIText.Progress.text(String.format("%.1f", crafter.getProgress() * 100) + " %"));
 							
@@ -68,14 +68,14 @@ public final class CommonGuiComponents
 							content.add(MIText.CurrentEuRecipe.text(TextHelper.getEuTextTick(crafter.getCurrentRecipeEu())));
 						}
 					}
-					if(crafter.matchesMultipleRecipes())
+					if(crafter != null && crafter.matchesMultipleRecipes())
 					{
 						content.add(MIText.MachineMultipleRecipes1.text(), RED);
 					}
 				},
 				() ->
 				{
-					if(crafter.matchesMultipleRecipes())
+					if(crafter != null && crafter.matchesMultipleRecipes())
 					{
 						return List.of(
 								MIText.MachineMultipleRecipes1.text().withStyle(ChatFormatting.RED),
