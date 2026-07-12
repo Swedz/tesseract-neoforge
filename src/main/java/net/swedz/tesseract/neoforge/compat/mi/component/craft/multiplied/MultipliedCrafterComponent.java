@@ -9,6 +9,7 @@ import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.transaction.Transaction;
+import com.google.common.collect.Sets;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -20,10 +21,10 @@ import net.swedz.tesseract.neoforge.compat.mi.component.craft.AbstractModularCra
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccessBehavior;
 import net.swedz.tesseract.neoforge.compat.mi.helper.CrafterComponentHelper;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public final class MultipliedCrafterComponent extends AbstractModularCrafterComponent<RecipeHolder<MachineRecipe>>
@@ -128,7 +129,7 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 		{
 			ServerLevel serverWorld = behavior.getCrafterWorld();
 			MachineRecipeType recipeType = this.getRecipeType();
-			List<RecipeHolder<MachineRecipe>> recipes = new ArrayList<>(recipeType.getFluidOnlyRecipes(serverWorld));
+			Set<RecipeHolder<MachineRecipe>> recipes = Sets.newHashSet(recipeType.getFluidOnlyRecipes(serverWorld));
 			for(ConfigurableItemStack stack : inventory.getItemInputs())
 			{
 				if(!stack.isEmpty())
