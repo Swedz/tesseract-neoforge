@@ -9,6 +9,7 @@ import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.transaction.Transaction;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -143,9 +144,11 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	
 	private int calculateItemInputRecipeMultiplier(MachineRecipe recipe)
 	{
-		List<ItemStack> itemsInHatches = inventory.getItemInputs().stream()
-				.map((item) -> item.getResource().toStack((int) item.getAmount()))
-				.toList();
+		List<ItemStack> itemsInHatches = Lists.newArrayList();
+		for(var stack : inventory.getItemInputs())
+		{
+			itemsInHatches.add(stack.toStack());
+		}
 		
 		int itemMultiplier = this.getMaxMultiplier();
 		for(MachineRecipe.ItemInput input : recipe.itemInputs)
