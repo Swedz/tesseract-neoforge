@@ -116,6 +116,44 @@ public final class MultipliedCrafterComponent extends AbstractModularCrafterComp
 	}
 	
 	@Override
+	protected boolean recipesOverlap(RecipeHolder<MachineRecipe> first, RecipeHolder<MachineRecipe> second)
+	{
+		for(var stack : inventory.getFluidInputs())
+		{
+			for(var input : first.value().fluidInputs)
+			{
+				if(input.fluid().test(stack.toStack()))
+				{
+					for(var otherInput : second.value().fluidInputs)
+					{
+						if(otherInput.fluid().test(stack.toStack()))
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		for(var stack : inventory.getItemInputs())
+		{
+			for(var input : first.value().itemInputs)
+			{
+				if(input.matches(stack.toStack()))
+				{
+					for(var otherInput : second.value().itemInputs)
+					{
+						if(otherInput.matches(stack.toStack()))
+						{
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	@Override
 	protected Collection<RecipeHolder<MachineRecipe>> getRecipes()
 	{
 		if(this.getRecipeType() == null)
