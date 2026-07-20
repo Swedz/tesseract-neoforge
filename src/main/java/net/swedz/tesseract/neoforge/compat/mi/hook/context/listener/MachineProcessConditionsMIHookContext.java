@@ -18,6 +18,6 @@ public final class MachineProcessConditionsMIHookContext extends MIHookContext
 	
 	public <T extends MachineProcessCondition> void register(ResourceLocation id, MapCodec<T> codec, StreamCodec<? super RegistryFriendlyByteBuf, T> streamCodec)
 	{
-		MachineProcessConditions.register(id, codec, streamCodec);
+		hook.enqueue(() -> MachineProcessConditions.register(id, codec, streamCodec));
 	}
 }

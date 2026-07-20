@@ -17,6 +17,6 @@ public final class ClientGuiComponentsMIHookContext extends MIHookContext
 	
 	public <P, D> void register(GuiComponentServer.Type<P, D> type, BiFunction<P, D, GuiComponentClient<P, D>> clientFactory)
 	{
-		GuiComponentsClient.register(type, clientFactory);
+		hook.enqueue(() -> GuiComponentsClient.register(type, clientFactory));
 	}
 }

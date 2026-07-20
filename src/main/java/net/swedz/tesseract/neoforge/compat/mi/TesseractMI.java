@@ -1,8 +1,8 @@
 package net.swedz.tesseract.neoforge.compat.mi;
 
 import net.minecraft.network.chat.Style;
-import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.api.Assert;
+import net.swedz.tesseract.neoforge.Tesseract;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHooks;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.listener.HatchMIHookContext;

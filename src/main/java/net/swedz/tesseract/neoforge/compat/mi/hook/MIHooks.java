@@ -113,4 +113,13 @@ public final class MIHooks
 			action.accept(listener, context);
 		}
 	}
+	
+	public static void executeEnqueuedTasks()
+	{
+		MIHookEntrypointLoader.ensureLoaded();
+		for(var entry : HOOKS.entrySet())
+		{
+			entry.getValue().executeEnqueuedTasks();
+		}
+	}
 }

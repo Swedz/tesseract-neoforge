@@ -13,6 +13,7 @@
         "accessor.CasingComponentAccessor",
         "accessor.ConfigurableStackAccessor",
         "accessor.CrafterComponentAccessor",
+        "accessor.MachineCasingAccessor",
         "accessor.MIMachineRecipeTypesAccessor",
         "accessor.OverdriveComponentAccessor",
         "accessor.RedstoneControlComponentAccessor",

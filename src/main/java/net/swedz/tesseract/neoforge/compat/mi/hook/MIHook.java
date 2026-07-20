@@ -1,7 +1,9 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook;
 
+import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.List;
 import java.util.Objects;
 
 public final class MIHook
@@ -11,6 +13,8 @@ public final class MIHook
 	private MIHookRegistry   registry           = MIHookRegistry.NONE;
 	private MIHookListener   listener           = MIHookListener.NONE;
 	private MIHookEfficiency efficiencyListener = MIHookEfficiency.NONE;
+	
+	private final List<Runnable> tasks = Lists.newCopyOnWriteArrayList();
 	
 	public MIHook(String modId)
 	{
@@ -82,5 +86,15 @@ public final class MIHook
 		this.efficiencyListener = efficiencyListener;
 		
 		return this;
+	}
+	
+	public void enqueue(Runnable task)
+	{
+		tasks.add(task);
+	}
+	
+	void executeEnqueuedTasks()
+	{
+		tasks.forEach(Runnable::run);
 	}
 }
