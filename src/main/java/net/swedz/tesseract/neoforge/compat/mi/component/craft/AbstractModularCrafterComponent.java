@@ -78,6 +78,8 @@ public abstract class AbstractModularCrafterComponent<R> implements MachineCompo
 	
 	protected abstract void onTick();
 	
+	protected abstract boolean recipesOverlap(R first, R second);
+	
 	protected boolean takeInputs(R recipe, boolean simulate)
 	{
 		return this.takeItemInputs(recipe, simulate) &&
@@ -291,8 +293,12 @@ public abstract class AbstractModularCrafterComponent<R> implements MachineCompo
 			{
 				if(newActiveRecipe != null)
 				{
-					matchesMultipleRecipes = true;
-					return false;
+					if(this.recipesOverlap(newActiveRecipe, recipe))
+					{
+						matchesMultipleRecipes = true;
+						return false;
+					}
+					continue;
 				}
 				newActiveRecipe = recipe;
 				if(outputsLocked)
