@@ -7,6 +7,7 @@ import net.minecraft.world.level.block.Block;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHook;
 import net.swedz.tesseract.neoforge.compat.mi.hook.MIHookTracker;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.MIHookContext;
+import net.swedz.tesseract.neoforge.compat.mi.mixin.accessor.MachineCasingAccessor;
 import net.swedz.tesseract.neoforge.datagen.mi.client.MachineCasingModelsMIHookDatagenProvider;
 
 import java.util.function.BiConsumer;
@@ -19,16 +20,30 @@ public final class MachineCasingsMIHookContext extends MIHookContext
 		super(hook);
 	}
 	
+	private MachineCasing create(ResourceLocation key, Supplier<? extends Block> imitatedBlock)
+	{
+		var casing = MachineCasingAccessor.init(key, imitatedBlock);
+		hook.enqueue(() ->
+		{
+			if(MachineCasings.registeredCasings.containsKey(key))
+			{
+				throw new IllegalArgumentException("Duplicate machine casing definition: " + key);
+			}
+			MachineCasings.registeredCasings.put(key, casing);
+		});
+		return casing;
+	}
+	
 	public MachineCasing register(String id, String englishName, BiConsumer<MachineCasing, MachineCasingModelsMIHookDatagenProvider> model)
 	{
-		MachineCasing casing = MachineCasings.create(hook.id(id), englishName);
+		var casing = create(hook.id(id), null);
 		MIHookTracker.addMachineCasingModel(hook, (provider) -> model.accept(casing, provider));
 		return casing;
 	}
 	
 	public MachineCasing registerImitateBlock(String id, Supplier<? extends Block> block)
 	{
-		MachineCasing casing = MachineCasings.createBlockImitation(hook.id(id), block);
+		var casing = create(hook.id(id), block);
 		MIHookTracker.addMachineCasingModel(hook, (provider) -> provider.imitateBlock(casing, block.get()));
 		return casing;
 	}
