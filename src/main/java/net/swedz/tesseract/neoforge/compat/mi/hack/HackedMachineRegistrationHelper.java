@@ -456,28 +456,31 @@ public final class HackedMachineRegistrationHelper
 			String id,
 			String englishName,
 			MachineRecipeType recipeType,
-			MachineCategoryParams params
+			MachineCategoryParams inputParams
 	)
 	{
 		var machineId = hook.id(id);
-		params = new MachineCategoryParams(
+		var params = new MachineCategoryParams(
 				englishName,
 				machineId,
-				params.itemInputs,
-				params.itemOutputs,
-				params.fluidInputs,
-				params.fluidOutputs,
-				params.progressBarParams,
+				inputParams.itemInputs,
+				inputParams.itemOutputs,
+				inputParams.fluidInputs,
+				inputParams.fluidOutputs,
+				inputParams.progressBarParams,
 				recipeType,
-				params.recipePredicate,
-				params.isMultiblock,
-				params.steamMode
+				inputParams.recipePredicate,
+				inputParams.isMultiblock,
+				inputParams.steamMode
 		);
 		MIHookTracker.addReiCategoryName(machineId, englishName);
-		ReiMachineRecipes.registerCategory(machineId, params);
-		ReiMachineRecipes.registerMachineClickArea(machineId, params.progressBarParams.toRectangle());
+		hook.enqueue(() ->
+		{
+			ReiMachineRecipes.registerCategory(machineId, params);
+			ReiMachineRecipes.registerMachineClickArea(machineId, params.progressBarParams.toRectangle());
+			ReiMachineRecipes.registerRecipeCategoryForMachine(machineId, params.category);
+		});
 		params.workstations.add(machineId);
-		MIHookTracker.addReiCategoryId(machineId, params.category);
 	}
 	
 	public static void registerRecipeCategory(
@@ -536,10 +539,10 @@ public final class HackedMachineRegistrationHelper
 			if(((tiers >> i) & 1) > 0)
 			{
 				int minEu = previousMaxEu + 1;
-				int maxEu = i == 0 ? 2 : i == 1 ? 4 : Integer.MAX_VALUE;
-				String prefix = i == 0 ? "bronze_" : i == 1 ? "steel_" : tiers == TIER_ELECTRIC ? "" : "electric_";
+				int maxEu = i == 0 ? 2 : (i == 1 ? 4 : Integer.MAX_VALUE);
+				String prefix = i == 0 ? "bronze_" : (i == 1 ? "steel_" : (tiers == TIER_ELECTRIC ? "" : "electric_"));
 				ResourceLocation itemId = hook.id(prefix + machine);
-				String englishPrefix = i == 0 ? "Bronze " : i == 1 ? "Steel " : "Electric ";
+				String englishPrefix = i == 0 ? "Bronze " : (i == 1 ? "Steel " : "Electric ");
 				String fullEnglishName = tiers == TIER_ELECTRIC || previousMaxEu == 0 ? englishName : englishPrefix + englishName;
 				MachineCategoryParams category = new MachineCategoryParams(
 						fullEnglishName,
@@ -558,13 +561,16 @@ public final class HackedMachineRegistrationHelper
 						i < 2 ? SteamMode.BOTH : SteamMode.ELECTRIC_ONLY
 				);
 				MIHookTracker.addReiCategoryName(itemId, fullEnglishName);
-				ReiMachineRecipes.registerCategory(itemId, category);
-				ReiMachineRecipes.registerMachineClickArea(itemId, categoryParams.progressBarParams.toRectangle());
+				hook.enqueue(() ->
+				{
+					ReiMachineRecipes.registerCategory(itemId, category);
+					ReiMachineRecipes.registerMachineClickArea(itemId, categoryParams.progressBarParams.toRectangle());
+				});
 				previousCategories.add(category);
 				for(MachineCategoryParams param : previousCategories)
 				{
 					param.workstations.add(itemId);
-					ReiMachineRecipes.registerRecipeCategoryForMachine(itemId, param.category);
+					hook.enqueue(() -> ReiMachineRecipes.registerRecipeCategoryForMachine(itemId, param.category));
 				}
 				previousMaxEu = maxEu;
 			}
@@ -586,7 +592,7 @@ public final class HackedMachineRegistrationHelper
 		registry.recipeSerializerRegistry().register(name, () -> type);
 		registry.recipeTypeRegistry().register(name, () -> type);
 		registry.onMachineRecipeTypeRegister(type);
-		MIMachineRecipeTypesAccessor.getRecipeTypes().add(type);
+		hook.enqueue(() -> MIMachineRecipeTypesAccessor.getRecipeTypes().add(type));
 		
 		return type;
 	}
