@@ -586,12 +586,13 @@ public final class HackedMachineRegistrationHelper
 			Function<ResourceLocation, MachineRecipeType> creator
 	)
 	{
-		MIHookRegistry registry = hook.registry();
+		var registry = hook.registry();
 		
-		MachineRecipeType type = creator.apply(hook.id(name));
+		var type = creator.apply(hook.id(name));
 		registry.recipeSerializerRegistry().register(name, () -> type);
 		registry.recipeTypeRegistry().register(name, () -> type);
 		registry.onMachineRecipeTypeRegister(type);
+		MIHookTracker.addRecipeType(type);
 		hook.enqueue(() -> MIMachineRecipeTypesAccessor.getRecipeTypes().add(type));
 		
 		return type;

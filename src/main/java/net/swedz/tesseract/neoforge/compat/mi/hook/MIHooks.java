@@ -1,10 +1,12 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook;
 
 import com.google.common.collect.Maps;
+import net.neoforged.fml.ModList;
 import net.swedz.tesseract.neoforge.compat.mi.hook.context.machine.EfficiencyMIHookContext;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -16,6 +18,22 @@ public final class MIHooks
 {
 	private static final Map<String, MIHook>   HOOKS                = Maps.newHashMap();
 	private static final Set<MIHookEfficiency> EFFICIENCY_LISTENERS = new TreeSet<>(Comparator.comparingInt(MIHookEfficiency::getPriority));
+	
+	private static List<MIHook> sortedHooks()
+	{
+		var modList = ModList.get();
+		return HOOKS.values().stream()
+				.sorted(Comparator.comparingInt((hook) ->
+				{
+					var container = modList.getModContainerById(hook.modId());
+					if(container.isEmpty())
+					{
+						throw new IllegalStateException("Mod container for " + hook.modId() + " does not exist!");
+					}
+					return modList.getSortedMods().indexOf(container.get());
+				}))
+				.toList();
+	}
 	
 	static void registerListener(String modId, MIHookListener listener)
 	{
@@ -117,9 +135,9 @@ public final class MIHooks
 	public static void executeEnqueuedTasks()
 	{
 		MIHookEntrypointLoader.ensureLoaded();
-		for(var entry : HOOKS.entrySet())
+		for(var hook : sortedHooks())
 		{
-			entry.getValue().executeEnqueuedTasks();
+			hook.executeEnqueuedTasks();
 		}
 	}
 }

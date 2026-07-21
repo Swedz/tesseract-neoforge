@@ -106,7 +106,7 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 	{
 		Assert.that(isMultiblock, "Multiblock shapes can only be registered on multiblock machines");
 		Assert.notNull(shape);
-		ReiMachineRecipes.registerMultiblockShape(hook.id(name), shape, alternative);
+		hook.enqueue(() -> ReiMachineRecipes.registerMultiblockShape(hook.id(name), shape, alternative));
 		return this;
 	}
 	
@@ -134,7 +134,7 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 			for(var workstation : workstations)
 			{
 				Assert.notNull(workstation);
-				ReiMachineRecipes.registerWorkstation(hook.id(name), workstation);
+				hook.enqueue(() -> ReiMachineRecipes.registerWorkstation(hook.id(name), workstation));
 			}
 		}
 		return this;
@@ -143,7 +143,7 @@ public final class SpecialMachineBuilder extends MachineWithGuiBuilder<SpecialMa
 	public SpecialMachineBuilder registerAsWorkstationFor(ResourceLocation otherMachineId)
 	{
 		Assert.notNull(otherMachineId);
-		ReiMachineRecipes.registerWorkstation(otherMachineId, hook.id(name));
+		hook.enqueue(() -> ReiMachineRecipes.registerWorkstation(otherMachineId, hook.id(name)));
 		return this;
 	}
 }

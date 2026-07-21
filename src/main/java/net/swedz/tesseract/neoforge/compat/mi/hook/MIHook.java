@@ -2,6 +2,7 @@ package net.swedz.tesseract.neoforge.compat.mi.hook;
 
 import com.google.common.collect.Lists;
 import net.minecraft.resources.ResourceLocation;
+import net.swedz.tesseract.neoforge.Tesseract;
 
 import java.util.List;
 import java.util.Objects;
@@ -102,7 +103,15 @@ public final class MIHook
 	void executeEnqueuedTasks()
 	{
 		executedEnqueuedTasks = true;
-		tasks.forEach(Runnable::run);
+		Tesseract.LOGGER.info("Executing enqueued MI hook tasks for {}", modId);
+		try
+		{
+			tasks.forEach(Runnable::run);
+		}
+		catch(Exception ex)
+		{
+			throw new RuntimeException("Failed to execute enqueued MI hook tasks for " + modId, ex);
+		}
 		tasks.clear();
 	}
 }
