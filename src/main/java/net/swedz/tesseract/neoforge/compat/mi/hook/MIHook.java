@@ -16,6 +16,8 @@ public final class MIHook
 	
 	private final List<Runnable> tasks = Lists.newCopyOnWriteArrayList();
 	
+	private boolean executedEnqueuedTasks = false;
+	
 	public MIHook(String modId)
 	{
 		this.modId = modId;
@@ -90,11 +92,17 @@ public final class MIHook
 	
 	public void enqueue(Runnable task)
 	{
+		if(executedEnqueuedTasks)
+		{
+			throw new IllegalStateException("Cannot enqueue task after tasks have already been executed");
+		}
 		tasks.add(task);
 	}
 	
 	void executeEnqueuedTasks()
 	{
+		executedEnqueuedTasks = true;
 		tasks.forEach(Runnable::run);
+		tasks.clear();
 	}
 }

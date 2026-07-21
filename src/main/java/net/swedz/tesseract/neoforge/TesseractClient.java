@@ -10,6 +10,7 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import net.swedz.tesseract.neoforge.compat.ModLoadedHelper;
 import net.swedz.tesseract.neoforge.model.DynamicAtlasUnbakedModel;
 import net.swedz.tesseract.neoforge.tooltip.TooltipHandler;
 import net.swedz.tesseract.neoforge.tooltip.component.ItemStackClientTooltipComponent;
@@ -21,6 +22,18 @@ public final class TesseractClient
 {
 	public TesseractClient(IEventBus bus)
 	{
+		if(ModLoadedHelper.isLoaded("modern_industrialization"))
+		{
+			// Load the GuiComponentsClient class so that hooks get invoked immediately
+			try
+			{
+				Class.forName("aztech.modern_industrialization.client.machines.GuiComponentsClient");
+			}
+			catch(ClassNotFoundException ignored)
+			{
+			}
+		}
+		
 		NeoForge.EVENT_BUS.addListener(EventPriority.HIGHEST, ItemTooltipEvent.class, (event) ->
 				TooltipHandler.attach(event.getFlags(), event.getContext(), event.getItemStack(), event.getToolTip()));
 	}
