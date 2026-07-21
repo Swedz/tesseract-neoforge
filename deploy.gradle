@@ -1,9 +1,9 @@
 import me.modmuss50.mpp.ReleaseType
 
 static def trimChangelog(String changelog, int maxLength, boolean discordFormat) {
-	if (discordFormat) {
-		changelog = changelog.replaceAll(/## What's Changed\r?\n/, '')
+	changelog = changelog.replaceAll(/## What's Changed\r?\n/, '')
 
+	if (discordFormat) {
 		changelog = changelog.replaceAll(/## New Contributors/, '**New Contributors**')
 	}
 
