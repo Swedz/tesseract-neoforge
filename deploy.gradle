@@ -134,6 +134,7 @@ publishMods {
 		javaVersions.add JavaVersion.VERSION_21
 		client = true
 		server = true
+		changelogType = "markdown"
 		shared it
 	}
 
