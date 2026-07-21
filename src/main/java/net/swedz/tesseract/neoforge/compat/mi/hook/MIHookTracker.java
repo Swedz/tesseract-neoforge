@@ -1,7 +1,9 @@
 package net.swedz.tesseract.neoforge.compat.mi.hook;
 
 import aztech.modern_industrialization.MI;
+import aztech.modern_industrialization.machines.init.MIMachineRecipeTypes;
 import aztech.modern_industrialization.machines.models.MachineCasing;
+import aztech.modern_industrialization.machines.recipe.MachineRecipeType;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonObject;
@@ -19,6 +21,7 @@ public final class MIHookTracker
 	private static final Map<ResourceLocation, String>                                         REI_CATEGORY_NAMES    = Maps.newConcurrentMap();
 	private static final Map<ResourceLocation, MachineModelProperties>                         MACHINE_MODELS        = Maps.newConcurrentMap();
 	private static final Map<String, List<Consumer<MachineCasingModelsMIHookDatagenProvider>>> MACHINE_CASING_MODELS = Maps.newConcurrentMap();
+	private static final Map<ResourceLocation, MachineRecipeType>                              RECIPE_TYPES          = Maps.newConcurrentMap();
 	
 	public static List<Map.Entry<ResourceLocation, String>> getReiCategoryNames(String modId)
 	{
@@ -105,5 +108,23 @@ public final class MIHookTracker
 			
 			json.add("default_overlays", defaultOverlays);
 		}
+	}
+	
+	public static void addRecipeType(MachineRecipeType type)
+	{
+		RECIPE_TYPES.put(type.getId(), type);
+	}
+	
+	public static MachineRecipeType getRecipeType(ResourceLocation key)
+	{
+		var type = RECIPE_TYPES.get(key);
+		if(type == null)
+		{
+			type = MIMachineRecipeTypes.getRecipeTypes().stream()
+					.filter((miType) -> miType.getId().equals(key))
+					.findFirst()
+					.orElse(null);
+		}
+		return type;
 	}
 }
