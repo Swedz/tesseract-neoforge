@@ -5,9 +5,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLConstructModEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
@@ -55,7 +56,7 @@ public final class Tesseract
 			{
 			}
 			TesseractMILootConditions.init(bus);
-			bus.addListener(FMLCommonSetupEvent.class, (event) -> event.enqueueWork(MIHooks::executeEnqueuedTasks));
+			bus.addListener(EventPriority.HIGHEST, FMLConstructModEvent.class, (event) -> event.enqueueWork(MIHooks::executeEnqueuedTasks));
 		}
 		
 		bus.addListener(GatherDataEvent.class, (event) ->
