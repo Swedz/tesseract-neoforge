@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.config;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
@@ -37,6 +38,8 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 	private boolean includeDefaultValueComments;
 	
 	private ModConfigSpec spec;
+	
+	private final Map<String, ModConfigSpec.ConfigValue<?>> configValues = Maps.newConcurrentMap();
 	
 	public ModConfigFileAccess(ModContainer container, ModConfig.Type type, String fileName)
 	{
@@ -233,6 +236,17 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 		}
 	}
 	
+	private ModConfigSpec.ConfigValue<?> getConfigValue(String path)
+	{
+		ModConfigSpec.ConfigValue<?> configValue = configValues.get(path);
+		if(configValue == null)
+		{
+			configValue = spec.getValues().get(path);
+			configValues.put(path, configValue);
+		}
+		return configValue;
+	}
+	
 	@Override
 	public void load(Class<?> proxyClass)
 	{
@@ -262,8 +276,7 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 	{
 		Assert.notNull(spec, "Config file has not yet been loaded", IllegalStateException::new);
 		
-		ModConfigSpec.ConfigValue<?> configValue = spec.getValues().get(path);
-		var value = configValue.get();
+		var value = this.getConfigValue(path).get();
 		if(codecs.has(type))
 		{
 			return codecs.decode(type, value);
@@ -276,7 +289,6 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 	{
 		Assert.notNull(spec, "Config file has not yet been loaded", IllegalStateException::new);
 		
-		ModConfigSpec.ConfigValue configValue = spec.getValues().get(path);
 		Object encoded;
 		if(codecs.has(type))
 		{
@@ -286,6 +298,8 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 		{
 			encoded = value;
 		}
+		
+		ModConfigSpec.ConfigValue configValue = this.getConfigValue(path);
 		configValue.set(encoded);
 		configValue.save();
 	}
