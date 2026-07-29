@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 public class DataComponentTooltipProviderMixin
 {
 	@Inject(
-			method = "addDetailsToTooltip",
+			method = "addDetailsToTooltipComponents",
 			at = @At(
 					value = "FIELD",
 					target = "Lnet/minecraft/core/component/DataComponents;LORE:Lnet/minecraft/core/component/DataComponentType;",
