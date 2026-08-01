@@ -2,7 +2,17 @@ pluginManagement {
 	repositories {
 		mavenLocal()
 		gradlePluginPortal()
-		maven { url = 'https://maven.neoforged.net/releases' }
+		maven {
+			url = "https://maven.neoforged.net/releases"
+		}
+		maven {
+			name = "Modmaven"
+			url = "https://modmaven.dev"
+			content {
+				includeGroup "net.swedz"
+				includeGroup "net.swedz.deploy-inator"
+			}
+		}
 	}
 }
 
@@ -14,7 +24,7 @@ plugins {
 dependencyResolutionManagement {
 	repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
 	rulesMode = RulesMode.FAIL_ON_PROJECT_RULES
-
+	
 	repositories {
 		mavenLocal()
 		mavenCentral()
