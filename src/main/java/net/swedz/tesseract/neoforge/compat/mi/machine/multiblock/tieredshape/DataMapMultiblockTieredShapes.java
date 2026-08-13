@@ -13,10 +13,25 @@ public abstract class DataMapMultiblockTieredShapes<T extends MultiblockTier, D 
 {
 	private final DataMapType<Block, D> tierDataMap;
 	
-	public DataMapMultiblockTieredShapes(ResourceLocation machineId, Comparator<T> tierSort, DataMapType<Block, D> tierDataMap)
+	public DataMapMultiblockTieredShapes(
+			ResourceLocation machineId,
+			Comparator<T> tierSort,
+			DataMapType<Block, D> tierDataMap,
+			List<T> defaultTiers
+	)
 	{
-		super(machineId, tierSort);
+		super(machineId, tierSort, defaultTiers);
 		this.tierDataMap = tierDataMap;
+	}
+	
+	@Deprecated(forRemoval = true, since = "1.12.15")
+	public DataMapMultiblockTieredShapes(
+			ResourceLocation machineId,
+			Comparator<T> tierSort,
+			DataMapType<Block, D> tierDataMap
+	)
+	{
+		this(machineId, tierSort, tierDataMap, List.of());
 	}
 	
 	@Override

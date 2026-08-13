@@ -6,7 +6,6 @@ import aztech.modern_industrialization.machines.guicomponents.ShapeSelection;
 import aztech.modern_industrialization.machines.multiblocks.MultiblockMachineBlockEntity;
 import aztech.modern_industrialization.machines.multiblocks.ShapeTemplate;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -29,15 +28,32 @@ public abstract class MultiblockTieredShapes<T extends MultiblockTier>
 	
 	private final Comparator<T> tierSort;
 	
-	protected List<T>                  tiers        = List.of();
-	protected Map<ResourceLocation, T> tiersByBlock = Collections.unmodifiableMap(Maps.newHashMap());
+	protected List<T>                  tiers;
+	protected Map<ResourceLocation, T> tiersByBlock;
 	
 	private ShapeTemplate[] shapeTemplates = new ShapeTemplate[0];
 	
-	public MultiblockTieredShapes(ResourceLocation machineId, Comparator<T> tierSort)
+	public MultiblockTieredShapes(
+			ResourceLocation machineId,
+			Comparator<T> tierSort,
+			List<T> defaultTiers
+	)
 	{
 		this.machineId = machineId;
 		this.tierSort = tierSort;
+		this.tiers = defaultTiers;
+		this.tiersByBlock = this.compileTiersByBlock();
+		this.invalidateShapeTemplates();
+		this.invalidateRecipeViewerShapes();
+	}
+	
+	@Deprecated(forRemoval = true, since = "1.12.15")
+	public MultiblockTieredShapes(
+			ResourceLocation machineId,
+			Comparator<T> tierSort
+	)
+	{
+		this(machineId, tierSort, List.of());
 	}
 	
 	public final ResourceLocation machineId()
@@ -62,6 +78,11 @@ public abstract class MultiblockTieredShapes<T extends MultiblockTier>
 	
 	protected abstract List<T> buildTiers();
 	
+	private Map<ResourceLocation, T> compileTiersByBlock()
+	{
+		return tiers.stream().collect(Collectors.toMap(MultiblockTier::blockId, Function.identity()));
+	}
+	
 	private void invalidateTiers()
 	{
 		List<T> newTiers = Lists.newArrayList();
@@ -69,7 +90,7 @@ public abstract class MultiblockTieredShapes<T extends MultiblockTier>
 		newTiers.sort(tierSort);
 		
 		tiers = Collections.unmodifiableList(newTiers);
-		tiersByBlock = tiers.stream().collect(Collectors.toMap(MultiblockTier::blockId, Function.identity()));
+		tiersByBlock = this.compileTiersByBlock();
 	}
 	
 	protected abstract void buildShapeTemplates(ShapeTemplate[] shapeTemplates);
