@@ -28,6 +28,14 @@ repositories {
 			includeGroup "dev.emi"
 		}
 	}
+	maven {
+		name "Sonatype"
+		url = "https://central.sonatype.com/repository/maven-snapshots/"
+		content {
+			// GuideME
+			includeGroup "org.appliedenergistics"
+		}
+	}
 }
 
 dependencies {
@@ -51,4 +59,6 @@ dependencies {
 		compileOnly "aztech:Modern-Industrialization:${modern_industrialization_version}"
 		compileOnly "dev.technici4n:GrandPower:${grandpower_version}"
 	}
+	
+	localImplementation "org.appliedenergistics:guideme:${guideme_version}"
 }
