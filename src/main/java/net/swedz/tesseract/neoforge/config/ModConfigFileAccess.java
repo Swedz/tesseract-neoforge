@@ -3,12 +3,15 @@ package net.swedz.tesseract.neoforge.config;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.config.ConfigCodecMap;
 import net.swedz.tesseract.config.ConfigFileAccess;
+import net.swedz.tesseract.config.ConfigInstance;
 import net.swedz.tesseract.config.DefaultValueConfigHandler;
 import net.swedz.tesseract.config.annotation.ConfigComment;
 import net.swedz.tesseract.config.annotation.ConfigKey;
@@ -63,6 +66,21 @@ public final class ModConfigFileAccess implements ConfigFileAccess<Object>
 	public ConfigCodecMap<Object> codecs()
 	{
 		return codecs;
+	}
+	
+	private void handleModConfigEvent(ModConfigEvent event, ConfigInstance<?> instance)
+	{
+		if(event.getConfig().getSpec() == spec)
+		{
+			instance.resetCache();
+		}
+	}
+	
+	public void registerReloadListeners(IEventBus bus, ConfigInstance<?> instance)
+	{
+		bus.addListener(ModConfigEvent.Loading.class, (event) -> this.handleModConfigEvent(event, instance));
+		bus.addListener(ModConfigEvent.Reloading.class, (event) -> this.handleModConfigEvent(event, instance));
+		bus.addListener(ModConfigEvent.Unloading.class, (event) -> this.handleModConfigEvent(event, instance));
 	}
 	
 	private void buildConfig(
