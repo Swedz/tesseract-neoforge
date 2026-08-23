@@ -3,6 +3,7 @@ package net.swedz.tesseract.neoforge.compat.mi.helper;
 import aztech.modern_industrialization.MIText;
 import aztech.modern_industrialization.machines.components.ActiveShapeComponent;
 import aztech.modern_industrialization.machines.components.IsActiveComponent;
+import aztech.modern_industrialization.machines.components.OverclockComponent;
 import aztech.modern_industrialization.machines.guicomponents.ShapeSelection;
 import aztech.modern_industrialization.machines.multiblocks.MultiblockMachineBlockEntity;
 import aztech.modern_industrialization.util.TextHelper;
@@ -39,7 +40,15 @@ public final class CommonGuiComponents
 		);
 	}
 	
-	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, Supplier<Long> baseEuSupplier, IsActiveComponent isActive, int y, int height)
+	public static ModularMultiblockGui standardMultiblockScreen(
+			MultiblockMachineBlockEntity machine,
+			ModularCrafterAccess<?> crafter,
+			Supplier<Long> baseEuSupplier,
+			IsActiveComponent isActive,
+			OverclockComponent overclock,
+			int y,
+			int height
+	)
 	{
 		return new ModularMultiblockGui(
 				y,
@@ -72,6 +81,14 @@ public final class CommonGuiComponents
 					{
 						content.add(MIText.MachineMultipleRecipes1.text(), RED);
 					}
+					if(overclock != null)
+					{
+						int ticks = overclock.getTicks();
+						if(ticks > 0)
+						{
+							content.add(formatOverclockText(ticks));
+						}
+					}
 				},
 				() ->
 				{
@@ -87,19 +104,39 @@ public final class CommonGuiComponents
 		);
 	}
 	
+	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, Supplier<Long> baseEuSupplier, IsActiveComponent isActive, OverclockComponent overclock)
+	{
+		return standardMultiblockScreen(machine, crafter, baseEuSupplier, isActive, overclock, 0, ModularMultiblockGui.HEIGHT);
+	}
+	
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, Supplier<Long> baseEuSupplier, IsActiveComponent isActive)
 	{
-		return standardMultiblockScreen(machine, crafter, baseEuSupplier, isActive, 0, ModularMultiblockGui.HEIGHT);
+		return standardMultiblockScreen(machine, crafter, baseEuSupplier, isActive, null, 0, ModularMultiblockGui.HEIGHT);
+	}
+	
+	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive, OverclockComponent overclock, int y, int height)
+	{
+		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, overclock, y, height);
 	}
 	
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive, int y, int height)
 	{
-		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, y, height);
+		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, null, y, height);
+	}
+	
+	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive, OverclockComponent overclock, int height)
+	{
+		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, overclock, 0, height);
 	}
 	
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive, int height)
 	{
-		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, 0, height);
+		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, null, 0, height);
+	}
+	
+	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive, OverclockComponent overclock)
+	{
+		return standardMultiblockScreen(machine, crafter, isActive, overclock, ModularMultiblockGui.HEIGHT);
 	}
 	
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive)
@@ -107,18 +144,50 @@ public final class CommonGuiComponents
 		return standardMultiblockScreen(machine, crafter, isActive, ModularMultiblockGui.HEIGHT);
 	}
 	
+	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, OverclockComponent overclock, int y, int height)
+	{
+		return standardMultiblockScreen(machine, null, null, isActive, overclock, y, height);
+	}
+	
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, int y, int height)
 	{
-		return standardMultiblockScreen(machine, null, null, isActive, y, height);
+		return standardMultiblockScreen(machine, null, null, isActive, null, y, height);
+	}
+	
+	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, OverclockComponent overclock, int height)
+	{
+		return standardMultiblockScreen(machine, null, null, isActive, overclock, 0, height);
 	}
 	
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, int height)
 	{
-		return standardMultiblockScreen(machine, null, null, isActive, 0, height);
+		return standardMultiblockScreen(machine, null, null, isActive, null, 0, height);
+	}
+	
+	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, OverclockComponent overclock)
+	{
+		return standardMultiblockScreen(machine, isActive, overclock, ModularMultiblockGui.HEIGHT);
 	}
 	
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive)
 	{
 		return standardMultiblockScreen(machine, isActive, ModularMultiblockGui.HEIGHT);
+	}
+	
+	private static Component formatOverclockText(int ticks)
+	{
+		int seconds = ticks / 20;
+		int hours = seconds / 3600;
+		int minutes = seconds % 3600 / 60;
+		String time = String.format("%d", seconds);
+		if(hours > 0)
+		{
+			time = String.format("%d:%02d:%02d", hours, minutes, seconds % 60);
+		}
+		else if(minutes > 0)
+		{
+			time = String.format("%d:%02d", minutes, seconds % 60);
+		}
+		return MIText.GunpowderTime.text(time);
 	}
 }

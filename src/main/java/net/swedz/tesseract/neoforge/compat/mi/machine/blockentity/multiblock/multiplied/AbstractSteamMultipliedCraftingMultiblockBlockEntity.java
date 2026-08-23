@@ -16,6 +16,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.swedz.tesseract.neoforge.compat.mi.TesseractMI;
 import net.swedz.tesseract.neoforge.compat.mi.api.SteamMachineTierHolder;
+import net.swedz.tesseract.neoforge.compat.mi.helper.CommonGuiComponents;
 
 import java.util.List;
 
@@ -33,6 +34,8 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 		overclock = new OverclockComponent(overclockCatalysts);
 		
 		this.registerComponents(overclock);
+		
+		this.registerGuiComponent(CommonGuiComponents.standardMultiblockScreen(this, crafter, isActive, overclock));
 	}
 	
 	@Override
