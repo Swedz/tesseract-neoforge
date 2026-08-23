@@ -13,7 +13,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccessBehavior;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.EuCostTransformer;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.multiplied.MultipliedCrafterComponent;
-import net.swedz.tesseract.neoforge.compat.mi.helper.CommonGuiComponents;
 import net.swedz.tesseract.neoforge.compat.mi.machine.blockentity.multiblock.BasicMultiblockMachineBlockEntity;
 
 import java.util.UUID;
@@ -36,8 +35,6 @@ public abstract class AbstractMultipliedCraftingMultiblockBlockEntity extends Ba
 		this.registerComponents(crafter);
 		
 		this.registerGuiComponent(new ReiSlotLocking(crafter::lockRecipe, () -> operatingState != OperatingState.NOT_MATCHED));
-		
-		this.registerGuiComponent(CommonGuiComponents.standardMultiblockScreen(this, crafter, isActive));
 	}
 	
 	public abstract MachineRecipeType getRecipeType();
