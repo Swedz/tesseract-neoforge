@@ -10,6 +10,7 @@ import aztech.modern_industrialization.util.TextHelper;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAccess;
+import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.CommonMultiblockGuiBuilder;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.ModularMultiblockGui;
 
 import java.util.List;
@@ -40,6 +41,10 @@ public final class CommonGuiComponents
 		);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(
 			MultiblockMachineBlockEntity machine,
 			ModularCrafterAccess<?> crafter,
@@ -104,71 +109,127 @@ public final class CommonGuiComponents
 		);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, Supplier<Long> baseEuSupplier, IsActiveComponent isActive, OverclockComponent overclock)
 	{
 		return standardMultiblockScreen(machine, crafter, baseEuSupplier, isActive, overclock, 0, ModularMultiblockGui.HEIGHT);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, Supplier<Long> baseEuSupplier, IsActiveComponent isActive)
 	{
 		return standardMultiblockScreen(machine, crafter, baseEuSupplier, isActive, null, 0, ModularMultiblockGui.HEIGHT);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive, OverclockComponent overclock, int y, int height)
 	{
 		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, overclock, y, height);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive, int y, int height)
 	{
 		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, null, y, height);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive, OverclockComponent overclock, int height)
 	{
 		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, overclock, 0, height);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive, int height)
 	{
 		return standardMultiblockScreen(machine, crafter, crafter::getBaseRecipeEu, isActive, null, 0, height);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive, OverclockComponent overclock)
 	{
 		return standardMultiblockScreen(machine, crafter, isActive, overclock, ModularMultiblockGui.HEIGHT);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, ModularCrafterAccess<?> crafter, IsActiveComponent isActive)
 	{
 		return standardMultiblockScreen(machine, crafter, isActive, ModularMultiblockGui.HEIGHT);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, OverclockComponent overclock, int y, int height)
 	{
 		return standardMultiblockScreen(machine, null, null, isActive, overclock, y, height);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, int y, int height)
 	{
 		return standardMultiblockScreen(machine, null, null, isActive, null, y, height);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, OverclockComponent overclock, int height)
 	{
 		return standardMultiblockScreen(machine, null, null, isActive, overclock, 0, height);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, int height)
 	{
 		return standardMultiblockScreen(machine, null, null, isActive, null, 0, height);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive, OverclockComponent overclock)
 	{
 		return standardMultiblockScreen(machine, isActive, overclock, ModularMultiblockGui.HEIGHT);
 	}
 	
+	/**
+	 * @deprecated use {@link CommonMultiblockGuiBuilder}
+	 */
+	@Deprecated(since = "1.12.17", forRemoval = true)
 	public static ModularMultiblockGui standardMultiblockScreen(MultiblockMachineBlockEntity machine, IsActiveComponent isActive)
 	{
 		return standardMultiblockScreen(machine, isActive, ModularMultiblockGui.HEIGHT);

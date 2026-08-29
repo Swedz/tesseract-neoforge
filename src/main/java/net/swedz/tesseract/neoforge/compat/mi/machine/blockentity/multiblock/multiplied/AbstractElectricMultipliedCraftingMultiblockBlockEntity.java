@@ -22,7 +22,7 @@ import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.swedz.tesseract.neoforge.compat.mi.TesseractMI;
 import net.swedz.tesseract.neoforge.compat.mi.api.MachineTierHolder;
-import net.swedz.tesseract.neoforge.compat.mi.helper.CommonGuiComponents;
+import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.CommonMultiblockGuiBuilder;
 import net.swedz.tesseract.neoforge.compat.mi.helper.ModularLubricantHelper;
 
 import java.util.List;
@@ -55,7 +55,9 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 				.withUpgrades(upgrades)
 				.withOverdrive(overdrive));
 		
-		this.registerGuiComponent(CommonGuiComponents.standardMultiblockScreen(this, crafter, isActive));
+		this.registerGuiComponent(new CommonMultiblockGuiBuilder(this)
+				.crafter(crafter)
+				.build());
 	}
 	
 	@Override
