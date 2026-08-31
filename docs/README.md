@@ -3,6 +3,8 @@
 This is the documentation for Tesseract's NeoForge Module. For any questions, please ask in the `#coding-stuff` channel
 on [my discord](https://discord.gg/vNaqDzSNaB).
 
+To set up use of Tesseract in your NeoForge mods, see the [setup page](SETUP.md).
+
 ## Hooking into Modern Industrialization
 
 Although I am not a dev for [Modern Industrialization](https://github.com/AztechMC/Modern-Industrialization), Tesseract
