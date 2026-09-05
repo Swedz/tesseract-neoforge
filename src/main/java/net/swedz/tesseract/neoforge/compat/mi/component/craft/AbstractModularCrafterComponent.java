@@ -376,6 +376,11 @@ public abstract class AbstractModularCrafterComponent<R> implements MachineCompo
 			}
 		}
 		
+		if(activeRecipe != null)
+		{
+			lastForcedTick = 0;
+		}
+		
 		long eu = 0;
 		boolean finished = false;
 		if(activeRecipe != null && enabled)
