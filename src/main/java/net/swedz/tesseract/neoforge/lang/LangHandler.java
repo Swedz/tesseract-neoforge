@@ -41,6 +41,20 @@ public final class LangHandler extends InterfaceProxyHandler<LangEntry<?>>
 		this.subSectionPrefix = subSectionPrefix + ".";
 	}
 	
+	private static Optional<LangKeyPattern> findFirstLangKeyPattern(Class<?> langClass)
+	{
+		if(langClass.isAnnotationPresent(LangKeyPattern.class))
+		{
+			return Optional.of(langClass.getAnnotation(LangKeyPattern.class));
+		}
+		var enclosingLangClass = langClass.getEnclosingClass();
+		if(enclosingLangClass != null)
+		{
+			return findFirstLangKeyPattern(enclosingLangClass);
+		}
+		return Optional.empty();
+	}
+	
 	private String createLangKey(Class<?> langClass, Method method)
 	{
 		var annotation = method.getAnnotation(LangKey.class);
@@ -51,9 +65,9 @@ public final class LangHandler extends InterfaceProxyHandler<LangEntry<?>>
 			return annotation.value().replace("{}", manager.modId());
 		}
 		
-		var prefix = langClass.isAnnotationPresent(LangKeyPattern.class) ?
-				langClass.getAnnotation(LangKeyPattern.class).value() :
-				"text.{}.";
+		var prefix = findFirstLangKeyPattern(langClass)
+				.map(LangKeyPattern::value)
+				.orElse("text.{}.");
 		prefix = prefix.replace("{}", manager.modId());
 		prefix += subSectionPrefix;
 		
