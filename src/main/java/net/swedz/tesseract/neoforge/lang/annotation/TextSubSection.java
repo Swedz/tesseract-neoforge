@@ -16,4 +16,11 @@ public @interface TextSubSection
 	 * @return the section prefix
 	 */
 	String value() default "";
+	
+	/**
+	 * <p>Determines whether this subsection should be included as part of the lang key.</p>
+	 *
+	 * @return true to exclude this sub section from the path of the lang key, false to keep it (default)
+	 */
+	boolean skipPath() default false;
 }
