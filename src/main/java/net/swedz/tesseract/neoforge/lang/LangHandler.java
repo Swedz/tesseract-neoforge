@@ -223,15 +223,17 @@ public final class LangHandler extends InterfaceProxyHandler<LangEntry<?>>
 		var methodSignature = method.toGenericString();
 		if(method.isAnnotationPresent(TextSubSection.class))
 		{
-			var textSubSection = method.getAnnotation(TextSubSection.class);
-			var section = textSubSection.value();
-			if(section.isEmpty())
-			{
-				section = NamingConventionHelper.fromCamelCaseToSnakeCase(method);
-			}
-			
 			var instance = manager.build(method.getReturnType());
-			instance.handler().setSubSectionPrefix(subSectionPrefix + section);
+			var textSubSection = method.getAnnotation(TextSubSection.class);
+			if(!textSubSection.skipPath())
+			{
+				var section = textSubSection.value();
+				if(section.isEmpty())
+				{
+					section = NamingConventionHelper.fromCamelCaseToSnakeCase(method);
+				}
+				instance.handler().setSubSectionPrefix(subSectionPrefix + section);
+			}
 			instance.load();
 			return Optional.of(new LangEntry.SubSection(instance.handler(), instance.lang()));
 		}
