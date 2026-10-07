@@ -18,14 +18,40 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
-import net.swedz.tesseract.neoforge.api.WorldPos;
 import net.swedz.tesseract.api.tuple.Pair;
+import net.swedz.tesseract.neoforge.Tesseract;
+import net.swedz.tesseract.neoforge.api.WorldPos;
+import net.swedz.tesseract.neoforge.lang.annotation.WithStyleSeparator;
+import net.swedz.tesseract.neoforge.lang.parser.ParserProvider;
+
+import java.util.List;
 
 public interface Parser<T>
 {
 	// @formatter:off
-	Parser<Component>                                         COMPONENT                 = (component) -> component;
-	Parser<Object>                                            OBJECT                    = (object) -> Component.literal(String.valueOf(object));
+	Parser<Component>                                         COMPONENT                  = (component) -> component;
+	ParserProvider<List<Component>>                           COMPONENTS_COMMA_SEPARATED = (context, components) ->
+	{
+		var style = context.getAnnotation(WithStyleSeparator.class);
+		var styleSeparator = context.style(style.separator());
+		var styleElement = context.style(style.element());
+		
+		var result = Component.empty();
+		for (int index = 0; index < components.size(); index++)
+		{
+			var component = components.get(index);
+			if(index > 0)
+			{
+				var separator = index == components.size() - 1 ?
+						Tesseract.text().spliteratorLast() :
+						Tesseract.text().spliterator();
+				result.append(separator.withStyle(styleSeparator));
+			}
+			result.append(component.copy().withStyle(styleElement));
+		}
+		return result;
+	};
+	Parser<Object>                                            OBJECT = (object) -> Component.literal(String.valueOf(object));
 	
 	Parser<Integer>                                           INTEGER_PERCENTAGE        = (value) -> Component.literal(String.valueOf(value)).append("%");
 	Parser<Integer>                                           INTEGER_PERCENTAGE_SPACED = (value) -> Component.literal(String.valueOf(value)).append(" %");
@@ -36,17 +62,17 @@ public interface Parser<T>
 	BiParser<Float, Integer>                                  FLOAT_PERCENTAGE          = (value, precision) -> FLOAT.parse(value * 100, precision).copy().append("%");
 	BiParser<Float, Integer>                                  FLOAT_PERCENTAGE_SPACED   = (value, precision) -> FLOAT.parse(value * 100, precision).copy().append(" %");
 	
-	Parser<ResourceKey<?>>                                    RESOURCE_KEY              = (key) -> Component.translatable(Util.makeDescriptionId(key.registryKey().registryKey().registry().toShortLanguageKey(), key.location()));
+	Parser<ResourceKey<?>>                                    RESOURCE_KEY = (key) -> Component.translatable(Util.makeDescriptionId(key.registryKey().registryKey().registry().toShortLanguageKey(), key.location()));
 	
-	Parser<ItemStack>                                         ITEM_STACK                = (stack) -> stack.getHoverName().copy();
-	Parser<Item>                                              ITEM                      = (item) -> ITEM_STACK.parse(item.getDefaultInstance());
-	Parser<ResourceLocation>                                  ITEM_ID                   = (id) -> ITEM.parse(BuiltInRegistries.ITEM.get(id));
+	Parser<ItemStack>                                         ITEM_STACK = (stack) -> stack.getHoverName().copy();
+	Parser<Item>                                              ITEM       = (item) -> ITEM_STACK.parse(item.getDefaultInstance());
+	Parser<ResourceLocation>                                  ITEM_ID    = (id) -> ITEM.parse(BuiltInRegistries.ITEM.get(id));
 	
-	Parser<Block>                                             BLOCK                     = Block::getName;
-	Parser<BlockState>                                        BLOCK_STATE               = (blockState) -> BLOCK.parse(blockState.getBlock());
-	Parser<ResourceLocation>                                  BLOCK_ID                  = (id) -> BLOCK.parse(BuiltInRegistries.BLOCK.get(id));
+	Parser<Block>                                             BLOCK       = Block::getName;
+	Parser<BlockState>                                        BLOCK_STATE = (blockState) -> BLOCK.parse(blockState.getBlock());
+	Parser<ResourceLocation>                                  BLOCK_ID    = (id) -> BLOCK.parse(BuiltInRegistries.BLOCK.get(id));
 	
-	Parser<Fluid>                                             FLUID                     = (fluid) -> fluid.getFluidType().getDescription();
+	Parser<Fluid>                                             FLUID = (fluid) -> fluid.getFluidType().getDescription();
 	
 	BiParser<HolderLookup.Provider, ResourceKey<Enchantment>>                ENCHANTMENT           = (registries, enchantment) -> registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(enchantment).value().description().copy();
 	Parser<Integer>                                                          ENCHANTMENT_LEVEL     = (level) -> Component.translatable("enchantment.level.%d".formatted(level));
@@ -62,15 +88,15 @@ public interface Parser<T>
 		return component;
 	};
 	
-	Parser<EntityType>                                        ENTITY_TYPE               = (entityType) -> entityType.getDescription().copy();
+	Parser<EntityType>                                        ENTITY_TYPE = (entityType) -> entityType.getDescription().copy();
 	
-	Parser<String>                                            KEYBIND                   = (key) -> Component.keybind("key.%s".formatted(key));
+	Parser<String>                                            KEYBIND = (key) -> Component.keybind("key.%s".formatted(key));
 	
-	Parser<BlockPos>                                          BLOCK_POS                 = (pos) -> Component.literal(pos.toShortString());
-	BiParser<ResourceKey<Level>, BlockPos>                    DIMENSION_POS             = (dimension, pos) -> Component.literal("%s (%s)".formatted(pos.toShortString(), dimension.location().toString()));
-	BiParser<Level, BlockPos>                                 LEVEL_POS                 = (level, pos) -> DIMENSION_POS.parse(level.dimension(), pos);
-	Parser<GlobalPos>                                         GLOBAL_POS                = (pos) -> DIMENSION_POS.parse(pos.dimension(), pos.pos());
-	Parser<WorldPos>                                          WORLD_POS                 = (pos) -> DIMENSION_POS.parse(pos.dimension(), pos.pos());
+	Parser<BlockPos>                                          BLOCK_POS     = (pos) -> Component.literal(pos.toShortString());
+	BiParser<ResourceKey<Level>, BlockPos>                    DIMENSION_POS = (dimension, pos) -> Component.literal("%s (%s)".formatted(pos.toShortString(), dimension.location().toString()));
+	BiParser<Level, BlockPos>                                 LEVEL_POS     = (level, pos) -> DIMENSION_POS.parse(level.dimension(), pos);
+	Parser<GlobalPos>                                         GLOBAL_POS    = (pos) -> DIMENSION_POS.parse(pos.dimension(), pos.pos());
+	Parser<WorldPos>                                          WORLD_POS     = (pos) -> DIMENSION_POS.parse(pos.dimension(), pos.pos());
 	// @formatter:on
 	
 	Component parse(T value);
