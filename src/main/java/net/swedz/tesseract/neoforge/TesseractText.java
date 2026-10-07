@@ -9,4 +9,10 @@ public interface TesseractText
 	@LangKey(text = "Press [Shift] for info")
 	@WithStyle("tooltip")
 	MutableComponent tooltipsShiftRequired();
+	
+	@LangKey(text = ", ")
+	MutableComponent spliterator();
+	
+	@LangKey(text = " and ")
+	MutableComponent spliteratorLast();
 }
