@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBaker;
 import net.minecraft.client.resources.model.ModelState;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -19,11 +18,9 @@ import net.neoforged.neoforge.client.model.geometry.IGeometryLoader;
 import net.neoforged.neoforge.client.model.geometry.SimpleUnbakedGeometry;
 import net.neoforged.neoforge.client.model.geometry.UnbakedGeometryHelper;
 import net.swedz.tesseract.neoforge.Tesseract;
-import net.swedz.tesseract.neoforge.helper.model.ModelHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 
 /**
@@ -41,17 +38,11 @@ public final class DynamicAtlasUnbakedModel extends SimpleUnbakedGeometry<Dynami
 		{
 			throw new JsonParseException("A dynamic atlas model must have an \"atlas\" property.");
 		}
-		ResourceLocation atlas = ResourceLocation.tryParse(json.get("atlas").getAsString());
+		var atlas = ResourceLocation.tryParse(json.get("atlas").getAsString());
 		if(atlas == null)
 		{
 			throw new JsonParseException("A dynamic atlas model must have a valid \"atlas\" property.");
 		}
-		
-		if(!json.has("textures"))
-		{
-			throw new JsonParseException("A dynamic atlas model must have a \"textures\" property.");
-		}
-		Map<String, Material> textures = ModelHelper.gatherTextures(atlas, json, "textures");
 		
 		if(!json.has("elements"))
 		{
@@ -63,15 +54,15 @@ public final class DynamicAtlasUnbakedModel extends SimpleUnbakedGeometry<Dynami
 			elements.add(context.deserialize(element, BlockElement.class));
 		}
 		
-		return new DynamicAtlasUnbakedModel(textures, elements);
+		return new DynamicAtlasUnbakedModel(atlas, elements);
 	};
 	
-	private final Map<String, Material> textures;
-	private final List<BlockElement>    elements;
+	private final ResourceLocation   atlas;
+	private final List<BlockElement> elements;
 	
-	private DynamicAtlasUnbakedModel(Map<String, Material> textures, List<BlockElement> elements)
+	private DynamicAtlasUnbakedModel(ResourceLocation atlas, List<BlockElement> elements)
 	{
-		this.textures = textures;
+		this.atlas = atlas;
 		this.elements = elements;
 	}
 	
@@ -87,17 +78,13 @@ public final class DynamicAtlasUnbakedModel extends SimpleUnbakedGeometry<Dynami
 			modelState = UnbakedGeometryHelper.composeRootTransformIntoModelState(modelState, rootTransform);
 		}
 		
-		for(BlockElement element : elements)
+		for(var element : elements)
 		{
-			for(Direction direction : element.faces.keySet())
+			for(var direction : element.faces.keySet())
 			{
 				var face = element.faces.get(direction);
-				var texture = face.texture();
-				if(texture.charAt(0) == '#')
-				{
-					texture = texture.substring(1);
-				}
-				var sprite = spriteGetter.apply(textures.getOrDefault(texture, new Material(InventoryMenu.BLOCK_ATLAS, MissingTextureAtlasSprite.getLocation())));
+				var material = this.getMaterialFromReference(context, face.texture());
+				var sprite = spriteGetter.apply(material);
 				var quad = BlockModel.bakeFace(element, face, sprite, direction, modelState);
 				
 				if(face.cullForDirection() == null)
@@ -110,5 +97,19 @@ public final class DynamicAtlasUnbakedModel extends SimpleUnbakedGeometry<Dynami
 				}
 			}
 		}
+	}
+	
+	private Material getMaterialFromReference(IGeometryBakingContext context, String texture)
+	{
+		if(texture.charAt(0) == '#')
+		{
+			var material = context.getMaterial(texture.substring(1));
+			if(!material.texture().equals(MissingTextureAtlasSprite.getLocation()))
+			{
+				return new Material(atlas, material.texture());
+			}
+			return material;
+		}
+		return new Material(atlas, ResourceLocation.parse(texture));
 	}
 }
