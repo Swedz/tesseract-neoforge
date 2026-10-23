@@ -17,8 +17,7 @@
     "client": [
         "BlockModelGeneratorsByIdentifierMixin",
         "BlockStateGeneratorCollectorByIdentifierMixin",
-        "GuiGraphicsExtractorExtensionMixin",
-        "event.RegisterFakeBlockStateDefinitionsEventMixin"
+        "GuiGraphicsExtractorExtensionMixin"
     ],
     "injectors": {
         "defaultRequire": 1
