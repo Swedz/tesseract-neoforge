@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.compat.mi.component.craft;
 
+import aztech.modern_industrialization.MIAdvancementTriggers;
 import aztech.modern_industrialization.api.machine.component.InventoryAccess;
 import aztech.modern_industrialization.inventory.AbstractConfigurableStack;
 import aztech.modern_industrialization.inventory.ConfigurableFluidStack;
@@ -372,7 +373,12 @@ public abstract class AbstractModularCrafterComponent<R> implements MachineCompo
 		{
 			if(behavior.canConsumeEu(1))
 			{
+				boolean matchesMultipleRecipesBefore = matchesMultipleRecipes;
 				started = this.updateActiveRecipe();
+				if(matchesMultipleRecipes && !matchesMultipleRecipesBefore)
+				{
+					behavior.getStatsOrDummy().triggerAdvancement(behavior.getCrafterWorld(), MIAdvancementTriggers.OVERLAPPING_RECIPES);
+				}
 			}
 		}
 		
