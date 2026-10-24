@@ -1,15 +1,18 @@
 package net.swedz.tesseract.neoforge.lang;
 
 import com.google.common.collect.Lists;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.MutableComponent;
 import net.swedz.tesseract.api.Assert;
 import net.swedz.tesseract.helper.NamingConventionHelper;
 import net.swedz.tesseract.interfaceproxy.InterfaceProxyHandler;
+import net.swedz.tesseract.neoforge.lang.annotation.Contextual;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKey;
 import net.swedz.tesseract.neoforge.lang.annotation.LangKeyPattern;
 import net.swedz.tesseract.neoforge.lang.annotation.Parsed;
 import net.swedz.tesseract.neoforge.lang.annotation.TextSubSection;
 import net.swedz.tesseract.neoforge.lang.annotation.WithStyle;
+import net.swedz.tesseract.neoforge.lang.exception.MoreThanOneContextualRegistry;
 import net.swedz.tesseract.neoforge.lang.parser.LangEntryParser;
 import net.swedz.tesseract.neoforge.lang.parser.ParserProvider;
 import net.swedz.tesseract.neoforge.lang.placeholder.LangEntryPlaceholder;
@@ -116,7 +119,7 @@ public final class LangHandler extends InterfaceProxyHandler<LangEntry<?>>
 				};
 			}
 			
-			var context = LangContext.of(param, manager::getStyle, manager::getParser);
+			var context = LangContext.of(param, manager::getStyle, manager::getParser, null);
 			
 			parsers[index] = new LangEntryParser(context, parser);
 		}
@@ -162,15 +165,20 @@ public final class LangHandler extends InterfaceProxyHandler<LangEntry<?>>
 		return matcher;
 	}
 	
-	private PlaceholdersResult getPlaceholders(Method method, LangKey langKey)
+	private PlaceholdersResult getPlaceholders(Method method, LangKey langKey, boolean hasContextualRegistry)
 	{
 		if(langKey.text().length == 0 ||
 		   !langKey.placeholders())
 		{
-			return new PlaceholdersResult(null, new LangEntryPlaceholder[method.getParameterCount()]);
+			int parameterCount = method.getParameterCount();
+			if(hasContextualRegistry)
+			{
+				parameterCount--;
+			}
+			return new PlaceholdersResult(null, new LangEntryPlaceholder[parameterCount]);
 		}
 		
-		var context = LangContext.of(method, manager::getStyle, manager::getParser);
+		var context = LangContext.of(method, manager::getStyle, manager::getParser, null);
 		
 		var text = langKey.text()[0];
 		var replacedText = text;
@@ -217,6 +225,27 @@ public final class LangHandler extends InterfaceProxyHandler<LangEntry<?>>
 		return new PlaceholdersResult(replacedText, placeholders.toArray(LangEntryPlaceholder[]::new));
 	}
 	
+	private int getContextualRegistryParameterIndex(Method method)
+	{
+		int foundIndex = -1;
+		for(int index = 0; index < method.getParameterCount(); index++)
+		{
+			var param = method.getParameters()[index];
+			var paramType = param.getType();
+			
+			if(param.isAnnotationPresent(Contextual.class) &&
+			   paramType.equals(HolderLookup.Provider.class))
+			{
+				if(foundIndex != -1)
+				{
+					throw new MoreThanOneContextualRegistry(method);
+				}
+				foundIndex = index;
+			}
+		}
+		return foundIndex;
+	}
+	
 	@Override
 	protected Optional<LangEntry<?>> generate(Class<?> proxyClass, Object proxy, Method method)
 	{
@@ -245,15 +274,17 @@ public final class LangHandler extends InterfaceProxyHandler<LangEntry<?>>
 				var key = this.createLangKey(proxyClass, method);
 				var style = this.getStyle(method.getAnnotation(WithStyle.class));
 				var parsers = this.getParsers(method);
-				var placeholders = this.getPlaceholders(method, langKey);
+				int contextualRegistryParameterIndex = this.getContextualRegistryParameterIndex(method);
+				var placeholders = this.getPlaceholders(method, langKey, contextualRegistryParameterIndex != -1);
 				var entry = new LangEntry.Text(
 						key,
 						placeholders.text(),
 						includeFallback(proxyClass, langKey),
 						langKey.datagen(),
-						new LangEntryStyle(LangContext.of(method, manager::getStyle, manager::getParser), style),
+						new LangEntryStyle(LangContext.of(method, manager::getStyle, manager::getParser, null), style),
 						parsers,
-						placeholders.providers()
+						placeholders.providers(),
+						contextualRegistryParameterIndex
 				);
 				return Optional.of(entry);
 			}

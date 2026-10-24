@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.lang;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.swedz.tesseract.interfaceproxy.InterfaceProxyEntry;
@@ -28,12 +29,23 @@ public interface LangEntry<R> extends InterfaceProxyEntry<R>
 			boolean datagen,
 			LangEntryStyle style,
 			LangEntryParser[] parsers,
-			LangEntryPlaceholder[] placeholders
+			LangEntryPlaceholder[] placeholders,
+			int contextualRegistryParameterIndex
 	) implements LangEntry<Component>
 	{
+		private HolderLookup.Provider resolveRegistries(Object[] args)
+		{
+			if(contextualRegistryParameterIndex == -1)
+			{
+				return null;
+			}
+			return (HolderLookup.Provider) args[contextualRegistryParameterIndex];
+		}
+		
 		@Override
 		public MutableComponent resolve(Object[] args)
 		{
+			var registries = this.resolveRegistries(args);
 			Object[] parsedArgs = new Object[placeholders.length];
 			int argIndex = 0;
 			for(int placeholderIndex = 0; placeholderIndex < placeholders.length; placeholderIndex++)
@@ -43,18 +55,21 @@ public interface LangEntry<R> extends InterfaceProxyEntry<R>
 				{
 					if(args != null)
 					{
-						var arg = args[argIndex];
-						var parsedArg = parsers[argIndex].parse(arg);
-						parsedArgs[placeholderIndex] = parsedArg;
+						if(argIndex != contextualRegistryParameterIndex)
+						{
+							var arg = args[argIndex];
+							var parsedArg = parsers[argIndex].parse(registries, arg);
+							parsedArgs[placeholderIndex] = parsedArg;
+						}
 						argIndex++;
 					}
 				}
 				else
 				{
-					parsedArgs[placeholderIndex] = placeholder.resolve();
+					parsedArgs[placeholderIndex] = placeholder.resolve(registries);
 				}
 			}
-			return Component.translatableWithFallback(key, includeFallback ? defaultText : null, parsedArgs).withStyle(style.get());
+			return Component.translatableWithFallback(key, includeFallback ? defaultText : null, parsedArgs).withStyle(style.get(registries));
 		}
 	}
 }
