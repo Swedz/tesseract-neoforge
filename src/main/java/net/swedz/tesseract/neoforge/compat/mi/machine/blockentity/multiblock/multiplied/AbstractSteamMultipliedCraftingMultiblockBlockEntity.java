@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.swedz.tesseract.neoforge.compat.mi.TesseractMI;
 import net.swedz.tesseract.neoforge.compat.mi.api.SteamMachineTierHolder;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.CommonMultiblockGuiBuilder;
@@ -96,7 +97,7 @@ public abstract class AbstractSteamMultipliedCraftingMultiblockBlockEntity exten
 	}
 	
 	@Override
-	public List<Component> getTooltips()
+	public List<Component> getTooltips(Item.TooltipContext context)
 	{
 		List<Component> tooltips = Lists.newArrayList();
 		tooltips.addAll(overclock.getTooltips());

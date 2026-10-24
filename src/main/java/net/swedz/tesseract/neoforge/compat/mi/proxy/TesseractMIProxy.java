@@ -13,7 +13,7 @@ public class TesseractMIProxy implements Proxy
 		return false;
 	}
 	
-	public boolean anyShiftTooltipsAreFor(ItemStack stack, Item item)
+	public boolean anyShiftTooltipsAreFor(Item.TooltipContext context, ItemStack stack, Item item)
 	{
 		return false;
 	}

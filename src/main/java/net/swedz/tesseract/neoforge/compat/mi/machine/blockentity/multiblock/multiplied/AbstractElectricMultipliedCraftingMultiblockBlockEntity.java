@@ -20,6 +20,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.swedz.tesseract.neoforge.compat.mi.TesseractMI;
 import net.swedz.tesseract.neoforge.compat.mi.api.MachineTierHolder;
 import net.swedz.tesseract.neoforge.compat.mi.guicomponent.modularmultiblock.CommonMultiblockGuiBuilder;
@@ -149,7 +150,7 @@ public abstract class AbstractElectricMultipliedCraftingMultiblockBlockEntity ex
 	}
 	
 	@Override
-	public List<Component> getTooltips()
+	public List<Component> getTooltips(Item.TooltipContext context)
 	{
 		return List.of(
 				TesseractMI.text().machineBatcherRecipe(true, this.getRecipeType()),
