@@ -38,7 +38,7 @@ public final class TooltipHandler
 				else if(tooltip.requiresShift() && !hasPrintRequiredShift && maybeComponents.isPresent())
 				{
 					hasPrintRequiredShift = true;
-					if(Proxies.get(TesseractMIProxy.class).anyShiftTooltipsAreFor(stack, item))
+					if(Proxies.get(TesseractMIProxy.class).anyShiftTooltipsAreFor(context, stack, item))
 					{
 						continue;
 					}
