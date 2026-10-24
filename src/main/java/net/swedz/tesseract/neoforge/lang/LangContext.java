@@ -1,6 +1,7 @@
 package net.swedz.tesseract.neoforge.lang;
 
 import com.google.common.collect.Maps;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.swedz.tesseract.api.Assert;
@@ -22,18 +23,27 @@ public final class LangContext
 	private final Function<String, StyleProvider>                 styleGetter;
 	private final BiFunction<String, Class<?>, ParserProvider<?>> parserGetter;
 	
-	private LangContext(Map<Class<?>, Annotation[]> annotations,
-						Function<String, StyleProvider> styleGetter,
-						BiFunction<String, Class<?>, ParserProvider<?>> parserGetter)
+	private final HolderLookup.Provider registries;
+	
+	private LangContext(
+			Map<Class<?>, Annotation[]> annotations,
+			Function<String, StyleProvider> styleGetter,
+			BiFunction<String, Class<?>, ParserProvider<?>> parserGetter,
+			HolderLookup.Provider registries
+	)
 	{
 		this.annotations = Collections.unmodifiableMap(annotations);
 		this.styleGetter = styleGetter;
 		this.parserGetter = parserGetter;
+		this.registries = registries;
 	}
 	
-	public static LangContext of(AnnotatedElement element,
-								 Function<String, StyleProvider> styleGetter,
-								 BiFunction<String, Class<?>, ParserProvider<?>> parserGetter)
+	public static LangContext of(
+			AnnotatedElement element,
+			Function<String, StyleProvider> styleGetter,
+			BiFunction<String, Class<?>, ParserProvider<?>> parserGetter,
+			HolderLookup.Provider registries
+	)
 	{
 		Map<Class<?>, Annotation[]> annotations = Maps.newHashMap();
 		
@@ -53,7 +63,12 @@ public final class LangContext
 			}
 		}
 		
-		return new LangContext(annotations, styleGetter, parserGetter);
+		return new LangContext(annotations, styleGetter, parserGetter, registries);
+	}
+	
+	public LangContext withRegistries(HolderLookup.Provider registries)
+	{
+		return new LangContext(annotations, styleGetter, parserGetter, registries);
 	}
 	
 	public boolean hasAnnotation(Class<?> type)
@@ -95,5 +110,14 @@ public final class LangContext
 	public <T> Component parse(Class<T> type, T value)
 	{
 		return this.parse("default", type, value);
+	}
+	
+	public HolderLookup.Provider registries()
+	{
+		if(registries == null)
+		{
+			throw new IllegalStateException("Cannot get registries from lang context when the lang entry does not have a contextual registry provided.");
+		}
+		return registries;
 	}
 }

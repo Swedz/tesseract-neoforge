@@ -1,5 +1,6 @@
 package net.swedz.tesseract.neoforge.lang.placeholder;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.network.chat.Component;
 import net.swedz.tesseract.neoforge.lang.LangContext;
 
@@ -9,8 +10,8 @@ public record LangEntryPlaceholder(
 		PlaceholderProvider provider
 )
 {
-	public Component resolve()
+	public Component resolve(HolderLookup.Provider registries)
 	{
-		return provider.resolve(context, block);
+		return provider.resolve(context.withRegistries(registries), block);
 	}
 }
