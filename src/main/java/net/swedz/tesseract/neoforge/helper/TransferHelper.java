@@ -9,6 +9,7 @@ import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.FluidUtil;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
@@ -415,43 +416,26 @@ public final class TransferHelper
 	 * @param maxAmount the largest amount of fluid that should be transferred, use {@link Integer#MAX_VALUE} to
 	 *                  transfer as much as possible.
 	 * @param simulated whether the transfer should be simulated
-	 * @return the {@link FluidStack} that was transferred from the source to the destination, null on failure
+	 * @return true if a transfer happened, false otherwise
 	 */
-	public static FluidStack tryFluidTransfer(IFluidHandler source, IFluidHandler target, int maxAmount, boolean simulated)
+	public static boolean tryFluidTransfer(IFluidHandler source, IFluidHandler target, int maxAmount, boolean simulated)
 	{
+		boolean didTransfer = false;
 		int tanks = source.getTanks();
-		for(int i = 0; i < tanks; ++i)
+		for(int index = 0; index < tanks; index++)
 		{
-			FluidStack toTry = source.getFluidInTank(i).copy();
+			var toTry = source.getFluidInTank(index).copy();
 			if(toTry.getAmount() > maxAmount)
 			{
 				toTry.setAmount(maxAmount);
 			}
-			FluidStack drainable = source.drain(toTry, IFluidHandler.FluidAction.SIMULATE);
-			if(drainable.isEmpty())
+			var drained = FluidUtil.tryFluidTransfer(target, source, toTry, true);
+			if(!drained.isEmpty())
 			{
-				continue;
-			}
-			int fillableAmount = target.fill(drainable, IFluidHandler.FluidAction.SIMULATE);
-			if(fillableAmount > 0)
-			{
-				drainable.setAmount(fillableAmount);
-				if(!simulated)
-				{
-					FluidStack drained = source.drain(drainable, IFluidHandler.FluidAction.EXECUTE);
-					if(!drained.isEmpty())
-					{
-						drained.setAmount(target.fill(drained, IFluidHandler.FluidAction.EXECUTE));
-						return drained;
-					}
-				}
-				else
-				{
-					return drainable;
-				}
+				didTransfer = true;
 			}
 		}
-		return FluidStack.EMPTY;
+		return didTransfer;
 	}
 	
 	/**
