@@ -389,9 +389,9 @@ public abstract class AbstractModularCrafterComponent<R> implements MachineCompo
 		
 		long eu = 0;
 		boolean finished = false;
-		if(activeRecipe != null && enabled)
+		if(activeRecipe != null)
 		{
-			if(usedEnergy > 0 || started)
+			if((usedEnergy > 0 || started) && enabled)
 			{
 				recipeMaxEu = this.getRecipeMaxEu(this.getRecipeEuCost(activeRecipe), recipeEnergy, efficiencyTicks);
 				eu = this.doConditionsMatchForRecipe(activeRecipe) ? behavior.consumeEu(Math.min(recipeMaxEu, recipeEnergy - usedEnergy), ACT) : 0;
