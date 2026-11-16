@@ -9,7 +9,6 @@ import aztech.modern_industrialization.machines.components.CrafterComponent;
 import aztech.modern_industrialization.machines.recipe.MachineRecipe;
 import aztech.modern_industrialization.stats.PlayerStatistics;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.fluid.FluidVariant;
-import aztech.modern_industrialization.thirdparty.fabrictransfer.api.item.ItemVariant;
 import aztech.modern_industrialization.thirdparty.fabrictransfer.api.storage.TransferVariant;
 import com.google.common.base.Predicate;
 import com.google.common.base.Supplier;
@@ -28,6 +27,7 @@ import net.swedz.tesseract.neoforge.compat.mi.component.craft.ModularCrafterAcce
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
 
 public final class CrafterComponentHelper
 {
@@ -37,10 +37,10 @@ public final class CrafterComponentHelper
 	)
 	{
 		List<ConfigurableItemStack> baseList = inventory.getItemInputs();
-		List<ConfigurableItemStack> stacks = simulate ? ConfigurableItemStack.copyList(baseList) : baseList;
+		long[] used = simulate ? new long[baseList.size()] : null;
 		
 		boolean ok = true;
-		for(MachineRecipe.ItemInput input : recipe.itemInputs)
+		for(var input : recipe.itemInputs)
 		{
 			// if we are not simulating, there is a chance we don't need to take this output
 			if(!simulate && input.probability() < 1)
@@ -51,21 +51,40 @@ public final class CrafterComponentHelper
 				}
 			}
 			int remainingAmount = input.amount() * (input.probability() == 0 ? 1 : multiplier);
-			for(ConfigurableItemStack stack : stacks)
+			for(int stackIndex = 0; stackIndex < baseList.size(); stackIndex++)
 			{
-				if(stack.getAmount() > 0 && stack.getResource().test(input.ingredient()))
+				var stack = baseList.get(stackIndex);
+				long amount = stack.getAmount();
+				if(simulate)
 				{
-					int taken = Math.min((int) stack.getAmount(), remainingAmount);
-					if(taken > 0 && !simulate)
-					{
-						behavior.getStatsOrDummy().addUsedItems(stack.getResource().getItem(), taken);
-					}
+					amount -= used[stackIndex];
+				}
+				
+				if(amount <= 0 || !stack.getResource().test(input.ingredient()))
+				{
+					continue;
+				}
+				
+				int taken = Math.min((int) amount, remainingAmount);
+				if(taken <= 0)
+				{
+					continue;
+				}
+				
+				if(!simulate)
+				{
+					behavior.getStatsOrDummy().addUsedItems(stack.getResource().getItem(), taken);
 					stack.decrement(taken);
-					remainingAmount -= taken;
-					if(remainingAmount == 0)
-					{
-						break;
-					}
+				}
+				else
+				{
+					used[stackIndex] += taken;
+				}
+				
+				remainingAmount -= taken;
+				if(remainingAmount == 0)
+				{
+					break;
 				}
 			}
 			if(remainingAmount > 0)
@@ -78,16 +97,22 @@ public final class CrafterComponentHelper
 	}
 	
 	public static boolean takeItemInputs(
-			MachineRecipe recipe, boolean simulate,
-			CrafterComponent.Behavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			CrafterComponent.Behavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier
 	)
 	{
 		return takeItemInputs(recipe, simulate, CommonBehavior.from(behavior), inventory, multiplier);
 	}
 	
 	public static boolean takeItemInputs(
-			MachineRecipe recipe, boolean simulate,
-			ModularCrafterAccessBehavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			ModularCrafterAccessBehavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier
 	)
 	{
 		return takeItemInputs(recipe, simulate, CommonBehavior.from(behavior), inventory, multiplier);
@@ -113,15 +138,20 @@ public final class CrafterComponentHelper
 	}
 	
 	private static boolean takeFluidInputs(
-			MachineRecipe recipe, boolean simulate,
-			CommonBehavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			CommonBehavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier,
+			boolean oneInputPerStack
 	)
 	{
 		List<ConfigurableFluidStack> baseList = inventory.getFluidInputs();
-		List<ConfigurableFluidStack> stacks = simulate ? ConfigurableFluidStack.copyList(baseList) : baseList;
+		boolean[] usedStacks = oneInputPerStack ? new boolean[baseList.size()] : null;
+		long[] used = simulate ? new long[baseList.size()] : null;
 		
 		boolean ok = true;
-		for(MachineRecipe.FluidInput input : recipe.fluidInputs)
+		for(var input : recipe.fluidInputs)
 		{
 			// if we are not simulating, there is a chance we don't need to take this output
 			if(!simulate && input.probability() < 1)
@@ -131,22 +161,52 @@ public final class CrafterComponentHelper
 					continue;
 				}
 			}
+			
 			long remainingAmount = input.amount() * (input.probability() == 0 ? 1 : multiplier);
-			for(ConfigurableFluidStack stack : stacks)
+			for(int stackIndex = 0; stackIndex < baseList.size(); ++stackIndex)
 			{
-				if(fluidIngredientMatch(stack.getResource(), input.fluid()))
+				if(oneInputPerStack && usedStacks[stackIndex])
 				{
-					long taken = Math.min(remainingAmount, stack.getAmount());
-					if(taken > 0 && !simulate)
-					{
-						behavior.getStatsOrDummy().addUsedFluids(stack.getResource().getFluid(), taken);
-					}
+					continue;
+				}
+				
+				var stack = baseList.get(stackIndex);
+				long amount = stack.getAmount();
+				if(simulate)
+				{
+					amount -= used[stackIndex];
+				}
+				
+				if(amount <= 0 || !fluidIngredientMatch(stack.getResource(), input.fluid()))
+				{
+					continue;
+				}
+				
+				long taken = Math.min(amount, remainingAmount);
+				if(taken <= 0)
+				{
+					continue;
+				}
+				
+				if(oneInputPerStack)
+				{
+					usedStacks[stackIndex] = true;
+				}
+				
+				if(!simulate)
+				{
+					behavior.getStatsOrDummy().addUsedFluids(stack.getResource().getFluid(), taken);
 					stack.decrement(taken);
-					remainingAmount -= taken;
-					if(remainingAmount == 0)
-					{
-						break;
-					}
+				}
+				else
+				{
+					used[stackIndex] += taken;
+				}
+				
+				remainingAmount -= taken;
+				if(remainingAmount == 0)
+				{
+					break;
 				}
 			}
 			if(remainingAmount > 0)
@@ -158,28 +218,72 @@ public final class CrafterComponentHelper
 	}
 	
 	public static boolean takeFluidInputs(
-			MachineRecipe recipe, boolean simulate,
-			CrafterComponent.Behavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			CrafterComponent.Behavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier
 	)
 	{
-		return takeFluidInputs(recipe, simulate, CommonBehavior.from(behavior), inventory, multiplier);
+		return takeFluidInputs(recipe, simulate, CommonBehavior.from(behavior), inventory, multiplier, behavior.oneFluidInputPerStack());
 	}
 	
 	public static boolean takeFluidInputs(
-			MachineRecipe recipe, boolean simulate,
-			ModularCrafterAccessBehavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			ModularCrafterAccessBehavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier
 	)
 	{
-		return takeFluidInputs(recipe, simulate, CommonBehavior.from(behavior), inventory, multiplier);
+		return takeFluidInputs(recipe, simulate, CommonBehavior.from(behavior), inventory, multiplier, behavior.oneFluidInputPerStack());
+	}
+	
+	private record OptimizedUpdatedStacksArray<T>(
+			List<T> baseList,
+			T[] updatedStacks,
+			Function<T, T> copyFunction
+	)
+	{
+		public T get(int index)
+		{
+			T stack = updatedStacks[index];
+			if(stack == null)
+			{
+				stack = baseList.get(index);
+			}
+			return stack;
+		}
+		
+		public T getToModify(T baseValue, int index)
+		{
+			var simStack = updatedStacks[index];
+			if(simStack == null)
+			{
+				simStack = copyFunction.apply(baseValue);
+				updatedStacks[index] = simStack;
+			}
+			return simStack;
+		}
 	}
 	
 	private static boolean putItemOutputs(
-			MachineRecipe recipe, boolean simulate, boolean toggleLock,
-			CommonBehavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			boolean toggleLock,
+			CommonBehavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier
 	)
 	{
 		List<ConfigurableItemStack> baseList = inventory.getItemOutputs();
-		List<ConfigurableItemStack> stacks = simulate ? ConfigurableItemStack.copyList(baseList) : baseList;
+		var simulatedStacks = simulate ?
+				new OptimizedUpdatedStacksArray<>(
+						baseList,
+						new ConfigurableItemStack[baseList.size()],
+						ConfigurableItemStack::new
+				) :
+				null;
 		
 		List<Integer> locksToToggle = new ArrayList<>();
 		List<Item> lockItems = new ArrayList<>();
@@ -204,17 +308,16 @@ public final class CrafterComponentHelper
 			// in empty stacks.
 			for(int loopRun = 0; loopRun < 2; loopRun++)
 			{
-				int stackId = 0;
-				for(ConfigurableItemStack stack : stacks)
+				for(int stackIndex = 0; stackIndex < baseList.size(); stackIndex++)
 				{
-					stackId++;
-					ItemVariant key = stack.getResource();
-					if(key.equals(output.variant()) || key.isBlank())
+					var stack = simulate ?
+							simulatedStacks.get(stackIndex) :
+							baseList.get(stackIndex);
+					var key = stack.getResource();
+					if(stack.isResourceAllowedByLock(output.variant()) &&
+					   (key.equals(output.variant()) || key.isBlank()))
 					{
-						// If simulating or chanced output, respect the adjusted capacity.
-						// If putting the output, don't respect the adjusted capacity in case it was
-						// reduced during the processing.
-						int remainingCapacity = simulate || output.probability() < 1 ?
+						int remainingCapacity = simulate || output.probability() < 1 || loopRun == 0 ?
 								(int) stack.getRemainingCapacityFor(output.variant()) :
 								output.variant().getMaxStackSize() - (int) stack.getAmount();
 						int ins = Math.min(remainingAmount, remainingCapacity);
@@ -222,10 +325,13 @@ public final class CrafterComponentHelper
 						{
 							if(key.isBlank())
 							{
-								if((stack.isMachineLocked() || stack.isPlayerLocked() || loopRun == 1) && stack.isValid(output.getStack()))
+								if(stack.isMachineLocked() || stack.isPlayerLocked() || loopRun == 1)
 								{
-									stack.setAmount(ins);
-									stack.setKey(output.variant());
+									var stackToModify = simulate ?
+											simulatedStacks.getToModify(stack, stackIndex) :
+											stack;
+									stackToModify.setAmount(ins);
+									stackToModify.setKey(output.variant());
 								}
 								else
 								{
@@ -234,14 +340,17 @@ public final class CrafterComponentHelper
 							}
 							else
 							{
-								stack.increment(ins);
+								var stackToModify = simulate ?
+										simulatedStacks.getToModify(stack, stackIndex) :
+										stack;
+								stackToModify.increment(ins);
 							}
 						}
 						remainingAmount -= ins;
 						// ins changed inside of previous if, need to check again!
 						if(ins > 0)
 						{
-							locksToToggle.add(stackId - 1);
+							locksToToggle.add(stackIndex);
 							lockItems.add(output.variant().getItem());
 							if(!simulate)
 							{
@@ -272,28 +381,42 @@ public final class CrafterComponentHelper
 	}
 	
 	public static boolean putItemOutputs(
-			MachineRecipe recipe, boolean simulate, boolean toggleLock,
-			CrafterComponent.Behavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			boolean toggleLock,
+			CrafterComponent.Behavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier
 	)
 	{
 		return putItemOutputs(recipe, simulate, toggleLock, CommonBehavior.from(behavior), inventory, multiplier);
 	}
 	
 	public static boolean putItemOutputs(
-			MachineRecipe recipe, boolean simulate, boolean toggleLock,
-			ModularCrafterAccessBehavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			boolean toggleLock,
+			ModularCrafterAccessBehavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier
 	)
 	{
 		return putItemOutputs(recipe, simulate, toggleLock, CommonBehavior.from(behavior), inventory, multiplier);
 	}
 	
 	private static boolean putFluidOutputs(
-			MachineRecipe recipe, boolean simulate, boolean toggleLock,
-			CommonBehavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			boolean toggleLock,
+			CommonBehavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier
 	)
 	{
 		List<ConfigurableFluidStack> baseList = inventory.getFluidOutputs();
-		List<ConfigurableFluidStack> stacks = simulate ? ConfigurableFluidStack.copyList(baseList) : baseList;
+		var simulatedStacks = simulate ?
+				new OptimizedUpdatedStacksArray<>(baseList, new ConfigurableFluidStack[baseList.size()], ConfigurableFluidStack::new) :
+				null;
 		
 		List<Integer> locksToToggle = new ArrayList<>();
 		List<Fluid> lockFluids = new ArrayList<>();
@@ -301,7 +424,7 @@ public final class CrafterComponentHelper
 		boolean ok = true;
 		for(int i = 0; i < Math.min(recipe.fluidOutputs.size(), behavior.getMaxFluidOutputs()); ++i)
 		{
-			MachineRecipe.FluidOutput output = recipe.fluidOutputs.get(i);
+			var output = recipe.fluidOutputs.get(i);
 			if(output.probability() < 1)
 			{
 				if(simulate)
@@ -314,31 +437,37 @@ public final class CrafterComponentHelper
 					continue;
 				}
 			}
+			long outputAmount = output.amount() * multiplier;
 			// First, try to find a slot that contains the fluid. If we couldn't find one,
 			// we insert in any stack
 			outer:
 			for(int tries = 0; tries < 2; ++tries)
 			{
-				for(int j = 0; j < stacks.size(); j++)
+				for(int stackIndex = 0; stackIndex < baseList.size(); stackIndex++)
 				{
-					ConfigurableFluidStack stack = stacks.get(j);
-					FluidVariant outputKey = FluidVariant.of(output.fluid());
-					if(stack.isResourceAllowedByLock(outputKey)
-					   && ((tries == 1 && stack.isResourceBlank()) || stack.getResource().equals(outputKey)))
+					var stack = simulate ?
+							simulatedStacks.get(stackIndex) :
+							baseList.get(stackIndex);
+					var outputKey = FluidVariant.of(output.fluid());
+					if(stack.isResourceAllowedByLock(outputKey) &&
+					   ((tries == 1 && stack.isResourceBlank()) || stack.getResource().equals(outputKey)))
 					{
-						long inserted = Math.min(output.amount() * multiplier, stack.getRemainingSpace());
+						long inserted = Math.min(outputAmount, stack.getRemainingSpace());
 						if(inserted > 0)
 						{
-							stack.setKey(outputKey);
-							stack.increment(inserted);
-							locksToToggle.add(j);
+							var stackToModify = simulate ?
+									simulatedStacks.getToModify(stack, stackIndex) :
+									stack;
+							stackToModify.setKey(outputKey);
+							stackToModify.increment(inserted);
+							locksToToggle.add(stackIndex);
 							lockFluids.add(output.fluid());
 							if(!simulate)
 							{
 								behavior.getStatsOrDummy().addProducedFluids(output.fluid(), inserted);
 							}
 						}
-						if(inserted < output.amount() * multiplier)
+						if(inserted < outputAmount)
 						{
 							ok = false;
 						}
@@ -363,16 +492,24 @@ public final class CrafterComponentHelper
 	}
 	
 	public static boolean putFluidOutputs(
-			MachineRecipe recipe, boolean simulate, boolean toggleLock,
-			CrafterComponent.Behavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			boolean toggleLock,
+			CrafterComponent.Behavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier
 	)
 	{
 		return putFluidOutputs(recipe, simulate, toggleLock, CommonBehavior.from(behavior), inventory, multiplier);
 	}
 	
 	public static boolean putFluidOutputs(
-			MachineRecipe recipe, boolean simulate, boolean toggleLock,
-			ModularCrafterAccessBehavior behavior, CrafterComponent.Inventory inventory, int multiplier
+			MachineRecipe recipe,
+			boolean simulate,
+			boolean toggleLock,
+			ModularCrafterAccessBehavior behavior,
+			CrafterComponent.Inventory inventory,
+			int multiplier
 	)
 	{
 		return putFluidOutputs(recipe, simulate, toggleLock, CommonBehavior.from(behavior), inventory, multiplier);
@@ -548,6 +685,8 @@ public final class CrafterComponentHelper
 		
 		PlayerStatistics getStatsOrDummy();
 		
+		boolean oneFluidInputPerStack();
+		
 		static CommonBehavior from(CrafterComponent.Behavior behavior)
 		{
 			return new CommonBehavior()
@@ -568,6 +707,12 @@ public final class CrafterComponentHelper
 				public PlayerStatistics getStatsOrDummy()
 				{
 					return behavior.getStatsOrDummy();
+				}
+				
+				@Override
+				public boolean oneFluidInputPerStack()
+				{
+					return behavior.oneFluidInputPerStack();
 				}
 			};
 		}
@@ -592,6 +737,12 @@ public final class CrafterComponentHelper
 				public PlayerStatistics getStatsOrDummy()
 				{
 					return behavior.getStatsOrDummy();
+				}
+				
+				@Override
+				public boolean oneFluidInputPerStack()
+				{
+					return behavior.oneFluidInputPerStack();
 				}
 			};
 		}

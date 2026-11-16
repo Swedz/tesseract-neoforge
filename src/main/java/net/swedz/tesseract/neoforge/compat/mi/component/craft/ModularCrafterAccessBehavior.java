@@ -74,6 +74,11 @@ public interface ModularCrafterAccessBehavior
 		return Integer.MAX_VALUE;
 	}
 	
+	default boolean oneFluidInputPerStack()
+	{
+		return false;
+	}
+	
 	@Nullable
 	UUID getOwnerUuid();
 	
